@@ -1,6 +1,6 @@
 set(PUBLIC_HEADERS
     zendapi/lang/Type.h
-    zendapi/lang/Value.h)
+    zendapi/lang/Variant.h)
 
 #set(PRIVATE_HEADER
 #    PARENT_SCOPE)
