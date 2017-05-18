@@ -1,9 +1,11 @@
 cmake_minimum_required(VERSION 3.4.3 FATAL_ERROR)
 project(zendapi CXX)
+
+set(ZAPI_PROJECT_NAME zendapi)
+
 list(APPEND CMAKE_MODULE_PATH
      "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
 set(ZAPI_VERSION 0.0.1)
-
 set(ZAPI_VERSION_MAJOR 0)
 set(ZAPI_VERSION_MINOR 0)
 set(ZAPI_VERSION_PATCH 1)
