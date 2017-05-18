@@ -50,10 +50,13 @@ set(ZAPI_INCLUDE_DIR "${ZAPI_WORKSPACE_DIR}/include")
 
 set(ZAPI_EXTRA_INCLUDE_DIR "${ZAPI_BINARY_DIR}/include")
 set(ZAPI_RUNTIME_OUTPUT_INTDIR "${ZAPI_BINARY_DIR}/${CMAKE_CFG_INTDIR}/bin")
-set(ZAPI_LIBRARY_OUTPUT_INTDIR "${ZAPI_LIBRARY_DIR}/${CMAKE_CFG_INTDIR}/lib")
+set(ZAPI_LIBRARY_OUTPUT_INTDIR "${ZAPI_BINARY_DIR}/${CMAKE_CFG_INTDIR}/lib")
 set(ZAPI_ARCHIVE_OUTPUT_INTDIR "${ZAPI_BINARY_DIR}/${CMAKE_CFG_INTDIR}/lib")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+option(ZAPI_OPT_DISABLE_TESTS
+       "If tests should be compiled or not" OFF)
 
 option(ZAPI_OPT_ENABLE_VERBOSE_DEBUG
        "Enable verbose debugging" OFF)
@@ -78,10 +81,6 @@ else ()
    set(CMAKE_CXX_STANDARD 14)
 endif ()
 
-include_directories(BEFORE
-                    ${ZAPI_INCLUDE_DIR}
-                    ${ZAPI_EXTRA_INCLUDE_DIR})
-
 # prepare for installation
 set(ZAPI_INSTALL_LIB_DIR lib CACHE PATH "Installation directory for libraries")
 set(ZAPI_INSTALL_BIN_DIR bin CACHE PATH "Installation directory for executables")
@@ -103,13 +102,29 @@ foreach(dirname LIB BIN INCLUDE CMAKE)
    endif()
 endforeach()
 
+include(AddLibZendApi)
+
+configure_file(
+    ${ZAPI_INCLUDE_DIR}/zendapi/Config.h.in
+    ${ZAPI_EXTRA_INCLUDE_DIR}/zendapi/Config.h
+    NEWLINE_STYLE UNIX)
+
+include_directories(BEFORE
+                    ${ZAPI_INCLUDE_DIR}
+                    ${ZAPI_EXTRA_INCLUDE_DIR})
+
 # variable about header files
 set(PUBLIC_HEADERS "")
 set(PRIVATE_HEADER "")
 
 add_subdirectory(include)
-message("${PUBLIC_HEADERS}")
 add_subdirectory(src)
+
+if(NOT ZAPI_OPT_DISABLE_TESTS)
+   add_subdirectory(utils/unittest)
+   add_subdirectory(tests)
+   add_subdirectory(unittests)
+endif()
 
 set(ZAPI_INCLUDE_DIRS_TEMP
     ${ZAPI_INCLUDE_DIR}
