@@ -80,10 +80,61 @@ include_directories(BEFORE
                     ${ZAPI_INCLUDE_DIR}
                     ${ZAPI_EXTRA_INCLUDE_DIR})
 
+# prepare for installation
+set(ZAPI_INSTALL_LIB_DIR lib CACHE PATH "Installation directory for libraries")
+set(ZAPI_INSTALL_BIN_DIR bin CACHE PATH "Installation directory for executables")
+set(ZAPI_INSTALL_INCLUDE_DIR include CACHE PATH "Installation directory for header files")
+
+if(WIN32 AND NOT CYGWIN)
+   set(ZAPI_INSTALL_CMAKE_DIR_TMP cmake)
+else()
+   set(ZAPI_INSTALL_CMAKE_DIR_TMP lib/cmake/zendapi)
+endif()
+
+set(ZAPI_INSTALL_CMAKE_DIR ${ZAPI_INSTALL_CMAKE_DIR_TMP}
+    CACHE PATH "Installation directory for CMake files")
+
+foreach(dirname LIB BIN INCLUDE CMAKE)
+   set(var ZAPI_INSTALL_${dirname}_DIR)
+   if(NOT IS_ABSOLUTE "${${var}}")
+      set(${var} "${CMAKE_INSTALL_PREFIX}/${${var}}")
+   endif()
+endforeach()
+
+# variable about header files
+set(PUBLIC_HEADERS "")
+set(PRIVATE_HEADER "")
+
 add_subdirectory(include)
+message("${PUBLIC_HEADERS}")
 add_subdirectory(src)
 
-# prepare for installation
+set(ZAPI_INCLUDE_DIRS_TEMP
+    ${ZAPI_INCLUDE_DIR}
+    ${ZAPI_EXTRA_INCLUDE_DIR})
+
+set(ZAPI_INCLUDE_DIRS
+    ${ZAPI_INCLUDE_DIRS_TEMP} CACHE PATH "ZendApi include directories")
+
+configure_file(${ZAPI_CMAKE_DIR}/ZendApiConfigBuildTree.cmake.in
+               ${ZAPI_BINARY_DIR}/ZendApiConfig.cmake
+               @ONLY)
+
+configure_file(${ZAPI_CMAKE_DIR}/ZendApiConfig.cmake.in
+               ${ZAPI_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/ZendApiConfig.cmake
+               @ONLY)
+
+# Generate version info for both build-tree and install-tree.
+configure_file(${ZAPI_CMAKE_DIR}/ZendApiConfigVersion.cmake.in
+               ${ZAPI_BINARY_DIR}/ZendApiConfigVersion.cmake
+               @ONLY)
+
+install(FILES
+        ${ZAPI_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/ZendApiConfig.cmake
+        ${ZAPI_BINARY_DIR}/ZendApiConfigVersion.cmake
+        DESTINATION
+        "${ZAPI_INSTALL_CMAKE_DIR}"
+        COMPONENT dev)
 
 message(STATUS "")
 message(STATUS "(zendapi ${NOTIFY_VERSION})")
@@ -95,6 +146,7 @@ message(STATUS "PROJECT_BINARY_DIR: ${PROJECT_BINARY_DIR}")
 message(STATUS "PROJECT_SOURCE_DIR: ${PROJECT_SOURCE_DIR}")
 message(STATUS "CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
 message(STATUS "CMAKE_COMMAND: ${CMAKE_COMMAND}")
+message(STATUS "CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
 message(STATUS "CMAKE_ROOT: ${CMAKE_ROOT}")
 message(STATUS "CMAKE_SYSTEM: ${CMAKE_SYSTEM}")
 message(STATUS "CMAKE_SYSTEM_NAME: ${CMAKE_SYSTEM_NAME}")
