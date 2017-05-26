@@ -13,12 +13,12 @@
 //
 // Created by softboy on 5/18/17.
 
-#ifndef ZENDAPI_GLOBAL_H
+#ifndef ZAPI_GLOBAL_H
 # include "zendapi/Global.h"
 #endif
 
-#ifndef ZENDAPI_PROCESSORDETECTION_H
-#define ZENDAPI_PROCESSORDETECTION_H
+#ifndef ZAPI_PROCESSORDETECTION_H
+#define ZAPI_PROCESSORDETECTION_H
 
 #ifdef ZAPI_HAVE_ENDIAN_H
 #include <endian.h>
@@ -272,4 +272,4 @@
 #  define ZAPI_PROCESSOR_WORDSIZE ZAPI_POINTER_SIZE
 #endif
 
-#endif //ZENDAPI_PROCESSORDETECTION_H
+#endif // ZAPI_PROCESSORDETECTION_H

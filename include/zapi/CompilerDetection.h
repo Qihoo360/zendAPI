@@ -13,12 +13,12 @@
 //
 // Created by softboy on 5/18/17.
 
-#ifndef ZENDAPI_GLOBAL_H
+#ifndef ZAPI_GLOBAL_H
 # include "zendapi/Global.h"
 #endif
 
-#ifndef ZENDAPI_COMPILERDETECTION_H
-#define ZENDAPI_COMPILERDETECTION_H
+#ifndef ZAPI_COMPILERDETECTION_H
+#define ZAPI_COMPILERDETECTION_H
 
 // The compiler, must be one of: (ZAPI_CC_x)
 
@@ -1305,4 +1305,4 @@
 #  endif
 #endif
 
-#endif //ZENDAPI_COMPILERDETECTION_H
+#endif //ZAPI_COMPILERDETECTION_H

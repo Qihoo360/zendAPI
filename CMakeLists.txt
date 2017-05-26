@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.4.3 FATAL_ERROR)
-project(zendapi CXX)
+project(zapi CXX)
 
-set(ZAPI_PROJECT_NAME zendapi)
+set(ZAPI_PROJECT_NAME zapi)
 
 list(APPEND CMAKE_MODULE_PATH
      "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
@@ -105,8 +105,8 @@ endforeach()
 include(AddLibZendApi)
 
 configure_file(
-    ${ZAPI_INCLUDE_DIR}/zendapi/Config.h.in
-    ${ZAPI_EXTRA_INCLUDE_DIR}/zendapi/Config.h
+    ${ZAPI_INCLUDE_DIR}/zapi/Config.h.in
+    ${ZAPI_EXTRA_INCLUDE_DIR}/zapi/Config.h
     NEWLINE_STYLE UNIX)
 
 include_directories(BEFORE
@@ -154,7 +154,7 @@ install(FILES
         COMPONENT dev)
 
 message(STATUS "")
-message(STATUS "(zendapi ${NOTIFY_VERSION})")
+message(STATUS "(zapi ${ZAPI_VERSION})")
 message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
 message(STATUS "CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")
 message(STATUS "CMAKE_CURRENT_BINARY_DIR: ${CMAKE_CURRENT_BINARY_DIR}")

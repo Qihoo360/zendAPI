@@ -14,8 +14,8 @@
 // Created by softboy on 18/05/2017.
 //
 
-#ifndef ZENDAPI_GLOBAL_H
-#define ZENDAPI_GLOBAL_H
+#ifndef ZAPI_GLOBAL_H
+#define ZAPI_GLOBAL_H
 
 #include "zendapi/Config.h"
 
@@ -25,9 +25,9 @@
 #define ZAPI_STRINGIFY2(x) #x
 #define ZAPI_STRINGIFY(x) ZAPI_STRINGIFY2(x)
 
-#include "zendapi/SystemDetection.h"
-#include "zendapi/ProcessorDetection.h"
-#include "zendapi/CompilerDetection.h"
+#include "zapi/SystemDetection.h"
+#include "zapi/ProcessorDetection.h"
+#include "zapi/CompilerDetection.h"
 
 using z_int8 = signed char;
 using z_uint8 = unsigned char;
@@ -193,4 +193,4 @@ using HANDLE = void *;
 
 #define ZAPI_ASSERT(x) (x);
 
-#endif //ZENDAPI_GLOBAL_H
+#endif //ZAPI_GLOBAL_H

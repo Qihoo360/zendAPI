@@ -13,12 +13,12 @@
 //
 // Created by softboy on 5/18/17.
 
-#ifndef ZENDAPI_GLOBAL_H
+#ifndef ZAPI_GLOBAL_H
 # include "zendapi/Global.h"
 #endif
 
-#ifndef ZENDAPI_SYSTEMDETECTION_H
-#define ZENDAPI_SYSTEMDETECTION_H
+#ifndef ZAPI_SYSTEMDETECTION_H
+#define ZAPI_SYSTEMDETECTION_H
 
 /*
  * The operating system, must be one of: (ZAPI_OS_x)
@@ -235,4 +235,4 @@
 #  define ZAPI_LINUXBASE
 #endif
 
-#endif //ZENDAPI_SYSTEMDETECTION_H
+#endif // ZAPI_SYSTEMDETECTION_H
