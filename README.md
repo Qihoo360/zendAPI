@@ -2,6 +2,9 @@
 ### 介绍
 zendapi这个项目是对zend engine的C接口使用C++11进行而面向对象的封装，从而屏蔽了底层Zend Engine API的接口复杂性，加快开发PHP扩展的效率。
 
+### 设计目标
+让php扩展开发更有趣
+
 项目官网地址：www.zendapi.org
 ### 特性
 1. 完全面向对象，对Zend Engine API进行二次定义
