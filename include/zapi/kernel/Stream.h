@@ -13,7 +13,7 @@
 //
 // Created by zzu_softboy on 27/05/2017.
 
-#ifndef ZAPI_BRIDGE_INITIALIZER_H
-#define ZAPI_BRIDGE_INITIALIZER_H
+#ifndef ZAPI_KERNEL_STREAM_H
+#define ZAPI_KERNEL_STREAM_H
 
-#endif //ZAPI_BRIDGE_INITIALIZER_H
+#endif //ZAPI_KERNEL_STREAM_H
