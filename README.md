@@ -30,6 +30,11 @@ API手册: www.zendapi.org/api
 
 TODO
 
+### 贡献者列表
+
+ZZU_SOFTBOY <zzu_softboy@163.com></br>
+欢迎大家加入，一起玩。
+
 ### License
 
 Apache License Version 2.0 see http://www.apache.org/licenses/LICENSE-2.0.html
