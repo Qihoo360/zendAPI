@@ -103,6 +103,7 @@ foreach(dirname LIB BIN INCLUDE CMAKE)
 endforeach()
 
 include(AddLibZendApi)
+include(DetectPhpInfo)
 
 configure_file(
     ${ZAPI_INCLUDE_DIR}/zapi/Config.h.in
