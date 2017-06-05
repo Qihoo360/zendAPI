@@ -150,6 +150,7 @@ function(zapi_add_unittest test_suite test_name)
    endif()
    include_directories(${ZAPI_UTILS_DIR}/unittest/googletest/include)
    include_directories(${ZAPI_UTILS_DIR}/unittest/googlemock/include)
+   include_directories(${ZAPI_PHP_INCLUDE_PATH})
    if (NOT ZAPI_OPT_ENABLE_THREADS)
       list(APPEND ZAPI_COMPILE_DEFINITIONS GTEST_HAS_PTHREAD=0)
    endif()
@@ -160,7 +161,7 @@ function(zapi_add_unittest test_suite test_name)
    # executable must be linked with it in order to provide consistent
    # API for all shared libaries loaded by this executable.
    target_link_libraries(${test_name} gtest_main gtest ${PTHREAD_LIB} ${CMAKE_PROJECT_NAME}
-                         ${ZAPI_PHP_LIB})
+                         zapi_php_lib)
    add_dependencies(${test_suite} ${test_name})
    get_target_property(test_suite_folder ${test_suite} FOLDER)
    if (NOT ${test_suite_folder} STREQUAL "NOTFOUND")

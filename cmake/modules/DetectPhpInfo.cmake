@@ -26,12 +26,16 @@ find_program(ZAPI_PHP_EXECUTABLE NAEMS php
              PATHS ${ZAPI_PHP_POSSIBLE_BIN_PATHS} NO_DEFAULT_PATH)
 
 find_program(ZAPI_PHP_CONFIG_EXECUABLE php-config
-              PATHS ${ZAPI_PHP_POSSIBLE_BIN_PATHS} NO_DEFAULT_PATH)
+             PATHS ${ZAPI_PHP_POSSIBLE_BIN_PATHS} NO_DEFAULT_PATH)
 
 # if you build the unittest we will detect libphp library
 if(NOT ZAPI_OPT_DISABLE_TESTS)
    find_library(ZAPI_PHP_LIB php7 NAEMS php php5
                 PATHS ${ZAPI_PHP_POSSIBLE_LIB_PATHS} NO_DEFAULT_PATH)
+   add_library(zapi_php_lib SHARED IMPORTED GLOBAL)
+   set_target_properties(zapi_php_lib
+                         PROPERTIES
+                         IMPORTED_LOCATION ${ZAPI_PHP_LIB})
 endif()
 
 if (NOT ZAPI_PHP_INCLUDE_PATH)
@@ -46,5 +50,20 @@ if (NOT ZAPI_OPT_DISABLE_TESTS AND NOT ZAPI_PHP_LIB)
    message(FATAL_ERROR "php library is not found")
 endif()
 
-include_directories(ZAPI_PHP_INCLUDE_PATH)
+# we use php-config to detect php extra include paths
+execute_process(COMMAND ${ZAPI_PHP_CONFIG_EXECUABLE} --includes
+                RESULT_VARIABLE ZAPI_TEMP_RUN_PHPCFG_RET
+                OUTPUT_VARIABLE ZAPI_TEMP_RUN_PHPCFG_OUTPUT
+                ERROR_QUIET)
+if (ZAPI_TEMP_RUN_PHPCFG_RET EQUAL 1)
+   message(FATAL_ERROR "run php-config error")
+endif()
 
+string(REPLACE " " ";" ZAPI_TEMP_RUN_PHPCFG_OUTPUT ${ZAPI_TEMP_RUN_PHPCFG_OUTPUT})
+
+foreach(zapi_temp_include_path ${ZAPI_TEMP_RUN_PHPCFG_OUTPUT})
+   string(SUBSTRING ${zapi_temp_include_path} 2 -1 zapi_temp_include_path)
+   list(APPEND ZAPI_PHP_INCLUDE_PATH ${zapi_temp_include_path})
+endforeach()
+
+include_directories(ZAPI_PHP_INCLUDE_PATH)
