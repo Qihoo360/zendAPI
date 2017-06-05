@@ -5,11 +5,14 @@ set(ZAPI_PROJECT_NAME zapi)
 
 list(APPEND CMAKE_MODULE_PATH
      "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
+
 set(ZAPI_VERSION 0.0.1)
 set(ZAPI_VERSION_MAJOR 0)
 set(ZAPI_VERSION_MINOR 0)
 set(ZAPI_VERSION_PATCH 1)
 set(ZAPI_VERSION_STAGE "devel")
+# the ZAPI api version, is release date number
+set(ZAPI_API_VERSION 20170605)
 
 set(ZAPI_ABI_MAJOR ${ZAPI_VERSION_MAJOR})
 set(ZAPI_ABI_MINOR ${ZAPI_VERSION_MINOR})
@@ -110,6 +113,11 @@ configure_file(
     ${ZAPI_EXTRA_INCLUDE_DIR}/zapi/Config.h
     NEWLINE_STYLE UNIX)
 
+configure_file(
+    ${ZAPI_INCLUDE_DIR}/zapi/Version.h.in
+    ${ZAPI_EXTRA_INCLUDE_DIR}/zapi/Version.h
+    NEWLINE_STYLE UNIX)
+
 include_directories(BEFORE
                     ${ZAPI_INCLUDE_DIR}
                     ${ZAPI_EXTRA_INCLUDE_DIR})
@@ -139,8 +147,8 @@ configure_file(${ZAPI_CMAKE_DIR}/ZendApiConfigBuildTree.cmake.in
                @ONLY)
 
 configure_file(${ZAPI_CMAKE_DIR}/ZendApiConfig.cmake.in
-               ${ZAPI_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/ZendApiConfig.cmake
-               @ONLY)
+${ZAPI_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/ZendApiConfig.cmake
+@ONLY)
 
 # Generate version info for both build-tree and install-tree.
 configure_file(${ZAPI_CMAKE_DIR}/ZendApiConfigVersion.cmake.in

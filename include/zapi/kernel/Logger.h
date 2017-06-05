@@ -11,26 +11,9 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by softboy on 18/05/2017.
-//
+// Created by zzu_softboy on 05/06/2017.
 
-#ifndef ZAPI_BRIDGE_EXTENSION_H
-#define ZAPI_BRIDGE_EXTENSION_H
+#ifndef ZAPI_KERNEL_LOGGER_H
+#define ZAPI_KERNEL_LOGGER_H
 
-#include "zapi/Global.h"
-
-namespace zapi
-{
-namespace bridge
-{
-
-class ZAPI_DECL_EXPORT Extension
-{
-public:
-   Extension();
-};
-
-} // bridge
-} // zapi
-
-#endif //ZAPI_BRIDGE_EXTENSION_H
+#endif //ZAPI_KERNEL_LOGGER_H

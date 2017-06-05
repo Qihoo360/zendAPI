@@ -17,7 +17,10 @@
 #ifndef ZAPI_GLOBAL_H
 #define ZAPI_GLOBAL_H
 
-#include "zendapi/Config.h"
+#include "php/main/php.h"
+
+#include "zapi/Version.h"
+#include "zapi/Config.h"
 
 #include <type_traits>
 #include <cstddef>
@@ -167,10 +170,11 @@ ZAPI_DECL_NOEXCEPT_EXPR(noexcept(internal::swapexceptiontester::check_swap(left)
    swap(left, right);
 }
 
-namespace zendapi
+namespace zapi
 {
 using HANDLE = void *;
-} // notify
+using Callback = std::function<void()>();
+} // zapi
 
 
 #ifdef ZAPI_CC_MSVC

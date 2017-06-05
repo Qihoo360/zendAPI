@@ -11,26 +11,31 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by softboy on 18/05/2017.
-//
+// Created by softboy on 5/26/17.
 
-#ifndef ZAPI_BRIDGE_EXTENSION_H
-#define ZAPI_BRIDGE_EXTENSION_H
+#ifndef ZAPI_VERSION_H
+#define ZAPI_VERSION_H
 
-#include "zapi/Global.h"
+#define ZAPI_VERSION_MAJOR @ZAPI_VERSION_MAJOR@
+#define ZAPI_VERSION_MINOR @ZAPI_VERSION_MINOR@
+#define ZAPI_VERSION_PATCH @ZAPI_VERSION_PATCH@
 
-namespace zapi
-{
-namespace bridge
-{
+// string representation of the zapi version
+#define ZAPI_PACKAGE_VERSION "@ZAPI_PACKAGE_VERSION@"
 
-class ZAPI_DECL_EXPORT Extension
-{
-public:
-   Extension();
-};
+// Numeric representation of the zapi version
+#define ZAPI_NUMERIC_VERSION @ZAPI_NUMERIC_VERSION@
 
-} // bridge
-} // zapi
+// The full version str of zapi
+#define ZAPI_VERSION "@ZAPI_VERSION@"
 
-#endif //ZAPI_BRIDGE_EXTENSION_H
+#define ZAPI_PACKAGE_NAME "zapi"
+
+#define ZAPI_PAKCAGE "zapi @ZAPI_VERSION@"
+
+#define ZAPI_API_VERSION @ZAPI_API_VERSION@
+#define ZAPI_PHP_API_VERSION PHP_API_VERSION
+#define ZAPI_ZEND_MODULE_API_NO ZEND_MODULE_API_NO
+#define ZAPI_ZEND_EXTENSION_API_NO ZEND_EXTENSION_API_NO
+
+#endif //ZAPI_VERSION_H
