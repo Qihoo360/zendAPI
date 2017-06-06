@@ -16,6 +16,16 @@
 #ifndef ZAPI_UTILS_HASHTABLE_H
 #define ZAPI_UTILS_HASHTABLE_H
 
+#include "zapi/Global.h"
 
+namespace zapi
+{
+
+class ZAPI_DECL_EXPORT HashTable
+{
+
+};
+
+} // zapi
 
 #endif //ZAPI_UTILS_HASHTABLE_H

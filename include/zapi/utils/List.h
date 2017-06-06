@@ -16,4 +16,16 @@
 #ifndef ZAPI_UTILS_LIST_H
 #define ZAPI_UTILS_LIST_H
 
+#include "zapi/Global.h"
+
+namespace zapi
+{
+
+class ZAPI_DECL_EXPORT List
+{
+
+};
+
+} // zapi
+
 #endif //ZAPI_UTILS_LIST_H

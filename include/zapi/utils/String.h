@@ -16,4 +16,16 @@
 #ifndef ZAPI_UTILS_STRING_H
 #define ZAPI_UTILS_STRING_H
 
+#include "zapi/Global.h"
+
+namespace zapi
+{
+
+class ZAPI_DECL_EXPORT String
+{
+
+};
+
+} // zapi
+
 #endif // ZAPI_UTILS_STRING_H
