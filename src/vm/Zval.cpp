@@ -14,17 +14,22 @@
 // Created by zzu_softboy on 06/06/2017.
 
 #include "zapi/vm/Zval.h"
+#include "zapi/lang/Type.h"
 
 namespace zapi
 {
 namespace vm
 {
 
+using zapi::lang::Type;
+
 _zval_struct *Zval::dereference() const
 {
    // first cast ourselves to a zval struct
    _zval_struct *self = const_cast<_zval_struct *>(reinterpret_cast<const _zval_struct *>(&m_buffer));
-
+   if ((static_cast<Type>(Z_TYPE_P(sef))) != Type::Reference) {
+      return self;
+   }
    return Z_REFVAL_P(self);
 }
 

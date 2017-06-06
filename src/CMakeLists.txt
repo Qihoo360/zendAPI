@@ -1,6 +1,7 @@
 set(ZAPI_SRC
     kernel/Global.cpp
-    vm/Extension.cpp)
+    vm/Extension.cpp
+    vm/Zval.cpp)
 
 zapi_add_library(${ZAPI_PROJECT_NAME} SHARED ${ZAPI_SRC}
                  ${ZAPI_PUBLIC_HEADERS}
