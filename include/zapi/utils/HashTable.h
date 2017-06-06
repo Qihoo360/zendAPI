@@ -13,7 +13,9 @@
 //
 // Created by zzu_softboy on 27/05/2017.
 
-#ifndef ZAPI_KERNEL_HASHTABLE_H
-#define ZAPI_KERNEL_HASHTABLE_H
+#ifndef ZAPI_UTILS_HASHTABLE_H
+#define ZAPI_UTILS_HASHTABLE_H
 
-#endif //ZAPI_KERNEL_HASHTABLE_H
+
+
+#endif //ZAPI_UTILS_HASHTABLE_H
