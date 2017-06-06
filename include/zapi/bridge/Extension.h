@@ -50,7 +50,7 @@ public:
 
    operator void * ()
    {
-      return module();
+      return getModule();
    }
 
    /**
@@ -111,7 +111,7 @@ public:
     *
     * @return void*
     */
-   void *module();
+   void *getModule();
 
    virtual ~Extension()
    {}
