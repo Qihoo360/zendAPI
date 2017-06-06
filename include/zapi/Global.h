@@ -19,6 +19,7 @@
 
 #include "php/main/php.h"
 #include "php/Zend/zend_API.h"
+#include "php/Zend/zend_types.h"
 
 #include "zapi/Version.h"
 #include "zapi/Config.h"
@@ -216,9 +217,9 @@ ZEND_END_MODULE_GLOBALS(zapi)
 // And now we're going to define a macro. This also is a uncommon architecture
 // from PHP to get access to a variable from the structure above.
 #ifdef ZTS
-#  define ZAPI_G(v) TSRM(zapi_globals_id, zapi_globals *, v)
+#  define ZAPI_GV(v) TSRM(zapi_globals_id, zapi_globals *, v)
 #else
-#  define ZAPI_G(v) (zapi_globals.v)
+#  define ZAPI_GV(v) (zapi_globals.v)
 #endif
 
 

@@ -65,5 +65,5 @@ foreach(zapi_temp_include_path ${ZAPI_TEMP_RUN_PHPCFG_OUTPUT})
    string(SUBSTRING ${zapi_temp_include_path} 2 -1 zapi_temp_include_path)
    list(APPEND ZAPI_PHP_INCLUDE_PATH ${zapi_temp_include_path})
 endforeach()
-
+message("${ZAPI_PHP_INCLUDE_PATH}")
 include_directories(ZAPI_PHP_INCLUDE_PATH)
