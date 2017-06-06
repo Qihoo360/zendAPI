@@ -24,6 +24,7 @@
 
 #include <type_traits>
 #include <cstddef>
+#include <memory>
 
 #define ZAPI_STRINGIFY2(x) #x
 #define ZAPI_STRINGIFY(x) ZAPI_STRINGIFY2(x)
@@ -83,23 +84,23 @@ static inline typename T::pointer zapi_get_ptr_helper(const T &p)
 
 #define ZAPI_DECLARE_PRIVATE(Class)\
    inline Class##Private* getImplPtr()\
-{\
-   return reinterpret_cast<Class##Private *>(zapi_get_ptr_helper(implPtr))\
+   {\
+      return reinterpret_cast<Class##Private *>(zapi_get_ptr_helper(implPtr))\
    }\
    inline const Class##Private* getImplPtr() const\
-{\
-   return reinterpret_cast<const Class##Provate *>(zapi_get_ptr_helper(implPtr))\
+   {\
+      return reinterpret_cast<const Class##Provate *>(zapi_get_ptr_helper(implPtr))\
    }\
    friend class Class##Private;
 
 #define ZAPI_DECLARE_PUBLIC(Class)\
    inline Class* getApiPtr()\
-{\
-   return static_cast<Class *>(apiPtr);\
+   {\
+      return static_cast<Class *>(apiPtr);\
    }\
-   inline const Class* getApiPtr() const\
-{\
-   return static_const<const Class *>(apiPtr);\
+      inline const Class* getApiPtr() const\
+   {\
+      return static_const<const Class *>(apiPtr);\
    }\
    friend class Class;
 
