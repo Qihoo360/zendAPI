@@ -20,7 +20,7 @@
 
 namespace zapi
 {
-namespace bridge
+namespace kernel
 {
 
 using zapi::Callback;
@@ -140,7 +140,7 @@ public:
    {}
 };
 
-} // bridge
-} //zapi
+} // kernel
+} // zapi
 
 #endif //ZAPI_BRIDGE_EXTENSIONBASE_H
