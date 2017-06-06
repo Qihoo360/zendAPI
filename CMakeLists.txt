@@ -123,8 +123,8 @@ include_directories(BEFORE
                     ${ZAPI_EXTRA_INCLUDE_DIR})
 
 # variable about header files
-set(PUBLIC_HEADERS "")
-set(PRIVATE_HEADER "")
+set(ZAPI_PUBLIC_HEADERS "")
+set(ZAPI_PRIVATE_HEADERS "")
 
 add_subdirectory(include)
 add_subdirectory(src)

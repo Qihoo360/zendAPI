@@ -1,7 +1,9 @@
 set(ZAPI_SRC
     kernel/Global.cpp)
 
-zapi_add_library(${ZAPI_PROJECT_NAME} SHARED ${ZAPI_SRC})
+zapi_add_library(${ZAPI_PROJECT_NAME} SHARED ${ZAPI_SRC}
+                 ${ZAPI_PUBLIC_HEADERS}
+                 ${ZAPI_PRIVATE_HEADERS})
 
 export(TARGETS ${ZAPI_PROJECT_NAME}
        FILE "${ZAPI_BINARY_DIR}/ZendApiTargets.cmake")
