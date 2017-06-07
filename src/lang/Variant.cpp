@@ -163,7 +163,7 @@ Variant::Variant(const StdClass *object)
    // space, and no handle does yet exist. But if it was constructed from
    // C++ space and not yet wrapped, this Value constructor should not be
    // called directly, but first via the derived Php::Object class.
-   
+
 }
 
 } // lang
