@@ -16,4 +16,47 @@
 #ifndef ZAPI_LANG_FATALERROR_H
 #define ZAPI_LANG_FATALERROR_H
 
+#include "zapi/lang/Exception.h"
+
+namespace zapi
+{
+namespace lang
+{
+
+class ZAPI_DECL_EXPORT FatalError : public Exception
+{
+public:
+   /**
+    * Constructor
+    * @param  message
+    */
+   FatalError(const std::string &message) : Exception(message)
+   {}
+
+   /**
+    * Destructor
+    */
+   virtual ~FatalError() = default;
+
+   /**
+    * Is this a native exception (one that was thrown from C++ code)
+    * @return bool
+    */
+   virtual bool native() const override
+   {
+      // although it is native, we return 0 because it should not persist
+      // as exception, but it should live on as zend_error() in stead
+      return false;
+   }
+
+   /**
+    * Report this error as a fatal error
+    * @return bool
+    */
+   virtual bool report() const override;
+};
+
+} // lang
+} // zapi
+
 #endif //ZAPI_LANG_FATALERROR_H

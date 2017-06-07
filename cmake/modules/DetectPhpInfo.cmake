@@ -2,10 +2,10 @@
 
 # we first search the newest php version
 set(ZAPI_PHP_POSSIBLE_INCLUDE_PATHS
-    /usr/local/php7/include/php
-    /usr/local/php/include/php
-    /usr/local/include/php
-    /usr/include/php)
+    /usr/local/php7/include
+    /usr/local/php/include
+    /usr/local/include
+    /usr/include)
 
 set(ZAPI_PHP_POSSIBLE_LIB_PATHS
     /usr/local/php7/lib
@@ -19,7 +19,7 @@ set(ZAPI_PHP_POSSIBLE_BIN_PATHS
     /usr/bin)
 
 # find php include path
-find_path(ZAPI_PHP_INCLUDE_PATH main/php.h
+find_path(ZAPI_PHP_INCLUDE_PATH php/main/php.h
           PATHS ${ZAPI_PHP_POSSIBLE_INCLUDE_PATHS})
 
 find_program(ZAPI_PHP_EXECUTABLE NAEMS php
