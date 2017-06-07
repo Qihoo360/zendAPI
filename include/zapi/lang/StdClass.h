@@ -16,4 +16,19 @@
 #ifndef ZAPI_LANG_STDCLASS_H
 #define ZAPI_LANG_STDCLASS_H
 
+#include "zapi/Global.h"
+
+namespace zapi
+{
+namespace lang
+{
+
+class ZAPI_DECL_EXPORT StdClass
+{
+
+};
+
+} // lang
+} // zapi
+
 #endif //ZAPI_LANG_STDCLASS_H

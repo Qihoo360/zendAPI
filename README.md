@@ -25,6 +25,7 @@ API手册: www.zendapi.org/api
 ### 说明
 
 当前ZendApi项目处于非常前期阶段，很多接口都不稳定，甚至会经常有大的变化，请不要用于实际项目，现阶段只适合学习用途。
+项目参考 PHP-CPP进行实现，大家要是对PHP-CPP感兴趣，请点击 https://github.com/CopernicaMarketingSoftware/PHP-CPP
 
 ### 简单入门
 #### 项目环境要求
