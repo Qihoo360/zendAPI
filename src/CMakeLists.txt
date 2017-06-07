@@ -1,5 +1,6 @@
 set(ZAPI_SRC
     kernel/Global.cpp
+    lang/Variant.cpp
     vm/Extension.cpp
     vm/Zval.cpp)
 
