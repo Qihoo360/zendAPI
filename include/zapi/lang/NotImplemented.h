@@ -25,13 +25,13 @@ namespace zapi
 namespace lang
 {
 
-class ZAPI_DECL_EXPORT NotImplemeted : public std::exception
+class ZAPI_DECL_EXPORT NotImplemented : public std::exception
 {
 public:
-   NotImplemeted() : std::exception()
+   NotImplemented() : std::exception()
    {}
 
-   virtual ~NotImplemeted() ZAPI_DECL_NOEXCEPT
+   virtual ~NotImplemented() ZAPI_DECL_NOEXCEPT
    {}
 };
 

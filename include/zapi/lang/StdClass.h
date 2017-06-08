@@ -229,7 +229,7 @@ public:
     *  @param  that        Object to compare with
     *  @return int
     */
-   Variant __compare(const StdClass &object) const;
+   int __compare(const StdClass &object) const;
 
 private:
    /**

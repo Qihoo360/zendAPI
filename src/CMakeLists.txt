@@ -2,6 +2,7 @@ set(ZAPI_SRC
     kernel/Global.cpp
     lang/Variant.cpp
     lang/FatalError.cpp
+    lang/StdClass.cpp
     vm/StdClassImpl.cpp
     vm/Extension.cpp
     vm/Zval.cpp)
