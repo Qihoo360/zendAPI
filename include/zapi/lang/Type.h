@@ -16,6 +16,8 @@
 #ifndef ZAPI_LANG_TYPE_H
 #define ZAPI_LANG_TYPE_H
 
+#include "php/Zend/zend_types.h"
+
 namespace zapi
 {
 namespace lang
@@ -27,22 +29,26 @@ namespace lang
  */
 enum class Type : unsigned char
 {
-   Undefined   = 0,  // Variable is not set
-   Null        = 1,  // Null will allow any type
-   False       = 2,  // Boolean false
-   True        = 3,  // Boolean true
-   Numeric     = 4,  // Integer type
-   Float       = 5,  // Floating point type
-   String      = 6,  // A string obviously
-   Array       = 7,  // An array of things
-   Object      = 8,  // An object
-   Resource    = 9,  // A resource
-   Reference   = 10, // Reference to another value (can be any type!)
-   Constant    = 11, // A constant value
-   ConstantAST = 12, // I think an Abstract Syntax tree, not quite sure
+   Undefined   = IS_UNDEF,  // Variable is not set
+   Null        = IS_NULL,  // Null will allow any type
+   False       = IS_FALSE,  // Boolean false
+   True        = IS_TRUE,  // Boolean true
+   Long        = IS_LONG,  // Integer type
+   Double      = IS_DOUBLE,  // Floating point type
+   String      = IS_STRING,  // A string obviously
+   Array       = IS_ARRAY,  // An array of things
+   Object      = IS_OBJECT,  // An object
+   Resource    = IS_RESOURCE,  // A resource
+   Reference   = IS_REFERENCE, // Reference to another value (can be any type!)
+   Constant    = IS_CONSTANT, // A constant value
+   ConstantAST = IS_CONSTANT_AST, // I think an Abstract Syntax tree, not quite sure
    // "fake types", not quite sure what that means
-   Bool        = 13, // You will never get this back as a type
-   Callable    = 14 // I don't know why this is a "fake" type
+   Bool        = _IS_BOOL, // You will never get this back as a type
+   Callable    = IS_CALLABLE, // I don't know why this is a "fake" type
+   // internal types
+   Indirect    = IS_INDIRECT,
+   Ptr         = IS_PTR,
+   Error       = _IS_ERROR
 };
 
 } // lang
