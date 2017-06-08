@@ -13,6 +13,7 @@
 //
 // Created by zzu_softboy on 06/06/2017.
 
+#include <zapi/lang/FatalError.h>
 #include "zapi/lang/Variant.h"
 
 namespace zapi
@@ -163,7 +164,10 @@ Variant::Variant(const StdClass *object)
    // space, and no handle does yet exist. But if it was constructed from
    // C++ space and not yet wrapped, this Value constructor should not be
    // called directly, but first via the derived Php::Object class.
-
+   auto *impl = object->implementation();
+   if (nullptr == impl) {
+      throw FatalError("Assigning an unassigned object to a variable");
+   }
 }
 
 } // lang

@@ -239,6 +239,7 @@ private:
    const StdClassImpl *implementation() const;
 
    friend class StdClassImpl;
+   friend class Variant;
 };
 
 } // lang
