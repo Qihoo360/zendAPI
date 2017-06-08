@@ -375,7 +375,7 @@ public:
     */
    operator double () const
    {
-      return getFloatValue();
+      return getDoubleValue();
    }
 
    /**
@@ -491,12 +491,12 @@ public:
    bool isNumeric() const;
    bool isBoolean() const;
    bool isString() const;
-   bool isFloat() const;
+   bool isDouble() const;
    bool isObject() const;
    bool isArray() const;
    bool isScalar() const
    {
-      return isNull() || isNumeric() || isBoolean() || isString() || isFloat();
+      return isNull() || isNumeric() || isBoolean() || isString() || isDouble();
    }
    bool isCallable() const;
 
@@ -548,7 +548,7 @@ public:
     * Retrieve the value as decimal
     * @return double
     */
-   double getFloatValue() const;
+   double getDoubleValue() const;
 
    /**
     * Convert the object to a vector

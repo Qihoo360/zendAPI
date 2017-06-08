@@ -477,15 +477,22 @@ Variant &Variant::operator=(const char *value)
 
 /**
  * Assignment operator
- * @param  value
- * @return Value
- */
+      * @param  value
+* @return Value
+*/
 Variant &Variant::operator=(double value)
 {
    zval z;
    ZVAL_DOUBLE(&z, value);
    return operator=(&z);
 }
+
+/**
+ * Add a value to the object
+ * @param  value
+ * @return Value
+ */
+
 
 } // lang
 } // zapi
