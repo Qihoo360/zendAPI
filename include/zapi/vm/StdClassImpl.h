@@ -119,9 +119,9 @@ public:
     * @param  val         Zval object
     * @return ObjectImpl
     */
-   static StdClassImpl *find()
+   static StdClassImpl *find(zval *val)
    {
-
+      return find(Z_OBJ_P(val));
    }
 
    /**

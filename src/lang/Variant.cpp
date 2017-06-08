@@ -13,13 +13,17 @@
 //
 // Created by zzu_softboy on 06/06/2017.
 
-#include <zapi/lang/FatalError.h>
+#include "zapi/lang/FatalError.h"
 #include "zapi/lang/Variant.h"
+#include "zapi/lang/StdClass.h"
+#include "zapi/vm/StdClassImpl.h"
 
 namespace zapi
 {
 namespace lang
 {
+
+using zapi::vm::StdClassImpl;
 
 /**
  * Implementation for the Value class, which wraps a PHP userspace
@@ -164,10 +168,323 @@ Variant::Variant(const StdClass *object)
    // space, and no handle does yet exist. But if it was constructed from
    // C++ space and not yet wrapped, this Value constructor should not be
    // called directly, but first via the derived Php::Object class.
-   auto *impl = object->implementation();
+   const StdClassImpl *impl = object->implementation();
    if (nullptr == impl) {
       throw FatalError("Assigning an unassigned object to a variable");
    }
+   ZVAL_OBJ(m_val, impl->getZendObject());
+   Z_ADDREF_P(m_val);
+}
+
+/**
+ * Copy constructor
+ * @param  value
+ */
+Variant::Variant(const Variant &other)
+{
+   zval *from = other.m_val;
+   zval *to = m_val;
+   ZVAL_DEREF(from);
+   // copy the value
+   ZVAL_COPY(to, from);
+}
+
+/**
+ * Creates a reference to another Value
+ *
+ * Value a = b.makeReference();
+ *
+ * is equivalent to
+ *
+ * $a = &$b;
+ *
+ * @param to Variable to which the reference should be created
+ * @return Value
+ */
+Variant Variant::makeReference()
+{
+   Variant result;
+   zval *from = m_val;
+   zval *to = result.m_val;
+   ZVAL_MAKE_REF(from);
+   zend_reference *ref = Z_REF_P(from);
+   GC_REFCOUNT(ref)++;
+   ZVAL_REF(to, ref);
+   return result;
+}
+
+/**
+ * Move constructor
+ * @param  value
+ */
+Variant::Variant(Variant &&other) ZAPI_DECL_NOEXCEPT
+{
+   ZVAL_UNDEF(m_val);
+   std::swap(m_val, other.m_val);
+}
+
+Variant::~Variant()
+{
+   zval_ptr_dtor(m_val);
+}
+
+/**
+ * Detach the zval
+ *
+ * This will unlink the zval internal structure from the Value object,
+ * so that the destructor will not reduce the number of references and/or
+ * deallocate the zval structure. This is used for functions that have to
+ * return a zval pointer, that would otherwise be deallocated the moment
+ * the function returns.
+ *
+ * @param  keeprefcount
+ * @return zval
+ */
+Zval Variant::detach(bool keepRefCount)
+{
+   Zval result;
+   ZVAL_COPY_VALUE(result, m_val);
+   // should we keep the reference count?
+   /// FIXME: what if reference count becomes 0?
+   /// Maybe we should call zval_ptr_dtor()?
+   if (!keepRefCount) {
+      Z_TRY_DELREF_P(m_val);
+   }
+   ZVAL_UNDEF(m_val);
+   return result;
+}
+
+/**
+ * Invalidate the object - so that it will not be destructed
+ */
+void Variant::invalidate()
+{
+   // do nothing if object is already undefined
+   if (Z_TYPE_P(m_val) == IS_UNDEF) {
+      return;
+   }
+   zval_ptr_dtor(m_val);
+   ZVAL_UNDEF(m_val);
+}
+
+/**
+ * Retrieve the refcount
+ * @return int
+ */
+int Variant::getRefCount() const
+{
+   if (!Z_REFCOUNTED_P(m_val))
+   {
+      return 0;
+   }
+   return Z_REFCOUNT_P(m_val);
+}
+
+/**
+ * Move operator
+ * @param  value
+ * @return Value
+ */
+Variant &Variant::operator=(Variant &&value)
+{
+   if (this == &value) {
+      return *this;
+   }
+   // if neither value is a reference we can simply swap the values
+   // the other value will then destruct and reduce the refcount
+   if (!Z_ISREF_P(value.m_val) && (!m_val || !Z_ISREF_P(m_val))) {
+      std::swap(m_val, value.m_val);
+   } else if (m_val) {
+      ZVAL_COPY_VALUE(m_val, value.m_val);
+   } else {
+      std::swap(m_val, value.m_val);
+      // and make sure it is no longer a reference
+      ZVAL_UNDEF(m_val);
+   }
+   return *this;
+}
+
+/**
+ * Assign a raw zval structure
+ *
+ * @param  value   The value to assign
+ * @return Value
+ */
+Variant &Variant::operator=(_zval_struct *value)
+{
+   // the value to assign to
+   zval *to = m_val;
+   // Dereference values
+   if (Z_ISREF_P(value)) {
+      value = Z_REFVAL_P(value);
+   }
+   if (Z_ISREF_P(to)) {
+      to = Z_REFVAL_P(to);
+   }
+   // check if we are allowed to update this value
+   if (Z_IMMUTABLE_P(to)) {
+      throw Exception("Cannot assign to an immutable variable");
+   }
+   // If the destination is refcounted
+   if (Z_REFCOUNTED_P(to)) {
+      // objects can have their own assignment handler
+      if (Z_TYPE_P(to) == IS_OBJECT && Z_OBJ_HANDLER_P(to, set)) {
+         Z_OBJ_HANDLER_P(to, set)(to, value);
+         return *this;
+      }
+      // If to and from are the same, there is nothing left to do
+      if (to == value) {
+         return *this;
+      }
+      // It is possible to make IS_REF point to another IS_REF, but that's a bug
+      assert(Z_TYPE_P(to) == IS_REFERENCE);
+      if (Z_REFCOUNT_P(to) > 1) {
+         // If reference count is greater than 1, we need to separate zval
+         // This is the optimized version of SEPARATE_ZVAL_NOREF()
+         if (Z_COPYABLE_P(to)) {
+            // this will decrement the reference count and invoke GC_ZVAL_CHECK_FOR_POSSIBLE_ROOT()
+            zval_ptr_dtor(to);
+            zval_copy_ctor_func(to);
+         }
+      } else {
+         // Destroy the current value of the variable and free up resources
+         zval_dtor(to);
+      }
+   }
+   ZVAL_COPY(to, value);
+   return *this;
+}
+
+/**
+ * Assignment operator
+ * @param  value
+ * @return Value
+ */
+Variant &Variant::operator=(const Variant &value)
+{
+   return operator=(value.m_val);
+}
+
+/**
+ * Assignment operator
+ * @param  value
+ * @return Value
+ */
+Variant &Variant::operator=(std::nullptr_t value)
+{
+   zval z;
+   ZVAL_NULL(&z);
+   return operator=(&z);
+}
+
+/**
+ * Assignment operator
+ * @param  value
+ * @return Value
+ */
+Variant &Variant::operator=(int16_t value)
+{
+   zval z;
+   ZVAL_LONG(&z, value);
+   return operator=(&z);
+}
+
+/**
+ * Assignment operator
+ * @param  value
+ * @return Value
+ */
+Variant &Variant::operator=(int32_t value)
+{
+   zval z;
+   ZVAL_LONG(&z, value);
+   return operator=(&z);
+}
+
+/**
+ * Assignment operator
+ * @param  value
+ * @return Value
+ */
+Variant &Variant::operator=(int64_t value)
+{
+   zval z;
+   ZVAL_LONG(&z, value);
+   return operator=(&z);
+}
+
+/**
+ * Assignment operator
+ * @param  value
+ * @return Value
+ */
+Variant &Variant::operator=(bool value)
+{
+   zval z;
+   ZVAL_BOOL(&z, value);
+   return operator=(&z);
+}
+
+/**
+ * Assignment operator
+ * @param  value
+ * @return Value
+ */
+Variant &Variant::operator=(char value)
+{
+   zval z;
+   ZVAL_STRINGL(&z, &value, 1);
+   operator=(&z);
+   zval_dtor(&z);
+   return *this;
+}
+
+/**
+ * Assignment operator
+ * @param  value
+ * @return Value
+ */
+Variant &Variant::operator=(const std::string &value)
+{
+   zval z;
+   if (value.size()) {
+      ZVAL_STRINGL(&z, value.c_str(), value.size());
+   } else {
+      ZVAL_EMPTY_STRING(&z);
+   }
+   operator=(&z);
+   zval_dtor(&z);
+   return *this;
+}
+
+/**
+ * Assignment operator
+ * @param  value
+ * @return Value
+ */
+Variant &Variant::operator=(const char *value)
+{
+   zval z;
+   if (value) {
+      ZVAL_STRINGL(&z, value, std::strlen(value));
+   } else {
+      ZVAL_EMPTY_STRING(&z);
+   }
+   operator=(&z);
+   zval_dtor(&z);
+   return *this;
+}
+
+/**
+ * Assignment operator
+ * @param  value
+ * @return Value
+ */
+Variant &Variant::operator=(double value)
+{
+   zval z;
+   ZVAL_DOUBLE(&z, value);
+   return operator=(&z);
 }
 
 } // lang

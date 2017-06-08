@@ -979,7 +979,7 @@ private:
     * Refcount - the number of references to the value
     * @return int
     */
-   int refCount() const;
+   int getRefCount() const;
 
    /**
     * Retrieve the class entry
