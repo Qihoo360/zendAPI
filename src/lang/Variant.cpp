@@ -13,6 +13,8 @@
 //
 // Created by zzu_softboy on 06/06/2017.
 
+#include <cstring>
+
 #include "zapi/lang/FatalError.h"
 #include "zapi/lang/Variant.h"
 #include "zapi/lang/StdClass.h"
@@ -201,7 +203,7 @@ Variant::Variant(const Variant &other)
  * $a = &$b;
  *
  * @param to Variable to which the reference should be created
- * @return Value
+ * @return Variant
  */
 Variant Variant::makeReference()
 {
@@ -285,7 +287,7 @@ int Variant::getRefCount() const
 /**
  * Move operator
  * @param  value
- * @return Value
+ * @return Variant
  */
 Variant &Variant::operator=(Variant &&value)
 {
@@ -310,7 +312,7 @@ Variant &Variant::operator=(Variant &&value)
  * Assign a raw zval structure
  *
  * @param  value   The value to assign
- * @return Value
+ * @return Variant
  */
 Variant &Variant::operator=(_zval_struct *value)
 {
@@ -360,7 +362,7 @@ Variant &Variant::operator=(_zval_struct *value)
 /**
  * Assignment operator
  * @param  value
- * @return Value
+ * @return Variant
  */
 Variant &Variant::operator=(const Variant &value)
 {
@@ -370,7 +372,7 @@ Variant &Variant::operator=(const Variant &value)
 /**
  * Assignment operator
  * @param  value
- * @return Value
+ * @return Variant
  */
 Variant &Variant::operator=(std::nullptr_t value)
 {
@@ -382,7 +384,7 @@ Variant &Variant::operator=(std::nullptr_t value)
 /**
  * Assignment operator
  * @param  value
- * @return Value
+ * @return Variant
  */
 Variant &Variant::operator=(int16_t value)
 {
@@ -394,7 +396,7 @@ Variant &Variant::operator=(int16_t value)
 /**
  * Assignment operator
  * @param  value
- * @return Value
+ * @return Variant
  */
 Variant &Variant::operator=(int32_t value)
 {
@@ -406,7 +408,7 @@ Variant &Variant::operator=(int32_t value)
 /**
  * Assignment operator
  * @param  value
- * @return Value
+ * @return Variant
  */
 Variant &Variant::operator=(int64_t value)
 {
@@ -418,7 +420,7 @@ Variant &Variant::operator=(int64_t value)
 /**
  * Assignment operator
  * @param  value
- * @return Value
+ * @return Variant
  */
 Variant &Variant::operator=(bool value)
 {
@@ -430,7 +432,7 @@ Variant &Variant::operator=(bool value)
 /**
  * Assignment operator
  * @param  value
- * @return Value
+ * @return Variant
  */
 Variant &Variant::operator=(char value)
 {
@@ -444,7 +446,7 @@ Variant &Variant::operator=(char value)
 /**
  * Assignment operator
  * @param  value
- * @return Value
+ * @return Variant
  */
 Variant &Variant::operator=(const std::string &value)
 {
@@ -462,7 +464,7 @@ Variant &Variant::operator=(const std::string &value)
 /**
  * Assignment operator
  * @param  value
- * @return Value
+ * @return Variant
  */
 Variant &Variant::operator=(const char *value)
 {
@@ -480,7 +482,7 @@ Variant &Variant::operator=(const char *value)
 /**
  * Assignment operator
       * @param  value
-* @return Value
+* @return Variant
 */
 Variant &Variant::operator=(double value)
 {
@@ -496,98 +498,535 @@ Variant &Variant::operator=(double value)
  */
 Variant &Variant::operator+=(const Variant &value)
 {
-   return Arithmetic<std::plus>(this, value);
+   return Arithmetic<std::plus>(this).assign(value);
 }
 
 Variant &Variant::operator+=(int16_t value)
 {
-   return Arithmetic<std::plus>(this, value);
+   return Arithmetic<std::plus>(this).assign(value);
 }
 
 Variant &Variant::operator+=(int32_t value)
 {
-   return Arithmetic<std::plus>(this, value);
+   return Arithmetic<std::plus>(this).assign(value);
 }
 
 Variant &Variant::operator+=(int64_t value)
 {
-   return Arithmetic<std::plus>(this, value);
+   return Arithmetic<std::plus>(this).assign(value);
 }
 
 Variant &Variant::operator+=(bool value)
 {
-   return Arithmetic<std::plus>(this, value);
+   return Arithmetic<std::plus>(this).assign(value);
 }
 
 Variant &Variant::operator+=(char value)
 {
-   return Arithmetic<std::plus>(this, value);
+   return Arithmetic<std::plus>(this).assign(value);
 }
 
 Variant &Variant::operator+=(const std::string &value)
 {
-   return Arithmetic<std::plus>(this, value);
+   return Arithmetic<std::plus>(this).assign(value);
 }
 
 Variant &Variant::operator+=(const char *value)
 {
-   return Arithmetic<std::plus>(this, value);
+   return Arithmetic<std::plus>(this).assign(value);
 }
 
 Variant &Variant::operator+=(double value)
 {
-   return Arithmetic<std::plus>(this, value);
+   return Arithmetic<std::plus>(this).assign(value);
 }
 
 /**
  * Subtract a value from the object
  * @param  value
- * @return Value
+ * @return Variant
  */
 Variant &Variant::operator-=(const Variant &value)
 {
-   return Arithmetic<std::minus>(this, value);
+   return Arithmetic<std::minus>(this).assign(value);
 }
 
 Variant &Variant::operator-=(int16_t value)
 {
-   return Arithmetic<std::minus>(this, value);
+   return Arithmetic<std::minus>(this).assign(value);
 }
 
 Variant &Variant::operator-=(int32_t value)
 {
-   return Arithmetic<std::minus>(this, value);
+   return Arithmetic<std::minus>(this).assign(value);
 }
 
 Variant &Variant::operator-=(int64_t value)
 {
-   return Arithmetic<std::minus>(this, value);
+   return Arithmetic<std::minus>(this).assign(value);
 }
 
 Variant &Variant::operator-=(bool value)
 {
-   return Arithmetic<std::minus>(this, value);
+   return Arithmetic<std::minus>(this).assign(value);
 }
 
 Variant &Variant::operator-=(char value)
 {
-   return Arithmetic<std::minus>(this, value);
+   return Arithmetic<std::minus>(this).assign(value);
 }
 
 Variant &Variant::operator-=(const std::string &value)
 {
-   return Arithmetic<std::minus>(this, value);
+   return Arithmetic<std::minus>(this).assign(value);
 }
 
 Variant &Variant::operator-=(const char *value)
 {
-   return Arithmetic<std::minus>(this, value);
+   return Arithmetic<std::minus>(this).assign(value);
 }
 
 Variant &Variant::operator-=(double value)
 {
-   return Arithmetic<std::minus>(this, value);
+   return Arithmetic<std::minus>(this).assign(value);
 }
+
+/**
+ * Multiply the object with a certain value
+ * @param  value
+ * @return Variant
+ */
+Variant &Variant::operator*=(const Variant &value)
+{
+   return Arithmetic<std::multiplies>(this).assign(value);
+}
+
+Variant &Variant::operator*=(int16_t value)
+{
+   return Arithmetic<std::multiplies>(this).assign(value);
+}
+
+Variant &Variant::operator*=(int32_t value)
+{
+   return Arithmetic<std::multiplies>(this).assign(value);
+}
+
+Variant &Variant::operator*=(int64_t value)
+{
+   return Arithmetic<std::multiplies>(this).assign(value);
+}
+
+Variant &Variant::operator*=(bool value)
+{
+   return Arithmetic<std::multiplies>(this).assign(value);
+}
+
+Variant &Variant::operator*=(char value)
+{
+   return Arithmetic<std::multiplies>(this).assign(value);
+}
+
+Variant &Variant::operator*=(const std::string &value)
+{
+   return Arithmetic<std::multiplies>(this).assign(value);
+}
+
+Variant &Variant::operator*=(const char *value)
+{
+   return Arithmetic<std::multiplies>(this).assign(value);
+}
+
+Variant &Variant::operator*=(double value)
+{
+   return Arithmetic<std::multiplies>(this).assign(value);
+}
+
+/**
+ * Divide the object with a certain value
+ * @param  value
+ * @return Variant
+ */
+Variant &Variant::operator/=(const Variant &value)
+{
+   return Arithmetic<std::divides>(this).assign(value);
+}
+
+Variant &Variant::operator/=(int16_t value)
+{
+   return Arithmetic<std::divides>(this).assign(value);
+}
+
+Variant &Variant::operator/=(int32_t value)
+{
+   return Arithmetic<std::divides>(this).assign(value);
+}
+
+Variant &Variant::operator/=(int64_t value)
+{
+   return Arithmetic<std::divides>(this).assign(value);
+}
+
+Variant &Variant::operator/=(bool value)
+{
+   return Arithmetic<std::divides>(this).assign(value);
+}
+
+Variant &Variant::operator/=(char value)
+{
+   return Arithmetic<std::divides>(this).assign(value);
+}
+
+Variant &Variant::operator/=(const std::string &value)
+{
+   return Arithmetic<std::divides>(this).assign(value);
+}
+
+Variant &Variant::operator/=(const char *value)
+{
+   return Arithmetic<std::divides>(this).assign(value);
+}
+
+Variant &Variant::operator/=(double value)
+{
+   return Arithmetic<std::divides>(this).assign(value);
+}
+
+/**
+ * Divide the object with a certain value and get the rest
+ * Note that this does not use the Arithmetic object, because no conversion between floats is necessary
+ * @param  value
+ * @return Variant
+ */
+Variant &Variant::operator%=(const Variant &value)
+{
+   return operator=(getNumericValue() % value.getNumericValue());
+}
+
+Variant &Variant::operator%=(int16_t value)
+{
+   return operator=(getNumericValue() % value);
+}
+
+Variant &Variant::operator%=(int32_t value)
+{
+   return operator=(getNumericValue() % value);
+}
+
+Variant &Variant::operator%=(int64_t value)
+{
+   return operator=(getNumericValue() % value);
+}
+
+Variant &Variant::operator%=(bool value)
+{
+   return operator=(getNumericValue() % value);
+}
+
+Variant &Variant::operator%=(char value)
+{
+   return operator=(getNumericValue() % value);
+}
+
+Variant &Variant::operator%=(const std::string &value)
+{
+   return operator=(getNumericValue() % std::stol(value));
+}
+
+Variant &Variant::operator%=(const char *value)
+{
+   return operator=(getNumericValue() % std::atol(value));
+}
+
+Variant &Variant::operator%=(double value)
+{
+   return operator=(getNumericValue() % static_cast<long>(value));
+}
+
+/**
+ * Assignment operator
+ * @param  value
+ * @return Variant
+ */
+Variant Variant::operator+(const Variant &value)
+{
+   return Arithmetic<std::plus>(this).apply(value);
+}
+
+Variant Variant::operator+(int16_t value)
+{
+   return Arithmetic<std::plus>(this).apply(value);
+}
+
+Variant Variant::operator+(int32_t value)
+{
+   return Arithmetic<std::plus>(this).apply(value);
+}
+
+Variant Variant::operator+(int64_t value)
+{
+   return Arithmetic<std::plus>(this).apply(value);
+}
+
+Variant Variant::operator+(bool value)
+{
+   return Arithmetic<std::plus>(this).apply(value);
+}
+
+Variant Variant::operator+(char value)
+{
+   return Arithmetic<std::plus>(this).apply(value);
+}
+
+Variant Variant::operator+(const std::string &value)
+{
+   return Arithmetic<std::plus>(this).apply(value);
+}
+
+Variant Variant::operator+(const char *value)
+{
+   return Arithmetic<std::plus>(this).apply(value);
+}
+
+Variant Variant::operator+(double value)
+{
+   return Arithmetic<std::plus>(this).apply(value);
+}
+
+/**
+ * Subtraction operator
+ * @param  value
+ * @return Variant
+ */
+Variant Variant::operator-(const Variant &value)
+{
+   return Arithmetic<std::minus>(this).apply(value);
+}
+
+Variant Variant::operator-(int16_t value)
+{
+   return Arithmetic<std::minus>(this).apply(value);
+}
+
+Variant Variant::operator-(int32_t value)
+{
+   return Arithmetic<std::minus>(this).apply(value);
+}
+
+Variant Variant::operator-(int64_t value)
+{
+   return Arithmetic<std::minus>(this).apply(value);
+}
+
+Variant Variant::operator-(bool value)
+{
+   return Arithmetic<std::minus>(this).apply(value);
+}
+
+Variant Variant::operator-(char value)
+{
+   return Arithmetic<std::minus>(this).apply(value);
+}
+
+Variant Variant::operator-(const std::string &value)
+{
+   return Arithmetic<std::minus>(this).apply(value);
+}
+
+Variant Variant::operator-(const char *value)
+{
+   return Arithmetic<std::minus>(this).apply(value);
+}
+
+Variant Variant::operator-(double value)
+{
+   return Arithmetic<std::minus>(this).apply(value);
+}
+
+/**
+ * Multiplication operator
+ * @param  value
+ * @return Variant
+ */
+Variant Variant::operator*(const Variant &value)
+{
+   return Arithmetic<std::multiplies>(this).apply(value);
+}
+
+Variant Variant::operator*(int16_t value)
+{
+   return Arithmetic<std::multiplies>(this).apply(value);
+}
+
+Variant Variant::operator*(int32_t value)
+{
+   return Arithmetic<std::multiplies>(this).apply(value);
+}
+
+Variant Variant::operator*(int64_t value)
+{
+   return Arithmetic<std::multiplies>(this).apply(value);
+}
+
+Variant Variant::operator*(bool value)
+{
+   return Arithmetic<std::multiplies>(this).apply(value);
+}
+
+Variant Variant::operator*(char value)
+{
+   return Arithmetic<std::multiplies>(this).apply(value);
+}
+
+Variant Variant::operator*(const std::string &value)
+{
+   return Arithmetic<std::multiplies>(this).apply(value);
+}
+
+Variant Variant::operator*(const char *value)
+{
+   return Arithmetic<std::multiplies>(this).apply(value);
+}
+
+Variant Variant::operator*(double value)
+{
+   return Arithmetic<std::multiplies>(this).apply(value);
+}
+
+/**
+ * Division operator
+ * @param  value
+ * @return Variant
+ */
+Variant Variant::operator/(const Variant &value)
+{
+   return Arithmetic<std::divides>(this).apply(value);
+}
+
+Variant Variant::operator/(int16_t value)
+{
+   return Arithmetic<std::divides>(this).apply(value);
+}
+
+Variant Variant::operator/(int32_t value)
+{
+   return Arithmetic<std::divides>(this).apply(value);
+}
+
+Variant Variant::operator/(int64_t value)
+{
+   return Arithmetic<std::divides>(this).apply(value);
+}
+
+Variant Variant::operator/(bool value)
+{
+   return Arithmetic<std::divides>(this).apply(value);
+}
+
+Variant Variant::operator/(char value)
+{
+   return Arithmetic<std::divides>(this).apply(value);
+}
+
+Variant Variant::operator/(const std::string &value)
+{
+   return Arithmetic<std::divides>(this).apply(value);
+}
+
+Variant Variant::operator/(const char *value)
+{
+   return Arithmetic<std::divides>(this).apply(value);
+}
+
+Variant Variant::operator/(double value)
+{
+   return Arithmetic<std::divides>(this).apply(value);
+}
+
+/**
+ * Modulus operator
+ * @param  value
+ * @return Variant
+ */
+Variant Variant::operator%(const Variant &value)
+{
+   return Variant(getNumericValue() % value.getNumericValue());
+}
+
+Variant Variant::operator%(int16_t value)
+{
+   return Variant(getNumericValue() % value);
+}
+
+Variant Variant::operator%(int32_t value)
+{
+   return Variant(getNumericValue() % value);
+}
+
+Variant Variant::operator%(int64_t value)
+{
+   return Variant(getNumericValue() % value);
+}
+
+Variant Variant::operator%(bool value)
+{
+   return Variant(getNumericValue() % value);
+}
+
+Variant Variant::operator%(char value)
+{
+   return Variant(getNumericValue() % value);
+}
+
+Variant Variant::operator%(const std::string &value)
+{
+   return Variant(getNumericValue() % std::stol(value));
+}
+
+Variant Variant::operator%(const char *value)
+{
+   return Variant(getNumericValue() % std::atol(value));
+}
+
+Variant Variant::operator%(double value)
+{
+   return Variant(getNumericValue() % static_cast<long>(value));
+}
+
+namespace
+{
+
+/**
+ * Helper function that runs the actual call
+ * @param  object      The object to call it on
+ * @param  method      The function or method to call
+ * @param  argc        Number of arguments
+ * @param  argv        The parameters
+ * @return Variant
+ */
+Variant do_exec(const zval *object, zval *method, int argc, zval *argv)
+{
+   zval retval;
+   zend_object *oldException = EG(exception);
+   // call the function
+   // we're casting the const away here, object is only const so we can call this method
+   // from const methods after all..
+   if (call_user_function_ex(CG(function_table), static_cast<zval *>(object),
+                             method, &retval, argc, argv, 1, nullptr) != SUCCESS) {
+      // throw an exception, the function does not exist
+      throw Exception("Invalid call to " + Variant(method).getStringValue());
+      // unreachable, but let's return at least something to prevent compiler warnings
+      return nullptr;
+   } else {
+      // was an exception thrown inside the function? In that case we throw a C++ new exception
+      // to give the C++ code the chance to catch it
+      if (oldException != EG(exception) && EG(exception)) {
+
+      }
+   }
+}
+
+}
+
 
 } // lang
 } // zapi

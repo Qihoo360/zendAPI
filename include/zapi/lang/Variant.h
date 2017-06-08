@@ -241,75 +241,75 @@ public:
     * @param  value
     * @return Value
     */
-   Variant &operator+(const Variant &value);
-   Variant &operator+(int16_t value);
-   Variant &operator+(int32_t value);
-   Variant &operator+(int64_t value);
-   Variant &operator+(bool value);
-   Variant &operator+(char value);
-   Variant &operator+(const std::string &value);
-   Variant &operator+(const char *value);
-   Variant &operator+(double value);
+   Variant operator+(const Variant &value);
+   Variant operator+(int16_t value);
+   Variant operator+(int32_t value);
+   Variant operator+(int64_t value);
+   Variant operator+(bool value);
+   Variant operator+(char value);
+   Variant operator+(const std::string &value);
+   Variant operator+(const char *value);
+   Variant operator+(double value);
 
    /**
     * Subtraction operator
     * @param  value
     * @return Value
     */
-   Variant &operator-(const Variant &value);
-   Variant &operator-(int16_t value);
-   Variant &operator-(int32_t value);
-   Variant &operator-(int64_t value);
-   Variant &operator-(bool value);
-   Variant &operator-(char value);
-   Variant &operator-(const std::string &value);
-   Variant &operator-(const char *value);
-   Variant &operator-(double value);
+   Variant operator-(const Variant &value);
+   Variant operator-(int16_t value);
+   Variant operator-(int32_t value);
+   Variant operator-(int64_t value);
+   Variant operator-(bool value);
+   Variant operator-(char value);
+   Variant operator-(const std::string &value);
+   Variant operator-(const char *value);
+   Variant operator-(double value);
 
    /**
     * Multiplication operator
     * @param  value
     * @return Value
     */
-   Variant &operator*(const Variant &value);
-   Variant &operator*(int16_t value);
-   Variant &operator*(int32_t value);
-   Variant &operator*(int64_t value);
-   Variant &operator*(bool value);
-   Variant &operator*(char value);
-   Variant &operator*(const std::string &value);
-   Variant &operator*(const char *value);
-   Variant &operator*(double value);
+   Variant operator*(const Variant &value);
+   Variant operator*(int16_t value);
+   Variant operator*(int32_t value);
+   Variant operator*(int64_t value);
+   Variant operator*(bool value);
+   Variant operator*(char value);
+   Variant operator*(const std::string &value);
+   Variant operator*(const char *value);
+   Variant operator*(double value);
 
    /**
     * Division operator
     * @param  value
     * @return Value
     */
-   Variant &operator/(const Variant &value);
-   Variant &operator/(int16_t value);
-   Variant &operator/(int32_t value);
-   Variant &operator/(int64_t value);
-   Variant &operator/(bool value);
-   Variant &operator/(char value);
-   Variant &operator/(const std::string &value);
-   Variant &operator/(const char *value);
-   Variant &operator/(double value);
+   Variant operator/(const Variant &value);
+   Variant operator/(int16_t value);
+   Variant operator/(int32_t value);
+   Variant operator/(int64_t value);
+   Variant operator/(bool value);
+   Variant operator/(char value);
+   Variant operator/(const std::string &value);
+   Variant operator/(const char *value);
+   Variant operator/(double value);
 
    /**
     * Modulus operator
     * @param  value
     * @return Value
     */
-   Variant &operator%(const Variant &value);
-   Variant &operator%(int16_t value);
-   Variant &operator%(int32_t value);
-   Variant &operator%(int64_t value);
-   Variant &operator%(bool value);
-   Variant &operator%(char value);
-   Variant &operator%(const std::string &value);
-   Variant &operator%(const char *value);
-   Variant &operator%(double value);
+   Variant operator%(const Variant &value);
+   Variant operator%(int16_t value);
+   Variant operator%(int32_t value);
+   Variant operator%(int64_t value);
+   Variant operator%(bool value);
+   Variant operator%(char value);
+   Variant operator%(const std::string &value);
+   Variant operator%(const char *value);
+   Variant operator%(double value);
 
    /**
     * Cast to a number
