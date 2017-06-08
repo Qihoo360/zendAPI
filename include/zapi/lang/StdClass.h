@@ -25,6 +25,7 @@ namespace lang
 {
 
 class StdClassImpl;
+class Parameters;
 
 class ZAPI_DECL_EXPORT StdClass
 {
@@ -167,7 +168,77 @@ public:
     * @param  params      The parameters that were passed to the function
     * @return Value       The return value
     */
-   Variant __call(const char *method, )
+   Variant __call(const char *method, Parameters &params) const;
+
+   /**
+    * Call the class as if it was a function
+    *
+    * This method is called when a an object is used with () operators:
+    * $object(). You can override this method to make objects callable.
+    *
+    * @param  params      The parameters that were passed to the function
+    * @return Value       The return value
+    */
+   Variant __invoke(Parameters &params) const;
+
+   /**
+    * Cast the object to a string
+    *
+    * This method is called when an object is casted to a string, or when
+    * it is used in a string context
+    *
+    * @return Value       The object as a string
+    */
+   Variant __toString() const;
+
+   /**
+    * Cast the object to an integer
+    *
+    * This method is called when an object is casted to an integer, or when
+    * it is used in an integer context
+    *
+    * @return int Integer value
+    */
+   Variant __toInteger() const;
+
+   /**
+    * Cast the object to a float
+    *
+    * This method is called when an object is casted to a float, or when it
+    * is used in a float context
+    *
+    * @return double      Floating point value
+    */
+   Variant __toDouble() const;
+
+   /**
+    * Cast the object to a boolean
+    *
+    * This method is called when an object is casted to a bool, or when it
+    * is used in a boolean context
+    *
+    * @return bool
+    */
+   Variant __toBool() const;
+
+   /**
+    *  Compare the object with a different object
+    *
+    *  Check how a different object compares to this object
+    *
+    *  @param  that        Object to compare with
+    *  @return int
+    */
+   Variant __compare(const StdClass &object) const;
+
+private:
+   /**
+    * Get access to the implementation object
+    * @return ObjectImpl
+    */
+   const StdClassImpl *implementation() const;
+
+   friend class StdClassImpl;
 };
 
 } // lang

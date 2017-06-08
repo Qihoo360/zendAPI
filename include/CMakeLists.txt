@@ -7,6 +7,7 @@ set(ZAPI_PUBLIC_HEADERS
     ${ZAPI_INCLUDE_DIR}/zapi/lang/FatalError.h
     ${ZAPI_INCLUDE_DIR}/zapi/lang/StdClass.h
     ${ZAPI_INCLUDE_DIR}/zapi/lang/Parameters.h
+    ${ZAPI_INCLUDE_DIR}/zapi/lang/Errors.h
     ${ZAPI_INCLUDE_DIR}/zapi/vm/Extension.h
     ${ZAPI_INCLUDE_DIR}/zapi/vm/StdClassImpl.h
     ${ZAPI_INCLUDE_DIR}/zapi/utils/HashTable.h
