@@ -11,47 +11,5 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by softboy on 5/26/17.
+// Created by zzu_softboy on 08/06/2017.
 
-#ifndef ZAPI_LANG_PARAMETERS_H
-#define ZAPI_LANG_PARAMETERS_H
-
-#include "zapi/Global.h"
-#include "zapi/lang/Variant.h"
-
-#include <vector>
-
-namespace zapi
-{
-namespace lang
-{
-
-class StdClass;
-
-/**
- * now this is very bad implemention of parameters class, but it works
- */
-class ZAPI_DECL_EXPORT Parameters : public std::vector<Variant>
-{
-private:
-   /**
-    *  The base object
-    *  @var Base
-    */
-   StdClass *m_object = nullptr;
-
-protected:
-   Parameters(StdClass *object) : m_object(object)
-   {}
-
-public:
-   StdClass *getObject() const
-   {
-      return m_object;
-   }
-};
-
-} // lang
-} // zapi
-
-#endif //ZAPI_LANG_PARAMETERS_H
