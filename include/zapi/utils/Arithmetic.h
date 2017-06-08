@@ -16,7 +16,7 @@
 #ifndef ZAPI_UTILS_ARITHMETIC_H
 #define ZAPI_UTILS_ARITHMETIC_H
 
-#include <stdlib>
+#include <cstdlib>
 
 #include "zapi/lang/Variant.h"
 
@@ -55,9 +55,9 @@ public:
    {
       if (value.isDouble())
       {
-         return apply(value.getDoubleVariant());
+         return apply(value.getDoubleValue());
       }
-      return apply(value.getNumericVariant());
+      return apply(value.getNumericValue());
    }
 
    /**
@@ -69,10 +69,10 @@ public:
    {
       // check if the current object is a floating point number
       if (m_value->isDouble()) {
-         return Variant(F<double>(m_value->getDoubleVariant(), value));
+         return Variant(F<double>(m_value->getDoubleValue(), value));
       }
       // apply to natural numbers
-      return Variant(F<int64_t>()(m_value->getNumericVariant(), value));
+      return Variant(F<int64_t>()(m_value->getNumericValue(), value));
    }
 
    /**
@@ -84,9 +84,9 @@ public:
    {
       // check if the current object is a floating point number
       if (m_value->isDouble()) {
-         return Variant(F<double>(m_value->getDoubleVariant(), value));
+         return Variant(F<double>(m_value->getDoubleValue(), value));
       }
-      return Variant(F<int64_t>()(m_value->getNumericVariant(), value));
+      return Variant(F<int64_t>()(m_value->getNumericValue(), value));
    }
 
    /**
@@ -98,9 +98,9 @@ public:
    {
       // check if the current object is a floating point number
       if (m_value->isDouble()) {
-         return Variant(F<double>(m_value->getDoubleVariant(), value));
+         return Variant(F<double>(m_value->getDoubleValue(), value));
       }
-      return Variant(F<int64_t>()(m_value->getNumericVariant(), value));
+      return Variant(F<int64_t>()(m_value->getNumericValue(), value));
    }
 
    /**
@@ -112,9 +112,9 @@ public:
    {
       // check if the current object is a floating point number
       if (m_value->isDouble()) {
-         return Variant(F<double>(m_value->getDoubleVariant(), value ? 1 : 0));
+         return Variant(F<double>(m_value->getDoubleValue(), value ? 1 : 0));
       }
-      return Variant(F<int64_t>()(m_value->getNumericVariant(), value ? 1 : 0));
+      return Variant(F<int64_t>()(m_value->getNumericValue(), value ? 1 : 0));
    }
 
    /**
@@ -127,9 +127,9 @@ public:
       // convert to an integer
       int v = value < '0' || value > '9' ? 0 : value - '0';
       if (m_value->isDouble()) {
-         return Variant(F<double>(m_value->getDoubleVariant(), value));
+         return Variant(F<double>(m_value->getDoubleValue(), value));
       }
-      return Variant(F<int64_t>()(m_value->getNumericVariant(), value));
+      return Variant(F<int64_t>()(m_value->getNumericValue(), value));
    }
 
    /**
@@ -159,7 +159,7 @@ public:
     */
    Variant apply(double value)
    {
-      return Variant(F<double>(m_value->getDoubleVariant(), value));
+      return Variant(F<double>(m_value->getDoubleValue(), value));
    }
 
    /**
@@ -172,10 +172,10 @@ public:
       // is this a type a floating point type?
       if (value.isDouble())
       {
-         return assign(value.getDoubleVariant());
+         return assign(value.getDoubleValue());
       }
       // we are going to treat it as a numeric (non floating) type
-      return assign(value.getNumericVariant());;
+      return assign(value.getNumericValue());;
    }
 
    /**
@@ -186,9 +186,9 @@ public:
    Variant &assign(int16_t value)
    {
       if (m_value->isDouble()) {
-         return m_value->operator=(F<double>()(m_value->getDoubleVariant(), value));
+         return m_value->operator=(F<double>()(m_value->getDoubleValue(), value));
       }
-      return m_value->operator=(F<int64_t>(m_value->getNumericVariant(), value));
+      return m_value->operator=(F<int64_t>(m_value->getNumericValue(), value));
    }
 
    /**
@@ -199,9 +199,9 @@ public:
    Variant &assign(int32_t value)
    {
       if (m_value->isDouble()) {
-         return m_value->operator=(F<double>()(m_value->getDoubleVariant(), value));
+         return m_value->operator=(F<double>()(m_value->getDoubleValue(), value));
       }
-      return m_value->operator=(F<int64_t>(m_value->getNumericVariant(), value));
+      return m_value->operator=(F<int64_t>(m_value->getNumericValue(), value));
    }
 
    /**
@@ -212,9 +212,9 @@ public:
    Variant &assign(int64_t value)
    {
       if (m_value->isDouble()) {
-         return m_value->operator=(F<double>()(m_value->getDoubleVariant(), value));
+         return m_value->operator=(F<double>()(m_value->getDoubleValue(), value));
       }
-      return m_value->operator=(F<int64_t>(m_value->getNumericVariant(), value));
+      return m_value->operator=(F<int64_t>(m_value->getNumericValue(), value));
    }
 
    /**
@@ -225,9 +225,9 @@ public:
    Variant &assign(bool value)
    {
       if (m_value->isDouble()) {
-         return m_value->operator=(F<double>()(m_value->getDoubleVariant(), value ? 1: 0));
+         return m_value->operator=(F<double>()(m_value->getDoubleValue(), value ? 1: 0));
       }
-      return m_value->operator=(F<int64_t>(m_value->getNumericVariant(), value ? 1 : 0));
+      return m_value->operator=(F<int64_t>(m_value->getNumericValue(), value ? 1 : 0));
    }
 
    /**
@@ -239,9 +239,9 @@ public:
    {
       value = value < '0' || value > '9' ? 0 : value - '0';
       if (m_value->isDouble()) {
-         return m_value->operator=(F<double>()(m_value->getDoubleVariant(), value));
+         return m_value->operator=(F<double>()(m_value->getDoubleValue(), value));
       }
-      return m_value->operator=(F<int64_t>(m_value->getNumericVariant(), value));
+      return m_value->operator=(F<int64_t>(m_value->getNumericValue(), value));
    }
 
    /**
@@ -259,19 +259,19 @@ public:
     * @param  value
     * @return Variant
     */
-   Variant &assign(const std::string &value)
+   Variant &assign(const char *value)
    {
-      return assign(std::stol(value));
+      return assign(std::atoi(value));
    }
 
    /**
     * Assign a double, applying the arithmetic operation
     * @param  value
-    * @return Variant
+    * @return Value
     */
    Variant &assign(double value)
    {
-      m_value->operator=(F<double>()(m_value->getDoubleVariant(), value));
+      m_value->operator=(F<double>()(m_value->getDoubleValue(), value));
    }
 };
 

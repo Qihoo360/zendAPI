@@ -17,6 +17,7 @@
 #include "zapi/lang/Variant.h"
 #include "zapi/lang/StdClass.h"
 #include "zapi/vm/StdClassImpl.h"
+#include "zapi/utils/Arithmetic.h"
 
 namespace zapi
 {
@@ -24,6 +25,7 @@ namespace lang
 {
 
 using zapi::vm::StdClassImpl;
+using zapi::utils::Arithmetic;
 
 /**
  * Implementation for the Value class, which wraps a PHP userspace
@@ -490,9 +492,102 @@ Variant &Variant::operator=(double value)
 /**
  * Add a value to the object
  * @param  value
+ * @return Variant
+ */
+Variant &Variant::operator+=(const Variant &value)
+{
+   return Arithmetic<std::plus>(this, value);
+}
+
+Variant &Variant::operator+=(int16_t value)
+{
+   return Arithmetic<std::plus>(this, value);
+}
+
+Variant &Variant::operator+=(int32_t value)
+{
+   return Arithmetic<std::plus>(this, value);
+}
+
+Variant &Variant::operator+=(int64_t value)
+{
+   return Arithmetic<std::plus>(this, value);
+}
+
+Variant &Variant::operator+=(bool value)
+{
+   return Arithmetic<std::plus>(this, value);
+}
+
+Variant &Variant::operator+=(char value)
+{
+   return Arithmetic<std::plus>(this, value);
+}
+
+Variant &Variant::operator+=(const std::string &value)
+{
+   return Arithmetic<std::plus>(this, value);
+}
+
+Variant &Variant::operator+=(const char *value)
+{
+   return Arithmetic<std::plus>(this, value);
+}
+
+Variant &Variant::operator+=(double value)
+{
+   return Arithmetic<std::plus>(this, value);
+}
+
+/**
+ * Subtract a value from the object
+ * @param  value
  * @return Value
  */
+Variant &Variant::operator-=(const Variant &value)
+{
+   return Arithmetic<std::minus>(this, value);
+}
 
+Variant &Variant::operator-=(int16_t value)
+{
+   return Arithmetic<std::minus>(this, value);
+}
+
+Variant &Variant::operator-=(int32_t value)
+{
+   return Arithmetic<std::minus>(this, value);
+}
+
+Variant &Variant::operator-=(int64_t value)
+{
+   return Arithmetic<std::minus>(this, value);
+}
+
+Variant &Variant::operator-=(bool value)
+{
+   return Arithmetic<std::minus>(this, value);
+}
+
+Variant &Variant::operator-=(char value)
+{
+   return Arithmetic<std::minus>(this, value);
+}
+
+Variant &Variant::operator-=(const std::string &value)
+{
+   return Arithmetic<std::minus>(this, value);
+}
+
+Variant &Variant::operator-=(const char *value)
+{
+   return Arithmetic<std::minus>(this, value);
+}
+
+Variant &Variant::operator-=(double value)
+{
+   return Arithmetic<std::minus>(this, value);
+}
 
 } // lang
 } // zapi

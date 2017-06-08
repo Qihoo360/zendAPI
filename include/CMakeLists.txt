@@ -14,6 +14,7 @@ set(ZAPI_PUBLIC_HEADERS
     ${ZAPI_INCLUDE_DIR}/zapi/utils/HashTable.h
     ${ZAPI_INCLUDE_DIR}/zapi/utils/List.h
     ${ZAPI_INCLUDE_DIR}/zapi/utils/String.h
+    ${ZAPI_INCLUDE_DIR}/zapi/utils/Arithmetic.h
     ${ZAPI_INCLUDE_DIR}/zapi/ZendApi.h
     ${ZAPI_INCLUDE_DIR}/zapi/CompilerDetection.h
     ${ZAPI_INCLUDE_DIR}/zapi/Global.h

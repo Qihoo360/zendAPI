@@ -27,6 +27,7 @@
 #include <type_traits>
 #include <cstddef>
 #include <memory>
+#include <functional>>
 
 #define ZAPI_STRINGIFY2(x) #x
 #define ZAPI_STRINGIFY(x) ZAPI_STRINGIFY2(x)
