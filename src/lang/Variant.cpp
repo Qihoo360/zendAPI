@@ -18,6 +18,7 @@
 #include "zapi/lang/FatalError.h"
 #include "zapi/lang/Variant.h"
 #include "zapi/lang/StdClass.h"
+#include "zapi/lang/OrigException.h"
 #include "zapi/vm/StdClassImpl.h"
 #include "zapi/utils/Arithmetic.h"
 
@@ -1020,13 +1021,52 @@ Variant do_exec(const zval *object, zval *method, int argc, zval *argv)
       // was an exception thrown inside the function? In that case we throw a C++ new exception
       // to give the C++ code the chance to catch it
       if (oldException != EG(exception) && EG(exception)) {
-
+         throw OrigException(EG(exception));
       }
+      if (Z_ISUNDEF(retval)) {
+         return nullptr;
+      }
+      Variant result(&retval);
+      // destruct the retval (this just decrements the refcounter, which is ok, because
+      // it is already wrapped in a Php::Value so still has 1 reference)
+      zval_ptr_dtor(&retval);
+      return result;
    }
 }
 
+} // end of namespace
+
+/**
+ * Call the function in PHP
+ * We have ten variants of this function, depending on the number of parameters
+ * This call operator is only useful when the variable represents a callable
+ * @param  p0-p10          Parameters of the function to be called.
+ * @return Value
+ */
+Variant Variant::operator()() const
+{
+   return do_exec(nullptr, m_val, 0, nullptr);
 }
 
+
+/**
+ * Is a method with the given name callable?
+ *
+ * This is only applicable when the Value contains a PHP object
+ *
+ * @param name Name of the function
+ * @return boolean
+ */
+bool Variant::isCallable() const
+{
+   // this only makes sense if we are an object
+   if (!isObject()) {
+      return false;
+   }
+   // get the class properties
+   zend_class_entry *ce = Z_OBJCE_P(m_val);
+
+}
 
 } // lang
 } // zapi
