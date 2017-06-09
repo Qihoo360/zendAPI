@@ -14,6 +14,8 @@
 // Created by zzu_softboy on 06/06/2017.
 
 #include <cstring>
+#include "php/Zend/zend_compile.h"
+#include "php/Zend/zend_closures.h"
 
 #include "zapi/lang/FatalError.h"
 #include "zapi/lang/Variant.h"
@@ -22,6 +24,7 @@
 #include "zapi/vm/StdClassImpl.h"
 #include "zapi/utils/Arithmetic.h"
 #include "zapi/utils/LowerCase.h"
+#include "zapi/ds/String.h"
 
 namespace zapi
 {
@@ -31,6 +34,7 @@ namespace lang
 using zapi::vm::StdClassImpl;
 using zapi::utils::Arithmetic;
 using zapi::utils::LowerCase;
+using zapi::ds::String;
 
 /**
  * Implementation for the Value class, which wraps a PHP userspace
@@ -1059,7 +1063,7 @@ Variant Variant::operator()() const
  * @param name Name of the function
  * @return boolean
  */
-bool Variant::isCallable() const
+bool Variant::isCallable(const char *name)
 {
    // this only makes sense if we are an object
    if (!isObject()) {
@@ -1067,8 +1071,760 @@ bool Variant::isCallable() const
    }
    // get the class properties
    zend_class_entry *ce = Z_OBJCE_P(m_val);
-
+   LowerCase methodName{ String(name) };
+   if (zend_hash_exists(&ce->function_table, methodName)) {
+      return true;
+   }
+   // can we dynamically fetch the method?
+   if (Z_OBJ_HT_P(m_val)->get_method == nullptr)
+   {
+      return false;
+   }
+   // get the function
+   union _zend_function *func = Z_OBJ_HT_P(m_val)->get_method(&Z_OBJ_P(m_val), methodName, nullptr);
+   if (nullptr == func) {
+      return false;
+   }
+   // i dont get this code, it is copied from the method_exists() function (but the code has
+   // of course been prettified because the php guys dont know how to write good looking code)
+   if (!(func->common.fn_flags & ZEND_ACC_CALL_VIA_TRAMPOLINE)) {
+      return true;
+   }
+   // check the result ("Returns true to the fake Closure's __invoke")
+   bool result = func->common.scope == zend_ce_closure &&
+                 zend_string_equals_literal(methodName.getValue(), ZEND_INVOKE_FUNC_NAME);
+   zend_string_release(func->common.function_name);
+   zend_free_trampoline(func);
+   return result;
 }
+
+/**
+ * Call the method - if the variable holds an object with the given method
+ * @param  name        name of the method to call
+ * @return Value
+ */
+Variant Variant::call(const char *name) const
+{
+   Variant method(name);
+   return do_exec(m_val, method.m_val, 0, nullptr);
+}
+
+/**
+ * Call the method - if the variable holds an object with the given method
+ * @param  name        name of the method to call
+ * @return Value
+ */
+Variant Variant::call(const char *name)
+{
+   Variant method(name);
+   return do_exec(m_val, method.m_val, 0, nullptr);
+}
+
+/**
+ * Call function with a number of parameters
+ * @param  argc        Number of parameters
+ * @param  argv        The parameters
+ * @return Value
+ */
+Variant Variant::exec(int argc, Variant *argv) const
+{
+   zval params[argc];
+   for (int i = 0; i < argc; i++) {
+      params[i] = *argv[i].m_val;
+   }
+   return do_exec(nullptr, m_val, argc, params);
+}
+
+/**
+ * Call method with a number of parameters
+ * @param  name        Name of method to call
+ * @param  argc        Number of parameters
+ * @param  argv        The parameters
+ * @return Value
+ */
+Variant Variant::exec(const char *name, int argc, Variant *argv) const
+{
+   // wrap the name in a Php::Value object to get a zval
+   Variant method(name);
+   zval params[argc];
+   for (int i = 0; i < argc; i++) {
+      params[i] = *argv[i].m_val;
+   }
+   return do_exec(m_val, method.m_val, argc, params);
+}
+
+/**
+ * Call method with a number of parameters
+ * @param  name        Name of method to call
+ * @param  argc        Number of parameters
+ * @param  argv        The parameters
+ * @return Value
+ */
+Variant Variant::exec(const char *name, int argc, Variant *argv)
+{
+   // wrap the name in a Php::Value object to get a zval
+   Variant method(name);
+   zval params[argc];
+   for (int i = 0; i < argc; i++) {
+      params[i] = *argv[i].m_val;
+   }
+   return do_exec(m_val, method.m_val, argc, params);
+}
+
+/**
+ * Comparison operators== for hardcoded Value
+ * @param  value
+ */
+bool Variant::operator==(const Variant &value) const
+{
+   zval result;
+   if (SUCCESS != compare_function(&result, m_val, value.m_val)) {
+      return false;
+   }
+   return result.value.lval == 0;
+}
+
+/**
+ * Comparison operators< for hardcoded Value
+ * @param  value
+ * @return bool
+ */
+bool Variant::operator<(const Variant &value) const
+{
+   zval result;
+   if (SUCCESS != compare_function(&result, m_val, value.m_val)) {
+      return false;
+   }
+   return result.value.lval < 0;
+}
+
+/**
+ * The type of object
+ * @return Type
+ */
+Type Variant::getType() const
+{
+   return static_cast<Type>(Z_TYPE_P(m_val));
+}
+
+/**
+ * Are we null? This will also check if we're a reference to a null value
+ * @return bool
+ */
+bool Variant::isNull() const
+{
+   if (getType() == Type::Null) {
+      return true;
+   }
+   return static_cast<Type>(Z_TYPE_P(m_val.dereference())) == Type::Null;
+}
+
+/**
+ * Are we a number? This will also check if we're a reference to a number
+ * @return bool
+ */
+bool Variant::isNumeric() const
+{
+   if (getType() == Type::Long) {
+      return true;
+   }
+   return static_cast<Type>(Z_TYPE_P(m_val.dereference())) == Type::Long;
+}
+
+/**
+ * Are we a boolean? This will also check if we're a reference to a boolean
+ * @return bool
+ */
+bool Variant::isBoolean() const
+{
+   if (getType() == Type::False || getType() == Type::True) {
+      return true;
+   }
+   Type type = static_cast<Type>(Z_TYPE_P(m_val.dereference()));
+   return getType() == Type::False || getType() == Type::True;
+}
+
+/**
+ * Are we a string? This will also check if we're a reference to a string
+ * @return bool
+ */
+bool Variant::isString() const
+{
+   if (getType() == Type::String) {
+      return true;
+   }
+   return static_cast<Type>(Z_TYPE_P(m_val.dereference())) == Type::String;
+}
+
+/**
+ * Are we a float? This will also check if we're a reference to a float
+ * @return bool
+ */
+bool Variant::isDouble() const
+{
+   if (getType() == Type::Double) {
+      return true;
+   }
+   return static_cast<Type>(Z_TYPE_P(m_val.dereference())) == Type::Double;
+}
+
+/**
+ * Are we an object? This will also check if we're a reference to an object
+ * @return bool
+ */
+bool Variant::isObject() const
+{
+   if (getType() == Type::Object) {
+      return true;
+   }
+   return static_cast<Type>(Z_TYPE_P(m_val.dereference())) == Type::Object;
+}
+
+/**
+ * Are we an array? This will also check if we're a reference to an array
+ * @return bool
+ */
+bool Variant::isArray() const
+{
+   if (getType() == Type::Array) {
+      return true;
+   }
+   return static_cast<Type>(Z_TYPE_P(m_val.dereference())) == Type::Array;
+}
+
+/**
+ * Change the internal type
+ * @param  type
+ * @return Variant
+ */
+Variant &Variant::setType(Type typeValue) &
+{
+   if (this->getType() == typeValue) {
+      return *this;
+   }
+   SEPARATE_ZVAL_IF_NOT_REF(m_val);
+   // run the conversion, when it fails we throw a fatal error which will
+   // in the end result in a zend_error() call. This FatalError class is necessary
+   // because a direct call to zend_error() will do a longjmp() which may not
+   // clean up the C++ objects created by the extension
+   switch (typeValue) {
+      case Type::Undefined:
+         throw FatalError{ "Cannot make a variable undefined"};
+         break;
+      case Type::Null:
+         convert_to_null(m_val);
+         break;
+      case Type::Double:
+         convert_to_double(m_val);
+         break;
+      case Type::Boolean:
+         convert_to_boolean(m_val);
+         break;
+      case Type::False:
+         convert_to_boolean(m_val);
+         ZVAL_FALSE(m_val);
+         break;
+      case Type::True:
+         convert_to_boolean(m_val);
+         ZVAL_TRUE(m_val);
+         break;
+      case Type::Array:
+         convert_to_array(m_val);
+         break;
+      case Type::Object:
+         convert_to_object(m_val);
+         break;
+      case Type::String:
+         convert_to_string(m_val);
+         break;
+      case Type::Resource:
+         throw FatalError{"Resource types cannot be handled by the zapi library"};
+         break;
+      case Type::Constant:
+         throw FatalError{"Constant types cannot be handled by the zapi library"};
+         break;
+      case Type::ConstantAST:
+         throw FatalError{"ConstantAST types cannot be handled by the zapi library"};
+         break;
+      case Type::Callable:
+         throw FatalError{"Callable types cannot be handled by the zapi library"};
+         break;
+      case Type::Reference:
+         throw FatalError{"Reference types cannot be handled by the zapi library"};
+         break;
+   }
+   return *this;
+}
+
+/**
+ * Check if the variable holds something that is callable
+ * @return bool
+ */
+bool Variant::isCallable() const
+{
+   return zend_is_callable(m_val, 0, NULL);
+}
+
+/**
+ * Retrieve the class entry
+ * @param  allowString
+ * @return zend_class_entry
+ */
+zend_class_entry *Variant::getClassEntry(bool allowString) const
+{
+   if (isObject()) {
+      return Z_OBJCE_P(m_val);
+   } else {
+      if (!allowString || !isString()) {
+         return nullptr;
+      }
+      return zend_lookup_class(Z_STR_P(m_val));
+   }
+}
+
+/**
+ * Check whether this object is an instance of a certain class
+ *
+ * If you set the parameter 'allowString' to true, and the Value object
+ * holds a string, the string will be treated as class name.
+ *
+ * @param  classname   The class of which this should be an instance
+ * @param  size        Length of the classname string
+ * @param  allowString Is it allowed for 'this' to be a string
+ * @return bool
+ */
+bool Variant::instanceOf(const char *className, size_t size, bool allowString) const
+{
+   zend_class_entry *thisClassEntry = getClassEntry(allowString);
+   if (!thisClassEntry) {
+      return false;
+   }
+   zend_class_entry *classEntry = zend_lookup_class_ex(String(className, size), nullptr, 0);
+   if (!classEntry) {
+      return false;
+   }
+   return instanceof_function(thisClassEntry, classEntry);
+}
+
+/**
+ * Check whether this object is derived from a certain class
+ *
+ * If you set the parameter 'allowString' to true, and the Value object
+ * holds a string, the string will be treated as class name.
+ *
+ * @param  classame   The class of which this should be an instance
+ * @param  size        Length of the classname string
+ * @param  allowString Is it allowed for 'this' to be a string
+ * @return bool
+ */
+bool Variant::derivedFrom(const char *className, size_t size, bool allowString) const
+{
+   zend_class_entry *thisClassEntry = getClassEntry(allowString);
+   if (!thisClassEntry) {
+      return false;
+   }
+   zend_class_entry *classEntry = zend_lookup_class_ex(String(className, size), nullptr, 0);
+   if (!classEntry) {
+      return false;
+   }
+   if (thisClassEntry == classEntry) {
+      return false;
+   }
+   return instanceof_function(thisClassEntry, classEntry);
+}
+
+/**
+ * Make a clone of the type
+ * @return Value
+ */
+Variant Variant::clone() const
+{
+   Variant output;
+   ZVAL_DUP(output.m_val, m_val);
+   return output;
+}
+
+/**
+ * Clone the zval to a different type
+ * @param  type
+ * @return Value
+ */
+Variant Variant::clone(Type typeValue) const
+{
+   Variant cloned = clone();
+   if (this->getType() != typeValue) {
+      cloned.setType(typeValue);
+   }
+   return cloned;
+}
+
+
+/**
+ * Retrieve the value as integer
+ * @return long
+ */
+int64_t  Variant::getNumericValue() const
+{
+   return zval_get_long(m_val);
+}
+
+/**
+ * Retrieve the value as boolean
+ * @return bool
+ */
+bool Variant::getBooleanValue() const
+{
+   switch (getType()) {
+      case Type::Undefined:
+         return false;
+      case Type::Null:
+         return false;
+      case Type::False:
+         return false;
+      case Type::True:
+         return true;
+      case Type::Long:
+         return getNumericValue();
+      case Type::Double:
+         return getDoubleValue();
+      case Type::String:
+         return getSize();
+      case Type::Array:
+         return getSize();
+      default:
+         return clone(Type::Boolean).getBooleanValue();
+   }
+}
+
+/**
+ * Retrieve the value as string
+ * @return string
+ */
+std::string Variant::getStringValue() const
+{
+   zend_string *tempStr = zval_get_string(m_val);
+   std::string ret(ZSTR_VAL(tempStr), ZSTR_LEN(tempStr));
+   zend_string_release(tempStr);
+}
+
+/**
+ * Access to the raw buffer
+ * @return char *
+ */
+char *Variant::getBuffer() const
+{
+   if (!isString()) {
+      return nullptr;
+   }
+   return Z_STRVAL_P(m_val);
+}
+
+/**
+ * Get access to the raw buffer for read operations. Note that this
+ * only works for string variables - other variables return nullptr.
+ *
+ * @return const char *
+ */
+const char *Variant::getRawValue() const
+{
+   if (isString()) {
+      return Z_STRVAL_P(m_val);
+   }
+   return nullptr;
+}
+
+/**
+ * Retrieve the value as decimal
+ * @return double
+ */
+double Variant::getDoubleValue() const
+{
+   return zval_get_double(m_val);
+}
+
+/**
+ * The number of members in case of an array or object
+ * @return int
+ */
+size_t Variant::getSize() const
+{
+   if (isArray()) {
+      return zend_hash_num_elements(Z_ARRVAL_P(m_val));
+   } else if (isObject()) {
+      if (!Z_OBJ_HT_P(m_val)->count_elements) {
+         return 0;
+      }
+      zend_long result;
+      return Z_OBJ_HT_P(m_val)->count_elements(m_val, &result) == SUCCESS ? result : 0;
+   } else if (isString()) {
+      return Z_STRLEN_P(m_val);
+   } else {
+      Variant copy(*this);
+      copy.setType(Type::String);
+      return copy.getSize();
+   }
+}
+
+/**
+ * Does the array contain a certain index?
+ * @param  index
+ * @return bool
+ */
+bool Variant::contains(int index) const
+{
+   if (isObject() && instanceOf("ArrayAcess")) {
+      return call("offsetExists", index).getBooleanValue();
+   } else if (!isArray()) {
+      return false;
+   }
+   return zend_hash_index_find(Z_ARRVAL_P(m_val.dereference()), index) != nullptr;
+}
+
+/**
+ * Does the array contain a certain key
+ * @param  key
+ * @param  size
+ * @return
+ */
+bool Variant::contains(const char *key, size_t size) const
+{
+   if (size < 0) {
+      size = std::strlen(key);
+   }
+   if (isArray()) {
+      return zend_hash_find(Z_ARRVAL_P(m_val.dereference()), String(key, size)) != nullptr;
+   } else if (isObject()) {
+      if (zend_check_property_access(Z_OBJ_P(m_val), String(key, size)) == FAILURE) {
+         return false;
+      }
+      zend_object_has_property_t has_property = Z_OBJ_HT_P(m_val)->has_property;
+      if (!has_property) {
+         return false;
+      }
+      Variant property(key, size);
+      return has_property(m_val, property.m_val, 0, nullptr);
+   } else {
+      return false;
+   }
+}
+
+/**
+ * Get access to a certain array member
+ * @param  index
+ * @return Value
+ */
+Variant Variant::get(int index) const
+{
+   if (isArray()) {
+      zval *result = zend_hash_index_find(Z_ARRVAL_P(m_val.dereference()), index);
+      if (!result) {
+         return Type::Undefined;
+      }
+      return result;
+   } else if (isObject() && instanceOf("ArrayAccess")) {
+      return call("offsetGet", index);
+   } else {
+      return Type::Undefined;
+   }
+}
+
+/**
+ * Get access to a certain assoc member
+ * @param  key
+ * @param  size
+ * @return Value
+ */
+Variant Variant::get(const char *key, ssize_t size) const
+{
+   if (!isArray() && !isObject()) {
+      return Variant();
+   }
+   if (size < 0) {
+      size = std::strlen(key);
+   }
+   if (isArray()) {
+      zval* value = zend_hash_find(Z_ARRVAL_P(m_val.dereference()), String(key, size));
+      return value ? Variant(value) : Variant();
+   } else {
+      if (size > 0  && key[0] == 0) {
+         return Variant();
+      }
+      zval rv;
+#if PHP_VERSION_ID < 70100
+      zend_class_entry* scope = EG(scope);
+#else
+      zend_class_entry* scope = EG(fake_scope) ? EG(fake_scope) : zend_get_executed_scope();
+#endif
+      zval *property = zend_read_property(scope, m_val, key, size, 0, &rv);
+      return Variant(property);
+   }
+}
+
+/**
+ * Set a certain property without performing any checks
+ * This method can be used when it is already known that the object is an array
+ * @param  index
+ * @param  value
+ * @return Value
+ */
+void Variant::setRaw(int index, const Variant &value)
+{
+   SEPARATE_ZVAL_IF_NOT_REF(m_val);
+   add_index_zval(m_val, index, value.m_val);
+   Z_TRY_ADDREF_P(value.m_val);
+}
+
+/**
+ * Set a certain property without running any checks
+ * @param  key
+ * @param  size
+ * @param  value
+ */
+void Variant::setRaw(const char *key, int size, const Variant &value)
+{
+   if (!key || (size > 0 && key[0] == 0)) {
+      return;
+   }
+   if (isObject()) {
+      SEPARATE_ZVAL_IF_NOT_REF(m_val);
+      // update the property
+#if PHP_VERSION_ID < 70100
+      zend_class_entry* scope = EG(scope);
+#else
+      zend_class_entry* scope = EG(fake_scope) ? EG(fake_scope) : zend_get_executed_scope();
+#endif
+      zend_update_property(scope, m_val, key, size, value.m_val);
+   } else {
+      SEPARATE_ZVAL_IF_NOT_REF(m_val);
+      add_assoc_zval_ex(m_val, key, size, value.m_val);
+      Z_TRY_ADDREF_P(value.m_val);
+   }
+}
+
+/**
+ * Set a certain property
+ * @param  index
+ * @param  value
+ * @return Value
+ */
+void Variant::set(int index, const Variant &value)
+{
+   zval *current;
+   if (isArray() && (current = zend_hash_index_find(Z_ARRVAL_P(m_val.dereference()), index))) {
+      // skip if nothing is going to change
+      if (value.m_val == current) {
+         return;
+      }
+   }
+   setType(Type::Array);
+   setRaw(index, value);
+}
+
+/**
+ * Set a certain property
+ * @param  key
+ * @param  size
+ * @param  value
+ * @return Value
+ */
+void Variant::set(const char *key, int size, const Variant &value)
+{
+   zval *current;
+   if (isArray() && (current = zend_hash_find(Z_ARRVAL_P(m_val.dereference()), String(key, size)))) {
+      if (value.m_val == current) {
+         return;
+      }
+   }
+   if (!isObject()) {
+      setType(Type::Array);
+   }
+   setRaw(key, size, value);
+}
+
+
+/**
+ *  Unset a member by its index
+ *  @param  index
+ */
+void Variant::unset(int index)
+{
+   // only necessary for arrays
+   if (!isArray()) return;
+
+   // if this is not a reference variable, we should detach it to implement copy on write
+   SEPARATE_ZVAL_IF_NOT_REF(m_val);
+
+   // remove the index
+   zend_hash_index_del(Z_ARRVAL_P(m_val.dereference()), index);
+}
+
+/**
+ * Unset by key name and length of the key
+ * @param  key
+ * @param  size
+ */
+void Variant::unset(const char *key, int size)
+{
+   if (isObject()) {
+      SEPARATE_ZVAL_IF_NOT_REF(m_val);
+      add_property_null_ex(m_val, key, size);
+   } else if (isArray()) {
+      SEPARATE_ZVAL_IF_NOT_REF(m_val);
+      zend_hash_del(Z_ARRVAL_P(m_val.dereference()), String(key, size));
+   }
+}
+
+/**
+ *  Retrieve the original implementation
+ *
+ * This only works for classes that were implemented using PHP-CPP,
+ * it returns nullptr for all other classes
+ *
+ * @return StdClass*
+ */
+StdClass *Variant::implementation() const
+{
+   if (!isObject()) {
+      return nullptr;
+   }
+   return StdClassImpl::find(m_val)->getObject();
+}
+
+/**
+ * This function is used in tests to make sure that the way we assign
+ * variable is consistent with that of PHP.
+ *
+ * @internal
+ */
+std::string Variant::debugZval() const
+{
+   std::string s;
+   zval* z = m_val;
+
+   s = "[type=" + std::to_string(static_cast<int>(Z_TYPE_P(z)))
+       + " refcounted=" + std::to_string(Z_REFCOUNTED_P(z))
+       + " isref=" + std::to_string(Z_ISREF_P(z))
+       + " refcount=" + std::to_string(Z_REFCOUNTED_P(z) ? Z_REFCOUNT_P(z) : 0)
+       + "] "
+         ;
+
+   zend_string* zs = zval_get_string(z);
+   s += std::string(ZSTR_VAL(zs), ZSTR_LEN(zs));
+   zend_string_release(zs);
+   return s;
+}
+
+/**
+ *  Custom output stream operator
+ *  @param  stream
+ *  @param  value
+ *  @return ostream
+ */
+std::ostream &operator<<(std::ostream &stream, const Variant &value)
+{
+   return stream << value.getStringValue();
+}
+
 
 } // lang
 } // zapi

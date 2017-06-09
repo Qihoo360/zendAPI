@@ -685,7 +685,7 @@ public:
     * @param  size
     * @return Value
     */
-   Variant get(const char *key, int size = -1) const;
+   Variant get(const char *key, ssize_t size = -1) const;
 
    /**
     * Set a certain property
@@ -986,7 +986,7 @@ private:
     * @param  allowString Allow the 'this' object to be a string
     * @return zend_class_entry
     */
-   _zend_class_entry *classEntry(bool allowString = true) const;
+   _zend_class_entry *getClassEntry(bool allowString = true) const;
 
 protected:
    Zval m_val;

@@ -43,7 +43,7 @@ enum class Type : unsigned char
    Constant    = IS_CONSTANT, // A constant value
    ConstantAST = IS_CONSTANT_AST, // I think an Abstract Syntax tree, not quite sure
    // "fake types", not quite sure what that means
-   Bool        = _IS_BOOL, // You will never get this back as a type
+   Boolean     = _IS_BOOL, // You will never get this back as a type
    Callable    = IS_CALLABLE, // I don't know why this is a "fake" type
    // internal types
    Indirect    = IS_INDIRECT,
