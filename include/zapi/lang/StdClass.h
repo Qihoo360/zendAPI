@@ -245,7 +245,10 @@ private:
     * Get access to the implementation object
     * @return ObjectImpl
     */
-   const StdClassImpl *implementation() const;
+   const StdClassImpl *implementation() const
+   {
+      return m_implPtr;
+   }
 
    friend class StdClassImpl;
    friend class Variant;

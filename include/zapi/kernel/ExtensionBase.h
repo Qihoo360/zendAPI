@@ -18,13 +18,24 @@
 
 #include "zapi/Global.h"
 
+// forward class declare
+namespace zapi
+{
+namespace vm
+{
+
+class Extension;
+
+} // vm
+} // zapi
+
 namespace zapi
 {
 namespace kernel
 {
 
 using zapi::Callback;
-class Extension;
+using zapi::vm::Extension;
 
 /**
  * Base class for ExtensionImpl objects. Common code used by both the Zend
@@ -136,7 +147,7 @@ public:
       m_idleHandler = callback;
    }
 
-   virtual ~Extension()
+   virtual ~ExtensionBase()
    {}
 };
 

@@ -22,7 +22,7 @@
 
 #include <vector>
 #include <map>
-#include <string>
+#include <cstring>
 
 namespace zapi
 {
@@ -59,9 +59,9 @@ public:
     * Constructor for various types
     */
    Variant(std::nullptr_t value);
-   Variant(int16_t value);
-   Variant(int32_t value);
-   Variant(int64_t value);
+   Variant(std::int16_t value);
+   Variant(std::int32_t value);
+   Variant(std::int64_t value);
    Variant(bool value);
    Variant(char value);
    Variant(const std::string &value);
@@ -152,9 +152,9 @@ public:
     */
    Variant &operator=(std::nullptr_t value);
    Variant &operator=(const Variant &value);
-   Variant &operator=(int16_t value);
-   Variant &operator=(int32_t value);
-   Variant &operator=(int64_t value);
+   Variant &operator=(std::int16_t value);
+   Variant &operator=(std::int32_t value);
+   Variant &operator=(std::int64_t value);
    Variant &operator=(bool value);
    Variant &operator=(char value);
    Variant &operator=(const std::string &value);
@@ -167,9 +167,9 @@ public:
     * @return Value
     */
    Variant &operator+=(const Variant &value);
-   Variant &operator+=(int16_t value);
-   Variant &operator+=(int32_t value);
-   Variant &operator+=(int64_t value);
+   Variant &operator+=(std::int16_t value);
+   Variant &operator+=(std::int32_t value);
+   Variant &operator+=(std::int64_t value);
    Variant &operator+=(bool value);
    Variant &operator+=(char value);
    Variant &operator+=(const std::string &value);
@@ -182,9 +182,9 @@ public:
     * @return Value
     */
    Variant &operator-=(const Variant &value);
-   Variant &operator-=(int16_t value);
-   Variant &operator-=(int32_t value);
-   Variant &operator-=(int64_t value);
+   Variant &operator-=(std::int16_t value);
+   Variant &operator-=(std::int32_t value);
+   Variant &operator-=(std::int64_t value);
    Variant &operator-=(bool value);
    Variant &operator-=(char value);
    Variant &operator-=(const std::string &value);
@@ -197,9 +197,9 @@ public:
     * @return Value
     */
    Variant &operator*=(const Variant &value);
-   Variant &operator*=(int16_t value);
-   Variant &operator*=(int32_t value);
-   Variant &operator*=(int64_t value);
+   Variant &operator*=(std::int16_t value);
+   Variant &operator*=(std::int32_t value);
+   Variant &operator*=(std::int64_t value);
    Variant &operator*=(bool value);
    Variant &operator*=(char value);
    Variant &operator*=(const std::string &value);
@@ -212,9 +212,9 @@ public:
     * @return Value
     */
    Variant &operator/=(const Variant &value);
-   Variant &operator/=(int16_t value);
-   Variant &operator/=(int32_t value);
-   Variant &operator/=(int64_t value);
+   Variant &operator/=(std::int16_t value);
+   Variant &operator/=(std::int32_t value);
+   Variant &operator/=(std::int64_t value);
    Variant &operator/=(bool value);
    Variant &operator/=(char value);
    Variant &operator/=(const std::string &value);
@@ -227,9 +227,9 @@ public:
     * @return Value
     */
    Variant &operator%=(const Variant &value);
-   Variant &operator%=(int16_t value);
-   Variant &operator%=(int32_t value);
-   Variant &operator%=(int64_t value);
+   Variant &operator%=(std::int16_t value);
+   Variant &operator%=(std::int32_t value);
+   Variant &operator%=(std::int64_t value);
    Variant &operator%=(bool value);
    Variant &operator%=(char value);
    Variant &operator%=(const std::string &value);
@@ -242,9 +242,9 @@ public:
     * @return Value
     */
    Variant operator+(const Variant &value);
-   Variant operator+(int16_t value);
-   Variant operator+(int32_t value);
-   Variant operator+(int64_t value);
+   Variant operator+(std::int16_t value);
+   Variant operator+(std::int32_t value);
+   Variant operator+(std::int64_t value);
    Variant operator+(bool value);
    Variant operator+(char value);
    Variant operator+(const std::string &value);
@@ -257,9 +257,9 @@ public:
     * @return Value
     */
    Variant operator-(const Variant &value);
-   Variant operator-(int16_t value);
-   Variant operator-(int32_t value);
-   Variant operator-(int64_t value);
+   Variant operator-(std::int16_t value);
+   Variant operator-(std::int32_t value);
+   Variant operator-(std::int64_t value);
    Variant operator-(bool value);
    Variant operator-(char value);
    Variant operator-(const std::string &value);
@@ -272,9 +272,9 @@ public:
     * @return Value
     */
    Variant operator*(const Variant &value);
-   Variant operator*(int16_t value);
-   Variant operator*(int32_t value);
-   Variant operator*(int64_t value);
+   Variant operator*(std::int16_t value);
+   Variant operator*(std::int32_t value);
+   Variant operator*(std::int64_t value);
    Variant operator*(bool value);
    Variant operator*(char value);
    Variant operator*(const std::string &value);
@@ -287,9 +287,9 @@ public:
     * @return Value
     */
    Variant operator/(const Variant &value);
-   Variant operator/(int16_t value);
-   Variant operator/(int32_t value);
-   Variant operator/(int64_t value);
+   Variant operator/(std::int16_t value);
+   Variant operator/(std::int32_t value);
+   Variant operator/(std::int64_t value);
    Variant operator/(bool value);
    Variant operator/(char value);
    Variant operator/(const std::string &value);
@@ -302,9 +302,9 @@ public:
     * @return Value
     */
    Variant operator%(const Variant &value);
-   Variant operator%(int16_t value);
-   Variant operator%(int32_t value);
-   Variant operator%(int64_t value);
+   Variant operator%(std::int16_t value);
+   Variant operator%(std::int32_t value);
+   Variant operator%(std::int64_t value);
    Variant operator%(bool value);
    Variant operator%(char value);
    Variant operator%(const std::string &value);
@@ -370,29 +370,29 @@ public:
 
    /**
     * Cast to a number
-    * @return int32_t
+    * @return std::int32_t
     */
-   operator int16_t () const
+   operator std::int16_t () const
    {
-      return static_cast<int16_t>(getNumericValue());
+      return static_cast<std::int16_t>(getNumericValue());
    }
 
    /**
     * Cast to a number
-    * @return int32_t
+    * @return std::int32_t
     */
-   operator int32_t () const
+   operator std::int32_t () const
    {
-      return static_cast<int32_t>(getNumericValue());
+      return static_cast<std::int32_t>(getNumericValue());
    }
 
    /**
     * Cast to a number
-    * @return int64_t
+    * @return std::int64_t
     */
-   operator int64_t () const
+   operator std::int64_t () const
    {
-      return static_cast<int64_t>(getNumericValue());
+      return static_cast<std::int64_t>(getNumericValue());
    }
 
    /**
@@ -580,14 +580,14 @@ public:
    /**
     * Retrieve the value as number
     *
-    * We force this to be a int64_t because we assume that most
-    * servers run 64 bits nowadays, and because we use int32_t, int64_t
+    * We force this to be a std::int64_t because we assume that most
+    * servers run 64 bits nowadays, and because we use std::int32_t, std::int64_t
     * almost everywhere, instead of 'long' and on OSX neither of
     * these intxx_t types is defined as 'long'...
     *
-    * @return int64_t
+    * @return std::int64_t
     */
-   int64_t getNumericValue() const;
+   std::int64_t getNumericValue() const;
 
    /**
     * Retrieve the value as boolean

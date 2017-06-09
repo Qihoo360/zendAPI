@@ -77,7 +77,7 @@ Variant::Variant(std::nullptr_t value) : Variant()
  * Constructor based on integer value
  * @param  value
  */
-Variant::Variant(int16_t value)
+Variant::Variant(std::int16_t value)
 {
    ZVAL_LONG(m_val, value);
 }
@@ -86,7 +86,7 @@ Variant::Variant(int16_t value)
  * Constructor based on integer value
  * @param  value
  */
-Variant::Variant(int32_t value)
+Variant::Variant(std::int32_t value)
 {
    ZVAL_LONG(m_val, value);
 }
@@ -95,7 +95,7 @@ Variant::Variant(int32_t value)
  * Constructor based on integer value
  * @param  value
  */
-Variant::Variant(int64_t value)
+Variant::Variant(std::int64_t value)
 {
    ZVAL_LONG(m_val, value);
 }
@@ -149,7 +149,6 @@ Variant::Variant(double value)
 {
    ZVAL_DOUBLE(m_val, value);
 }
-
 
 /**
  * Wrap object around zval
@@ -393,7 +392,7 @@ Variant &Variant::operator=(std::nullptr_t value)
  * @param  value
  * @return Variant
  */
-Variant &Variant::operator=(int16_t value)
+Variant &Variant::operator=(std::int16_t value)
 {
    zval z;
    ZVAL_LONG(&z, value);
@@ -405,7 +404,7 @@ Variant &Variant::operator=(int16_t value)
  * @param  value
  * @return Variant
  */
-Variant &Variant::operator=(int32_t value)
+Variant &Variant::operator=(std::int32_t value)
 {
    zval z;
    ZVAL_LONG(&z, value);
@@ -417,7 +416,7 @@ Variant &Variant::operator=(int32_t value)
  * @param  value
  * @return Variant
  */
-Variant &Variant::operator=(int64_t value)
+Variant &Variant::operator=(std::int64_t value)
 {
    zval z;
    ZVAL_LONG(&z, value);
@@ -508,17 +507,17 @@ Variant &Variant::operator+=(const Variant &value)
    return Arithmetic<std::plus>(this).assign(value);
 }
 
-Variant &Variant::operator+=(int16_t value)
+Variant &Variant::operator+=(std::int16_t value)
 {
    return Arithmetic<std::plus>(this).assign(value);
 }
 
-Variant &Variant::operator+=(int32_t value)
+Variant &Variant::operator+=(std::int32_t value)
 {
    return Arithmetic<std::plus>(this).assign(value);
 }
 
-Variant &Variant::operator+=(int64_t value)
+Variant &Variant::operator+=(std::int64_t value)
 {
    return Arithmetic<std::plus>(this).assign(value);
 }
@@ -558,17 +557,17 @@ Variant &Variant::operator-=(const Variant &value)
    return Arithmetic<std::minus>(this).assign(value);
 }
 
-Variant &Variant::operator-=(int16_t value)
+Variant &Variant::operator-=(std::int16_t value)
 {
    return Arithmetic<std::minus>(this).assign(value);
 }
 
-Variant &Variant::operator-=(int32_t value)
+Variant &Variant::operator-=(std::int32_t value)
 {
    return Arithmetic<std::minus>(this).assign(value);
 }
 
-Variant &Variant::operator-=(int64_t value)
+Variant &Variant::operator-=(std::int64_t value)
 {
    return Arithmetic<std::minus>(this).assign(value);
 }
@@ -608,17 +607,17 @@ Variant &Variant::operator*=(const Variant &value)
    return Arithmetic<std::multiplies>(this).assign(value);
 }
 
-Variant &Variant::operator*=(int16_t value)
+Variant &Variant::operator*=(std::int16_t value)
 {
    return Arithmetic<std::multiplies>(this).assign(value);
 }
 
-Variant &Variant::operator*=(int32_t value)
+Variant &Variant::operator*=(std::int32_t value)
 {
    return Arithmetic<std::multiplies>(this).assign(value);
 }
 
-Variant &Variant::operator*=(int64_t value)
+Variant &Variant::operator*=(std::int64_t value)
 {
    return Arithmetic<std::multiplies>(this).assign(value);
 }
@@ -658,17 +657,17 @@ Variant &Variant::operator/=(const Variant &value)
    return Arithmetic<std::divides>(this).assign(value);
 }
 
-Variant &Variant::operator/=(int16_t value)
+Variant &Variant::operator/=(std::int16_t value)
 {
    return Arithmetic<std::divides>(this).assign(value);
 }
 
-Variant &Variant::operator/=(int32_t value)
+Variant &Variant::operator/=(std::int32_t value)
 {
    return Arithmetic<std::divides>(this).assign(value);
 }
 
-Variant &Variant::operator/=(int64_t value)
+Variant &Variant::operator/=(std::int64_t value)
 {
    return Arithmetic<std::divides>(this).assign(value);
 }
@@ -709,17 +708,17 @@ Variant &Variant::operator%=(const Variant &value)
    return operator=(getNumericValue() % value.getNumericValue());
 }
 
-Variant &Variant::operator%=(int16_t value)
+Variant &Variant::operator%=(std::int16_t value)
 {
    return operator=(getNumericValue() % value);
 }
 
-Variant &Variant::operator%=(int32_t value)
+Variant &Variant::operator%=(std::int32_t value)
 {
    return operator=(getNumericValue() % value);
 }
 
-Variant &Variant::operator%=(int64_t value)
+Variant &Variant::operator%=(std::int64_t value)
 {
    return operator=(getNumericValue() % value);
 }
@@ -759,17 +758,17 @@ Variant Variant::operator+(const Variant &value)
    return Arithmetic<std::plus>(this).apply(value);
 }
 
-Variant Variant::operator+(int16_t value)
+Variant Variant::operator+(std::int16_t value)
 {
    return Arithmetic<std::plus>(this).apply(value);
 }
 
-Variant Variant::operator+(int32_t value)
+Variant Variant::operator+(std::int32_t value)
 {
    return Arithmetic<std::plus>(this).apply(value);
 }
 
-Variant Variant::operator+(int64_t value)
+Variant Variant::operator+(std::int64_t value)
 {
    return Arithmetic<std::plus>(this).apply(value);
 }
@@ -809,17 +808,17 @@ Variant Variant::operator-(const Variant &value)
    return Arithmetic<std::minus>(this).apply(value);
 }
 
-Variant Variant::operator-(int16_t value)
+Variant Variant::operator-(std::int16_t value)
 {
    return Arithmetic<std::minus>(this).apply(value);
 }
 
-Variant Variant::operator-(int32_t value)
+Variant Variant::operator-(std::int32_t value)
 {
    return Arithmetic<std::minus>(this).apply(value);
 }
 
-Variant Variant::operator-(int64_t value)
+Variant Variant::operator-(std::int64_t value)
 {
    return Arithmetic<std::minus>(this).apply(value);
 }
@@ -859,17 +858,17 @@ Variant Variant::operator*(const Variant &value)
    return Arithmetic<std::multiplies>(this).apply(value);
 }
 
-Variant Variant::operator*(int16_t value)
+Variant Variant::operator*(std::int16_t value)
 {
    return Arithmetic<std::multiplies>(this).apply(value);
 }
 
-Variant Variant::operator*(int32_t value)
+Variant Variant::operator*(std::int32_t value)
 {
    return Arithmetic<std::multiplies>(this).apply(value);
 }
 
-Variant Variant::operator*(int64_t value)
+Variant Variant::operator*(std::int64_t value)
 {
    return Arithmetic<std::multiplies>(this).apply(value);
 }
@@ -909,17 +908,17 @@ Variant Variant::operator/(const Variant &value)
    return Arithmetic<std::divides>(this).apply(value);
 }
 
-Variant Variant::operator/(int16_t value)
+Variant Variant::operator/(std::int16_t value)
 {
    return Arithmetic<std::divides>(this).apply(value);
 }
 
-Variant Variant::operator/(int32_t value)
+Variant Variant::operator/(std::int32_t value)
 {
    return Arithmetic<std::divides>(this).apply(value);
 }
 
-Variant Variant::operator/(int64_t value)
+Variant Variant::operator/(std::int64_t value)
 {
    return Arithmetic<std::divides>(this).apply(value);
 }
@@ -959,17 +958,17 @@ Variant Variant::operator%(const Variant &value)
    return Variant(getNumericValue() % value.getNumericValue());
 }
 
-Variant Variant::operator%(int16_t value)
+Variant Variant::operator%(std::int16_t value)
 {
    return Variant(getNumericValue() % value);
 }
 
-Variant Variant::operator%(int32_t value)
+Variant Variant::operator%(std::int32_t value)
 {
    return Variant(getNumericValue() % value);
 }
 
-Variant Variant::operator%(int64_t value)
+Variant Variant::operator%(std::int64_t value)
 {
    return Variant(getNumericValue() % value);
 }
@@ -1469,7 +1468,7 @@ Variant Variant::clone(Type typeValue) const
  * Retrieve the value as integer
  * @return long
  */
-int64_t  Variant::getNumericValue() const
+std::int64_t  Variant::getNumericValue() const
 {
    return zval_get_long(m_val);
 }

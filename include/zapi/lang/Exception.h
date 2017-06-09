@@ -17,7 +17,7 @@
 #define ZAPI_LANG_EXCEPTION_H
 
 #include <exception>
-#include <string>
+#include <cstring>
 
 #include "zapi/Global.h"
 

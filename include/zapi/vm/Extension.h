@@ -16,7 +16,7 @@
 #ifndef ZAPI_VM_EXTENSION_H
 #define ZAPI_VM_EXTENSION_H
 
-#include <zapi/bridge/Extension.h>
+#include "zapi/bridge/Extension.h"
 #include "zapi/kernel/ExtensionBase.h"
 
 namespace zapi

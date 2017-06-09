@@ -14,7 +14,7 @@
 // Created by softboy on 5/18/17.
 
 #ifndef ZAPI_GLOBAL_H
-# include "zendapi/Global.h"
+# include "zapi/Global.h"
 #endif
 
 #ifndef ZAPI_PROCESSORDETECTION_H

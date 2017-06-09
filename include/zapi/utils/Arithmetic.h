@@ -139,7 +139,7 @@ public:
     */
    Variant apply(const std::string &value)
    {
-      return apply(std::stoll(value));
+      return apply(static_cast<int64_t>(std::stoll(value)));
    }
 
    /**
@@ -251,7 +251,7 @@ public:
     */
    Variant &assign(const std::string &value)
    {
-      return assign(std::stoll(value));
+      return assign(static_cast<int64_t>(std::stoll(value)));
    }
 
    /**

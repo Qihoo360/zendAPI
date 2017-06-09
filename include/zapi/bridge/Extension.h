@@ -19,12 +19,21 @@
 
 #include "zapi/Global.h"
 
+// forward class declare
+namespace zapi
+{
+namespace vm
+{
+class Extension;
+} // vm
+} // zapi
+
 namespace zapi
 {
 namespace bridge
 {
 
-class ExtensionPrivate;
+using VmExtension = zapi::vm::Extension;
 
 class ZAPI_DECL_EXPORT Extension
 {
@@ -126,7 +135,7 @@ private:
     *
     * @var std::unique_ptr<ExtensionPrivate> m_implPtr
     */
-   std::unique_ptr<ExtensionPrivate> m_implPtr;
+   std::unique_ptr<VmExtension> m_implPtr;
 };
 
 } // bridge

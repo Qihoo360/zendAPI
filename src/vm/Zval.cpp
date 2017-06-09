@@ -27,7 +27,7 @@ _zval_struct *Zval::dereference() const
 {
    // first cast ourselves to a zval struct
    _zval_struct *self = const_cast<_zval_struct *>(reinterpret_cast<const _zval_struct *>(&m_buffer));
-   if ((static_cast<Type>(Z_TYPE_P(sef))) != Type::Reference) {
+   if ((static_cast<Type>(Z_TYPE_P(self))) != Type::Reference) {
       return self;
    }
    return Z_REFVAL_P(self);

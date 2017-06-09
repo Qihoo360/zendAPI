@@ -28,6 +28,7 @@
 #include <cstddef>
 #include <memory>
 #include <functional>
+#include <cstdint>
 
 #define ZAPI_STRINGIFY2(x) #x
 #define ZAPI_STRINGIFY(x) ZAPI_STRINGIFY2(x)
@@ -177,7 +178,7 @@ ZAPI_DECL_NOEXCEPT_EXPR(noexcept(internal::swapexceptiontester::check_swap(left)
 namespace zapi
 {
 using HANDLE = void *;
-using Callback = std::function<void()>();
+using Callback = std::function<void()>;
 } // zapi
 
 
