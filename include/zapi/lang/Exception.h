@@ -61,7 +61,7 @@ public:
     *  Returns the message of the exception.
     *  @return &string
     */
-   const std::string &message() const ZAPI_DECL_NOEXCEPT
+   const std::string &getMessage() const ZAPI_DECL_NOEXCEPT
    {
       return m_message;
    }
@@ -71,7 +71,7 @@ public:
     *
     * @return The exception code
     */
-   virtual long int code() const ZAPI_DECL_NOEXCEPT
+   virtual long int getCode() const ZAPI_DECL_NOEXCEPT
    {
       return -1;
    }
@@ -86,7 +86,7 @@ public:
     *
     * @return The filename the exception was thrown in
     */
-   virtual const std::string &file() const ZAPI_DECL_NOEXCEPT
+   virtual const std::string &getFileName() const ZAPI_DECL_NOEXCEPT
    {
       static std::string file{"<filename unknown>"};
       return file;
@@ -95,7 +95,7 @@ public:
    /**
     * Retrieve the line at which the exception was thrown
     */
-   virtual const long int line() const ZAPI_DECL_NOEXCEPT
+   virtual long int getLine() const ZAPI_DECL_NOEXCEPT
    {
       return -1;
    }

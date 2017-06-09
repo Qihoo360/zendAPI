@@ -9,11 +9,12 @@ set(ZAPI_PUBLIC_HEADERS
     ${ZAPI_INCLUDE_DIR}/zapi/lang/Parameters.h
     ${ZAPI_INCLUDE_DIR}/zapi/lang/Errors.h
     ${ZAPI_INCLUDE_DIR}/zapi/lang/NotImplemented.h
+    ${ZAPI_INCLUDE_DIR}/zapi/lang/OrigException.h
     ${ZAPI_INCLUDE_DIR}/zapi/vm/Extension.h
     ${ZAPI_INCLUDE_DIR}/zapi/vm/StdClassImpl.h
-    ${ZAPI_INCLUDE_DIR}/zapi/utils/HashTable.h
-    ${ZAPI_INCLUDE_DIR}/zapi/utils/List.h
-    ${ZAPI_INCLUDE_DIR}/zapi/utils/String.h
+    ${ZAPI_INCLUDE_DIR}/zapi/ds/HashTable.h
+    ${ZAPI_INCLUDE_DIR}/zapi/ds/List.h
+    ${ZAPI_INCLUDE_DIR}/zapi/ds/String.h
     ${ZAPI_INCLUDE_DIR}/zapi/utils/Arithmetic.h
     ${ZAPI_INCLUDE_DIR}/zapi/ZendApi.h
     ${ZAPI_INCLUDE_DIR}/zapi/CompilerDetection.h

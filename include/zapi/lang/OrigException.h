@@ -19,6 +19,7 @@
 #include <string>
 
 #include "php/Zend/zend_types.h"
+#include "php/Zend/zend_exceptions.h"
 
 #include "zapi/lang/Exception.h"
 
@@ -87,7 +88,109 @@ public:
       zend_string_release(message);
       zend_string_release(file);
    }
+
+   /**
+    * Copy constructor
+    * @param  exception
+    */
+   OrigException(const OrigException &exception)
+      : Exception("OrigException"),
+        m_handled(exception.m_handled)
+   {}
+
+   /**
+    * Move constructor
+    * @param  exception
+    */
+   OrigException(OrigException &&exception)
+      : Exception("OrigException"),
+        m_handled(exception.m_handled)
+   {
+      exception.m_handled = true;
+   }
+
+   /**
+    * Destructor
+    */
+   virtual ~OrigException() ZAPI_DECL_NOEXCEPT
+   {
+      if (!m_handled) {
+         return;
+      }
+      zend_clear_exception();
+   }
+
+   /**
+    * This is _not_ a native exception, it was thrown by a PHP script
+    * @return bool
+    */
+   virtual bool native() const override
+   {
+      return false;
+   }
+
+   /**
+    * Reactivate the exception
+    */
+   void reactivate()
+   {
+      // it was not handled by extension C++ code
+      m_handled = false;
+   }
+
+   /**
+    * Returns the exception code
+    *
+    * @note   This only works if the exception was originally
+    *         thrown in PHP userland. If the native() member
+    *         function returns true, this function will not
+    *         be able to correctly provide the filename.
+    *
+    * @return The exception code
+    */
+   virtual long int getCode() const ZAPI_DECL_NOEXCEPT override
+   {
+      return m_code;
+   }
+
+   /**
+    * Retrieve the filename the exception was thrown in
+    *
+    * @return The filename the exception was thrown in
+    */
+   virtual const std::string &getFileName() const ZAPI_DECL_NOEXCEPT override
+   {
+      return m_file;
+   }
+
+   /**
+    * Retrieve the line at which the exception was thrown
+    *
+    * @return The line number the exception was thrown at
+    */
+   virtual long int getLine() const ZAPI_DECL_NOEXCEPT override
+   {
+      return m_line;
+   }
 };
+
+namespace
+{
+
+inline void process_exception(Exception &exception)
+{
+   if (exception.native()) {
+      zend_throw_exception(zend_exception_get_default(), static_cast<char *>(exception.what()), 0);
+   } else if (!exception.report()) {
+      // this is not a native exception, so it was originally thrown by a
+      // php script, and then not caught by the c++ of the extension, we are
+      // going to tell to the exception that it is still active
+      OrigException &orig = static_cast<OrigException &>(exception);
+      orig.reactivate();
+   }
+}
+
+}
 
 } // lang
 } // zapi
