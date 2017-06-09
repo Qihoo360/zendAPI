@@ -27,7 +27,7 @@
 #include <type_traits>
 #include <cstddef>
 #include <memory>
-#include <functional>>
+#include <functional>
 
 #define ZAPI_STRINGIFY2(x) #x
 #define ZAPI_STRINGIFY(x) ZAPI_STRINGIFY2(x)
@@ -58,10 +58,10 @@ using z_uint64 = unsigned long long;
 using z_longlong = z_int64;
 using z_ulonglong = z_uint64;
 
-using uchar = unsigned char;
-using ushort = unsigned short;
-using uint = unsigned int;
-using ulong = unsigned long;
+using z_uchar = unsigned char;
+using z_ushort = unsigned short;
+using z_uint = unsigned int;
+using z_ulong = unsigned long;
 
 #if defined(__ELF__)
 #  define ZAPI_OF_ELF

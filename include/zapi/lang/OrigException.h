@@ -180,7 +180,7 @@ namespace
 inline void process_exception(Exception &exception)
 {
    if (exception.native()) {
-      zend_throw_exception(zend_exception_get_default(), static_cast<char *>(exception.what()), 0);
+      zend_throw_exception(zend_exception_get_default(), exception.what(), 0);
    } else if (!exception.report()) {
       // this is not a native exception, so it was originally thrown by a
       // php script, and then not caught by the c++ of the extension, we are

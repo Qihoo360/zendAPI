@@ -69,7 +69,7 @@ public:
    {
       // check if the current object is a floating point number
       if (m_value->isDouble()) {
-         return Variant(F<double>(m_value->getDoubleValue(), value));
+         return Variant(F<double>()(m_value->getDoubleValue(), value));
       }
       // apply to natural numbers
       return Variant(F<int64_t>()(m_value->getNumericValue(), value));
@@ -84,7 +84,7 @@ public:
    {
       // check if the current object is a floating point number
       if (m_value->isDouble()) {
-         return Variant(F<double>(m_value->getDoubleValue(), value));
+         return Variant(F<double>()(m_value->getDoubleValue(), value));
       }
       return Variant(F<int64_t>()(m_value->getNumericValue(), value));
    }
@@ -98,7 +98,7 @@ public:
    {
       // check if the current object is a floating point number
       if (m_value->isDouble()) {
-         return Variant(F<double>(m_value->getDoubleValue(), value));
+         return Variant(F<double>()(m_value->getDoubleValue(), value));
       }
       return Variant(F<int64_t>()(m_value->getNumericValue(), value));
    }
@@ -112,7 +112,7 @@ public:
    {
       // check if the current object is a floating point number
       if (m_value->isDouble()) {
-         return Variant(F<double>(m_value->getDoubleValue(), value ? 1 : 0));
+         return Variant(F<double>()(m_value->getDoubleValue(), value ? 1 : 0));
       }
       return Variant(F<int64_t>()(m_value->getNumericValue(), value ? 1 : 0));
    }
@@ -127,7 +127,7 @@ public:
       // convert to an integer
       int v = value < '0' || value > '9' ? 0 : value - '0';
       if (m_value->isDouble()) {
-         return Variant(F<double>(m_value->getDoubleValue(), value));
+         return Variant(F<double>()(m_value->getDoubleValue(), value));
       }
       return Variant(F<int64_t>()(m_value->getNumericValue(), value));
    }
@@ -139,7 +139,7 @@ public:
     */
    Variant apply(const std::string &value)
    {
-      return apply(std::stol(value));
+      return apply(std::stoll(value));
    }
 
    /**
@@ -159,7 +159,7 @@ public:
     */
    Variant apply(double value)
    {
-      return Variant(F<double>(m_value->getDoubleValue(), value));
+      return Variant(F<double>()(m_value->getDoubleValue(), value));
    }
 
    /**
@@ -188,7 +188,7 @@ public:
       if (m_value->isDouble()) {
          return m_value->operator=(F<double>()(m_value->getDoubleValue(), value));
       }
-      return m_value->operator=(F<int64_t>(m_value->getNumericValue(), value));
+      return m_value->operator=(F<int64_t>()(m_value->getNumericValue(), value));
    }
 
    /**
@@ -201,7 +201,7 @@ public:
       if (m_value->isDouble()) {
          return m_value->operator=(F<double>()(m_value->getDoubleValue(), value));
       }
-      return m_value->operator=(F<int64_t>(m_value->getNumericValue(), value));
+      return m_value->operator=(F<int64_t>()(m_value->getNumericValue(), value));
    }
 
    /**
@@ -214,7 +214,7 @@ public:
       if (m_value->isDouble()) {
          return m_value->operator=(F<double>()(m_value->getDoubleValue(), value));
       }
-      return m_value->operator=(F<int64_t>(m_value->getNumericValue(), value));
+      return m_value->operator=(F<int64_t>()(m_value->getNumericValue(), value));
    }
 
    /**
@@ -227,7 +227,7 @@ public:
       if (m_value->isDouble()) {
          return m_value->operator=(F<double>()(m_value->getDoubleValue(), value ? 1: 0));
       }
-      return m_value->operator=(F<int64_t>(m_value->getNumericValue(), value ? 1 : 0));
+      return m_value->operator=(F<int64_t>()(m_value->getNumericValue(), value ? 1 : 0));
    }
 
    /**
@@ -241,7 +241,7 @@ public:
       if (m_value->isDouble()) {
          return m_value->operator=(F<double>()(m_value->getDoubleValue(), value));
       }
-      return m_value->operator=(F<int64_t>(m_value->getNumericValue(), value));
+      return m_value->operator=(F<int64_t>()(m_value->getNumericValue(), value));
    }
 
    /**
@@ -251,7 +251,7 @@ public:
     */
    Variant &assign(const std::string &value)
    {
-      return assign(std::stol(value));
+      return assign(std::stoll(value));
    }
 
    /**
@@ -271,7 +271,7 @@ public:
     */
    Variant &assign(double value)
    {
-      m_value->operator=(F<double>()(m_value->getDoubleValue(), value));
+      return m_value->operator=(F<double>()(m_value->getDoubleValue(), value));
    }
 };
 

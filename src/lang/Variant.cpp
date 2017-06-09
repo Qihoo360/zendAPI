@@ -296,7 +296,7 @@ int Variant::getRefCount() const
  * @param  value
  * @return Variant
  */
-Variant &Variant::operator=(Variant &&value)
+Variant &Variant::operator=(Variant &&value) ZAPI_DECL_NOEXCEPT
 {
    if (this == &value) {
       return *this;
@@ -1017,7 +1017,7 @@ Variant do_exec(const zval *object, zval *method, int argc, zval *argv)
    // call the function
    // we're casting the const away here, object is only const so we can call this method
    // from const methods after all..
-   if (call_user_function_ex(CG(function_table), static_cast<zval *>(object),
+   if (call_user_function_ex(CG(function_table), const_cast<zval *>(object),
                              method, &retval, argc, argv, 1, nullptr) != SUCCESS) {
       // throw an exception, the function does not exist
       throw Exception("Invalid call to " + Variant(method).getStringValue());
@@ -1314,6 +1314,9 @@ Variant &Variant::setType(Type typeValue) &
       case Type::Null:
          convert_to_null(m_val);
          break;
+      case Type::Long:
+         convert_to_long(m_val);
+         break;
       case Type::Double:
          convert_to_double(m_val);
          break;
@@ -1350,6 +1353,9 @@ Variant &Variant::setType(Type typeValue) &
          throw FatalError{"Callable types cannot be handled by the zapi library"};
          break;
       case Type::Reference:
+         throw FatalError{"Reference types cannot be handled by the zapi library"};
+         break;
+      default:
          throw FatalError{"Reference types cannot be handled by the zapi library"};
          break;
    }
@@ -1505,6 +1511,7 @@ std::string Variant::getStringValue() const
    zend_string *tempStr = zval_get_string(m_val);
    std::string ret(ZSTR_VAL(tempStr), ZSTR_LEN(tempStr));
    zend_string_release(tempStr);
+   return ret;
 }
 
 /**
@@ -1586,7 +1593,7 @@ bool Variant::contains(int index) const
  * @param  size
  * @return
  */
-bool Variant::contains(const char *key, size_t size) const
+bool Variant::contains(const char *key, ssize_t size) const
 {
    if (size < 0) {
       size = std::strlen(key);

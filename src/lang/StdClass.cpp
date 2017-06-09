@@ -16,6 +16,7 @@
 #include "zapi/lang/StdClass.h"
 #include "zapi/lang/NotImplemented.h"
 #include "zapi/lang/Variant.h"
+#include "zapi/vm/StdClassImpl.h"
 
 namespace zapi
 {

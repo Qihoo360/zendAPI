@@ -19,12 +19,21 @@
 #include "zapi/Global.h"
 #include "zapi/lang/Variant.h"
 
+// forward declare
+namespace zapi
+{
+namespace vm
+{
+class StdClassImpl;
+} // vm
+} // zapi
+
 namespace zapi
 {
 namespace lang
 {
 
-class StdClassImpl;
+using zapi::vm::StdClassImpl;
 class Parameters;
 
 class ZAPI_DECL_EXPORT StdClass

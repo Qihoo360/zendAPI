@@ -312,6 +312,63 @@ public:
    Variant operator%(double value);
 
    /**
+    * Comparison operators for hardcoded strings
+    * @param  value
+    */
+   bool operator==(const char *value) const
+   {
+      return std::strcmp(getRawValue(), value) == 0;
+   }
+
+   bool operator!=(const char *value) const
+   {
+      return std::strcmp(getRawValue(), value) != 0;
+   }
+
+   bool operator<=(const char *value) const
+   {
+      return std::strcmp(getRawValue(), value) <= 0;
+   }
+
+   bool operator>=(const char *value) const
+   {
+      return std::strcmp(getRawValue(), value) >= 0;
+   }
+
+   bool operator<(const char *value) const
+   {
+      return std::strcmp(getRawValue(), value) < 0;
+   }
+
+   bool operator>(const char *value) const
+   {
+      return std::strcmp(getRawValue(), value) > 0;
+   }
+
+   /**
+    * Comparison operators for hardcoded Variant
+    * @param  value
+    */
+   bool operator==(const Variant &value) const;
+   bool operator!=(const Variant &value) const
+   {
+      return !operator==(value);
+   }
+   bool operator<(const Variant &value) const;
+   bool operator>(const Variant &value) const
+   {
+      return value.operator<(*this);
+   }
+   bool operator<=(const Variant &value) const
+   {
+      return !value.operator>(*this);
+   }
+   bool operator>=(const Variant &value) const
+   {
+      return !value.operator<(*this);
+   }
+
+   /**
     * Cast to a number
     * @return int32_t
     */
@@ -385,7 +442,7 @@ public:
    template <typename T>
    operator std::vector<T> () const
    {
-      return getVectorValue();
+      return getVectorValue<T>();
    }
 
    /**
@@ -633,7 +690,7 @@ public:
     * @param  size
     * @return bool
     */
-   bool contains(const char *key, size_t size) const;
+   bool contains(const char *key, ssize_t size) const;
 
    /**
     * Is a certain key set in the array

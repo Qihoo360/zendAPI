@@ -1,3 +1,3 @@
 set(LANG_TEST_SRCS
-    Variant.cpp)
+    VariantTest.cpp)
 zapi_add_unittest(UnitTests LangTest ${LANG_TEST_SRCS})

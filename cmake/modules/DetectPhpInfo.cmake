@@ -21,7 +21,6 @@ set(ZAPI_PHP_POSSIBLE_BIN_PATHS
 # find php include path
 find_path(ZAPI_PHP_INCLUDE_PATH php/main/php.h
           PATHS ${ZAPI_PHP_POSSIBLE_INCLUDE_PATHS})
-
 find_program(ZAPI_PHP_EXECUTABLE NAEMS php
              PATHS ${ZAPI_PHP_POSSIBLE_BIN_PATHS} NO_DEFAULT_PATH)
 
@@ -65,4 +64,4 @@ foreach(zapi_temp_include_path ${ZAPI_TEMP_RUN_PHPCFG_OUTPUT})
    string(SUBSTRING ${zapi_temp_include_path} 2 -1 zapi_temp_include_path)
    list(APPEND ZAPI_PHP_INCLUDE_PATH ${zapi_temp_include_path})
 endforeach()
-include_directories(ZAPI_PHP_INCLUDE_PATH)
+include_directories(BEFORE ${ZAPI_PHP_INCLUDE_PATH})

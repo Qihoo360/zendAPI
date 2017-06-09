@@ -19,6 +19,7 @@
 #include <memory>
 
 #include "zapi/Global.h"
+#include "zapi/lang/StdClass.h"
 
 #include "php/Zend/zend_types.h"
 #include "php/Zend/zend_alloc.h"
@@ -29,7 +30,7 @@ namespace zapi
 namespace vm
 {
 
-class StdClass;
+using zapi::lang::StdClass;
 
 class StdClassImpl
 {
@@ -135,7 +136,7 @@ public:
       // correct number of bytes from the pointer to get at the address at which the
       // actual StdClassImpl starts. to be able to actually perform this pointer arithmetic
       // we must first cast the pointer to a char (void pointer arithmetic is not allowed!)
-      auto *mixed = static_cast<const MixedObject *>(static_cast<char *>(object) - getOffset());
+      auto *mixed = reinterpret_cast<const MixedObject *>(reinterpret_cast<const char *>(object) - getOffset());
       return mixed->self;
    }
 

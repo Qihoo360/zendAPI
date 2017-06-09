@@ -1,11 +1,12 @@
 set(ZAPI_SRC
     kernel/Global.cpp
     lang/Variant.cpp
-    lang/FatalError.cpp
+#    lang/FatalError.cpp
     lang/StdClass.cpp
-    vm/StdClassImpl.cpp
-    vm/Extension.cpp
-    vm/Zval.cpp)
+#    vm/StdClassImpl.cpp
+#    vm/Extension.cpp
+#    vm/Zval.cpp
+    )
 
 zapi_add_library(${ZAPI_PROJECT_NAME} SHARED ${ZAPI_SRC}
                  ${ZAPI_PUBLIC_HEADERS}
