@@ -21,6 +21,7 @@
 #include "zapi/lang/OrigException.h"
 #include "zapi/vm/StdClassImpl.h"
 #include "zapi/utils/Arithmetic.h"
+#include "zapi/utils/LowerCase.h"
 
 namespace zapi
 {
@@ -29,6 +30,7 @@ namespace lang
 
 using zapi::vm::StdClassImpl;
 using zapi::utils::Arithmetic;
+using zapi::utils::LowerCase;
 
 /**
  * Implementation for the Value class, which wraps a PHP userspace
