@@ -115,6 +115,11 @@ function(zapi_add_library name)
                                VERSION ${ZAPI_VERSION_MAJOR}.${ZAPI_VERSION_MINOR}.${ZAPI_VERSION_PATCH})
       endif()
    endif()
+   if (APPLE)
+      # here when we compile zapi on osx, we do extra with linker flags -undefined dynamic_lookup
+      set_property(TARGET ${name} APPEND_STRING PROPERTY
+                   LINK_FLAGS " -undefined dynamic_lookup ")
+   endif()
 endfunction()
 
 macro(zapi_add_executable name)

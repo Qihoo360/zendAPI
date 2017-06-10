@@ -15,6 +15,8 @@
 
 #include "php/Zend/zend_compile.h"
 #include "php/Zend/zend_closures.h"
+#include "php/Zend/zend_string.h"
+#include "php/Zend/zend_alloc.h"
 
 #include "zapi/lang/FatalError.h"
 #include "zapi/lang/Variant.h"
@@ -26,6 +28,7 @@
 #include "zapi/ds/String.h"
 
 #include <cstring>
+#include <iostream>
 
 namespace zapi
 {

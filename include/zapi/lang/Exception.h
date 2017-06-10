@@ -17,7 +17,7 @@
 #define ZAPI_LANG_EXCEPTION_H
 
 #include <exception>
-#include <cstring>
+#include <string>
 
 #include "zapi/Global.h"
 
@@ -33,7 +33,7 @@ protected:
     * The exception message
     * @var    char*
     */
-   std::string m_message;
+    std::string m_message;
 public:
    /**
     * Constructor
