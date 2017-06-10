@@ -964,7 +964,13 @@ public:
     * @internal
     */
    std::string debugZval() const;
-
+   
+   /**
+    * get the zval reference been wrappered
+    * 
+    * @return 
+    */
+   const Zval& getZval();
 protected:
    /**
     * Detach the zval

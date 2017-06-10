@@ -13,7 +13,6 @@
 //
 // Created by zzu_softboy on 06/06/2017.
 
-#include <cstring>
 #include "php/Zend/zend_compile.h"
 #include "php/Zend/zend_closures.h"
 
@@ -25,6 +24,8 @@
 #include "zapi/utils/Arithmetic.h"
 #include "zapi/utils/LowerCase.h"
 #include "zapi/ds/String.h"
+
+#include <cstring>
 
 namespace zapi
 {
@@ -1781,7 +1782,7 @@ void Variant::unset(const char *key, int size)
 }
 
 /**
- *  Retrieve the original implementation
+ * Retrieve the original implementation
  *
  * This only works for classes that were implemented using PHP-CPP,
  * it returns nullptr for all other classes
@@ -1821,6 +1822,16 @@ std::string Variant::debugZval() const
 }
 
 /**
+ * Gete the wrapper Zval object reference
+ * 
+ * @return 
+ */
+const Zval& Variant::getZval()
+{
+   return m_val;
+}
+
+/**
  *  Custom output stream operator
  *  @param  stream
  *  @param  value
@@ -1830,7 +1841,6 @@ std::ostream &operator<<(std::ostream &stream, const Variant &value)
 {
    return stream << value.getStringValue();
 }
-
 
 } // lang
 } // zapi

@@ -48,9 +48,9 @@ public:
    }
 
    /**
-    *  Cast to a zval
+    * Cast to a zval
     *
-    *  @return zend value structure
+    * @return zend value structure
     */
    _zval_struct &operator* () const &
    {
@@ -58,10 +58,10 @@ public:
    }
 
    /**
-    *  In case this is a reference, dereference it into a zval.. In case it isn't
-    *  the actual value is returned.
+    * In case this is a reference, dereference it into a zval.. In case it isn't
+    * the actual value is returned.
     *
-    *  @return _zval_struct*
+    * @return _zval_struct*
     */
    _zval_struct *dereference() const;
 };
