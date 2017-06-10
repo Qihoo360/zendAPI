@@ -4,7 +4,7 @@ project(zapi CXX)
 set(ZAPI_PROJECT_NAME zapi)
 
 list(APPEND CMAKE_MODULE_PATH
-     "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
+   "${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules")
 
 set(ZAPI_VERSION 0.0.1)
 set(ZAPI_VERSION_MAJOR 0)
@@ -19,22 +19,22 @@ set(ZAPI_ABI_MINOR ${ZAPI_VERSION_MINOR})
 set(ZAPI_ABI_PATCH ${ZAPI_VERSION_PATCH})
 
 set(ZAPI_ABI_VERSION
-    "{ZAPI_ABI_MAJOR}.${ZAPI_ABI_MINOR}.${ZAPI_ABI_PATCH}")
+   "{ZAPI_ABI_MAJOR}.${ZAPI_ABI_MINOR}.${ZAPI_ABI_PATCH}")
 set(ZAPI_PACKAGE_VERSION
-    "${ZAPI_VERSION_MAJOR}.${ZAPI_VERSION_MINOR}.${ZAPI_VERSION_PATCH}")
+   "${ZAPI_VERSION_MAJOR}.${ZAPI_VERSION_MINOR}.${ZAPI_VERSION_PATCH}")
 set(ZAPI_NUMERIC_VERSION 0x000001)
 set(ZAPI_STAGE_NAME ${ZAPI_VERSION_STAGE})
 
 set(ZAPI_ALLOWED_STAGE_NAMES
-    rc
-    beta
-    alpha
-    devel
-    release
-    stable)
+   rc
+   beta
+   alpha
+   devel
+   release
+   stable)
 
 list(FIND ZAPI_ALLOWED_STAGE_NAMES
-     "${ZAPI_STAGE_NAME}" ZAPI_TEMP_STAGE_RET)
+   "${ZAPI_STAGE_NAME}" ZAPI_TEMP_STAGE_RET)
 
 if(ZAPI_TEMP_STAGE_RET EQUAL -1)
    message(WARNING "stage ${NOTIFY_STAGE_NAME}  is not allowed, reset to be beta")
@@ -42,7 +42,7 @@ if(ZAPI_TEMP_STAGE_RET EQUAL -1)
 endif()
 
 set(ZAPI_VERSION
-    "${ZAPI_VERSION_MAJOR}.${ZAPI_VERSION_MINOR}.${ZAPI_VERSION_PATCH}-${ZAPI_VERSION_STAGE}")
+   "${ZAPI_VERSION_MAJOR}.${ZAPI_VERSION_MINOR}.${ZAPI_VERSION_PATCH}-${ZAPI_VERSION_STAGE}")
 
 set(ZAPI_WORKSPACE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 set(ZAPI_UTILS_DIR "${ZAPI_WORKSPACE_DIR}/utils")
@@ -59,13 +59,13 @@ set(ZAPI_ARCHIVE_OUTPUT_INTDIR "${ZAPI_BINARY_DIR}/${CMAKE_CFG_INTDIR}/lib")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 option(ZAPI_OPT_DISABLE_TESTS
-       "If tests should be compiled or not" OFF)
+   "If tests should be compiled or not" OFF)
 
 option(ZAPI_OPT_ENABLE_VERBOSE_DEBUG
-       "Enable verbose debugging" OFF)
+   "Enable verbose debugging" OFF)
 
 option(ZAPI_OPT_DISABLE_TESTS
-       "If tests should be compiled or not" OFF)
+   "If tests should be compiled or not" OFF)
 
 set(ZAPI_OPT_LIBDIR_SUFFIX "" CACHE STRING "Define suffix of library directory name (32/64)" )
 string(TOUPPER "${CMAKE_BUILD_TYPE}" ZAPI_BUILD_TYPE)
@@ -96,7 +96,7 @@ else()
 endif()
 
 set(ZAPI_INSTALL_CMAKE_DIR ${ZAPI_INSTALL_CMAKE_DIR_TMP}
-    CACHE PATH "Installation directory for CMake files")
+   CACHE PATH "Installation directory for CMake files")
 
 foreach(dirname LIB BIN INCLUDE CMAKE)
    set(var ZAPI_INSTALL_${dirname}_DIR)
@@ -109,18 +109,19 @@ include(AddLibZendApi)
 include(DetectPhpInfo)
 
 configure_file(
-    ${ZAPI_INCLUDE_DIR}/zapi/Config.h.in
-    ${ZAPI_EXTRA_INCLUDE_DIR}/zapi/Config.h
-    NEWLINE_STYLE UNIX)
+   ${ZAPI_INCLUDE_DIR}/zapi/Config.h.in
+   ${ZAPI_EXTRA_INCLUDE_DIR}/zapi/Config.h
+   NEWLINE_STYLE UNIX)
 
 configure_file(
-    ${ZAPI_INCLUDE_DIR}/zapi/Version.h.in
-    ${ZAPI_EXTRA_INCLUDE_DIR}/zapi/Version.h
-    NEWLINE_STYLE UNIX)
+   ${ZAPI_INCLUDE_DIR}/zapi/Version.h.in
+   ${ZAPI_EXTRA_INCLUDE_DIR}/zapi/Version.h
+   NEWLINE_STYLE UNIX)
 
-include_directories(BEFORE
-                    ${ZAPI_INCLUDE_DIR}
-                    ${ZAPI_EXTRA_INCLUDE_DIR})
+include_directories(
+   BEFORE
+   ${ZAPI_INCLUDE_DIR}
+   ${ZAPI_EXTRA_INCLUDE_DIR})
 
 # variable about header files
 set(ZAPI_PUBLIC_HEADERS "")
@@ -136,31 +137,31 @@ if(NOT ZAPI_OPT_DISABLE_TESTS)
 endif()
 
 set(ZAPI_INCLUDE_DIRS_TEMP
-    ${ZAPI_INCLUDE_DIR}
-    ${ZAPI_EXTRA_INCLUDE_DIR})
+   ${ZAPI_INCLUDE_DIR}
+   ${ZAPI_EXTRA_INCLUDE_DIR})
 
 set(ZAPI_INCLUDE_DIRS
-    ${ZAPI_INCLUDE_DIRS_TEMP} CACHE PATH "ZendApi include directories")
+   ${ZAPI_INCLUDE_DIRS_TEMP} CACHE PATH "ZendApi include directories")
 
 configure_file(${ZAPI_CMAKE_DIR}/ZendApiConfigBuildTree.cmake.in
-               ${ZAPI_BINARY_DIR}/ZendApiConfig.cmake
-               @ONLY)
+   ${ZAPI_BINARY_DIR}/ZendApiConfig.cmake
+   @ONLY)
 
 configure_file(${ZAPI_CMAKE_DIR}/ZendApiConfig.cmake.in
-${ZAPI_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/ZendApiConfig.cmake
-@ONLY)
+   ${ZAPI_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/ZendApiConfig.cmake
+   @ONLY)
 
 # Generate version info for both build-tree and install-tree.
 configure_file(${ZAPI_CMAKE_DIR}/ZendApiConfigVersion.cmake.in
-               ${ZAPI_BINARY_DIR}/ZendApiConfigVersion.cmake
-               @ONLY)
+   ${ZAPI_BINARY_DIR}/ZendApiConfigVersion.cmake
+   @ONLY)
 
 install(FILES
-        ${ZAPI_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/ZendApiConfig.cmake
-        ${ZAPI_BINARY_DIR}/ZendApiConfigVersion.cmake
-        DESTINATION
-        "${ZAPI_INSTALL_CMAKE_DIR}"
-        COMPONENT dev)
+   ${ZAPI_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/ZendApiConfig.cmake
+   ${ZAPI_BINARY_DIR}/ZendApiConfigVersion.cmake
+   DESTINATION
+   "${ZAPI_INSTALL_CMAKE_DIR}"
+   COMPONENT dev)
 
 message(STATUS "")
 message(STATUS "(zapi ${ZAPI_VERSION})")

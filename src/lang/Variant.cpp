@@ -1050,13 +1050,12 @@ Variant do_exec(const zval *object, zval *method, int argc, zval *argv)
  * We have ten variants of this function, depending on the number of parameters
  * This call operator is only useful when the variable represents a callable
  * @param  p0-p10          Parameters of the function to be called.
- * @return Value
+ * @return Variant
  */
 Variant Variant::operator()() const
 {
    return do_exec(nullptr, m_val, 0, nullptr);
 }
-
 
 /**
  * Is a method with the given name callable?
@@ -1104,7 +1103,7 @@ bool Variant::isCallable(const char *name)
 /**
  * Call the method - if the variable holds an object with the given method
  * @param  name        name of the method to call
- * @return Value
+ * @return Variant
  */
 Variant Variant::call(const char *name) const
 {
@@ -1115,7 +1114,7 @@ Variant Variant::call(const char *name) const
 /**
  * Call the method - if the variable holds an object with the given method
  * @param  name        name of the method to call
- * @return Value
+ * @return Variant
  */
 Variant Variant::call(const char *name)
 {
@@ -1127,7 +1126,7 @@ Variant Variant::call(const char *name)
  * Call function with a number of parameters
  * @param  argc        Number of parameters
  * @param  argv        The parameters
- * @return Value
+ * @return Variant
  */
 Variant Variant::exec(int argc, Variant *argv) const
 {
@@ -1143,7 +1142,7 @@ Variant Variant::exec(int argc, Variant *argv) const
  * @param  name        Name of method to call
  * @param  argc        Number of parameters
  * @param  argv        The parameters
- * @return Value
+ * @return Variant
  */
 Variant Variant::exec(const char *name, int argc, Variant *argv) const
 {
@@ -1161,7 +1160,7 @@ Variant Variant::exec(const char *name, int argc, Variant *argv) const
  * @param  name        Name of method to call
  * @param  argc        Number of parameters
  * @param  argv        The parameters
- * @return Value
+ * @return Variant
  */
 Variant Variant::exec(const char *name, int argc, Variant *argv)
 {
@@ -1444,7 +1443,7 @@ bool Variant::derivedFrom(const char *className, size_t size, bool allowString) 
 
 /**
  * Make a clone of the type
- * @return Value
+ * @return Variant
  */
 Variant Variant::clone() const
 {
@@ -1456,7 +1455,7 @@ Variant Variant::clone() const
 /**
  * Clone the zval to a different type
  * @param  type
- * @return Value
+ * @return Variant
  */
 Variant Variant::clone(Type typeValue) const
 {
@@ -1466,7 +1465,6 @@ Variant Variant::clone(Type typeValue) const
    }
    return cloned;
 }
-
 
 /**
  * Retrieve the value as integer
@@ -1621,7 +1619,7 @@ bool Variant::contains(const char *key, ssize_t size) const
 /**
  * Get access to a certain array member
  * @param  index
- * @return Value
+ * @return Variant
  */
 Variant Variant::get(int index) const
 {
@@ -1642,7 +1640,7 @@ Variant Variant::get(int index) const
  * Get access to a certain assoc member
  * @param  key
  * @param  size
- * @return Value
+ * @return Variant
  */
 Variant Variant::get(const char *key, ssize_t size) const
 {
@@ -1675,7 +1673,7 @@ Variant Variant::get(const char *key, ssize_t size) const
  * This method can be used when it is already known that the object is an array
  * @param  index
  * @param  value
- * @return Value
+ * @return Variant
  */
 void Variant::setRaw(int index, const Variant &value)
 {
@@ -1715,7 +1713,7 @@ void Variant::setRaw(const char *key, int size, const Variant &value)
  * Set a certain property
  * @param  index
  * @param  value
- * @return Value
+ * @return Variant
  */
 void Variant::set(int index, const Variant &value)
 {
@@ -1735,7 +1733,7 @@ void Variant::set(int index, const Variant &value)
  * @param  key
  * @param  size
  * @param  value
- * @return Value
+ * @return Variant
  */
 void Variant::set(const char *key, int size, const Variant &value)
 {
@@ -1753,8 +1751,8 @@ void Variant::set(const char *key, int size, const Variant &value)
 
 
 /**
- *  Unset a member by its index
- *  @param  index
+ * Unset a member by its index
+ * @param  index
  */
 void Variant::unset(int index)
 {
@@ -1835,10 +1833,10 @@ const Zval& Variant::getZval()
 }
 
 /**
- *  Custom output stream operator
- *  @param  stream
- *  @param  value
- *  @return ostream
+ * Custom output stream operator
+ * @param  stream
+ * @param  value
+ * @return ostream
  */
 std::ostream &operator<<(std::ostream &stream, const Variant &value)
 {
