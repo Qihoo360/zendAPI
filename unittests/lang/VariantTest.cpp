@@ -30,5 +30,15 @@ TEST(VariantTest, testConstructor)
       Variant var1(std::numeric_limits<int16_t>::min());
       const Zval &val1 = var1.getZval();
       ASSERT_EQ(Z_LVAL_P(val1), std::numeric_limits<int16_t>::min());
+      Variant var2(std::numeric_limits<int16_t>::max());
+      ASSERT_EQ(Z_LVAL_P(var2.getZval()), std::numeric_limits<int16_t>::max());
+      Variant var3(std::numeric_limits<int32_t>::min());
+      ASSERT_EQ(Z_LVAL_P(var3.getZval()), std::numeric_limits<int32_t>::min());
+      Variant var4(std::numeric_limits<int32_t>::max());
+      ASSERT_EQ(Z_LVAL_P(var4.getZval()), std::numeric_limits<int32_t>::max());
+      Variant var5(std::numeric_limits<int64_t>::min());
+      ASSERT_EQ(Z_LVAL_P(var5.getZval()), std::numeric_limits<int64_t>::min());
+      Variant var6(std::numeric_limits<int64_t>::max());
+      ASSERT_EQ(Z_LVAL_P(var6.getZval()), std::numeric_limits<int64_t>::max());
    }
 }
