@@ -139,6 +139,9 @@ Variant::Variant(const std::string &value)
 Variant::Variant(const char *value, int size)
 {
    if (value != nullptr) {
+      if (size < 0) {
+         size = std::strlen(value);
+      }
       ZVAL_STRINGL(m_val, value, size);
    } else {
       ZVAL_NULL(m_val);

@@ -4,6 +4,7 @@
 #include "zapi/Global.h"
 #include "zapi/lang/Variant.h"
 #include "zapi/vm/Zval.h"
+#include "zapi/lang/FatalError.h"
 
 #include "php/sapi/embed/php_embed.h"
 #include "php/Zend/zend_types.h"
@@ -12,8 +13,12 @@
 
 #include <iostream>
 #include <limits>
+#include <string>
+#include <cstring>
 
 using zapi::lang::Variant;
+using zapi::lang::FatalError;
+using zapi::lang::Type;
 using zapi::vm::Zval;
 
 namespace
@@ -66,6 +71,62 @@ TEST_F(VariantTest, testConstructor)
       char *retCharArr = Z_STRVAL_P(charVariant.getZval());
       ASSERT_EQ(retCharArr[0], 'a');
       ASSERT_EQ(Z_STRLEN_P(charVariant.getZval()), 1);
+      // test constructor(const std::string &value)
+      std::string zapiStr("zapi");
+      Variant zapiStrVar(zapiStr);
+      char *zapiStrPtr = Z_STRVAL_P(zapiStrVar.getZval());
+      ASSERT_EQ(Z_STRLEN_P(zapiStrVar.getZval()), 4);
+      ASSERT_EQ(std::strncmp(zapiStrPtr, "zapi", 4), 0);
+      ASSERT_EQ(Z_TYPE_P(zapiStrVar.getZval()), IS_STRING);
+      // test constructor(const char *value, int length = -1)
+      Variant sizeStr1("hello zapi!", -1);
+      ASSERT_EQ(Z_STRLEN_P(sizeStr1.getZval()), 11);
+      ASSERT_EQ(std::strncmp(Z_STRVAL_P(sizeStr1.getZval()), "hello zapi!", 11), 0);
+      ASSERT_EQ(Z_TYPE_P(sizeStr1.getZval()), IS_STRING);
+      Variant sizeStr2("hello zapi!", 5);
+      ASSERT_EQ(Z_STRLEN_P(sizeStr2.getZval()), 5);
+      ASSERT_EQ(std::strncmp(Z_STRVAL_P(sizeStr2.getZval()), "hello", 5), 0);
+      ASSERT_EQ(Z_TYPE_P(sizeStr2.getZval()), IS_STRING);
+      Variant sizeStr3("hello zapi!", 20);
+      ASSERT_EQ(Z_STRLEN_P(sizeStr3.getZval()), 20);
+      ASSERT_EQ(std::strncmp(Z_STRVAL_P(sizeStr3.getZval()), "hello zapi!\0\0\0\0\0\0\0\0\0", 20), 0);
+      ASSERT_EQ(Z_TYPE_P(sizeStr3.getZval()), IS_STRING);
+      Variant sizeStr4("hello zapi!");
+      ASSERT_EQ(Z_STRLEN_P(sizeStr4.getZval()), 11);
+      ASSERT_EQ(std::strncmp(Z_STRVAL_P(sizeStr4.getZval()), "hello zapi!", 11), 0);
+      ASSERT_EQ(Z_TYPE_P(sizeStr4.getZval()), IS_STRING);
+      // test constructor(double value)
+      double dvalue = 0.12;
+      Variant doubleVar(dvalue);
+      ASSERT_EQ(Z_TYPE_P(doubleVar.getZval()), IS_DOUBLE);
+      ASSERT_EQ(Z_DVAL_P(doubleVar.getZval()), 0.12);
+      double dvalue1 = -0.12;
+      Variant doubleVar1(dvalue1);
+      ASSERT_EQ(Z_TYPE_P(doubleVar1.getZval()), IS_DOUBLE);
+      ASSERT_EQ(Z_DVAL_P(doubleVar1.getZval()), -0.12);
+      // test type constructor
+      ASSERT_THROW(Variant(Type::Undefined), FatalError);
+      ASSERT_THROW(Variant(Type::Resource), FatalError);
+      ASSERT_THROW(Variant(Type::Constant), FatalError);
+      ASSERT_THROW(Variant(Type::ConstantAST), FatalError);
+      ASSERT_THROW(Variant(Type::Callable), FatalError);
+      ASSERT_THROW(Variant(Type::Reference), FatalError);
+      Variant nullTypeVar(Type::Null);
+      ASSERT_EQ(Z_TYPE_P(nullTypeVar.getZval()), IS_NULL);
+      Variant falseTypeVar(Type::False);
+      ASSERT_EQ(Z_TYPE_P(falseTypeVar.getZval()), IS_FALSE);
+      Variant trueTypeVar(Type::True);
+      ASSERT_EQ(Z_TYPE_P(trueTypeVar.getZval()), IS_TRUE);
+      Variant longTypeVar(Type::Long);
+      ASSERT_EQ(Z_TYPE_P(longTypeVar.getZval()), IS_LONG);
+      Variant doubleTypeVar(Type::Double);
+      ASSERT_EQ(Z_TYPE_P(doubleTypeVar.getZval()), IS_DOUBLE);
+      Variant stringTypeVar(Type::String);
+      ASSERT_EQ(Z_TYPE_P(stringTypeVar.getZval()), IS_STRING);
+      Variant arrayTypeVar(Type::Array);
+      ASSERT_EQ(Z_TYPE_P(arrayTypeVar.getZval()), IS_ARRAY);
+      Variant objectTypeVar(Type::Object);
+      ASSERT_EQ(Z_TYPE_P(objectTypeVar.getZval()), IS_OBJECT);
    }
 }
 
