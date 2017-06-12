@@ -5,6 +5,7 @@
 #include "zapi/lang/Variant.h"
 #include "zapi/vm/Zval.h"
 #include "zapi/lang/FatalError.h"
+#include "zapi/lang/Type.h"
 
 #include "php/sapi/embed/php_embed.h"
 #include "php/Zend/zend_types.h"
@@ -105,12 +106,13 @@ TEST_F(VariantTest, testConstructor)
       ASSERT_EQ(Z_TYPE_P(doubleVar1.getZval()), IS_DOUBLE);
       ASSERT_EQ(Z_DVAL_P(doubleVar1.getZval()), -0.12);
       // test type constructor
-      ASSERT_THROW(Variant(Type::Undefined), FatalError);
-      ASSERT_THROW(Variant(Type::Resource), FatalError);
-      ASSERT_THROW(Variant(Type::Constant), FatalError);
-      ASSERT_THROW(Variant(Type::ConstantAST), FatalError);
-      ASSERT_THROW(Variant(Type::Callable), FatalError);
-      ASSERT_THROW(Variant(Type::Reference), FatalError);
+
+      ASSERT_THROW({Variant undefinedVar(Type::Undefined);}, FatalError);
+      ASSERT_THROW({Variant resourceVar(Type::Resource);}, FatalError);
+      ASSERT_THROW({Variant constVar(Type::Constant);}, FatalError);
+      ASSERT_THROW({Variant constAstVar(Type::ConstantAST);}, FatalError);
+      ASSERT_THROW({Variant callableVar(Type::Callable);}, FatalError);
+      ASSERT_THROW({Variant refVar(Type::Reference);}, FatalError);
       Variant nullTypeVar(Type::Null);
       ASSERT_EQ(Z_TYPE_P(nullTypeVar.getZval()), IS_NULL);
       Variant falseTypeVar(Type::False);
