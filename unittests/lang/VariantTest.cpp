@@ -106,7 +106,6 @@ TEST_F(VariantTest, testConstructor)
       ASSERT_EQ(Z_TYPE_P(doubleVar1.getZval()), IS_DOUBLE);
       ASSERT_EQ(Z_DVAL_P(doubleVar1.getZval()), -0.12);
       // test type constructor
-
       ASSERT_THROW({Variant undefinedVar(Type::Undefined);}, FatalError);
       ASSERT_THROW({Variant resourceVar(Type::Resource);}, FatalError);
       ASSERT_THROW({Variant constVar(Type::Constant);}, FatalError);
@@ -129,6 +128,21 @@ TEST_F(VariantTest, testConstructor)
       ASSERT_EQ(Z_TYPE_P(arrayTypeVar.getZval()), IS_ARRAY);
       Variant objectTypeVar(Type::Object);
       ASSERT_EQ(Z_TYPE_P(objectTypeVar.getZval()), IS_OBJECT);
+      
+      // test construct from other _zval_struct *
+      zval rawVar;
+      ZVAL_LONG(&rawVar, 2017);
+      Variant constructFromRaw(&rawVar);
+      ASSERT_EQ(Z_LVAL_P(constructFromRaw.getZval()), 2017);
+      ASSERT_EQ(Z_TYPE_P(constructFromRaw.getZval()), IS_LONG);
+      ZVAL_LONG(&rawVar, 2018);
+      ASSERT_EQ(Z_LVAL_P(constructFromRaw.getZval()), 2017);
+      ASSERT_EQ(Z_LVAL_P(&rawVar), 2018);
+      zval rawVar1;
+      ZVAL_LONG(&rawVar1, 2017);
+      Variant constructFromRawRef(&rawVar1, true);
+      ASSERT_EQ(Z_TYPE_P(constructFromRawRef.getZval()), IS_LONG);
+      ASSERT_EQ(Z_LVAL_P(constructFromRawRef.getZval()), 2017);
    }
 }
 

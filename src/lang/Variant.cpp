@@ -164,14 +164,18 @@ Variant::Variant(double value)
  */
 Variant::Variant(_zval_struct *value, bool isRef)
 {
-   if (!isRef) {
-      ZVAL_DUP(m_val, value);
-   } else {
-      ZVAL_MAKE_REF(value);
-      zend_reference *ref = Z_REF_P(value);
-      ++GC_REFCOUNT(ref);
-      ZVAL_REF(m_val, ref);
+   ZVAL_DUP(m_val, value);
+   if (!Z_REFCOUNTED_P(m_val)) {
+      return;
    }
+   if (isRef && Z_REFCOUNT_P(m_val) > 1) {
+      SEPARATE_ZVAL_IF_NOT_REF(m_val);
+   }
+   Z_ADDREF_P(m_val);
+   if (!isRef || Z_ISREF_P(m_val)) {
+      return;
+   }
+   ZVAL_MAKE_REF(m_val);
 }
 
 /**
