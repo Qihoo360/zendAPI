@@ -1030,15 +1030,7 @@ private:
     */
    Variant exec(const char *name, int argc, Variant *argv) const;
    Variant exec(const char *name, int argc, Variant *argv);
-
-   /**
-    * Assign a raw zval structure
-    *
-    * @param  value   The value to assign
-    * @return Value
-    */
-   Variant &operator=(_zval_struct *value);
-
+   
    /**
     * Refcount - the number of references to the value
     * @return int

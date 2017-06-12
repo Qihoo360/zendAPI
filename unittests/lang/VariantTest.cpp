@@ -151,7 +151,85 @@ TEST_F(VariantTest, testConstructor)
       ASSERT_EQ(Z_TYPE_P(meStr.getZval()), Z_TYPE_P(origStr.getZval()));
       ASSERT_EQ(Z_LVAL_P(meStr.getZval()), Z_LVAL_P(origStr.getZval()));
    }
-   
+   {
+      // test move constructor 
+      Variant orig("zapi", 4);
+      Variant me(std::move(orig));
+      ASSERT_EQ(Z_TYPE_P(orig.getZval()), IS_UNDEF);
+      ASSERT_EQ(Z_TYPE_P(me.getZval()), IS_STRING);
+      ASSERT_EQ(std::strncmp(Z_STRVAL_P(me.getZval()), "zapi", 4), 0);
+   }
+}
+
+TEST_F(VariantTest, testAssignOperator)
+{
+   {
+      Variant orig(2018);
+      Variant me("hello", 5);
+      me = orig;
+      ASSERT_EQ(Z_TYPE_P(orig.getZval()), IS_LONG);
+      ASSERT_EQ(Z_LVAL_P(me.getZval()), 2018);
+   }
+   {
+      // test number assign operators
+      Variant var(1);
+      ASSERT_EQ(Z_TYPE_P(var.getZval()), IS_LONG);
+      ASSERT_EQ(Z_LVAL_P(var.getZval()), 1);
+      var = static_cast<int16_t>(123);
+      ASSERT_EQ(Z_TYPE_P(var.getZval()), IS_LONG);
+      ASSERT_EQ(Z_LVAL_P(var.getZval()), 123);
+      var = std::numeric_limits<int16_t>::min();
+      ASSERT_EQ(Z_TYPE_P(var.getZval()), IS_LONG);
+      ASSERT_EQ(Z_LVAL_P(var.getZval()), std::numeric_limits<int16_t>::min());
+      var = std::numeric_limits<int16_t>::max();
+      ASSERT_EQ(Z_TYPE_P(var.getZval()), IS_LONG);
+      ASSERT_EQ(Z_LVAL_P(var.getZval()), std::numeric_limits<int16_t>::max());
+      var = static_cast<int32_t>(1232);
+      ASSERT_EQ(Z_TYPE_P(var.getZval()), IS_LONG);
+      ASSERT_EQ(Z_LVAL_P(var.getZval()), 1232);
+      var = std::numeric_limits<int32_t>::min();
+      ASSERT_EQ(Z_TYPE_P(var.getZval()), IS_LONG);
+      ASSERT_EQ(Z_LVAL_P(var.getZval()), std::numeric_limits<int32_t>::min());
+      var = std::numeric_limits<int32_t>::max();
+      ASSERT_EQ(Z_TYPE_P(var.getZval()), IS_LONG);
+      ASSERT_EQ(Z_LVAL_P(var.getZval()), std::numeric_limits<int32_t>::max());
+      var = static_cast<int64_t>(2018);
+      ASSERT_EQ(Z_TYPE_P(var.getZval()), IS_LONG);
+      ASSERT_EQ(Z_LVAL_P(var.getZval()), 2018);
+      var = std::numeric_limits<int64_t>::min();
+      ASSERT_EQ(Z_TYPE_P(var.getZval()), IS_LONG);
+      ASSERT_EQ(Z_LVAL_P(var.getZval()), std::numeric_limits<int64_t>::min());
+      var = std::numeric_limits<int64_t>::max();
+      ASSERT_EQ(Z_TYPE_P(var.getZval()), IS_LONG);
+      ASSERT_EQ(Z_LVAL_P(var.getZval()), std::numeric_limits<int64_t>::max());
+      // test double assign operators
+      var = 0.12;
+      ASSERT_EQ(Z_TYPE_P(var.getZval()), IS_DOUBLE);
+      ASSERT_EQ(Z_DVAL_P(var.getZval()), 0.12);
+   }
+   {
+      // test boolean assign operators
+      Variant booleanVar;
+      ASSERT_EQ(Z_TYPE_P(booleanVar.getZval()), IS_NULL);
+      booleanVar = true;
+      ASSERT_EQ(Z_TYPE_P(booleanVar.getZval()), IS_TRUE);
+      booleanVar = false;
+      ASSERT_EQ(Z_TYPE_P(booleanVar.getZval()), IS_FALSE);
+   }
+   {
+      // string assign operators
+      Variant strVar;
+      ASSERT_EQ(Z_TYPE_P(strVar.getZval()), IS_NULL);
+      strVar = std::string("zapi");
+      ASSERT_EQ(Z_TYPE_P(strVar.getZval()), IS_STRING);
+      ASSERT_EQ(std::strncmp(Z_STRVAL_P(strVar.getZval()), "zapi", 4), 0);
+      strVar = 'a';
+      ASSERT_EQ(Z_TYPE_P(strVar.getZval()), IS_STRING);
+      ASSERT_EQ(std::strncmp(Z_STRVAL_P(strVar.getZval()), "a", 1), 0);
+      strVar = "hello zapi";
+      ASSERT_EQ(Z_TYPE_P(strVar.getZval()), IS_STRING);
+      ASSERT_EQ(std::strncmp(Z_STRVAL_P(strVar.getZval()), "hello zapi", 10), 0);
+   }
 }
 
 int main(int argc, char **argv)

@@ -319,60 +319,8 @@ Variant &Variant::operator=(Variant &&value) ZAPI_DECL_NOEXCEPT
       ZVAL_COPY_VALUE(m_val, value.m_val);
    } else {
       std::swap(m_val, value.m_val);
-      // and make sure it is no longer a reference
-      ZVAL_UNDEF(m_val);
+      ZVAL_UNREF(m_val);
    }
-   return *this;
-}
-
-/**
- * Assign a raw zval structure
- *
- * @param  value   The value to assign
- * @return Variant
- */
-Variant &Variant::operator=(_zval_struct *value)
-{
-   // the value to assign to
-   zval *to = m_val;
-   // Dereference values
-   if (Z_ISREF_P(value)) {
-      value = Z_REFVAL_P(value);
-   }
-   if (Z_ISREF_P(to)) {
-      to = Z_REFVAL_P(to);
-   }
-   // check if we are allowed to update this value
-   if (Z_IMMUTABLE_P(to)) {
-      throw Exception("Cannot assign to an immutable variable");
-   }
-   // If the destination is refcounted
-   if (Z_REFCOUNTED_P(to)) {
-      // objects can have their own assignment handler
-      if (Z_TYPE_P(to) == IS_OBJECT && Z_OBJ_HANDLER_P(to, set)) {
-         Z_OBJ_HANDLER_P(to, set)(to, value);
-         return *this;
-      }
-      // If to and from are the same, there is nothing left to do
-      if (to == value) {
-         return *this;
-      }
-      // It is possible to make IS_REF point to another IS_REF, but that's a bug
-      assert(Z_TYPE_P(to) == IS_REFERENCE);
-      if (Z_REFCOUNT_P(to) > 1) {
-         // If reference count is greater than 1, we need to separate zval
-         // This is the optimized version of SEPARATE_ZVAL_NOREF()
-         if (Z_COPYABLE_P(to)) {
-            // this will decrement the reference count and invoke GC_ZVAL_CHECK_FOR_POSSIBLE_ROOT()
-            zval_ptr_dtor(to);
-            zval_copy_ctor_func(to);
-         }
-      } else {
-         // Destroy the current value of the variable and free up resources
-         zval_dtor(to);
-      }
-   }
-   ZVAL_COPY(to, value);
    return *this;
 }
 
@@ -383,7 +331,22 @@ Variant &Variant::operator=(_zval_struct *value)
  */
 Variant &Variant::operator=(const Variant &value)
 {
-   return operator=(value.m_val);
+   if (this == &value) {
+      return *this;
+   }
+   if (Z_ISREF_P(m_val)) {
+      int refCount = Z_REFCOUNT_P(m_val);
+      zval_dtor(m_val);
+      *m_val = *value.m_val;
+      zval_copy_ctor(m_val);
+      ZVAL_MAKE_REF(m_val);
+      Z_SET_REFCOUNT_P(m_val, refCount);
+   } else {
+      zval_ptr_dtor(m_val);
+      m_val = value.m_val;
+      Z_TRY_ADDREF_P(m_val);
+   }
+   return *this;
 }
 
 /**
@@ -393,9 +356,10 @@ Variant &Variant::operator=(const Variant &value)
  */
 Variant &Variant::operator=(std::nullptr_t value)
 {
-   zval z;
-   ZVAL_NULL(&z);
-   return operator=(&z);
+   SEPARATE_ZVAL_IF_NOT_REF(m_val);
+   zval_dtor(m_val);
+   ZVAL_NULL(m_val);
+   return *this;
 }
 
 /**
@@ -405,9 +369,10 @@ Variant &Variant::operator=(std::nullptr_t value)
  */
 Variant &Variant::operator=(std::int16_t value)
 {
-   zval z;
-   ZVAL_LONG(&z, value);
-   return operator=(&z);
+   SEPARATE_ZVAL_IF_NOT_REF(m_val);
+   zval_dtor(m_val);
+   ZVAL_LONG(m_val, value);
+   return *this;
 }
 
 /**
@@ -417,9 +382,10 @@ Variant &Variant::operator=(std::int16_t value)
  */
 Variant &Variant::operator=(std::int32_t value)
 {
-   zval z;
-   ZVAL_LONG(&z, value);
-   return operator=(&z);
+   SEPARATE_ZVAL_IF_NOT_REF(m_val);
+   zval_dtor(m_val);
+   ZVAL_LONG(m_val, value);
+   return *this;
 }
 
 /**
@@ -429,9 +395,10 @@ Variant &Variant::operator=(std::int32_t value)
  */
 Variant &Variant::operator=(std::int64_t value)
 {
-   zval z;
-   ZVAL_LONG(&z, value);
-   return operator=(&z);
+   SEPARATE_ZVAL_IF_NOT_REF(m_val);
+   zval_dtor(m_val);
+   ZVAL_LONG(m_val, value);
+   return *this;
 }
 
 /**
@@ -441,9 +408,10 @@ Variant &Variant::operator=(std::int64_t value)
  */
 Variant &Variant::operator=(bool value)
 {
-   zval z;
-   ZVAL_BOOL(&z, value);
-   return operator=(&z);
+   SEPARATE_ZVAL_IF_NOT_REF(m_val);
+   zval_dtor(m_val);
+   ZVAL_BOOL(m_val, value);
+   return *this;
 }
 
 /**
@@ -453,10 +421,9 @@ Variant &Variant::operator=(bool value)
  */
 Variant &Variant::operator=(char value)
 {
-   zval z;
-   ZVAL_STRINGL(&z, &value, 1);
-   operator=(&z);
-   zval_dtor(&z);
+   SEPARATE_ZVAL_IF_NOT_REF(m_val);
+   zval_dtor(m_val);
+   ZVAL_STRINGL(m_val, &value, 1);
    return *this;
 }
 
@@ -467,14 +434,9 @@ Variant &Variant::operator=(char value)
  */
 Variant &Variant::operator=(const std::string &value)
 {
-   zval z;
-   if (value.size()) {
-      ZVAL_STRINGL(&z, value.c_str(), value.size());
-   } else {
-      ZVAL_EMPTY_STRING(&z);
-   }
-   operator=(&z);
-   zval_dtor(&z);
+   SEPARATE_ZVAL_IF_NOT_REF(m_val);
+   zval_dtor(m_val);
+   ZVAL_STRINGL(m_val, value.c_str(), value.size());
    return *this;
 }
 
@@ -485,27 +447,23 @@ Variant &Variant::operator=(const std::string &value)
  */
 Variant &Variant::operator=(const char *value)
 {
-   zval z;
-   if (value) {
-      ZVAL_STRINGL(&z, value, std::strlen(value));
-   } else {
-      ZVAL_EMPTY_STRING(&z);
-   }
-   operator=(&z);
-   zval_dtor(&z);
+   SEPARATE_ZVAL_IF_NOT_REF(m_val);
+   zval_dtor(m_val);
+   ZVAL_STRINGL(m_val, value, std::strlen(value));
    return *this;
 }
 
 /**
  * Assignment operator
-      * @param  value
-* @return Variant
-*/
+ * @param  value
+ * @return Variant
+ */
 Variant &Variant::operator=(double value)
 {
-   zval z;
-   ZVAL_DOUBLE(&z, value);
-   return operator=(&z);
+   SEPARATE_ZVAL_IF_NOT_REF(m_val);
+   zval_dtor(m_val);
+   ZVAL_DOUBLE(m_val, value);
+   return *this;
 }
 
 /**
@@ -1101,7 +1059,7 @@ bool Variant::isCallable(const char *name)
    }
    // check the result ("Returns true to the fake Closure's __invoke")
    bool result = func->common.scope == zend_ce_closure &&
-                 zend_string_equals_literal(methodName.getValue(), ZEND_INVOKE_FUNC_NAME);
+         zend_string_equals_literal(methodName.getValue(), ZEND_INVOKE_FUNC_NAME);
    zend_string_release(func->common.function_name);
    zend_free_trampoline(func);
    return result;
@@ -1317,56 +1275,56 @@ Variant &Variant::setType(Type typeValue) &
    // because a direct call to zend_error() will do a longjmp() which may not
    // clean up the C++ objects created by the extension
    switch (typeValue) {
-      case Type::Undefined:
-         throw FatalError{ "Cannot make a variable undefined"};
-         break;
-      case Type::Null:
-         convert_to_null(m_val);
-         break;
-      case Type::Long:
-         convert_to_long(m_val);
-         break;
-      case Type::Double:
-         convert_to_double(m_val);
-         break;
-      case Type::Boolean:
-         convert_to_boolean(m_val);
-         break;
-      case Type::False:
-         convert_to_boolean(m_val);
-         ZVAL_FALSE(m_val);
-         break;
-      case Type::True:
-         convert_to_boolean(m_val);
-         ZVAL_TRUE(m_val);
-         break;
-      case Type::Array:
-         convert_to_array(m_val);
-         break;
-      case Type::Object:
-         convert_to_object(m_val);
-         break;
-      case Type::String:
-         convert_to_string(m_val);
-         break;
-      case Type::Resource:
-         throw FatalError{"Resource types cannot be handled by the zapi library"};
-         break;
-      case Type::Constant:
-         throw FatalError{"Constant types cannot be handled by the zapi library"};
-         break;
-      case Type::ConstantAST:
-         throw FatalError{"ConstantAST types cannot be handled by the zapi library"};
-         break;
-      case Type::Callable:
-         throw FatalError{"Callable types cannot be handled by the zapi library"};
-         break;
-      case Type::Reference:
-         throw FatalError{"Reference types cannot be handled by the zapi library"};
-         break;
-      default:
-         throw FatalError{"Reference types cannot be handled by the zapi library"};
-         break;
+   case Type::Undefined:
+      throw FatalError{ "Cannot make a variable undefined"};
+      break;
+   case Type::Null:
+      convert_to_null(m_val);
+      break;
+   case Type::Long:
+      convert_to_long(m_val);
+      break;
+   case Type::Double:
+      convert_to_double(m_val);
+      break;
+   case Type::Boolean:
+      convert_to_boolean(m_val);
+      break;
+   case Type::False:
+      convert_to_boolean(m_val);
+      ZVAL_FALSE(m_val);
+      break;
+   case Type::True:
+      convert_to_boolean(m_val);
+      ZVAL_TRUE(m_val);
+      break;
+   case Type::Array:
+      convert_to_array(m_val);
+      break;
+   case Type::Object:
+      convert_to_object(m_val);
+      break;
+   case Type::String:
+      convert_to_string(m_val);
+      break;
+   case Type::Resource:
+      throw FatalError{"Resource types cannot be handled by the zapi library"};
+      break;
+   case Type::Constant:
+      throw FatalError{"Constant types cannot be handled by the zapi library"};
+      break;
+   case Type::ConstantAST:
+      throw FatalError{"ConstantAST types cannot be handled by the zapi library"};
+      break;
+   case Type::Callable:
+      throw FatalError{"Callable types cannot be handled by the zapi library"};
+      break;
+   case Type::Reference:
+      throw FatalError{"Reference types cannot be handled by the zapi library"};
+      break;
+   default:
+      throw FatalError{"Reference types cannot be handled by the zapi library"};
+      break;
    }
    return *this;
 }
@@ -1489,24 +1447,24 @@ std::int64_t  Variant::getNumericValue() const
 bool Variant::getBooleanValue() const
 {
    switch (getType()) {
-      case Type::Undefined:
-         return false;
-      case Type::Null:
-         return false;
-      case Type::False:
-         return false;
-      case Type::True:
-         return true;
-      case Type::Long:
-         return getNumericValue();
-      case Type::Double:
-         return getDoubleValue();
-      case Type::String:
-         return getSize();
-      case Type::Array:
-         return getSize();
-      default:
-         return clone(Type::Boolean).getBooleanValue();
+   case Type::Undefined:
+      return false;
+   case Type::Null:
+      return false;
+   case Type::False:
+      return false;
+   case Type::True:
+      return true;
+   case Type::Long:
+      return getNumericValue();
+   case Type::Double:
+      return getDoubleValue();
+   case Type::String:
+      return getSize();
+   case Type::Array:
+      return getSize();
+   default:
+      return clone(Type::Boolean).getBooleanValue();
    }
 }
 
@@ -1765,10 +1723,10 @@ void Variant::unset(int index)
 {
    // only necessary for arrays
    if (!isArray()) return;
-
+   
    // if this is not a reference variable, we should detach it to implement copy on write
    SEPARATE_ZVAL_IF_NOT_REF(m_val);
-
+   
    // remove the index
    zend_hash_index_del(Z_ARRVAL_P(m_val.dereference()), index);
 }
@@ -1815,14 +1773,14 @@ std::string Variant::debugZval() const
 {
    std::string s;
    zval* z = m_val;
-
+   
    s = "[type=" + std::to_string(static_cast<int>(Z_TYPE_P(z)))
-       + " refcounted=" + std::to_string(Z_REFCOUNTED_P(z))
-       + " isref=" + std::to_string(Z_ISREF_P(z))
-       + " refcount=" + std::to_string(Z_REFCOUNTED_P(z) ? Z_REFCOUNT_P(z) : 0)
-       + "] "
+         + " refcounted=" + std::to_string(Z_REFCOUNTED_P(z))
+         + " isref=" + std::to_string(Z_ISREF_P(z))
+         + " refcount=" + std::to_string(Z_REFCOUNTED_P(z) ? Z_REFCOUNT_P(z) : 0)
+         + "] "
          ;
-
+   
    zend_string* zs = zval_get_string(z);
    s += std::string(ZSTR_VAL(zs), ZSTR_LEN(zs));
    zend_string_release(zs);
