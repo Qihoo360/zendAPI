@@ -1048,31 +1048,31 @@ template <typename X, typename std::enable_if<std::is_integral<X>::value>::type 
 X &operator+=(X &x, const Variant &value)
 {
    return x += static_cast<X>(value);
-};
+}
 
 template <typename X, typename std::enable_if<std::is_integral<X>::value>::type * = nullptr>
 X &operator-=(X &x, const Variant &value)
 {
    return x -= static_cast<X>(value);
-};
+}
 
 template <typename X, typename std::enable_if<std::is_integral<X>::value>::type * = nullptr>
 X &operator*=(X &x, const Variant &value)
 {
    return x *= static_cast<X>(value);
-};
+}
 
 template <typename X, typename std::enable_if<std::is_integral<X>::value>::type * = nullptr>
 X &operator/=(X &x, const Variant &value)
 {
    return x /= static_cast<X>(value);
-};
+}
 
 template <typename X, typename std::enable_if<std::is_integral<X>::value>::type * = nullptr>
 X &operator%=(X &x, const Variant &value)
 {
    return x %= static_cast<X>(value);
-};
+}
 
 /**
  * Custom output stream operator

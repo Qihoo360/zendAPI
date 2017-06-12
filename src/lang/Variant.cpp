@@ -978,7 +978,7 @@ Variant do_exec(const zval *object, zval *method, int argc, zval *argv)
       }
       Variant result(&retval);
       // destruct the retval (this just decrements the refcounter, which is ok, because
-      // it is already wrapped in a Php::Value so still has 1 reference)
+      // it is already wrapped in a Variant so still has 1 reference)
       zval_ptr_dtor(&retval);
       return result;
    }
@@ -1413,7 +1413,10 @@ Variant Variant::clone(Type typeValue) const
  */
 std::int64_t  Variant::getNumericValue() const
 {
-   return zval_get_long(m_val);
+   if (isNumeric()) {
+      return Z_LVAL_P(m_val);
+   }
+   clone(Type::Long).getNumericValue();
 }
 
 /**
@@ -1454,6 +1457,23 @@ std::string Variant::getStringValue() const
    std::string ret(ZSTR_VAL(tempStr), ZSTR_LEN(tempStr));
    zend_string_release(tempStr);
    return ret;
+   switch (getType()) {
+   case Type::Null:
+      return {};
+   case Type::False:
+      return "0";
+   case Type::True:
+      return "1";
+   case Type::Long:
+      return std::to_string(getNumericValue());
+   case Type::Double:
+      return std::to_string(getDoubleValue());
+   case Type::String:
+      return {Z_STRVAL_P(m_val), Z_STRLEN_P(m_val)};
+   default:
+      break;
+   }
+   return clone(Type::String).getStringValue();
 }
 
 /**
@@ -1488,7 +1508,11 @@ const char *Variant::getRawValue() const
  */
 double Variant::getDoubleValue() const
 {
-   return zval_get_double(m_val);
+   if (isDouble()) {
+      return Z_DVAL_P(m_val);
+   }
+   return clone(Type::Double).getDoubleValue();
+   // why not use zval_get_double(m_val)
 }
 
 /**

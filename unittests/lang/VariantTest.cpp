@@ -232,6 +232,65 @@ TEST_F(VariantTest, testAssignOperator)
    }
 }
 
+TEST_F(VariantTest, testGetType)
+{
+   Variant var;
+   ASSERT_EQ(var.getType(), Type::Null);
+   ASSERT_TRUE(var.isNull());
+   ASSERT_TRUE(var.isScalar());
+   var = 1;
+   ASSERT_EQ(var.getType(), Type::Long);
+   ASSERT_TRUE(var.isNumeric());
+   ASSERT_TRUE(var.isScalar());
+   var = "xiuxiux";
+   ASSERT_EQ(var.getType(), Type::String);
+   ASSERT_TRUE(var.isString());
+   ASSERT_TRUE(var.isScalar());
+   var = 0.3;
+   ASSERT_EQ(var.getType(), Type::Double);
+   ASSERT_TRUE(var.isScalar());
+   ASSERT_TRUE(var.isDouble());
+   var = true;
+   ASSERT_EQ(var.getType(), Type::True);
+   ASSERT_TRUE(var.isScalar());
+   ASSERT_TRUE(var.isBoolean());
+   var = false;
+   ASSERT_EQ(var.getType(), Type::False);
+   ASSERT_TRUE(var.isScalar());
+   ASSERT_TRUE(var.isBoolean());
+}
+
+TEST_F(VariantTest, testSetType)
+{
+   Variant var;
+   ASSERT_EQ(var.getType(), Type::Null);
+   var.setType(Type::True);
+   ASSERT_EQ(var.getType(), Type::True);
+   var.setType(Type::False);
+   ASSERT_EQ(var.getType(), Type::False);
+   var.setType(Type::String);
+   ASSERT_EQ(var.getType(), Type::String);
+   var.setType(Type::Long);
+   ASSERT_EQ(var.getType(), Type::Long);
+   var.setType(Type::Double);
+   ASSERT_EQ(var.getType(), Type::Double);
+   var.setType(Type::Array);
+   ASSERT_EQ(var.getType(), Type::Array);
+   var.setType(Type::Object);
+   ASSERT_EQ(var.getType(), Type::Object);
+   // unsupported types
+   ASSERT_THROW({var.setType(Type::Undefined);}, FatalError);
+   ASSERT_THROW({var.setType(Type::Resource);}, FatalError);
+   ASSERT_THROW({var.setType(Type::Constant);}, FatalError);
+   ASSERT_THROW({var.setType(Type::ConstantAST);}, FatalError);
+   ASSERT_THROW({var.setType(Type::Callable);}, FatalError);
+}
+
+TEST_F(VariantTest, testPlusEqOperator)
+{
+   
+}
+
 int main(int argc, char **argv)
 {
    int retCode = 0;
