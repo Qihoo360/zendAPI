@@ -178,7 +178,7 @@ Variant::Variant(_zval_struct *value, bool isRef)
    ZVAL_MAKE_REF(m_val);
 }
 
-/**
+/**   
  * Wrap around an object
  * @param  object
  */
@@ -208,30 +208,6 @@ Variant::Variant(const Variant &other)
    ZVAL_DEREF(from);
    // copy the value
    ZVAL_COPY(to, from);
-}
-
-/**
- * Creates a reference to another Value
- *
- * Value a = b.makeReference();
- *
- * is equivalent to
- *
- * $a = &$b;
- *
- * @param to Variable to which the reference should be created
- * @return Variant
- */
-Variant Variant::makeReference()
-{
-   Variant result;
-   zval *from = m_val;
-   zval *to = result.m_val;
-   ZVAL_MAKE_REF(from);
-   zend_reference *ref = Z_REF_P(from);
-   GC_REFCOUNT(ref)++;
-   ZVAL_REF(to, ref);
-   return result;
 }
 
 /**

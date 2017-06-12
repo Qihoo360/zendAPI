@@ -635,17 +635,6 @@ public:
    }
 
    /**
-    * Creates a reference to another Value
-    * Variant a = b.makeReference();
-    * is equivalent to
-    *
-    * $a = &$b;
-    *
-    * @return
-    */
-   Variant makeReference();
-
-   /**
     * The number of members in case of an array or object
     *
     * @return int
