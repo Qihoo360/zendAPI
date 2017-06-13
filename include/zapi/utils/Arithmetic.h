@@ -251,6 +251,9 @@ public:
     */
    Variant &assign(const std::string &value)
    {
+      if (m_value->isDouble()) {
+         return m_value->operator=(F<double>()(m_value->getDoubleValue(), std::stod(value)));
+      }
       return assign(static_cast<int64_t>(std::stoll(value)));
    }
 
@@ -261,7 +264,10 @@ public:
     */
    Variant &assign(const char *value)
    {
-      return assign(std::atoi(value));
+      if (m_value->isDouble()) {
+         return m_value->operator=(F<double>()(m_value->getDoubleValue(), std::stod(value)));
+      }
+      return assign(static_cast<int64_t>(std::stoll(value)));
    }
 
    /**

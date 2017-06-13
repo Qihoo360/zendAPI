@@ -1120,8 +1120,9 @@ Variant Variant::exec(const char *name, int argc, Variant *argv)
  */
 bool Variant::operator==(const Variant &value) const
 {
+   TSRMLS_FETCH();
    zval result;
-   if (SUCCESS != compare_function(&result, m_val, value.m_val)) {
+   if (SUCCESS != compare_function(&result, m_val, value.m_val TSRMLS_CC)) {
       return false;
    }
    return result.value.lval == 0;
@@ -1134,8 +1135,9 @@ bool Variant::operator==(const Variant &value) const
  */
 bool Variant::operator<(const Variant &value) const
 {
+   TSRMLS_FETCH();
    zval result;
-   if (SUCCESS != compare_function(&result, m_val, value.m_val)) {
+   if (SUCCESS != compare_function(&result, m_val, value.m_val TSRMLS_CC)) {
       return false;
    }
    return result.value.lval < 0;
@@ -1311,7 +1313,8 @@ Variant &Variant::setType(Type typeValue) &
  */
 bool Variant::isCallable() const
 {
-   return zend_is_callable(m_val, 0, NULL);
+   TSRMLS_FETCH();
+   return zend_is_callable(m_val, 0, NULL TSRMLS_CC);
 }
 
 /**
@@ -1321,13 +1324,14 @@ bool Variant::isCallable() const
  */
 zend_class_entry *Variant::getClassEntry(bool allowString) const
 {
+   TSRMLS_FETCH();
    if (isObject()) {
       return Z_OBJCE_P(m_val);
    } else {
       if (!allowString || !isString()) {
          return nullptr;
       }
-      return zend_lookup_class(Z_STR_P(m_val));
+      return zend_lookup_class(Z_STR_P(m_val) TSRMLS_CC);
    }
 }
 
@@ -1344,15 +1348,16 @@ zend_class_entry *Variant::getClassEntry(bool allowString) const
  */
 bool Variant::instanceOf(const char *className, size_t size, bool allowString) const
 {
+   TSRMLS_FETCH();
    zend_class_entry *thisClassEntry = getClassEntry(allowString);
    if (!thisClassEntry) {
       return false;
    }
-   zend_class_entry *classEntry = zend_lookup_class_ex(String(className, size), nullptr, 0);
+   zend_class_entry *classEntry = zend_lookup_class_ex(String(className, size), nullptr, 0 TSRMLS_CC);
    if (!classEntry) {
       return false;
    }
-   return instanceof_function(thisClassEntry, classEntry);
+   return instanceof_function(thisClassEntry, classEntry TSRMLS_CC);
 }
 
 /**
@@ -1368,18 +1373,19 @@ bool Variant::instanceOf(const char *className, size_t size, bool allowString) c
  */
 bool Variant::derivedFrom(const char *className, size_t size, bool allowString) const
 {
+   TSRMLS_FETCH();
    zend_class_entry *thisClassEntry = getClassEntry(allowString);
    if (!thisClassEntry) {
       return false;
    }
-   zend_class_entry *classEntry = zend_lookup_class_ex(String(className, size), nullptr, 0);
+   zend_class_entry *classEntry = zend_lookup_class_ex(String(className, size), nullptr, 0 TSRMLS_CC);
    if (!classEntry) {
       return false;
    }
    if (thisClassEntry == classEntry) {
       return false;
    }
-   return instanceof_function(thisClassEntry, classEntry);
+   return instanceof_function(thisClassEntry, classEntry TSRMLS_CC);
 }
 
 /**
@@ -1416,7 +1422,7 @@ std::int64_t  Variant::getNumericValue() const
    if (isNumeric()) {
       return Z_LVAL_P(m_val);
    }
-   clone(Type::Long).getNumericValue();
+   return clone(Type::Long).getNumericValue();
 }
 
 /**

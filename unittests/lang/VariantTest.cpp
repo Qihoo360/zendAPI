@@ -286,9 +286,124 @@ TEST_F(VariantTest, testSetType)
    ASSERT_THROW({var.setType(Type::Callable);}, FatalError);
 }
 
+TEST_F(VariantTest, testClone)
+{
+   {
+      Variant var(2018);
+      Variant cloned = var.clone();
+      ASSERT_EQ(cloned.getType(), var.getType());
+      ASSERT_EQ(cloned.getNumericValue(), var.getNumericValue());
+   }
+   {
+      Variant var(true);
+      Variant cloned = var.clone();
+      ASSERT_EQ(cloned.getType(), var.getType());
+      ASSERT_EQ(cloned.getBooleanValue(), var.getBooleanValue());
+   }
+   {
+      Variant var("zapi");
+      Variant cloned = var.clone();
+      ASSERT_EQ(cloned.getType(), var.getType());
+      ASSERT_EQ(cloned.getStringValue(), var.getStringValue());
+   }
+   {
+      Variant var(static_cast<double>(0.32));
+      Variant cloned = var.clone();
+      ASSERT_EQ(cloned.getType(), var.getType());
+      ASSERT_EQ(cloned.getDoubleValue(), var.getDoubleValue());
+   }
+   // set type when clone
+   {
+      Variant var(static_cast<double>(0.32));
+      Variant cloned = var.clone(Type::Long);
+      ASSERT_EQ(cloned.getType(), Type::Long);
+      ASSERT_EQ(var.getDoubleValue(), 0.32);
+      ASSERT_EQ(cloned.getNumericValue(), 0);
+   }
+}
+
 TEST_F(VariantTest, testPlusEqOperator)
 {
-   
+   {
+      Variant numberVar(0);
+      ASSERT_EQ(numberVar.getType(), Type::Long);
+      numberVar += 1;
+      ASSERT_EQ(numberVar.getNumericValue(), 1);
+      ASSERT_EQ(numberVar.getType(), Type::Long);
+      numberVar += 5;
+      ASSERT_EQ(numberVar.getNumericValue(), 6);
+      ASSERT_EQ(numberVar.getType(), Type::Long);
+      numberVar += true;
+      ASSERT_EQ(numberVar.getNumericValue(), 7);
+      ASSERT_EQ(numberVar.getType(), Type::Long);
+      numberVar += false;
+      ASSERT_EQ(numberVar.getNumericValue(), 7);
+      ASSERT_EQ(numberVar.getType(), Type::Long);
+      numberVar += "12";
+      ASSERT_EQ(numberVar.getNumericValue(), 19);
+      ASSERT_EQ(numberVar.getType(), Type::Long);
+      numberVar += "1.2";
+      ASSERT_EQ(numberVar.getNumericValue(), 20);
+      ASSERT_EQ(numberVar.getType(), Type::Long);
+      numberVar += static_cast<int16_t>(1);
+      ASSERT_EQ(numberVar.getNumericValue(), 21);
+      ASSERT_EQ(numberVar.getType(), Type::Long);
+      numberVar += static_cast<int32_t>(1);
+      ASSERT_EQ(numberVar.getNumericValue(), 22);
+      ASSERT_EQ(numberVar.getType(), Type::Long);
+      numberVar += static_cast<int64_t>(1);
+      ASSERT_EQ(numberVar.getNumericValue(), 23);
+      ASSERT_EQ(numberVar.getType(), Type::Long);
+      numberVar += std::string("2");
+      ASSERT_EQ(numberVar.getNumericValue(), 25);
+      ASSERT_EQ(numberVar.getType(), Type::Long);
+      numberVar += 'a'; // convert to 0
+      ASSERT_EQ(numberVar.getNumericValue(), 25);
+      ASSERT_EQ(numberVar.getType(), Type::Long);
+      numberVar += '3';
+      ASSERT_EQ(numberVar.getNumericValue(), 28);
+      ASSERT_EQ(numberVar.getType(), Type::Long);
+   }
+   {
+      Variant numberVar(static_cast<double>(0));
+      ASSERT_EQ(numberVar.getType(), Type::Double);
+      numberVar += 1;
+      ASSERT_EQ(numberVar.getDoubleValue(), 1);
+      ASSERT_EQ(numberVar.getType(), Type::Double);
+      numberVar += 5.2;
+      ASSERT_EQ(numberVar.getDoubleValue(), 6.2);
+      ASSERT_EQ(numberVar.getType(), Type::Double);
+      numberVar += true;
+      ASSERT_EQ(numberVar.getDoubleValue(), 7.2);
+      ASSERT_EQ(numberVar.getType(), Type::Double);
+      numberVar += false;
+      ASSERT_EQ(numberVar.getDoubleValue(), 7.2);
+      ASSERT_EQ(numberVar.getType(), Type::Double);
+      numberVar += "12";
+      ASSERT_EQ(numberVar.getDoubleValue(), 19.2);
+      ASSERT_EQ(numberVar.getType(), Type::Double);
+      numberVar += "1.2";
+      ASSERT_EQ(numberVar.getDoubleValue(), 20.4);
+      ASSERT_EQ(numberVar.getType(), Type::Double);
+      numberVar += static_cast<int16_t>(1);
+      ASSERT_EQ(numberVar.getDoubleValue(), 21.4);
+      ASSERT_EQ(numberVar.getType(), Type::Double);
+      numberVar += static_cast<int32_t>(1);
+      ASSERT_EQ(numberVar.getDoubleValue(), 22.4);
+      ASSERT_EQ(numberVar.getType(), Type::Double);
+      numberVar += static_cast<int64_t>(1);
+      ASSERT_EQ(numberVar.getDoubleValue(), 23.4);
+      ASSERT_EQ(numberVar.getType(), Type::Double);
+      numberVar += std::string("2");
+      ASSERT_EQ(numberVar.getDoubleValue(), 25.4);
+      ASSERT_EQ(numberVar.getType(), Type::Double);
+      numberVar += 'a'; // convert to 0
+      ASSERT_EQ(numberVar.getDoubleValue(), 25.4);
+      ASSERT_EQ(numberVar.getType(), Type::Double);
+      numberVar += '3';
+      ASSERT_EQ(numberVar.getDoubleValue(), 28.4);
+      ASSERT_EQ(numberVar.getType(), Type::Double);
+   }
 }
 
 int main(int argc, char **argv)

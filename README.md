@@ -27,6 +27,9 @@ API手册: www.zendapi.org/api
 当前ZendApi项目处于非常前期阶段，很多接口都不稳定，甚至会经常有大的变化，请不要用于实际项目，现阶段只适合学习用途。
 项目参考 PHP-CPP进行实现，大家要是对PHP-CPP感兴趣，请点击 https://github.com/CopernicaMarketingSoftware/PHP-CPP
 
+**声明：**</br>
+ZendApi项目第一版中有些部分跟PHP-CPP将会高度一样，文件头也会加上PHP-CPP信息，一旦完成后ZendApi项目将会独立发展。
+
 ### 简单入门
 #### 项目环境要求
 暂时只支持linux服务器环境，php版本7.0以上，标准C++11编译器, cmake 3.5.0以上版本
@@ -50,5 +53,6 @@ ZZU_SOFTBOY <zzu_softboy@163.com></br>
 Apache License Version 2.0 see http://www.apache.org/licenses/LICENSE-2.0.html
 
 ### 特别感谢
-
 Unicorn Team，感谢团队的自我驱动和包容的文化，让我开发ZendApi项目。
+
+<img style = "width:100px;height:100px;float:left;display:block" src="https://raw.githubusercontent.com/qcoreteam/zendapi/master/assets/images/unicornteam.png"/>
