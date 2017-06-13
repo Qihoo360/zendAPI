@@ -675,6 +675,7 @@ Variant &Variant::operator%=(bool value)
 
 Variant &Variant::operator%=(char value)
 {
+   value = value < '0' || value > '9' ? 0 : value - '0';
    return operator=(getNumericValue() % value);
 }
 

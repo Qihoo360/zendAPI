@@ -125,7 +125,7 @@ public:
    Variant apply(char value)
    {
       // convert to an integer
-      int v = value < '0' || value > '9' ? 0 : value - '0';
+      value = value < '0' || value > '9' ? 0 : value - '0';
       if (m_value->isDouble()) {
          return Variant(F<double>()(m_value->getDoubleValue(), value));
       }
