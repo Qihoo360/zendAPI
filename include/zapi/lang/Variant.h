@@ -318,31 +318,83 @@ public:
     */
    bool operator==(const char *value) const
    {
+      const char *rawValue = getRawValue();
+      if (nullptr == rawValue && nullptr == value) {
+         return true;
+      }else if (nullptr == rawValue || nullptr == value) {
+         return false;
+      }
       return std::strcmp(getRawValue(), value) == 0;
    }
 
    bool operator!=(const char *value) const
    {
+      const char *rawValue = getRawValue();
+      if (nullptr == rawValue && nullptr == value) {
+         return false;
+      }else if (nullptr == rawValue || nullptr == value) {
+         return true;
+      }
       return std::strcmp(getRawValue(), value) != 0;
    }
 
    bool operator<=(const char *value) const
    {
+      const char *rawValue = getRawValue();
+      if (nullptr == rawValue && nullptr == value) {
+         return true;
+      }else if (nullptr == rawValue || nullptr == value) {
+         if (nullptr == rawValue) {
+            return true;
+         } else {
+            return false;
+         }
+      }
       return std::strcmp(getRawValue(), value) <= 0;
    }
 
    bool operator>=(const char *value) const
    {
+      const char *rawValue = getRawValue();
+      if (nullptr == rawValue && nullptr == value) {
+         return true;
+      }else if (nullptr == rawValue || nullptr == value) {
+         if (nullptr == rawValue) {
+            return false;
+         } else {
+            return true;
+         }
+      }
       return std::strcmp(getRawValue(), value) >= 0;
    }
 
    bool operator<(const char *value) const
    {
+      const char *rawValue = getRawValue();
+      if (nullptr == rawValue && nullptr == value) {
+         return false;
+      }else if (nullptr == rawValue || nullptr == value) {
+         if (nullptr == rawValue) {
+            return true;
+         } else {
+            return false;
+         }
+      }
       return std::strcmp(getRawValue(), value) < 0;
    }
 
    bool operator>(const char *value) const
    {
+      const char *rawValue = getRawValue();
+      if (nullptr == rawValue && nullptr == value) {
+         return false;
+      }else if (nullptr == rawValue || nullptr == value) {
+         if (nullptr == rawValue) {
+            return false;
+         } else {
+            return true;
+         }
+      }
       return std::strcmp(getRawValue(), value) > 0;
    }
 

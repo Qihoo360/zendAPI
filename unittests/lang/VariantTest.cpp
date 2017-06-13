@@ -1015,6 +1015,52 @@ TEST_F(VariantTest, testModOperator)
    }
 }
 
+TEST_F(VariantTest, testStrPtrCompareOperators)
+{
+   {
+     {
+         // string value compare
+         Variant strVal("zapi");
+         ASSERT_TRUE(strVal > "hello");
+         ASSERT_TRUE(strVal >= "hello");
+         ASSERT_TRUE(strVal != "hello");
+         strVal = "hello";
+         ASSERT_TRUE(strVal < "zapi");
+         ASSERT_TRUE(strVal != "zapi");
+         ASSERT_TRUE(strVal <= "hello");
+         ASSERT_TRUE(strVal == "hello");
+         Variant numberVar(1);
+         // 其他类型都转换成nullptr
+         ASSERT_FALSE(numberVar > "hello");
+         ASSERT_TRUE(numberVar < "hello");
+         ASSERT_FALSE(numberVar == "hello");
+      }
+      {
+         // test nullptr
+         Variant nullVar;
+         ASSERT_TRUE(nullVar < "zapi");
+         ASSERT_TRUE(nullVar <= "zapi");
+         ASSERT_FALSE(nullVar > "zapi");
+         ASSERT_FALSE(nullVar >= "zapi");
+         ASSERT_TRUE(nullVar != "zapi");
+         ASSERT_FALSE(nullVar == "zapi");
+         Variant strVar("zapi");
+         ASSERT_FALSE(strVar < nullptr);
+         ASSERT_FALSE(strVar <= nullptr);
+         ASSERT_TRUE(strVar > nullptr);
+         ASSERT_TRUE(strVar >= nullptr);
+         ASSERT_TRUE(strVar != nullptr);
+         ASSERT_FALSE(strVar == nullptr);
+         ASSERT_FALSE(nullVar < nullptr); 
+         ASSERT_TRUE(nullVar <= nullptr);
+         ASSERT_FALSE(nullVar > nullptr);
+         ASSERT_TRUE(nullVar >= nullptr);
+         ASSERT_FALSE(nullVar != nullptr);
+         ASSERT_TRUE(nullVar == nullptr);
+      }
+   }
+}
+
 int main(int argc, char **argv)
 {
    int retCode = 0;
