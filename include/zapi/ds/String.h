@@ -13,8 +13,8 @@
 //
 // Created by zzu_softboy on 05/06/2017.
 
-#ifndef ZAPI_UTILS_STRING_H
-#define ZAPI_UTILS_STRING_H
+#ifndef ZAPI_DS_STRING_H
+#define ZAPI_DS_STRING_H
 
 #include <string>
 
@@ -170,4 +170,4 @@ public:
 } // ds
 } // zapi
 
-#endif // ZAPI_UTILS_STRING_H
+#endif // ZAPI_DS_STRING_H

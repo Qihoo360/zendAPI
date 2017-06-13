@@ -13,8 +13,8 @@
 //
 // Created by zzu_softboy on 27/05/2017.
 
-#ifndef ZAPI_UTILS_LIST_H
-#define ZAPI_UTILS_LIST_H
+#ifndef ZAPI_DS_LIST_H
+#define ZAPI_DS_LIST_H
 
 #include "zapi/Global.h"
 
@@ -28,4 +28,4 @@ class ZAPI_DECL_EXPORT List
 
 } // zapi
 
-#endif //ZAPI_UTILS_LIST_H
+#endif //ZAPI_DS_LIST_H

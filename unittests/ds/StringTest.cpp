@@ -11,21 +11,31 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by zzu_softboy on 27/05/2017.
+// Created by softboy on 2017/06/13.
 
-#ifndef ZAPI_UTILS_HASHTABLE_H
-#define ZAPI_UTILS_HASHTABLE_H
+#include "php/sapi/embed/php_embed.h"
 
-#include "zapi/Global.h"
+#include "gtest/gtest.h"
 
-namespace zapi
+namespace
 {
 
-class ZAPI_DECL_EXPORT HashTable
+class StringTest : public ::testing::Test
+{};
+
+} // end of namespace
+
+TEST_F(StringTest, testConstructor)
 {
+   
+}
 
-};
-
-} // zapi
-
-#endif //ZAPI_UTILS_HASHTABLE_H
+int main(int argc, char **argv)
+{
+   int retCode = 0;
+   PHP_EMBED_START_BLOCK(argc,argv);
+   ::testing::InitGoogleTest(&argc, argv);
+   retCode = RUN_ALL_TESTS();
+   PHP_EMBED_END_BLOCK();
+   return retCode;
+}

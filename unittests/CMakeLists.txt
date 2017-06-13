@@ -1,4 +1,5 @@
 add_custom_target(UnitTests)
 set_target_properties(UnitTests PROPERTIES FOLDER "UnitTests")
 add_subdirectory(lang)
+add_subdirectory(ds)
 zapi_add_unittest(UnitTests EmbedPhpTest EmbedPhpTest.cpp)

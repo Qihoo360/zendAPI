@@ -13,7 +13,7 @@
 //
 // Created by softboy on 5/26/17.
 
-#ifndef ZAPI_LANG_ARRAY_H
-#define ZAPI_LANG_ARRAY_H
+#ifndef ZAPI_DS_ARRAY_H
+#define ZAPI_DS_ARRAY_H
 
-#endif //ZAPI_LANG_ARRAY_H
+#endif //ZAPI_DS_ARRAY_H
