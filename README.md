@@ -28,7 +28,8 @@ API手册: www.zendapi.org/api
 项目参考 PHP-CPP进行实现，大家要是对PHP-CPP感兴趣，请点击 https://github.com/CopernicaMarketingSoftware/PHP-CPP
 
 **声明：**</br>
-ZendApi项目第一版中有些部分跟PHP-CPP将会高度一样，文件头也会加上PHP-CPP信息，一旦完成后ZendApi项目将会独立发展。
+ZendApi项目第一版中有些部分跟PHP-CPP将会高度一样，文件头也会加上PHP-CPP信息，一旦完成后ZendApi项目将会独立发展，当然适当的时机
+我也会将代码反馈给PHP-CPP项目。
 
 ### 简单入门
 #### 项目环境要求
