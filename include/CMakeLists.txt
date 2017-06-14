@@ -2,6 +2,7 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/kernel/ExtensionBase.h
    ${ZAPI_INCLUDE_DIR}/zapi/bridge/Extension.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Type.h
+   ${ZAPI_INCLUDE_DIR}/zapi/lang/Array.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Variant.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Variable.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Exception.h

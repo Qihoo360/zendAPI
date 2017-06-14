@@ -51,6 +51,8 @@ enum class Type : unsigned char
    Error       = _IS_ERROR
 };
 
+
+
 } // lang
 } // zapi
 

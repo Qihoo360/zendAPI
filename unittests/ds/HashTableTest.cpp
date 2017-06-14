@@ -11,35 +11,30 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by softboy on 5/26/17.
+// Created by zzu_softboy on 14/06/2017.
 
-#ifndef ZAPI_DS_HASHTABLE_H
-#define ZAPI_DS_HASHTABLE_H
+#include "php/sapi/embed/php_embed.h"
 
-#include "php/Zend/zend_hash.h"
-
+#include "gtest/gtest.h"
+#include <iostream>
 #include "zapi/Global.h"
-
-namespace zapi
+#include <limits>
+#include <bitset>
+using std::bitset;
+namespace
 {
-namespace ds
+
+class HashTableTest : public ::testing::Test
+{};
+
+} // end of namespace
+
+TEST_F(HashTableTest, testConstructors) 
 {
-
-class ZAPI_DECL_EXPORT HashTable
-{
-private:
-   std::shared_ptr<HashTable> m_hashTable;
-public:
-   HashTable();
-   HashTable(HashTable *hashTable);
-//   int getSize() const;
-//   void find();
-//   bool isEmpty() const;
-//   void getKey();
-//   void getValue();
-};
-
-} // ds
-} // zapi
-
-#endif //ZAPI_DS_HASHTABLE_H
+   char a = -16;
+   signed char b = -(unsigned char)a;
+   char c = (unsigned char)a | (unsigned char) 2;
+   bitset<8> d(c);
+   std::cout << d << std::endl;
+//   std::cout <<std::bin<< b << "-" << std::numeric_limits<unsigned char>::max();
+}

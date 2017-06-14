@@ -11,35 +11,9 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by softboy on 5/26/17.
+// Created by zzu_softboy on 14/06/2017.
 
-#ifndef ZAPI_DS_HASHTABLE_H
-#define ZAPI_DS_HASHTABLE_H
+#ifndef ZAPI_LANG_ARRAY_H
+#define ZAPI_LANG_ARRAY_H
 
-#include "php/Zend/zend_hash.h"
-
-#include "zapi/Global.h"
-
-namespace zapi
-{
-namespace ds
-{
-
-class ZAPI_DECL_EXPORT HashTable
-{
-private:
-   std::shared_ptr<HashTable> m_hashTable;
-public:
-   HashTable();
-   HashTable(HashTable *hashTable);
-//   int getSize() const;
-//   void find();
-//   bool isEmpty() const;
-//   void getKey();
-//   void getValue();
-};
-
-} // ds
-} // zapi
-
-#endif //ZAPI_DS_HASHTABLE_H
+#endif //ZAPI_LANG_ARRAY_H
