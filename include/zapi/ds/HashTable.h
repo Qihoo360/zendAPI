@@ -16,6 +16,25 @@
 #ifndef ZAPI_DS_HASHTABLE_H
 #define ZAPI_DS_HASHTABLE_H
 
+#include "php/Zend/zend_hash.h"
+
 #include "zapi/Global.h"
+
+namespace zapi
+{
+namespace ds
+{
+
+class ZAPI_DECL_EXPORT HashTable
+{
+private:
+   std::shared_ptr<HashTable> m_hashTable;
+public:
+   HashTable();
+   HashTable(HashTable *hashTable);
+};
+
+} // ds
+} // zapi
 
 #endif //ZAPI_DS_HASHTABLE_H

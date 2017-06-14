@@ -1011,37 +1011,38 @@ Variant Variant::operator()() const
  */
 bool Variant::isCallable(const char *name)
 {
-   // this only makes sense if we are an object
-   if (!isObject()) {
-      return false;
-   }
-   // get the class properties
-   zend_class_entry *ce = Z_OBJCE_P(m_val);
-   LowerCase methodName{ String(name) };
-   if (zend_hash_exists(&ce->function_table, methodName)) {
-      return true;
-   }
-   // can we dynamically fetch the method?
-   if (Z_OBJ_HT_P(m_val)->get_method == nullptr)
-   {
-      return false;
-   }
-   // get the function
-   union _zend_function *func = Z_OBJ_HT_P(m_val)->get_method(&Z_OBJ_P(m_val), methodName, nullptr);
-   if (nullptr == func) {
-      return false;
-   }
-   // i dont get this code, it is copied from the method_exists() function (but the code has
-   // of course been prettified because the php guys dont know how to write good looking code)
-   if (!(func->common.fn_flags & ZEND_ACC_CALL_VIA_TRAMPOLINE)) {
-      return true;
-   }
-   // check the result ("Returns true to the fake Closure's __invoke")
-   bool result = func->common.scope == zend_ce_closure &&
-         zend_string_equals_literal(methodName.getValue(), ZEND_INVOKE_FUNC_NAME);
-   zend_string_release(func->common.function_name);
-   zend_free_trampoline(func);
-   return result;
+   return true;
+//   // this only makes sense if we are an object
+//   if (!isObject()) {
+//      return false;
+//   }
+//   // get the class properties
+//   zend_class_entry *ce = Z_OBJCE_P(m_val);
+//   LowerCase methodName{""};
+//   if (zend_hash_exists(&ce->function_table, methodName)) {
+//      return true;
+//   }
+//   // can we dynamically fetch the method?
+//   if (Z_OBJ_HT_P(m_val)->get_method == nullptr)
+//   {
+//      return false;
+//   }
+//   // get the function
+//   union _zend_function *func = Z_OBJ_HT_P(m_val)->get_method(&Z_OBJ_P(m_val), methodName, nullptr);
+//   if (nullptr == func) {
+//      return false;
+//   }
+//   // i dont get this code, it is copied from the method_exists() function (but the code has
+//   // of course been prettified because the php guys dont know how to write good looking code)
+//   if (!(func->common.fn_flags & ZEND_ACC_CALL_VIA_TRAMPOLINE)) {
+//      return true;
+//   }
+//   // check the result ("Returns true to the fake Closure's __invoke")
+//   bool result = func->common.scope == zend_ce_closure &&
+//         zend_string_equals_literal(methodName.getValue(), ZEND_INVOKE_FUNC_NAME);
+//   zend_string_release(func->common.function_name);
+//   zend_free_trampoline(func);
+//   return result;
 }
 
 /**
@@ -1351,16 +1352,17 @@ zend_class_entry *Variant::getClassEntry(bool allowString) const
  */
 bool Variant::instanceOf(const char *className, size_t size, bool allowString) const
 {
-   TSRMLS_FETCH();
-   zend_class_entry *thisClassEntry = getClassEntry(allowString);
-   if (!thisClassEntry) {
-      return false;
-   }
-   zend_class_entry *classEntry = zend_lookup_class_ex(String(className, size), nullptr, 0 TSRMLS_CC);
-   if (!classEntry) {
-      return false;
-   }
-   return instanceof_function(thisClassEntry, classEntry TSRMLS_CC);
+//   TSRMLS_FETCH();
+//   zend_class_entry *thisClassEntry = getClassEntry(allowString);
+//   if (!thisClassEntry) {
+//      return false;
+//   }
+//   zend_class_entry *classEntry = zend_lookup_class_ex(String(className, size), nullptr, 0 TSRMLS_CC);
+//   if (!classEntry) {
+//      return false;
+//   }
+//   return instanceof_function(thisClassEntry, classEntry TSRMLS_CC);
+   return true;
 }
 
 /**
@@ -1376,19 +1378,20 @@ bool Variant::instanceOf(const char *className, size_t size, bool allowString) c
  */
 bool Variant::derivedFrom(const char *className, size_t size, bool allowString) const
 {
-   TSRMLS_FETCH();
-   zend_class_entry *thisClassEntry = getClassEntry(allowString);
-   if (!thisClassEntry) {
-      return false;
-   }
-   zend_class_entry *classEntry = zend_lookup_class_ex(String(className, size), nullptr, 0 TSRMLS_CC);
-   if (!classEntry) {
-      return false;
-   }
-   if (thisClassEntry == classEntry) {
-      return false;
-   }
-   return instanceof_function(thisClassEntry, classEntry TSRMLS_CC);
+//   TSRMLS_FETCH();
+//   zend_class_entry *thisClassEntry = getClassEntry(allowString);
+//   if (!thisClassEntry) {
+//      return false;
+//   }
+//   zend_class_entry *classEntry = zend_lookup_class_ex(String(className, size), nullptr, 0 TSRMLS_CC);
+//   if (!classEntry) {
+//      return false;
+//   }
+//   if (thisClassEntry == classEntry) {
+//      return false;
+//   }
+//   return instanceof_function(thisClassEntry, classEntry TSRMLS_CC);
+   return true;
 }
 
 /**
@@ -1570,24 +1573,25 @@ bool Variant::contains(int index) const
  */
 bool Variant::contains(const char *key, ssize_t size) const
 {
-   if (size < 0) {
-      size = std::strlen(key);
-   }
-   if (isArray()) {
-      return zend_hash_find(Z_ARRVAL_P(m_val.dereference()), String(key, size)) != nullptr;
-   } else if (isObject()) {
-      if (zend_check_property_access(Z_OBJ_P(m_val), String(key, size)) == FAILURE) {
-         return false;
-      }
-      zend_object_has_property_t has_property = Z_OBJ_HT_P(m_val)->has_property;
-      if (!has_property) {
-         return false;
-      }
-      Variant property(key, size);
-      return has_property(m_val, property.m_val, 0, nullptr);
-   } else {
-      return false;
-   }
+//   if (size < 0) {
+//      size = std::strlen(key);
+//   }
+//   if (isArray()) {
+//      return zend_hash_find(Z_ARRVAL_P(m_val.dereference()), String(key, size)) != nullptr;
+//   } else if (isObject()) {
+//      if (zend_check_property_access(Z_OBJ_P(m_val), String(key, size)) == FAILURE) {
+//         return false;
+//      }
+//      zend_object_has_property_t has_property = Z_OBJ_HT_P(m_val)->has_property;
+//      if (!has_property) {
+//         return false;
+//      }
+//      Variant property(key, size);
+//      return has_property(m_val, property.m_val, 0, nullptr);
+//   } else {
+//      return false;
+//   }
+   return true;
 }
 
 /**
@@ -1618,28 +1622,29 @@ Variant Variant::get(int index) const
  */
 Variant Variant::get(const char *key, ssize_t size) const
 {
-   if (!isArray() && !isObject()) {
-      return Variant();
-   }
-   if (size < 0) {
-      size = std::strlen(key);
-   }
-   if (isArray()) {
-      zval* value = zend_hash_find(Z_ARRVAL_P(m_val.dereference()), String(key, size));
-      return value ? Variant(value) : Variant();
-   } else {
-      if (size > 0  && key[0] == 0) {
-         return Variant();
-      }
-      zval rv;
-#if PHP_VERSION_ID < 70100
-      zend_class_entry* scope = EG(scope);
-#else
-      zend_class_entry* scope = EG(fake_scope) ? EG(fake_scope) : zend_get_executed_scope();
-#endif
-      zval *property = zend_read_property(scope, m_val, key, size, 0, &rv);
-      return Variant(property);
-   }
+//   if (!isArray() && !isObject()) {
+//      return Variant();
+//   }
+//   if (size < 0) {
+//      size = std::strlen(key);
+//   }
+//   if (isArray()) {
+//      zval* value = zend_hash_find(Z_ARRVAL_P(m_val.dereference()), String(key, size));
+//      return value ? Variant(value) : Variant();
+//   } else {
+//      if (size > 0  && key[0] == 0) {
+//         return Variant();
+//      }
+//      zval rv;
+//#if PHP_VERSION_ID < 70100
+//      zend_class_entry* scope = EG(scope);
+//#else
+//      zend_class_entry* scope = EG(fake_scope) ? EG(fake_scope) : zend_get_executed_scope();
+//#endif
+//      zval *property = zend_read_property(scope, m_val, key, size, 0, &rv);
+//      return Variant(property);
+//   }
+   return true;
 }
 
 /**
@@ -1711,16 +1716,16 @@ void Variant::set(int index, const Variant &value)
  */
 void Variant::set(const char *key, int size, const Variant &value)
 {
-   zval *current;
-   if (isArray() && (current = zend_hash_find(Z_ARRVAL_P(m_val.dereference()), String(key, size)))) {
-      if (value.m_val == current) {
-         return;
-      }
-   }
-   if (!isObject()) {
-      setType(Type::Array);
-   }
-   setRaw(key, size, value);
+//   zval *current;
+//   if (isArray() && (current = zend_hash_find(Z_ARRVAL_P(m_val.dereference()), String(key, size)))) {
+//      if (value.m_val == current) {
+//         return;
+//      }
+//   }
+//   if (!isObject()) {
+//      setType(Type::Array);
+//   }
+//   setRaw(key, size, value);
 }
 
 
@@ -1747,13 +1752,13 @@ void Variant::unset(int index)
  */
 void Variant::unset(const char *key, int size)
 {
-   if (isObject()) {
-      SEPARATE_ZVAL_IF_NOT_REF(m_val);
-      add_property_null_ex(m_val, key, size);
-   } else if (isArray()) {
-      SEPARATE_ZVAL_IF_NOT_REF(m_val);
-      zend_hash_del(Z_ARRVAL_P(m_val.dereference()), String(key, size));
-   }
+//   if (isObject()) {
+//      SEPARATE_ZVAL_IF_NOT_REF(m_val);
+//      add_property_null_ex(m_val, key, size);
+//   } else if (isArray()) {
+//      SEPARATE_ZVAL_IF_NOT_REF(m_val);
+//      zend_hash_del(Z_ARRVAL_P(m_val.dereference()), String(key, size));
+//   }
 }
 
 /**

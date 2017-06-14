@@ -16,23 +16,27 @@
 #ifndef ZAPI_DS_STRING_H
 #define ZAPI_DS_STRING_H
 
-#include <string>
+#include "php/Zend/zend_string.h"
 
 #include "zapi/Global.h"
 
 namespace zapi
 {
-namespace ds{
+namespace ds
+{
 
 class ZAPI_DECL_EXPORT String
 {
 private:
    /**
     * The string we are wrapping
-    * @var    zend_string*
+    * @var std::shared_ptr<zend_string>
     */
    zend_string *m_string;
 public:
+   String() : m_string(nullptr)
+   {}
+   
    /**
     * Constructor
     *
@@ -96,7 +100,7 @@ public:
    /**
     * Move constructor
     *
-    * @param  that    The string to move
+    * @param  that The string to move
     */
    String(String &&other)
          : m_string(other.m_string)
@@ -109,10 +113,9 @@ public:
     */
    virtual ~String()
    {
-      // release the reference, freeing the
-      // string if we are the last referee
       if (m_string) {
          zend_string_release(m_string);
+         m_string = nullptr;
       }
    }
 
@@ -143,7 +146,23 @@ public:
     */
    size_t getSize() const
    {
-      return ZSTR_LEN(m_string);
+      if (m_string) {
+         return ZSTR_LEN(m_string);
+      }
+      return 0;
+   }
+   
+   /**
+    * whether the string is empty
+    * 
+    * @return 
+    */
+   bool isEmpty() const
+   {
+      if (0 == getSize()) {
+         return true;
+      }
+      return false;
    }
 
    /**
@@ -151,7 +170,7 @@ public:
     *
     * @return The zend string
     */
-   operator zend_string * ()
+   operator zend_string * () const ZAPI_DECL_NOEXCEPT
    {
       return m_string;
    }
@@ -164,6 +183,18 @@ public:
    zend_string *operator->()
    {
       return m_string;
+   }
+public:
+   /**
+    * Get the refcount of underline zend_string 
+    * @return 
+    */
+   int getRefCount() const ZAPI_DECL_NOEXCEPT
+   {
+      if (m_string) {
+         return zend_string_refcount(m_string);
+      }
+      return 0;
    }
 };
 

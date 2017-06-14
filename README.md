@@ -28,7 +28,9 @@ API手册: www.zendapi.org/api
 ### 说明
 
 当前ZendApi项目处于非常前期阶段，很多接口都不稳定，甚至会经常有大的变化，请不要用于实际项目，现阶段只适合学习用途。
-项目参考 PHP-CPP进行实现，大家要是对PHP-CPP感兴趣，请点击 https://github.com/CopernicaMarketingSoftware/PHP-CPP
+项目参考 
+1. PHP-CPP进行实现，大家要是对PHP-CPP感兴趣，请点击 https://github.com/CopernicaMarketingSoftware/PHP-CPP
+2. Qt project 在底层数据结构的接口上借鉴Qt core相关设计，如果您对Qt感兴趣，请点击：http://doc.qt.io/
 
 **声明：**</br>
 ZendApi项目第一版中有些部分跟PHP-CPP将会高度一样，文件头也会加上PHP-CPP信息，一旦完成后ZendApi项目将会独立发展，当然适当的时机

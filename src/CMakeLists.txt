@@ -1,6 +1,6 @@
 set(ZAPI_SRC
    kernel/Global.cpp
-   lang/Variant.cpp
+#   lang/Variant.cpp
    lang/FatalError.cpp
    lang/StdClass.cpp
    ds/String.cpp
