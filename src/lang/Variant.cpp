@@ -253,19 +253,6 @@ Zval Variant::detach(bool keepRefCount)
 }
 
 /**
- * Invalidate the object - so that it will not be destructed
- */
-void Variant::invalidate()
-{
-   // do nothing if object is already undefined
-   if (Z_TYPE_P(m_val) == IS_UNDEF) {
-      return;
-   }
-   zval_ptr_dtor(m_val);
-   ZVAL_UNDEF(m_val);
-}
-
-/**
  * Retrieve the refcount
  * @return int
  */
@@ -444,710 +431,6 @@ Variant &Variant::operator=(double value)
 }
 
 /**
- * Add a value to the object
- * @param  value
- * @return Variant
- */
-Variant &Variant::operator+=(const Variant &value)
-{
-   return Arithmetic<std::plus>(this).assign(value);
-}
-
-Variant &Variant::operator+=(std::int16_t value)
-{
-   return Arithmetic<std::plus>(this).assign(value);
-}
-
-Variant &Variant::operator+=(std::int32_t value)
-{
-   return Arithmetic<std::plus>(this).assign(value);
-}
-
-Variant &Variant::operator+=(std::int64_t value)
-{
-   return Arithmetic<std::plus>(this).assign(value);
-}
-
-Variant &Variant::operator+=(bool value)
-{
-   return Arithmetic<std::plus>(this).assign(value);
-}
-
-Variant &Variant::operator+=(char value)
-{
-   return Arithmetic<std::plus>(this).assign(value);
-}
-
-Variant &Variant::operator+=(const std::string &value)
-{
-   return Arithmetic<std::plus>(this).assign(value);
-}
-
-Variant &Variant::operator+=(const char *value)
-{
-   return Arithmetic<std::plus>(this).assign(value);
-}
-
-Variant &Variant::operator+=(double value)
-{
-   return Arithmetic<std::plus>(this).assign(value);
-}
-
-/**
- * Subtract a value from the object
- * @param  value
- * @return Variant
- */
-Variant &Variant::operator-=(const Variant &value)
-{
-   return Arithmetic<std::minus>(this).assign(value);
-}
-
-Variant &Variant::operator-=(std::int16_t value)
-{
-   return Arithmetic<std::minus>(this).assign(value);
-}
-
-Variant &Variant::operator-=(std::int32_t value)
-{
-   return Arithmetic<std::minus>(this).assign(value);
-}
-
-Variant &Variant::operator-=(std::int64_t value)
-{
-   return Arithmetic<std::minus>(this).assign(value);
-}
-
-Variant &Variant::operator-=(bool value)
-{
-   return Arithmetic<std::minus>(this).assign(value);
-}
-
-Variant &Variant::operator-=(char value)
-{
-   return Arithmetic<std::minus>(this).assign(value);
-}
-
-Variant &Variant::operator-=(const std::string &value)
-{
-   return Arithmetic<std::minus>(this).assign(value);
-}
-
-Variant &Variant::operator-=(const char *value)
-{
-   return Arithmetic<std::minus>(this).assign(value);
-}
-
-Variant &Variant::operator-=(double value)
-{
-   return Arithmetic<std::minus>(this).assign(value);
-}
-
-/**
- * Multiply the object with a certain value
- * @param  value
- * @return Variant
- */
-Variant &Variant::operator*=(const Variant &value)
-{
-   return Arithmetic<std::multiplies>(this).assign(value);
-}
-
-Variant &Variant::operator*=(std::int16_t value)
-{
-   return Arithmetic<std::multiplies>(this).assign(value);
-}
-
-Variant &Variant::operator*=(std::int32_t value)
-{
-   return Arithmetic<std::multiplies>(this).assign(value);
-}
-
-Variant &Variant::operator*=(std::int64_t value)
-{
-   return Arithmetic<std::multiplies>(this).assign(value);
-}
-
-Variant &Variant::operator*=(bool value)
-{
-   return Arithmetic<std::multiplies>(this).assign(value);
-}
-
-Variant &Variant::operator*=(char value)
-{
-   return Arithmetic<std::multiplies>(this).assign(value);
-}
-
-Variant &Variant::operator*=(const std::string &value)
-{
-   return Arithmetic<std::multiplies>(this).assign(value);
-}
-
-Variant &Variant::operator*=(const char *value)
-{
-   return Arithmetic<std::multiplies>(this).assign(value);
-}
-
-Variant &Variant::operator*=(double value)
-{
-   return Arithmetic<std::multiplies>(this).assign(value);
-}
-
-/**
- * Divide the object with a certain value
- * @param  value
- * @return Variant
- */
-Variant &Variant::operator/=(const Variant &value)
-{
-   return Arithmetic<std::divides>(this).assign(value);
-}
-
-Variant &Variant::operator/=(std::int16_t value)
-{
-   return Arithmetic<std::divides>(this).assign(value);
-}
-
-Variant &Variant::operator/=(std::int32_t value)
-{
-   return Arithmetic<std::divides>(this).assign(value);
-}
-
-Variant &Variant::operator/=(std::int64_t value)
-{
-   return Arithmetic<std::divides>(this).assign(value);
-}
-
-Variant &Variant::operator/=(bool value)
-{
-   return Arithmetic<std::divides>(this).assign(value);
-}
-
-Variant &Variant::operator/=(char value)
-{
-   return Arithmetic<std::divides>(this).assign(value);
-}
-
-Variant &Variant::operator/=(const std::string &value)
-{
-   return Arithmetic<std::divides>(this).assign(value);
-}
-
-Variant &Variant::operator/=(const char *value)
-{
-   return Arithmetic<std::divides>(this).assign(value);
-}
-
-Variant &Variant::operator/=(double value)
-{
-   return Arithmetic<std::divides>(this).assign(value);
-}
-
-/**
- * Divide the object with a certain value and get the rest
- * Note that this does not use the Arithmetic object, because no conversion between floats is necessary
- * @param  value
- * @return Variant
- */
-Variant &Variant::operator%=(const Variant &value)
-{
-   return operator=(getNumericValue() % value.getNumericValue());
-}
-
-Variant &Variant::operator%=(std::int16_t value)
-{
-   return operator=(getNumericValue() % value);
-}
-
-Variant &Variant::operator%=(std::int32_t value)
-{
-   return operator=(getNumericValue() % value);
-}
-
-Variant &Variant::operator%=(std::int64_t value)
-{
-   return operator=(getNumericValue() % value);
-}
-
-Variant &Variant::operator%=(bool value)
-{
-   return operator=(getNumericValue() % value);
-}
-
-Variant &Variant::operator%=(char value)
-{
-   value = value < '0' || value > '9' ? 0 : value - '0';
-   return operator=(getNumericValue() % value);
-}
-
-Variant &Variant::operator%=(const std::string &value)
-{
-   return operator=(getNumericValue() % std::stol(value));
-}
-
-Variant &Variant::operator%=(const char *value)
-{
-   return operator=(getNumericValue() % std::atol(value));
-}
-
-Variant &Variant::operator%=(double value)
-{
-   return operator=(getNumericValue() % static_cast<long>(value));
-}
-
-/**
- * Assignment operator
- * @param  value
- * @return Variant
- */
-Variant Variant::operator+(const Variant &value)
-{
-   return Arithmetic<std::plus>(this).apply(value);
-}
-
-Variant Variant::operator+(std::int16_t value)
-{
-   return Arithmetic<std::plus>(this).apply(value);
-}
-
-Variant Variant::operator+(std::int32_t value)
-{
-   return Arithmetic<std::plus>(this).apply(value);
-}
-
-Variant Variant::operator+(std::int64_t value)
-{
-   return Arithmetic<std::plus>(this).apply(value);
-}
-
-Variant Variant::operator+(bool value)
-{
-   return Arithmetic<std::plus>(this).apply(value);
-}
-
-Variant Variant::operator+(char value)
-{
-   return Arithmetic<std::plus>(this).apply(value);
-}
-
-Variant Variant::operator+(const std::string &value)
-{
-   return Arithmetic<std::plus>(this).apply(value);
-}
-
-Variant Variant::operator+(const char *value)
-{
-   return Arithmetic<std::plus>(this).apply(value);
-}
-
-Variant Variant::operator+(double value)
-{
-   return Arithmetic<std::plus>(this).apply(value);
-}
-
-/**
- * Subtraction operator
- * @param  value
- * @return Variant
- */
-Variant Variant::operator-(const Variant &value)
-{
-   return Arithmetic<std::minus>(this).apply(value);
-}
-
-Variant Variant::operator-(std::int16_t value)
-{
-   return Arithmetic<std::minus>(this).apply(value);
-}
-
-Variant Variant::operator-(std::int32_t value)
-{
-   return Arithmetic<std::minus>(this).apply(value);
-}
-
-Variant Variant::operator-(std::int64_t value)
-{
-   return Arithmetic<std::minus>(this).apply(value);
-}
-
-Variant Variant::operator-(bool value)
-{
-   return Arithmetic<std::minus>(this).apply(value);
-}
-
-Variant Variant::operator-(char value)
-{
-   return Arithmetic<std::minus>(this).apply(value);
-}
-
-Variant Variant::operator-(const std::string &value)
-{
-   return Arithmetic<std::minus>(this).apply(value);
-}
-
-Variant Variant::operator-(const char *value)
-{
-   return Arithmetic<std::minus>(this).apply(value);
-}
-
-Variant Variant::operator-(double value)
-{
-   return Arithmetic<std::minus>(this).apply(value);
-}
-
-/**
- * Multiplication operator
- * @param  value
- * @return Variant
- */
-Variant Variant::operator*(const Variant &value)
-{
-   return Arithmetic<std::multiplies>(this).apply(value);
-}
-
-Variant Variant::operator*(std::int16_t value)
-{
-   return Arithmetic<std::multiplies>(this).apply(value);
-}
-
-Variant Variant::operator*(std::int32_t value)
-{
-   return Arithmetic<std::multiplies>(this).apply(value);
-}
-
-Variant Variant::operator*(std::int64_t value)
-{
-   return Arithmetic<std::multiplies>(this).apply(value);
-}
-
-Variant Variant::operator*(bool value)
-{
-   return Arithmetic<std::multiplies>(this).apply(value);
-}
-
-Variant Variant::operator*(char value)
-{
-   return Arithmetic<std::multiplies>(this).apply(value);
-}
-
-Variant Variant::operator*(const std::string &value)
-{
-   return Arithmetic<std::multiplies>(this).apply(value);
-}
-
-Variant Variant::operator*(const char *value)
-{
-   return Arithmetic<std::multiplies>(this).apply(value);
-}
-
-Variant Variant::operator*(double value)
-{
-   return Arithmetic<std::multiplies>(this).apply(value);
-}
-
-/**
- * Division operator
- * @param  value
- * @return Variant
- */
-Variant Variant::operator/(const Variant &value)
-{
-   return Arithmetic<std::divides>(this).apply(value);
-}
-
-Variant Variant::operator/(std::int16_t value)
-{
-   return Arithmetic<std::divides>(this).apply(value);
-}
-
-Variant Variant::operator/(std::int32_t value)
-{
-   return Arithmetic<std::divides>(this).apply(value);
-}
-
-Variant Variant::operator/(std::int64_t value)
-{
-   return Arithmetic<std::divides>(this).apply(value);
-}
-
-Variant Variant::operator/(bool value)
-{
-   return Arithmetic<std::divides>(this).apply(value);
-}
-
-Variant Variant::operator/(char value)
-{
-   return Arithmetic<std::divides>(this).apply(value);
-}
-
-Variant Variant::operator/(const std::string &value)
-{
-   return Arithmetic<std::divides>(this).apply(value);
-}
-
-Variant Variant::operator/(const char *value)
-{
-   return Arithmetic<std::divides>(this).apply(value);
-}
-
-Variant Variant::operator/(double value)
-{
-   return Arithmetic<std::divides>(this).apply(value);
-}
-
-/**
- * Modulus operator
- * @param  value
- * @return Variant
- */
-Variant Variant::operator%(const Variant &value)
-{
-   return Variant(getNumericValue() % value.getNumericValue());
-}
-
-Variant Variant::operator%(std::int16_t value)
-{
-   return Variant(getNumericValue() % value);
-}
-
-Variant Variant::operator%(std::int32_t value)
-{
-   return Variant(getNumericValue() % value);
-}
-
-Variant Variant::operator%(std::int64_t value)
-{
-   return Variant(getNumericValue() % value);
-}
-
-Variant Variant::operator%(bool value)
-{
-   return Variant(getNumericValue() % value);
-}
-
-Variant Variant::operator%(char value)
-{
-   value = value < '0' || value > '9' ? 0 : value - '0';
-   return Variant(getNumericValue() % value);
-}
-
-Variant Variant::operator%(const std::string &value)
-{
-   return Variant(getNumericValue() % std::stol(value));
-}
-
-Variant Variant::operator%(const char *value)
-{
-   return Variant(getNumericValue() % std::atol(value));
-}
-
-Variant Variant::operator%(double value)
-{
-   return Variant(getNumericValue() % static_cast<long>(value));
-}
-
-namespace
-{
-
-/**
- * Helper function that runs the actual call
- * @param  object      The object to call it on
- * @param  method      The function or method to call
- * @param  argc        Number of arguments
- * @param  argv        The parameters
- * @return Variant
- */
-Variant do_exec(const zval *object, zval *method, int argc, zval *argv)
-{
-   zval retval;
-   zend_object *oldException = EG(exception);
-   // call the function
-   // we're casting the const away here, object is only const so we can call this method
-   // from const methods after all..
-   if (call_user_function_ex(CG(function_table), const_cast<zval *>(object),
-                             method, &retval, argc, argv, 1, nullptr) != SUCCESS) {
-      // throw an exception, the function does not exist
-      throw Exception("Invalid call to " + Variant(method).getStringValue());
-      // unreachable, but let's return at least something to prevent compiler warnings
-      return nullptr;
-   } else {
-      // was an exception thrown inside the function? In that case we throw a C++ new exception
-      // to give the C++ code the chance to catch it
-      if (oldException != EG(exception) && EG(exception)) {
-         throw OrigException(EG(exception));
-      }
-      if (Z_ISUNDEF(retval)) {
-         return nullptr;
-      }
-      Variant result(&retval);
-      // destruct the retval (this just decrements the refcounter, which is ok, because
-      // it is already wrapped in a Variant so still has 1 reference)
-      zval_ptr_dtor(&retval);
-      return result;
-   }
-}
-
-} // end of namespace
-
-/**
- * Call the function in PHP
- * We have ten variants of this function, depending on the number of parameters
- * This call operator is only useful when the variable represents a callable
- * @param  p0-p10          Parameters of the function to be called.
- * @return Variant
- */
-Variant Variant::operator()() const
-{
-   return do_exec(nullptr, m_val, 0, nullptr);
-}
-
-/**
- * Is a method with the given name callable?
- *
- * This is only applicable when the Value contains a PHP object
- *
- * @param name Name of the function
- * @return boolean
- */
-bool Variant::isCallable(const char *name)
-{
-   return true;
-//   // this only makes sense if we are an object
-//   if (!isObject()) {
-//      return false;
-//   }
-//   // get the class properties
-//   zend_class_entry *ce = Z_OBJCE_P(m_val);
-//   LowerCase methodName{""};
-//   if (zend_hash_exists(&ce->function_table, methodName)) {
-//      return true;
-//   }
-//   // can we dynamically fetch the method?
-//   if (Z_OBJ_HT_P(m_val)->get_method == nullptr)
-//   {
-//      return false;
-//   }
-//   // get the function
-//   union _zend_function *func = Z_OBJ_HT_P(m_val)->get_method(&Z_OBJ_P(m_val), methodName, nullptr);
-//   if (nullptr == func) {
-//      return false;
-//   }
-//   // i dont get this code, it is copied from the method_exists() function (but the code has
-//   // of course been prettified because the php guys dont know how to write good looking code)
-//   if (!(func->common.fn_flags & ZEND_ACC_CALL_VIA_TRAMPOLINE)) {
-//      return true;
-//   }
-//   // check the result ("Returns true to the fake Closure's __invoke")
-//   bool result = func->common.scope == zend_ce_closure &&
-//         zend_string_equals_literal(methodName.getValue(), ZEND_INVOKE_FUNC_NAME);
-//   zend_string_release(func->common.function_name);
-//   zend_free_trampoline(func);
-//   return result;
-}
-
-/**
- * Call the method - if the variable holds an object with the given method
- * @param  name        name of the method to call
- * @return Variant
- */
-Variant Variant::call(const char *name) const
-{
-   Variant method(name);
-   return do_exec(m_val, method.m_val, 0, nullptr);
-}
-
-/**
- * Call the method - if the variable holds an object with the given method
- * @param  name        name of the method to call
- * @return Variant
- */
-Variant Variant::call(const char *name)
-{
-   Variant method(name);
-   return do_exec(m_val, method.m_val, 0, nullptr);
-}
-
-/**
- * Call function with a number of parameters
- * @param  argc        Number of parameters
- * @param  argv        The parameters
- * @return Variant
- */
-Variant Variant::exec(int argc, Variant *argv) const
-{
-   zval params[argc];
-   for (int i = 0; i < argc; i++) {
-      params[i] = *argv[i].m_val;
-   }
-   return do_exec(nullptr, m_val, argc, params);
-}
-
-/**
- * Call method with a number of parameters
- * @param  name        Name of method to call
- * @param  argc        Number of parameters
- * @param  argv        The parameters
- * @return Variant
- */
-Variant Variant::exec(const char *name, int argc, Variant *argv) const
-{
-   // wrap the name in a Php::Value object to get a zval
-   Variant method(name);
-   zval params[argc];
-   for (int i = 0; i < argc; i++) {
-      params[i] = *argv[i].m_val;
-   }
-   return do_exec(m_val, method.m_val, argc, params);
-}
-
-/**
- * Call method with a number of parameters
- * @param  name        Name of method to call
- * @param  argc        Number of parameters
- * @param  argv        The parameters
- * @return Variant
- */
-Variant Variant::exec(const char *name, int argc, Variant *argv)
-{
-   // wrap the name in a Php::Value object to get a zval
-   Variant method(name);
-   zval params[argc];
-   for (int i = 0; i < argc; i++) {
-      params[i] = *argv[i].m_val;
-   }
-   return do_exec(m_val, method.m_val, argc, params);
-}
-
-/**
- * Comparison operators== for hardcoded Value
- * @param  value
- */
-bool Variant::operator==(const Variant &value) const
-{
-   TSRMLS_FETCH();
-   zval result;
-   if (SUCCESS != compare_function(&result, m_val, value.m_val TSRMLS_CC)) {
-      return false;
-   }
-   return result.value.lval == 0;
-}
-
-/**
- * Comparison operators< for hardcoded Value
- * @param  value
- * @return bool
- */
-bool Variant::operator<(const Variant &value) const
-{
-   TSRMLS_FETCH();
-   zval result;
-   if (SUCCESS != compare_function(&result, m_val, value.m_val TSRMLS_CC)) {
-      return false;
-   }
-   return result.value.lval < 0;
-}
-
-/**
  * The type of object
  * @return Type
  */
@@ -1172,7 +455,7 @@ bool Variant::isNull() const
  * Are we a number? This will also check if we're a reference to a number
  * @return bool
  */
-bool Variant::isNumeric() const
+bool Variant::isLong() const
 {
    if (getType() == Type::Long) {
       return true;
@@ -1184,7 +467,7 @@ bool Variant::isNumeric() const
  * Are we a boolean? This will also check if we're a reference to a boolean
  * @return bool
  */
-bool Variant::isBoolean() const
+bool Variant::isBool() const
 {
    if (getType() == Type::False || getType() == Type::True) {
       return true;
@@ -1242,24 +525,42 @@ bool Variant::isArray() const
 }
 
 /**
- * Change the internal type
- * @param  type
- * @return Variant
+ * Returns true if the variant can be converted to the type targetType, otherwise false.
+ * 
+ * @return bool
  */
-Variant &Variant::setType(Type typeValue) &
+bool Variant::canConvert(Type targetType) const
 {
-   if (this->getType() == typeValue) {
+   switch (targetType) {
+   case Type::Undefined:
+   case Type::Resource:
+   case Type::Constant:
+   case Type::ConstantAST:
+   case Type::Reference:
+   case Type::Callable:
+      return false;
+   default:
+      return true;
+   }
+}
+
+/**
+ * convert current variant type to target type
+ * If the cast cannot be done, the variant is cleared. Returns true if the current type of the 
+ * variant was successfully cast; otherwise returns false.
+ *
+ * @param Type typeValue
+ * @return bool
+ */
+bool Variant::convert(Type targetType)
+{
+   if (this->getType() == targetType) {
       return *this;
+   } else if (!canConvert(targetType)) {
+      return false;
    }
    SEPARATE_ZVAL_IF_NOT_REF(m_val);
-   // run the conversion, when it fails we throw a fatal error which will
-   // in the end result in a zend_error() call. This FatalError class is necessary
-   // because a direct call to zend_error() will do a longjmp() which may not
-   // clean up the C++ objects created by the extension
-   switch (typeValue) {
-   case Type::Undefined:
-      throw FatalError{ "Cannot make a variable undefined"};
-      break;
+   switch (targetType) {
    case Type::Null:
       convert_to_null(m_val);
       break;
@@ -1289,108 +590,9 @@ Variant &Variant::setType(Type typeValue) &
    case Type::String:
       convert_to_string(m_val);
       break;
-   case Type::Resource:
-      throw FatalError{"Resource types cannot be handled by the zapi library"};
-      break;
-   case Type::Constant:
-      throw FatalError{"Constant types cannot be handled by the zapi library"};
-      break;
-   case Type::ConstantAST:
-      throw FatalError{"ConstantAST types cannot be handled by the zapi library"};
-      break;
-   case Type::Callable:
-      throw FatalError{"Callable types cannot be handled by the zapi library"};
-      break;
-   case Type::Reference:
-      throw FatalError{"Reference types cannot be handled by the zapi library"};
-      break;
    default:
-      throw FatalError{"Reference types cannot be handled by the zapi library"};
-      break;
+      return false;
    }
-   return *this;
-}
-
-/**
- * Check if the variable holds something that is callable
- * @return bool
- */
-bool Variant::isCallable() const
-{
-   TSRMLS_FETCH();
-   return zend_is_callable(m_val, 0, NULL TSRMLS_CC);
-}
-
-/**
- * Retrieve the class entry
- * @param  allowString
- * @return zend_class_entry
- */
-zend_class_entry *Variant::getClassEntry(bool allowString) const
-{
-   TSRMLS_FETCH();
-   if (isObject()) {
-      return Z_OBJCE_P(m_val);
-   } else {
-      if (!allowString || !isString()) {
-         return nullptr;
-      }
-      return zend_lookup_class(Z_STR_P(m_val) TSRMLS_CC);
-   }
-}
-
-/**
- * Check whether this object is an instance of a certain class
- *
- * If you set the parameter 'allowString' to true, and the Value object
- * holds a string, the string will be treated as class name.
- *
- * @param  classname   The class of which this should be an instance
- * @param  size        Length of the classname string
- * @param  allowString Is it allowed for 'this' to be a string
- * @return bool
- */
-bool Variant::instanceOf(const char *className, size_t size, bool allowString) const
-{
-//   TSRMLS_FETCH();
-//   zend_class_entry *thisClassEntry = getClassEntry(allowString);
-//   if (!thisClassEntry) {
-//      return false;
-//   }
-//   zend_class_entry *classEntry = zend_lookup_class_ex(String(className, size), nullptr, 0 TSRMLS_CC);
-//   if (!classEntry) {
-//      return false;
-//   }
-//   return instanceof_function(thisClassEntry, classEntry TSRMLS_CC);
-   return true;
-}
-
-/**
- * Check whether this object is derived from a certain class
- *
- * If you set the parameter 'allowString' to true, and the Value object
- * holds a string, the string will be treated as class name.
- *
- * @param  classame   The class of which this should be an instance
- * @param  size        Length of the classname string
- * @param  allowString Is it allowed for 'this' to be a string
- * @return bool
- */
-bool Variant::derivedFrom(const char *className, size_t size, bool allowString) const
-{
-//   TSRMLS_FETCH();
-//   zend_class_entry *thisClassEntry = getClassEntry(allowString);
-//   if (!thisClassEntry) {
-//      return false;
-//   }
-//   zend_class_entry *classEntry = zend_lookup_class_ex(String(className, size), nullptr, 0 TSRMLS_CC);
-//   if (!classEntry) {
-//      return false;
-//   }
-//   if (thisClassEntry == classEntry) {
-//      return false;
-//   }
-//   return instanceof_function(thisClassEntry, classEntry TSRMLS_CC);
    return true;
 }
 
@@ -1410,11 +612,11 @@ Variant Variant::clone() const
  * @param  type
  * @return Variant
  */
-Variant Variant::clone(Type typeValue) const
+Variant Variant::clone(Type targetType) const
 {
    Variant cloned = clone();
-   if (this->getType() != typeValue) {
-      cloned.setType(typeValue);
+   if (this->getType() != targetType) {
+      cloned.convert(targetType);
    }
    return cloned;
 }
@@ -1423,19 +625,19 @@ Variant Variant::clone(Type typeValue) const
  * Retrieve the value as integer
  * @return long
  */
-std::int64_t  Variant::getNumericValue() const
+std::int64_t  Variant::toLong() const
 {
-   if (isNumeric()) {
+   if (isLong()) {
       return Z_LVAL_P(m_val);
    }
-   return clone(Type::Long).getNumericValue();
+   return clone(Type::Long).toLong();
 }
 
 /**
  * Retrieve the value as boolean
  * @return bool
  */
-bool Variant::getBooleanValue() const
+bool Variant::toBool() const
 {
    switch (getType()) {
    case Type::Undefined:
@@ -1447,15 +649,15 @@ bool Variant::getBooleanValue() const
    case Type::True:
       return true;
    case Type::Long:
-      return getNumericValue();
+      return toLong();
    case Type::Double:
-      return getDoubleValue();
+      return toDouble();
    case Type::String:
-      return getSize();
+      return Z_STRLEN_P(m_val);
    case Type::Array:
-      return getSize();
+      return zend_hash_num_elements(Z_ARRVAL_P(m_val));
    default:
-      return clone(Type::Boolean).getBooleanValue();
+      return clone(Type::Boolean).toBool();
    }
 }
 
@@ -1463,7 +665,7 @@ bool Variant::getBooleanValue() const
  * Retrieve the value as string
  * @return string
  */
-std::string Variant::getStringValue() const
+std::string Variant::toString() const
 {
    zend_string *tempStr = zval_get_string(m_val);
    std::string ret(ZSTR_VAL(tempStr), ZSTR_LEN(tempStr));
@@ -1477,304 +679,28 @@ std::string Variant::getStringValue() const
    case Type::True:
       return "1";
    case Type::Long:
-      return std::to_string(getNumericValue());
+      return std::to_string(toLong());
    case Type::Double:
-      return std::to_string(getDoubleValue());
+      return std::to_string(toDouble());
    case Type::String:
       return {Z_STRVAL_P(m_val), Z_STRLEN_P(m_val)};
    default:
       break;
    }
-   return clone(Type::String).getStringValue();
-}
-
-/**
- * Access to the raw buffer
- * @return char *
- */
-char *Variant::getBuffer() const
-{
-   if (!isString()) {
-      return nullptr;
-   }
-   return Z_STRVAL_P(m_val);
-}
-
-/**
- * Get access to the raw buffer for read operations. Note that this
- * only works for string variables - other variables return nullptr.
- *
- * @return const char *
- */
-const char *Variant::getRawValue() const
-{
-   if (isString()) {
-      return Z_STRVAL_P(m_val);
-   }
-   return nullptr;
+   return clone(Type::String).toString();
 }
 
 /**
  * Retrieve the value as decimal
  * @return double
  */
-double Variant::getDoubleValue() const
+double Variant::toDouble() const
 {
    if (isDouble()) {
       return Z_DVAL_P(m_val);
    }
-   return clone(Type::Double).getDoubleValue();
+   return clone(Type::Double).toDouble();
    // why not use zval_get_double(m_val)
-}
-
-/**
- * The number of members in case of an array or object
- * @return int
- */
-size_t Variant::getSize() const
-{
-   if (isArray()) {
-      return zend_hash_num_elements(Z_ARRVAL_P(m_val));
-   } else if (isObject()) {
-      if (!Z_OBJ_HT_P(m_val)->count_elements) {
-         return 0;
-      }
-      zend_long result;
-      return Z_OBJ_HT_P(m_val)->count_elements(m_val, &result) == SUCCESS ? result : 0;
-   } else if (isString()) {
-      return Z_STRLEN_P(m_val);
-   } else {
-      Variant copy(*this);
-      copy.setType(Type::String);
-      return copy.getSize();
-   }
-}
-
-/**
- * Does the array contain a certain index?
- * @param  index
- * @return bool
- */
-bool Variant::contains(int index) const
-{
-   if (isObject() && instanceOf("ArrayAcess")) {
-      return call("offsetExists", index).getBooleanValue();
-   } else if (!isArray()) {
-      return false;
-   }
-   return zend_hash_index_find(Z_ARRVAL_P(m_val.dereference()), index) != nullptr;
-}
-
-/**
- * Does the array contain a certain key
- * @param  key
- * @param  size
- * @return
- */
-bool Variant::contains(const char *key, ssize_t size) const
-{
-//   if (size < 0) {
-//      size = std::strlen(key);
-//   }
-//   if (isArray()) {
-//      return zend_hash_find(Z_ARRVAL_P(m_val.dereference()), String(key, size)) != nullptr;
-//   } else if (isObject()) {
-//      if (zend_check_property_access(Z_OBJ_P(m_val), String(key, size)) == FAILURE) {
-//         return false;
-//      }
-//      zend_object_has_property_t has_property = Z_OBJ_HT_P(m_val)->has_property;
-//      if (!has_property) {
-//         return false;
-//      }
-//      Variant property(key, size);
-//      return has_property(m_val, property.m_val, 0, nullptr);
-//   } else {
-//      return false;
-//   }
-   return true;
-}
-
-/**
- * Get access to a certain array member
- * @param  index
- * @return Variant
- */
-Variant Variant::get(int index) const
-{
-   if (isArray()) {
-      zval *result = zend_hash_index_find(Z_ARRVAL_P(m_val.dereference()), index);
-      if (!result) {
-         return Type::Undefined;
-      }
-      return result;
-   } else if (isObject() && instanceOf("ArrayAccess")) {
-      return call("offsetGet", index);
-   } else {
-      return Type::Undefined;
-   }
-}
-
-/**
- * Get access to a certain assoc member
- * @param  key
- * @param  size
- * @return Variant
- */
-Variant Variant::get(const char *key, ssize_t size) const
-{
-//   if (!isArray() && !isObject()) {
-//      return Variant();
-//   }
-//   if (size < 0) {
-//      size = std::strlen(key);
-//   }
-//   if (isArray()) {
-//      zval* value = zend_hash_find(Z_ARRVAL_P(m_val.dereference()), String(key, size));
-//      return value ? Variant(value) : Variant();
-//   } else {
-//      if (size > 0  && key[0] == 0) {
-//         return Variant();
-//      }
-//      zval rv;
-//#if PHP_VERSION_ID < 70100
-//      zend_class_entry* scope = EG(scope);
-//#else
-//      zend_class_entry* scope = EG(fake_scope) ? EG(fake_scope) : zend_get_executed_scope();
-//#endif
-//      zval *property = zend_read_property(scope, m_val, key, size, 0, &rv);
-//      return Variant(property);
-//   }
-   return true;
-}
-
-/**
- * Set a certain property without performing any checks
- * This method can be used when it is already known that the object is an array
- * @param  index
- * @param  value
- * @return Variant
- */
-void Variant::setRaw(int index, const Variant &value)
-{
-   SEPARATE_ZVAL_IF_NOT_REF(m_val);
-   add_index_zval(m_val, index, value.m_val);
-   Z_TRY_ADDREF_P(value.m_val);
-}
-
-/**
- * Set a certain property without running any checks
- * @param  key
- * @param  size
- * @param  value
- */
-void Variant::setRaw(const char *key, int size, const Variant &value)
-{
-   if (!key || (size > 0 && key[0] == 0)) {
-      return;
-   }
-   if (isObject()) {
-      SEPARATE_ZVAL_IF_NOT_REF(m_val);
-      // update the property
-#if PHP_VERSION_ID < 70100
-      zend_class_entry* scope = EG(scope);
-#else
-      zend_class_entry* scope = EG(fake_scope) ? EG(fake_scope) : zend_get_executed_scope();
-#endif
-      zend_update_property(scope, m_val, key, size, value.m_val);
-   } else {
-      SEPARATE_ZVAL_IF_NOT_REF(m_val);
-      add_assoc_zval_ex(m_val, key, size, value.m_val);
-      Z_TRY_ADDREF_P(value.m_val);
-   }
-}
-
-/**
- * Set a certain property
- * @param  index
- * @param  value
- * @return Variant
- */
-void Variant::set(int index, const Variant &value)
-{
-   zval *current;
-   if (isArray() && (current = zend_hash_index_find(Z_ARRVAL_P(m_val.dereference()), index))) {
-      // skip if nothing is going to change
-      if (value.m_val == current) {
-         return;
-      }
-   }
-   setType(Type::Array);
-   setRaw(index, value);
-}
-
-/**
- * Set a certain property
- * @param  key
- * @param  size
- * @param  value
- * @return Variant
- */
-void Variant::set(const char *key, int size, const Variant &value)
-{
-//   zval *current;
-//   if (isArray() && (current = zend_hash_find(Z_ARRVAL_P(m_val.dereference()), String(key, size)))) {
-//      if (value.m_val == current) {
-//         return;
-//      }
-//   }
-//   if (!isObject()) {
-//      setType(Type::Array);
-//   }
-//   setRaw(key, size, value);
-}
-
-
-/**
- * Unset a member by its index
- * @param  index
- */
-void Variant::unset(int index)
-{
-   // only necessary for arrays
-   if (!isArray()) return;
-   
-   // if this is not a reference variable, we should detach it to implement copy on write
-   SEPARATE_ZVAL_IF_NOT_REF(m_val);
-   
-   // remove the index
-   zend_hash_index_del(Z_ARRVAL_P(m_val.dereference()), index);
-}
-
-/**
- * Unset by key name and length of the key
- * @param  key
- * @param  size
- */
-void Variant::unset(const char *key, int size)
-{
-//   if (isObject()) {
-//      SEPARATE_ZVAL_IF_NOT_REF(m_val);
-//      add_property_null_ex(m_val, key, size);
-//   } else if (isArray()) {
-//      SEPARATE_ZVAL_IF_NOT_REF(m_val);
-//      zend_hash_del(Z_ARRVAL_P(m_val.dereference()), String(key, size));
-//   }
-}
-
-/**
- * Retrieve the original implementation
- *
- * This only works for classes that were implemented using PHP-CPP,
- * it returns nullptr for all other classes
- *
- * @return StdClass*
- */
-StdClass *Variant::implementation() const
-{
-   if (!isObject()) {
-      return nullptr;
-   }
-   return StdClassImpl::find(m_val)->getObject();
 }
 
 /**
@@ -1819,7 +745,7 @@ const Zval& Variant::getZval()
  */
 std::ostream &operator<<(std::ostream &stream, const Variant &value)
 {
-   return stream << value.getStringValue();
+   return stream << value.toString();
 }
 
 } // lang

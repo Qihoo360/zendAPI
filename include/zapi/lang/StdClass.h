@@ -77,7 +77,7 @@ public:
     */
    Variant operator[](const char *name) const
    {
-      return Variant(this).get(name);
+      return Variant(this);
    }
 
    /**
@@ -87,7 +87,7 @@ public:
     */
    Variant operator[](const std::string &name) const
    {
-      return Variant(this).get(name);
+      return Variant(this);
    }
 
    /**
@@ -97,7 +97,7 @@ public:
     */
    Variant property(const char *name) const
    {
-      return Variant(this).get(name);
+      return Variant(this);
    }
 
    /**
@@ -107,7 +107,7 @@ public:
     */
    Variant property(const std::string &name) const
    {
-      return Variant(this).get(name);
+      return Variant(this);
    }
 
    /**

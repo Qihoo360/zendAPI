@@ -55,9 +55,9 @@ public:
    {
       if (value.isDouble())
       {
-         return apply(value.getDoubleValue());
+         return apply(value.toDouble());
       }
-      return apply(value.getNumericValue());
+      return apply(value.toLong());
    }
 
    /**
@@ -69,10 +69,10 @@ public:
    {
       // check if the current object is a floating point number
       if (m_value->isDouble()) {
-         return Variant(F<double>()(m_value->getDoubleValue(), value));
+         return Variant(F<double>()(m_value->toDouble(), value));
       }
       // apply to natural numbers
-      return Variant(F<int64_t>()(m_value->getNumericValue(), value));
+      return Variant(F<int64_t>()(m_value->toLong(), value));
    }
 
    /**
@@ -84,9 +84,9 @@ public:
    {
       // check if the current object is a floating point number
       if (m_value->isDouble()) {
-         return Variant(F<double>()(m_value->getDoubleValue(), value));
+         return Variant(F<double>()(m_value->toDouble(), value));
       }
-      return Variant(F<int64_t>()(m_value->getNumericValue(), value));
+      return Variant(F<int64_t>()(m_value->toLong(), value));
    }
 
    /**
@@ -98,9 +98,9 @@ public:
    {
       // check if the current object is a floating point number
       if (m_value->isDouble()) {
-         return Variant(F<double>()(m_value->getDoubleValue(), value));
+         return Variant(F<double>()(m_value->toDouble(), value));
       }
-      return Variant(F<int64_t>()(m_value->getNumericValue(), value));
+      return Variant(F<int64_t>()(m_value->toLong(), value));
    }
 
    /**
@@ -112,9 +112,9 @@ public:
    {
       // check if the current object is a floating point number
       if (m_value->isDouble()) {
-         return Variant(F<double>()(m_value->getDoubleValue(), value ? 1 : 0));
+         return Variant(F<double>()(m_value->toDouble(), value ? 1 : 0));
       }
-      return Variant(F<int64_t>()(m_value->getNumericValue(), value ? 1 : 0));
+      return Variant(F<int64_t>()(m_value->toLong(), value ? 1 : 0));
    }
 
    /**
@@ -127,9 +127,9 @@ public:
       // convert to an integer
       value = value < '0' || value > '9' ? 0 : value - '0';
       if (m_value->isDouble()) {
-         return Variant(F<double>()(m_value->getDoubleValue(), value));
+         return Variant(F<double>()(m_value->toDouble(), value));
       }
-      return Variant(F<int64_t>()(m_value->getNumericValue(), value));
+      return Variant(F<int64_t>()(m_value->toLong(), value));
    }
 
    /**
@@ -159,7 +159,7 @@ public:
     */
    Variant apply(double value)
    {
-      return Variant(F<double>()(m_value->getDoubleValue(), value));
+      return Variant(F<double>()(m_value->toDouble(), value));
    }
 
    /**
@@ -172,10 +172,10 @@ public:
       // is this a type a floating point type?
       if (value.isDouble())
       {
-         return assign(value.getDoubleValue());
+         return assign(value.toDouble());
       }
       // we are going to treat it as a numeric (non floating) type
-      return assign(value.getNumericValue());;
+      return assign(value.toLong());;
    }
 
    /**
@@ -186,9 +186,9 @@ public:
    Variant &assign(int16_t value)
    {
       if (m_value->isDouble()) {
-         return m_value->operator=(F<double>()(m_value->getDoubleValue(), value));
+         return m_value->operator=(F<double>()(m_value->toDouble(), value));
       }
-      return m_value->operator=(F<int64_t>()(m_value->getNumericValue(), value));
+      return m_value->operator=(F<int64_t>()(m_value->toLong(), value));
    }
 
    /**
@@ -199,9 +199,9 @@ public:
    Variant &assign(int32_t value)
    {
       if (m_value->isDouble()) {
-         return m_value->operator=(F<double>()(m_value->getDoubleValue(), value));
+         return m_value->operator=(F<double>()(m_value->toDouble(), value));
       }
-      return m_value->operator=(F<int64_t>()(m_value->getNumericValue(), value));
+      return m_value->operator=(F<int64_t>()(m_value->toLong(), value));
    }
 
    /**
@@ -212,9 +212,9 @@ public:
    Variant &assign(int64_t value)
    {
       if (m_value->isDouble()) {
-         return m_value->operator=(F<double>()(m_value->getDoubleValue(), value));
+         return m_value->operator=(F<double>()(m_value->toDouble(), value));
       }
-      return m_value->operator=(F<int64_t>()(m_value->getNumericValue(), value));
+      return m_value->operator=(F<int64_t>()(m_value->toLong(), value));
    }
 
    /**
@@ -225,9 +225,9 @@ public:
    Variant &assign(bool value)
    {
       if (m_value->isDouble()) {
-         return m_value->operator=(F<double>()(m_value->getDoubleValue(), value ? 1: 0));
+         return m_value->operator=(F<double>()(m_value->toDouble(), value ? 1: 0));
       }
-      return m_value->operator=(F<int64_t>()(m_value->getNumericValue(), value ? 1 : 0));
+      return m_value->operator=(F<int64_t>()(m_value->toLong(), value ? 1 : 0));
    }
 
    /**
@@ -239,9 +239,9 @@ public:
    {
       value = value < '0' || value > '9' ? 0 : value - '0';
       if (m_value->isDouble()) {
-         return m_value->operator=(F<double>()(m_value->getDoubleValue(), value));
+         return m_value->operator=(F<double>()(m_value->toDouble(), value));
       }
-      return m_value->operator=(F<int64_t>()(m_value->getNumericValue(), value));
+      return m_value->operator=(F<int64_t>()(m_value->toLong(), value));
    }
 
    /**
@@ -252,7 +252,7 @@ public:
    Variant &assign(const std::string &value)
    {
       if (m_value->isDouble()) {
-         return m_value->operator=(F<double>()(m_value->getDoubleValue(), std::stod(value)));
+         return m_value->operator=(F<double>()(m_value->toDouble(), std::stod(value)));
       }
       return assign(static_cast<int64_t>(std::stoll(value)));
    }
@@ -265,7 +265,7 @@ public:
    Variant &assign(const char *value)
    {
       if (m_value->isDouble()) {
-         return m_value->operator=(F<double>()(m_value->getDoubleValue(), std::stod(value)));
+         return m_value->operator=(F<double>()(m_value->toDouble(), std::stod(value)));
       }
       return assign(static_cast<int64_t>(std::stoll(value)));
    }
@@ -277,7 +277,7 @@ public:
     */
    Variant &assign(double value)
    {
-      return m_value->operator=(F<double>()(m_value->getDoubleValue(), value));
+      return m_value->operator=(F<double>()(m_value->toDouble(), value));
    }
 };
 
