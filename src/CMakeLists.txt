@@ -3,11 +3,12 @@ set(ZAPI_SRC
    lang/Variant.cpp
    lang/FatalError.cpp
    lang/StdClass.cpp
+   ds/String.cpp
    vm/StdClassImpl.cpp
    vm/Extension.cpp
    vm/Zval.cpp)
 
-zapi_add_library(${ZAPI_PROJECT_NAME} SHARED ${ZAPI_SRC})
+zapi_add_library(${ZAPI_PROJECT_NAME} SHARED ${ZAPI_SRC} ${ZAPI_PUBLIC_HEADERS})
 
 export(TARGETS ${ZAPI_PROJECT_NAME}
    FILE "${ZAPI_BINARY_DIR}/ZendApiTargets.cmake")

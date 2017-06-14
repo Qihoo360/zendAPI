@@ -14,7 +14,7 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/vm/Extension.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/StdClassImpl.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/Zval.h
-   ${ZAPI_INCLUDE_DIR}/zapi/ds/Array.h
+   ${ZAPI_INCLUDE_DIR}/zapi/ds/HashTable.h
    ${ZAPI_INCLUDE_DIR}/zapi/ds/List.h
    ${ZAPI_INCLUDE_DIR}/zapi/ds/String.h
    ${ZAPI_INCLUDE_DIR}/zapi/utils/Arithmetic.h
