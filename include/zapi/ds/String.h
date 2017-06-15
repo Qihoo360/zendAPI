@@ -19,6 +19,7 @@
 #include "php/Zend/zend_string.h"
 
 #include "zapi/Global.h"
+#include <string>
 
 namespace zapi
 {
@@ -54,7 +55,7 @@ public:
     * @param string The string to wrap
     */
    String(const std::string &string)
-         : m_string(zend_string_init(string.data(), string.size(), 1))
+         : String(string.data(), string.size(), true)
    {}
 
    /**
@@ -63,7 +64,7 @@ public:
     * @param  string  The string to wrap
     */
    String(const char *string)
-         : m_string(zend_string_init(string, std::strlen(string), 1))
+         : String(string, std::strlen(string), true)
    {}
 
    /**
@@ -73,7 +74,7 @@ public:
     * @param  size    Number of bytes in the string
     */
    String(const char *string, size_t size)
-         : m_string(zend_string_init(string, size, 1))
+         : String(string, size, true)
    {}
 
    /**
@@ -83,7 +84,11 @@ public:
     */
    template <size_t size>
    String(const char (&string)[size])
-         : m_string(zend_string_init(string, size - 1, 1))
+      : String(string, size - 1, true)
+   {}
+   
+   String(const char *string, size_t size, bool persistent)
+      : m_string(zend_string_init(string, size, persistent ? 1 : 0))
    {}
 
    /**

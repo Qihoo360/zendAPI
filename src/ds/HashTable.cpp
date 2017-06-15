@@ -11,46 +11,16 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by zzu_softboy on 14/06/2017.
+// Created by zzu_softboy on 15/06/2017.
 
-#include "php/sapi/embed/php_embed.h"
-
-#include "gtest/gtest.h"
-#include "zapi/Global.h"
-#include <limits>
 #include "zapi/ds/HashTable.h"
-#include "zapi/lang/Variant.h"
-#include <iostream>
 
-using ZapiHashTable = zapi::ds::HashTable;
-using zapi::lang::Variant;
-
-namespace
+namespace zapi
+{
+namespace ds
 {
 
-class HashTableTest : public ::testing::Test
-{};
+zapi::lang::HashTableDataDeleter zValDataDeleter = ZVAL_PTR_DTOR;
 
-} // end of namespace
-
-TEST_F(HashTableTest, testConstructors) 
-{
-   {
-      // default constructor
-      ZapiHashTable table;
-      ASSERT_EQ(table.getSize(), 0);
-   }
-}
-
-TEST_F(HashTableTest, testInsertItem)
-{
-   {
-      // default constructor
-      ZapiHashTable table;
-      ASSERT_EQ(table.getSize(), 0);
-      table.insert("name", Variant("zapi"));
-      ASSERT_EQ(table.getSize(), 1);
-      table.insert("age", Variant(20));
-      ASSERT_EQ(table.getSize(), 2);
-   }
-}
+} // ds
+} // zapi

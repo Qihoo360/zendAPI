@@ -23,6 +23,7 @@
 
 #include "zapi/Version.h"
 #include "zapi/Config.h"
+#include "zapi/lang/Type.h"
 
 #include <type_traits>
 #include <cstddef>

@@ -17,6 +17,7 @@
 #define ZAPI_LANG_TYPE_H
 
 #include "php/Zend/zend_types.h"
+#include "php/Zend/zend_variables.h"
 
 namespace zapi
 {
@@ -51,7 +52,7 @@ enum class Type : unsigned char
    Error       = _IS_ERROR
 };
 
-
+using HashTableDataDeleter = dtor_func_t;
 
 } // lang
 } // zapi

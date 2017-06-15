@@ -732,7 +732,7 @@ std::string Variant::debugZval() const
  * 
  * @return 
  */
-const Zval& Variant::getZval()
+const Zval& Variant::getZval() const
 {
    return m_val;
 }

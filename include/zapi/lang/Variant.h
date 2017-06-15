@@ -218,25 +218,17 @@ public:
    }
    
    /**
-    * Cast to byte array
-    *
-    * Note that this only works for string values, other
-    * variables return a nullptr.
-    *
-    * @return const char *
-    */
-   operator const char * () const
-   {
-      return "zapi";
-   }
-   
-   /**
     * Cast to a floating point
     * @return double
     */
    operator double () const
    {
       return toDouble();
+   }
+   
+   operator zval * () const
+   {
+      return static_cast<zval *>(m_val);
    }
    
    /**
@@ -331,7 +323,7 @@ public:
     * 
     * @return 
     */
-   const Zval& getZval();
+   const Zval& getZval() const;
 protected:
    /**
     * Detach the zval
