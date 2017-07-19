@@ -54,3 +54,17 @@ TEST_F(HashTableTest, testInsertItem)
       ASSERT_EQ(table.getSize(), 2);
    }
 }
+
+TEST_F(HashTableTest, testIterator)
+{
+   {
+      // default constructor
+      ZapiHashTable table;
+      ASSERT_EQ(table.getSize(), 0);
+      table.insert("name", Variant("zapi"));
+      ASSERT_EQ(table.getSize(), 1);
+      table.insert("age", Variant(20));
+      ASSERT_EQ(table.getSize(), 2);
+      
+   }
+}

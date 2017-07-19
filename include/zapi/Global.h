@@ -203,6 +203,8 @@ using Callback = std::function<void()>;
 
 #define ZAPI_ASSERT(x) (x);
 
+#define ZAPI_SUCCESS SUCCESS
+#define ZAPI_FAILURE FAILURE
 
 // The way how PHP C API deals with "global" variables is peculiar.
 //

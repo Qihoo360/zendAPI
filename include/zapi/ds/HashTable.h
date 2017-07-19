@@ -63,8 +63,7 @@ class ZAPI_DECL_EXPORT HashTable
 public:
    constexpr static uint32_t DEFAULT_HASH_SIZE = 8;
    using IndexType = zend_ulong;
-private:
-   ::HashTable m_hashTable;
+   using HashPosition = ::HashPosition;
 public:
    HashTable(uint32_t tableSize = DEFAULT_HASH_SIZE,
              zapi::lang::HashTableDataDeleter defaultDeleter = zValDataDeleter, 
@@ -87,15 +86,15 @@ public:
    {
       zend_hash_destroy(&m_hashTable);
    }
-
-//   HashTable(HashTable *hashTable);
+   
+   //   HashTable(HashTable *hashTable);
    
    uint32_t getSize() const
    {
       return zend_hash_num_elements(&m_hashTable);
    }
    
-//   void find();
+   //   void find();
    
    bool isEmpty() const
    {
@@ -106,12 +105,12 @@ public:
    {
       return insert(String(key), value, forceNew);
    }
-
+   
    HashTable &insert(const std::string &key, const Variant &value, bool forceNew = false)
    {
       return insert(String(key.c_str(), key.size()), value, forceNew);
    }
-
+   
    HashTable &insert(const String &key, const Variant &value, bool forceNew = false)
    {
       if (forceNew) {
@@ -122,7 +121,7 @@ public:
       return *this;
    }
    
-//   void getKey();
+   //   void getKey();
    const Variant getValue(const char *key) const;
    const Variant getValue(const std::string &key) const;
    const Variant getValue(const String &key) const;
@@ -136,11 +135,10 @@ public:
       typedef Variant *pointer;
       typedef Variant &reference;
    public:
-      
-      inline iterator() :m_index(0) 
+      inline iterator() :m_index(HT_INVALID_IDX), m_hashTable(nullptr)
       {}
       
-      explicit inline iterator(index) :m_index(index)
+      explicit inline iterator(::HashTable hashTable, HashPosition index) :m_index(index), m_hashTable(hashTable)
       {}
       
       inline const std::string getKey()
@@ -152,12 +150,78 @@ public:
       inline Variant getValue() const 
       {}
       
+   public:
+      inline bool operator==(const iterator &other) const
+      {
+         return m_index == other.m_index;
+      }
+      
+      inline bool operator!=(const iterator &other) const
+      {
+         return m_index != other.m_index;
+      }
+      
+      inline iterator &operator++()
+      {
+         static_assert(m_hashTable != nullptr, "m_hashTable can't be nullptr");
+         int result = zend_hash_move_forward_ex(m_hashTable, &m_index);
+         static_assert(result == ZAPI_SUCCESS, "Iterating beyond end()");
+         return *this;
+      }
+      
+      inline iterator operator++(int)
+      {
+         iterator iter = *this;
+         static_assert(m_hashTable != nullptr, "m_hashTable can't be nullptr");
+         int result = zend_hash_move_forward_ex(m_hashTable, &m_index);
+         static_assert(result == ZAPI_SUCCESS, "Iterating beyond end()");
+         return iter;
+      }
+      
+      inline iterator &operator--()
+      {
+         static_assert(m_hashTable != nullptr, "m_hashTable can't be nullptr");
+         int result = zend_hash_move_backwards_ex(m_hashTable, &m_index);
+         static_assert(result == ZAPI_SUCCESS, "Iterating backward beyond begin()");
+         return *this;
+      }
+      
+      inline iterator operator--()
+      {
+         iterator iter = *this;
+         static_assert(m_hashTable != nullptr, "m_hashTable can't be nullptr");
+         int result = zend_hash_move_backwards_ex(m_hashTable, &m_index);
+         static_assert(result == ZAPI_SUCCESS, "Iterating backward beyond begin()");
+         return iter;
+      }
+      
+      inline iterator operator+(int step)
+      {
+         
+      }
+      
+      inline iterator operator-(int step)
+      {
+         
+      }
+      
+      inline iterator &operator+=(int step)
+      {
+         
+      }
+      
+      inline iterator &operator-=(int step)
+      {
+         
+      }
+      
    private:
       friend class const_iterator;
       /**
        * @brief current hash table index 
        */
-      uint32_t m_index;
+      HashPosition m_index;
+      ::HashTable *m_hashTable;
    };
    
    class const_iterator
@@ -167,16 +231,23 @@ public:
    
    // STL style
    inline iterator begin()
-   {}
+   {
+      return iterator(m_hashTable.nInternalPointer);
+   }
    
    inline const_iterator cbegin()
    {}
    
    inline iterator end()
-   {}
+   {
+      return iterator(HT_INVALID_IDX);
+   }
    
    inline iterator cend()
    {}
+   
+private:
+   ::HashTable m_hashTable;
 };
 
 } // ds
