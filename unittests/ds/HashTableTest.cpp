@@ -21,6 +21,8 @@
 #include "zapi/ds/HashTable.h"
 #include "zapi/lang/Variant.h"
 #include <iostream>
+#include <vector>
+#include <string>
 
 using ZapiHashTable = zapi::ds::HashTable;
 using zapi::lang::Variant;
@@ -65,6 +67,18 @@ TEST_F(HashTableTest, testIterator)
       ASSERT_EQ(table.getSize(), 1);
       table.insert("age", Variant(20));
       ASSERT_EQ(table.getSize(), 2);
-      
+      table.insert("height", Variant(123));
+      ASSERT_EQ(table.getSize(), 3);
+      ZapiHashTable::iterator iter = table.begin();
+      std::vector<std::string> expectedKeys{"name", "age", "height"};
+      std::vector<std::string> actualKeys;
+      while (iter != table.end()) {
+         ZapiHashTable::HashKeyType keyType = iter.getKeyType();
+         if (keyType == ZapiHashTable::HashKeyType::String) {
+            actualKeys.push_back(iter.getStrKey());
+         }
+         iter++;
+      }
+      ASSERT_EQ(expectedKeys, actualKeys);
    }
 }

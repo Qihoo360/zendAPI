@@ -106,6 +106,33 @@ Variant::Variant(std::int64_t value)
 }
 
 /**
+ * Constructor based on integer value
+ * @param  value
+ */
+Variant::Variant(std::uint16_t value)
+{
+   ZVAL_LONG(m_val, static_cast<std::int16_t>(value));
+}
+
+/**
+ * Constructor based on integer value
+ * @param  value
+ */
+Variant::Variant(std::uint32_t value)
+{
+   ZVAL_LONG(m_val, static_cast<std::int32_t>(value));
+}
+
+/**
+ * Constructor based on integer value
+ * @param  value
+ */
+Variant::Variant(std::uint64_t value)
+{
+   ZVAL_LONG(m_val, static_cast<std::int64_t>(value));
+}
+
+/**
  * Constructor based on boolean value
  * @param  value
  */
@@ -363,6 +390,39 @@ Variant &Variant::operator=(std::int64_t value)
    zval_dtor(m_val);
    ZVAL_LONG(m_val, value);
    return *this;
+}
+
+/**
+ * Assignment operator
+ * 
+ * @param  value
+ * @return Variant
+ */
+Variant &Variant::operator=(std::uint16_t value)
+{
+   return operator=(static_cast<std::int16_t>(value));
+}
+
+/**
+ * Assignment operator
+ * 
+ * @param  value
+ * @return Variant
+ */
+Variant &Variant::operator=(std::uint32_t value)
+{
+   return operator=(static_cast<std::int32_t>(value));
+}
+
+/**
+ * Assignment operator
+ * 
+ * @param  value
+ * @return Variant
+ */
+Variant &Variant::operator=(std::uint64_t value)
+{
+   return operator=(static_cast<std::int64_t>(value));
 }
 
 /**

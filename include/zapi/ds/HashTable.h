@@ -28,32 +28,6 @@ namespace zapi
 namespace ds
 {
 
-enum class HashKeyType : unsigned char
-{
-   String      = HASH_KEY_IS_STRING,
-   Long        = HASH_KEY_IS_LONG,
-   NotExistent = HASH_KEY_NON_EXISTENT
-};
-
-enum class HashActionType : unsigned char
-{
-   Update         = HASH_UPDATE,
-   Add            = HASH_ADD,
-   UpdateIndirect = HASH_UPDATE_INDIRECT,
-   AddNew         = HASH_ADD_NEW,
-   AddNext        = HASH_ADD_NEXT
-};
-
-enum class HashFlagType : unsigned char
-{
-   Persisent        = HASH_FLAG_PERSISTENT,
-   ApplyProtection  = HASH_FLAG_APPLY_PROTECTION,
-   Packed           = HASH_FLAG_PACKED,
-   Initialized      = HASH_FLAG_INITIALIZED,
-   StaticKeys       = HASH_FLAG_STATIC_KEYS,
-   HasEmptyIndirect = HASH_FLAG_HAS_EMPTY_IND
-};
-
 using zapi::lang::Variant;
 
 extern zapi::lang::HashTableDataDeleter zValDataDeleter;
@@ -64,6 +38,31 @@ public:
    constexpr static uint32_t DEFAULT_HASH_SIZE = 8;
    using IndexType = zend_ulong;
    using HashPosition = ::HashPosition;
+   enum class HashKeyType : unsigned char
+   {
+      String      = HASH_KEY_IS_STRING,
+      Long        = HASH_KEY_IS_LONG,
+      NotExistent = HASH_KEY_NON_EXISTENT
+   };
+   
+   enum class HashActionType : unsigned char
+   {
+      Update         = HASH_UPDATE,
+      Add            = HASH_ADD,
+      UpdateIndirect = HASH_UPDATE_INDIRECT,
+      AddNew         = HASH_ADD_NEW,
+      AddNext        = HASH_ADD_NEXT
+   };
+   
+   enum class HashFlagType : unsigned char
+   {
+      Persisent        = HASH_FLAG_PERSISTENT,
+      ApplyProtection  = HASH_FLAG_APPLY_PROTECTION,
+      Packed           = HASH_FLAG_PACKED,
+      Initialized      = HASH_FLAG_INITIALIZED,
+      StaticKeys       = HASH_FLAG_STATIC_KEYS,
+      HasEmptyIndirect = HASH_FLAG_HAS_EMPTY_IND
+   };
 public:
    HashTable(uint32_t tableSize = DEFAULT_HASH_SIZE,
              zapi::lang::HashTableDataDeleter defaultDeleter = zValDataDeleter, 
@@ -141,8 +140,42 @@ public:
       explicit inline iterator(::HashTable *hashTable, HashPosition index) :m_index(index), m_hashTable(hashTable)
       {}
       
-      inline const std::string getKey()
-      {}
+      inline std::string getStrKey()
+      {
+         zend_string *key;
+         int keyType = zend_hash_get_current_key_ex(m_hashTable, &key, nullptr, &m_index);
+         ZAPI_ASSERT_X(keyType != HASH_KEY_NON_EXISTENT, "zapi::ds::HashTable::iterator", "Current key is not exist");
+         // we just copy here
+         return std::string(key->val, key->len);
+      }
+      
+      inline IndexType getNumericKey()
+      {
+         IndexType index;
+         int keyType = zend_hash_get_current_key_ex(m_hashTable, nullptr, &index, &m_index);
+         ZAPI_ASSERT_X(keyType != HASH_KEY_NON_EXISTENT, "zapi::ds::HashTable::iterator", "Current key is not exist");
+         return index;
+      }
+      
+      inline Variant getKey()
+      {
+         zend_string *key;
+         IndexType index;
+         int keyType = zend_hash_get_current_key_ex(m_hashTable, &key, &index, &m_index);
+         ZAPI_ASSERT_X(keyType != HASH_KEY_NON_EXISTENT, "zapi::ds::HashTable::iterator", "Current key is not exist");
+         // we just copy here
+         if (keyType == HASH_KEY_IS_STRING) {
+            return Variant(key->val, key->len);
+         } else {
+            return Variant(index);
+         }
+      }
+      
+      inline HashKeyType getKeyType()
+      {
+         int type = zend_hash_get_current_key_type_ex(m_hashTable, &m_index);
+         return static_cast<HashKeyType>(type);
+      }
       
       inline const int getIndex()
       {}

@@ -63,6 +63,9 @@ public:
    Variant(std::int16_t value);
    Variant(std::int32_t value);
    Variant(std::int64_t value);
+   Variant(std::uint16_t value);
+   Variant(std::uint32_t value);
+   Variant(std::uint64_t value);
    Variant(bool value);
    Variant(char value);
    Variant(const std::string &value);
@@ -156,6 +159,9 @@ public:
    Variant &operator=(std::int16_t value);
    Variant &operator=(std::int32_t value);
    Variant &operator=(std::int64_t value);
+   Variant &operator=(std::uint16_t value);
+   Variant &operator=(std::uint32_t value);
+   Variant &operator=(std::uint64_t value);
    Variant &operator=(bool value);
    Variant &operator=(char value);
    Variant &operator=(const std::string &value);
@@ -294,6 +300,18 @@ public:
     * @return std::int64_t
     */
    std::int64_t toLong() const;
+   
+   /**
+    * Retrieve the value as number
+    *
+    * We force this to be a std::int64_t because we assume that most
+    * servers run 64 bits nowadays, and because we use std::int32_t, std::int64_t
+    * almost everywhere, instead of 'long' and on OSX neither of
+    * these intxx_t types is defined as 'long'...
+    *
+    * @return std::int64_t
+    */
+   std::uint64_t toUnsignedLong() const;
    
    /**
     * Retrieve the value as boolean
