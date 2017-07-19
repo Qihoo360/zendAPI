@@ -128,15 +128,55 @@ public:
    const Variant getValue(const String &key) const;
    const Variant getValue(IndexType key);
    
-   class Iterator 
+   class iterator 
+   {
+   public:
+      typedef std::bidirectional_iterator_tag iterator_category;
+      typedef Variant value_type;
+      typedef Variant *pointer;
+      typedef Variant &reference;
+   public:
+      
+      inline iterator() :m_index(0) 
+      {}
+      
+      explicit inline iterator(index) :m_index(index)
+      {}
+      
+      inline const std::string getKey()
+      {}
+      
+      inline const int getIndex()
+      {}
+      
+      inline Variant getValue() const 
+      {}
+      
+   private:
+      friend class const_iterator;
+      /**
+       * @brief current hash table index 
+       */
+      uint32_t m_index;
+   };
+   
+   class const_iterator
    {
       
    };
    
-   class ConstInterator
-   {
-      
-   };
+   // STL style
+   inline iterator begin()
+   {}
+   
+   inline const_iterator cbegin()
+   {}
+   
+   inline iterator end()
+   {}
+   
+   inline iterator cend()
+   {}
 };
 
 } // ds
