@@ -225,7 +225,6 @@ ZEND_END_MODULE_GLOBALS(zapi)
 #  define ZAPI_GV(v) (zapi_globals.v)
 #endif
 
-
 // We're almost there, we now need to declare an instance of the
 // structure defined above (if building for a single thread) or some
 // sort of impossible to understand magic pointer-to-a-pointer (for

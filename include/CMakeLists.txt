@@ -1,4 +1,5 @@
 set(ZAPI_PUBLIC_HEADERS
+   ${ZAPI_INCLUDE_DIR}/apidoc.h
    ${ZAPI_INCLUDE_DIR}/zapi/kernel/ExtensionBase.h
    ${ZAPI_INCLUDE_DIR}/zapi/bridge/Extension.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Type.h
