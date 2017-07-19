@@ -1,9 +1,12 @@
 # ZendApi
+
+<img width=200px src="https://raw.githubusercontent.com/qcoreteam/zendapi/master/assets/images/zendapi-logo.svg">
+
 ### 介绍
 
 该项目是对Zend Engine的C接口使用C++11进行而面向对象的封装，从而屏蔽了底层Zend Engine API的接口复杂性，加快开发PHP扩展的效率。
 
-项目官网地址：www.zendapi.org
+项目官网地址：www.zendapi.com
 
 ### 设计目标
 
@@ -22,8 +25,8 @@
 
 ### 文档相关
 
-用户手册: www.zendapi.org/documents</br>
-API手册: www.zendapi.org/api
+用户手册: www.zendapi.com/documents</br>
+API手册: www.zendapi.com/api
 
 ### 说明
 
