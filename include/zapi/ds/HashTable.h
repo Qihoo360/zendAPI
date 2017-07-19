@@ -138,7 +138,7 @@ public:
       inline iterator() :m_index(HT_INVALID_IDX), m_hashTable(nullptr)
       {}
       
-      explicit inline iterator(::HashTable hashTable, HashPosition index) :m_index(index), m_hashTable(hashTable)
+      explicit inline iterator(::HashTable *hashTable, HashPosition index) :m_index(index), m_hashTable(hashTable)
       {}
       
       inline const std::string getKey()
@@ -163,56 +163,66 @@ public:
       
       inline iterator &operator++()
       {
-         static_assert(m_hashTable != nullptr, "m_hashTable can't be nullptr");
+         ZAPI_ASSERT_X(m_hashTable != nullptr, "zapi::ds::HashTable::iterator", "m_hashTable can't be nullptr");
          int result = zend_hash_move_forward_ex(m_hashTable, &m_index);
-         static_assert(result == ZAPI_SUCCESS, "Iterating beyond end()");
+         ZAPI_ASSERT_X(result == ZAPI_SUCCESS, "zapi::ds::HashTable::iterator", "Iterating beyond end()");
          return *this;
       }
       
       inline iterator operator++(int)
       {
          iterator iter = *this;
-         static_assert(m_hashTable != nullptr, "m_hashTable can't be nullptr");
+         ZAPI_ASSERT_X(m_hashTable != nullptr, "zapi::ds::HashTable::iterator", "m_hashTable can't be nullptr");
          int result = zend_hash_move_forward_ex(m_hashTable, &m_index);
-         static_assert(result == ZAPI_SUCCESS, "Iterating beyond end()");
+         ZAPI_ASSERT_X(result == ZAPI_SUCCESS, "zapi::ds::HashTable::iterator", "Iterating beyond end()");
          return iter;
       }
       
       inline iterator &operator--()
       {
-         static_assert(m_hashTable != nullptr, "m_hashTable can't be nullptr");
+         ZAPI_ASSERT_X(m_hashTable != nullptr, "zapi::ds::HashTable::iterator", "m_hashTable can't be nullptr");
          int result = zend_hash_move_backwards_ex(m_hashTable, &m_index);
-         static_assert(result == ZAPI_SUCCESS, "Iterating backward beyond begin()");
+         ZAPI_ASSERT_X(result == ZAPI_SUCCESS, "zapi::ds::HashTable::iterator", "Iterating backward beyond begin()");
          return *this;
       }
       
-      inline iterator operator--()
+      inline iterator operator--(int)
       {
          iterator iter = *this;
-         static_assert(m_hashTable != nullptr, "m_hashTable can't be nullptr");
+         ZAPI_ASSERT_X(m_hashTable != nullptr, "zapi::ds::HashTable::iterator", "m_hashTable can't be nullptr");
          int result = zend_hash_move_backwards_ex(m_hashTable, &m_index);
-         static_assert(result == ZAPI_SUCCESS, "Iterating backward beyond begin()");
+         ZAPI_ASSERT_X(result == ZAPI_SUCCESS, "zapi::ds::HashTable::iterator", "Iterating backward beyond begin()");
          return iter;
       }
       
-      inline iterator operator+(int step)
+      inline iterator operator+(int32_t step)
       {
-         
+         iterator iter = *this;
+         if (step > 0) {
+            while (step--) {
+               ++iter;
+            }
+         } else {
+            while (step++) {
+               --iter;
+            }
+         }
+         return iter;
       }
       
-      inline iterator operator-(int step)
+      inline iterator operator-(int32_t step)
       {
-         
+         return operator+(-step);
       }
       
       inline iterator &operator+=(int step)
       {
-         
+         return *this = *this + step;
       }
       
       inline iterator &operator-=(int step)
       {
-         
+         return *this = *this - step;
       }
       
    private:
@@ -232,7 +242,7 @@ public:
    // STL style
    inline iterator begin()
    {
-      return iterator(m_hashTable.nInternalPointer);
+      return iterator(&m_hashTable, m_hashTable.nInternalPointer);
    }
    
    inline const_iterator cbegin()
@@ -240,7 +250,7 @@ public:
    
    inline iterator end()
    {
-      return iterator(HT_INVALID_IDX);
+      return iterator(&m_hashTable, HT_INVALID_IDX);
    }
    
    inline iterator cend()

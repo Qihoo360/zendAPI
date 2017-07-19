@@ -13,3 +13,17 @@
 //
 // Created by zzu_softboy on 05/06/2017.
 
+#include "zapi/Global.h"
+
+#include <iostream>
+
+namespace zapi
+{
+
+void assert_x(const char *where, const char *what, const char *file, int line) ZAPI_DECL_NOEXCEPT
+{
+   std::cerr <<  "ASSERT failure in " << where << ": \"" << what 
+              << "\", file " << file << ", line "<< line << std::endl;
+}
+
+} // zapi

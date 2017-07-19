@@ -201,7 +201,21 @@ using Callback = std::function<void()>;
    Class(const Class &) ZAPI_DECL_EQ_DELETE;\
    Class &operator=(const Class &) ZAPI_DECL_EQ_DELETE;
 
-#define ZAPI_ASSERT(x) (x);
+namespace zapi
+{
+inline void noop(void) {}
+ZAPI_DECL_EXPORT void assert_x(const char *where, const char *what, const char *file, int line) ZAPI_DECL_NOEXCEPT;
+} // zapi
+
+
+
+#if !defined(ZAPI_ASSERT)
+#  if defined(ZAPI_NO_DEBUG) && !defined(ZAPI_FORCE_ASSERTS)
+#     define ZAPI_ASSERT_X(cond, where, what) do { } while ((false) && (cond))
+#  else 
+#     define ZAPI_ASSERT_X(cond, where, what) ((!(cond)) ? zapi::assert_x(where, what,__FILE__,__LINE__) : zapi::noop())
+#  endif
+#endif
 
 #define ZAPI_SUCCESS SUCCESS
 #define ZAPI_FAILURE FAILURE
