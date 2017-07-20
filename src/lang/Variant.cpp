@@ -80,6 +80,7 @@ Variant::Variant(std::nullptr_t value) : Variant()
 
 /**
  * Constructor based on integer value
+ * 
  * @param  value
  */
 Variant::Variant(std::int16_t value)
@@ -89,6 +90,7 @@ Variant::Variant(std::int16_t value)
 
 /**
  * Constructor based on integer value
+ * 
  * @param  value
  */
 Variant::Variant(std::int32_t value)
@@ -98,6 +100,7 @@ Variant::Variant(std::int32_t value)
 
 /**
  * Constructor based on integer value
+ * 
  * @param  value
  */
 Variant::Variant(std::int64_t value)
@@ -107,6 +110,7 @@ Variant::Variant(std::int64_t value)
 
 /**
  * Constructor based on integer value
+ * 
  * @param  value
  */
 Variant::Variant(std::uint16_t value)
@@ -116,6 +120,7 @@ Variant::Variant(std::uint16_t value)
 
 /**
  * Constructor based on integer value
+ * 
  * @param  value
  */
 Variant::Variant(std::uint32_t value)
@@ -125,6 +130,7 @@ Variant::Variant(std::uint32_t value)
 
 /**
  * Constructor based on integer value
+ * 
  * @param  value
  */
 Variant::Variant(std::uint64_t value)
@@ -134,6 +140,7 @@ Variant::Variant(std::uint64_t value)
 
 /**
  * Constructor based on boolean value
+ * 
  * @param  value
  */
 Variant::Variant(bool value)
@@ -143,6 +150,7 @@ Variant::Variant(bool value)
 
 /**
  * Constructor based on single character
+ * 
  * @param  value
  */
 Variant::Variant(char value)
@@ -152,6 +160,7 @@ Variant::Variant(char value)
 
 /**
  * Constructor based on string value
+ * 
  * @param  value
  */
 Variant::Variant(const std::string &value)
@@ -161,16 +170,14 @@ Variant::Variant(const std::string &value)
 
 /**
  * Constructor based on a byte array
+ * 
  * @param  value
  * @param  size
  */
 Variant::Variant(const char *value, int size)
 {
    if (value != nullptr) {
-      if (size < 0) {
-         size = std::strlen(value);
-      }
-      ZVAL_STRINGL(&m_val, value, size);
+      ZVAL_STRINGL(&m_val, value, size < 0 ? std::strlen(value) : size);
    } else {
       ZVAL_NULL(&m_val);
    }
@@ -178,6 +185,7 @@ Variant::Variant(const char *value, int size)
 
 /**
  * Constructor based on decimal value
+ * 
  * @param  value
  */
 Variant::Variant(double value)
@@ -187,28 +195,25 @@ Variant::Variant(double value)
 
 /**
  * Wrap object around zval
+ * 
  * @param  zval        Value to wrap
  * @param  ref         Force this to be a reference
  */
-Variant::Variant(_zval_struct *value, bool isRef)
+Variant::Variant(zval *value, bool isRef)
 {
-   ZVAL_DUP(&m_val, value);
-   // if value is the primitive type return
-   if (!Z_REFCOUNTED_P(&m_val)) {
-      return;
+   if (!isRef) {
+      ZVAL_DUP(&m_val, value);
+   } else {
+      ZVAL_MAKE_REF(value);
+      zend_reference *ref = Z_REF_P(value);
+      ++GC_REFCOUNT(ref);
+      ZVAL_REF(&m_val, ref);
    }
-   if (isRef && Z_REFCOUNT_P(&m_val) > 1) {
-      SEPARATE_ZVAL_IF_NOT_REF(&m_val);
-   }
-   Z_ADDREF_P(&m_val);
-   if (!isRef || Z_ISREF(m_val)) {
-      return;
-   }
-   ZVAL_MAKE_REF(&m_val);
 }
 
 /**   
  * Wrap around an object
+ * 
  * @param  object
  */
 Variant::Variant(const StdClass *object)
@@ -228,6 +233,7 @@ Variant::Variant(const StdClass *object)
 
 /**
  * Copy constructor
+ * 
  * @param  value
  */
 Variant::Variant(const Variant &other)
@@ -240,6 +246,7 @@ Variant::Variant(const Variant &other)
 
 /**
  * Move constructor
+ * 
  * @param  value
  */
 Variant::Variant(Variant &&other) ZAPI_DECL_NOEXCEPT
@@ -254,46 +261,8 @@ Variant::~Variant()
 }
 
 /**
- * Detach the zval
- *
- * This will unlink the zval internal structure from the Value object,
- * so that the destructor will not reduce the number of references and/or
- * deallocate the zval structure. This is used for functions that have to
- * return a zval pointer, that would otherwise be deallocated the moment
- * the function returns.
- *
- * @param  keeprefcount
- * @return zval
- */
-Zval Variant::detach(bool keepRefCount)
-{
-   Zval result;
-   ZVAL_COPY_VALUE(result, &m_val);
-   // should we keep the reference count?
-   /// FIXME: what if reference count becomes 0?
-   /// Maybe we should call zval_ptr_dtor()?
-   if (!keepRefCount) {
-      Z_TRY_DELREF_P(&m_val);
-   }
-   ZVAL_UNDEF(&m_val);
-   return result;
-}
-
-/**
- * Retrieve the refcount
- * @return int
- */
-int Variant::getRefCount()
-{
-   if (!Z_REFCOUNTED(m_val))
-   {
-      return 0;
-   }
-   return Z_REFCOUNT(m_val);
-}
-
-/**
  * Move operator
+ * 
  * @param  value
  * @return Variant
  */
@@ -317,6 +286,7 @@ Variant &Variant::operator=(Variant &&value) ZAPI_DECL_NOEXCEPT
 
 /**
  * Assignment operator
+ * 
  * @param  value
  * @return Variant
  */
@@ -342,6 +312,7 @@ Variant &Variant::operator=(const Variant &value)
 
 /**
  * Assignment operator
+ * 
  * @param  value
  * @return Variant
  */
@@ -355,6 +326,7 @@ Variant &Variant::operator=(std::nullptr_t value)
 
 /**
  * Assignment operator
+ * 
  * @param  value
  * @return Variant
  */
@@ -368,6 +340,7 @@ Variant &Variant::operator=(std::int16_t value)
 
 /**
  * Assignment operator
+ * 
  * @param  value
  * @return Variant
  */
@@ -381,6 +354,7 @@ Variant &Variant::operator=(std::int32_t value)
 
 /**
  * Assignment operator
+ * 
  * @param  value
  * @return Variant
  */
@@ -427,6 +401,7 @@ Variant &Variant::operator=(std::uint64_t value)
 
 /**
  * Assignment operator
+ * 
  * @param  value
  * @return Variant
  */
@@ -440,6 +415,7 @@ Variant &Variant::operator=(bool value)
 
 /**
  * Assignment operator
+ * 
  * @param  value
  * @return Variant
  */
@@ -453,6 +429,7 @@ Variant &Variant::operator=(char value)
 
 /**
  * Assignment operator
+ * 
  * @param  value
  * @return Variant
  */
@@ -466,6 +443,7 @@ Variant &Variant::operator=(const std::string &value)
 
 /**
  * Assignment operator
+ * 
  * @param  value
  * @return Variant
  */
@@ -479,6 +457,7 @@ Variant &Variant::operator=(const char *value)
 
 /**
  * Assignment operator
+ * 
  * @param  value
  * @return Variant
  */
@@ -492,6 +471,7 @@ Variant &Variant::operator=(double value)
 
 /**
  * The type of object
+ * 
  * @return Type
  */
 Type Variant::getType() const
@@ -501,6 +481,7 @@ Type Variant::getType() const
 
 /**
  * Are we null? This will also check if we're a reference to a null value
+ * 
  * @return bool
  */
 bool Variant::isNull() const
@@ -513,6 +494,7 @@ bool Variant::isNull() const
 
 /**
  * Are we a number? This will also check if we're a reference to a number
+ * 
  * @return bool
  */
 bool Variant::isLong() const
@@ -525,6 +507,7 @@ bool Variant::isLong() const
 
 /**
  * Are we a boolean? This will also check if we're a reference to a boolean
+ * 
  * @return bool
  */
 bool Variant::isBool() const
@@ -538,6 +521,7 @@ bool Variant::isBool() const
 
 /**
  * Are we a string? This will also check if we're a reference to a string
+ * 
  * @return bool
  */
 bool Variant::isString() const
@@ -550,6 +534,7 @@ bool Variant::isString() const
 
 /**
  * Are we a float? This will also check if we're a reference to a float
+ * 
  * @return bool
  */
 bool Variant::isDouble() const
@@ -562,6 +547,7 @@ bool Variant::isDouble() const
 
 /**
  * Are we an object? This will also check if we're a reference to an object
+ * 
  * @return bool
  */
 bool Variant::isObject() const

@@ -17,7 +17,6 @@
 #define ZAPI_LANG_VARIANT_H
 
 #include "zapi/Global.h"
-#include "zapi/vm/Zval.h"
 #include "zapi/lang/Type.h"
 
 #include <vector>
@@ -31,7 +30,6 @@ namespace lang
 {
 
 class StdClass;
-using zapi::vm::Zval;
 /**
  * Base class for values that are stored in the Zend engine. One instance
  * of the value class represents a variable that exists in user space in
@@ -234,6 +232,7 @@ public:
    
    operator zval * () const
    {
+      Z_TRY_ADDREF_P(const_cast<zval *>(&m_val));
       return const_cast<zval *>(&m_val);
    }
    
@@ -323,41 +322,6 @@ public:
    {
       return m_val;
    }
-
-protected:
-   /**
-    * Detach the zval
-    *
-    * This will unlink the zval internal structure from the Value object,
-    * so that the destructor will not reduce the number of references and/or
-    * deallocate the zval structure. This is used for functions that have to
-    * return a zval pointer, that would otherwise be deallocated the moment
-    * the function returns.
-    *
-    * @param  keeprefcount    Keep the same refcount
-    * @return zval
-    */
-   Zval detach(bool keepRefCount = true);
-   
-   /**
-    *  Invalidate the object - so that it will not be destructed
-    */
-   void invalidate();
-   
-private:
-   /**
-    * all function with a number of parameters
-    * @param  argc        Number of parameters
-    * @param  argv        The parameters
-    * @return Variant
-    */
-   Variant exec(int argc, Variant *argv) const;
-   
-   /**
-    * Refcount - the number of references to the value
-    * @return int
-    */
-   int getRefCount();
    
 protected:
    zval m_val;
