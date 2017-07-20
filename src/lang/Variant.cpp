@@ -193,6 +193,7 @@ Variant::Variant(double value)
 Variant::Variant(_zval_struct *value, bool isRef)
 {
    ZVAL_DUP(m_val, value);
+   // if value is the primitive type return
    if (!Z_REFCOUNTED_P(m_val)) {
       return;
    }

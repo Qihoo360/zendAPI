@@ -157,6 +157,12 @@ public:
          return index;
       }
       
+      inline iterator &reset()
+      {
+         zend_hash_internal_pointer_reset_ex(m_hashTable, &m_index);
+         return *this;
+      }
+      
       inline Variant getKey()
       {
          zend_string *key;
@@ -177,11 +183,10 @@ public:
          return static_cast<HashKeyType>(type);
       }
       
-      inline const int getIndex()
-      {}
-      
-      inline Variant getValue() const 
-      {}
+      inline Variant getValue() 
+      {
+         return zend_hash_get_current_data_ex(m_hashTable, &m_index);
+      }
       
    public:
       inline bool operator==(const iterator &other) const
@@ -258,18 +263,17 @@ public:
          return *this = *this - step;
       }
       
+      inline Variant operator*()
+      {
+         return getValue();
+      }
+
    private:
-      friend class const_iterator;
       /**
        * @brief current hash table index 
        */
       HashPosition m_index;
       ::HashTable *m_hashTable;
-   };
-   
-   class const_iterator
-   {
-      
    };
    
    // STL style
@@ -278,16 +282,10 @@ public:
       return iterator(&m_hashTable, m_hashTable.nInternalPointer);
    }
    
-   inline const_iterator cbegin()
-   {}
-   
    inline iterator end()
    {
       return iterator(&m_hashTable, HT_INVALID_IDX);
    }
-   
-   inline iterator cend()
-   {}
    
 private:
    ::HashTable m_hashTable;

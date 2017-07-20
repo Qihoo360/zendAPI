@@ -209,13 +209,15 @@ ZAPI_DECL_EXPORT void assert_x(const char *where, const char *what, const char *
 
 
 
-#if !defined(ZAPI_ASSERT)
+#if !defined(ZAPI_ASSERT_X)
 #  if defined(ZAPI_NO_DEBUG) && !defined(ZAPI_FORCE_ASSERTS)
 #     define ZAPI_ASSERT_X(cond, where, what) do { } while ((false) && (cond))
 #  else 
 #     define ZAPI_ASSERT_X(cond, where, what) ((!(cond)) ? zapi::assert_x(where, what,__FILE__,__LINE__) : zapi::noop())
 #  endif
 #endif
+
+#define ZAPI_ASSERT ZEND_ASSERT
 
 #define ZAPI_SUCCESS SUCCESS
 #define ZAPI_FAILURE FAILURE

@@ -72,13 +72,25 @@ TEST_F(HashTableTest, testIterator)
       ZapiHashTable::iterator iter = table.begin();
       std::vector<std::string> expectedKeys{"name", "age", "height"};
       std::vector<std::string> actualKeys;
+      std::vector<std::string> expectedValueStrs{"zapi"};
+      std::vector<int64_t> expectedValueInts{20, 123};
+      std::vector<std::string> actualValueStrs;
+      std::vector<int64_t> actualValueInts;
       while (iter != table.end()) {
          ZapiHashTable::HashKeyType keyType = iter.getKeyType();
          if (keyType == ZapiHashTable::HashKeyType::String) {
             actualKeys.push_back(iter.getStrKey());
          }
+         Variant value = *iter;
+         if (value.getType() == zapi::lang::Type::String) {
+            actualValueStrs.push_back(value.toString());
+         } else if (value.getType() == zapi::lang::Type::Long) {
+            actualValueInts.push_back(value.toLong());
+         }
          iter++;
       }
       ASSERT_EQ(expectedKeys, actualKeys);
+      ASSERT_EQ(expectedValueStrs, actualValueStrs);
+      ASSERT_EQ(expectedValueInts, actualValueInts);
    }
 }
