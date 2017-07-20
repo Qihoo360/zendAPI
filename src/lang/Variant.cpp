@@ -211,26 +211,6 @@ Variant::Variant(zval *value, bool isRef)
    }
 }
 
-/**   
- * Wrap around an object
- * 
- * @param  object
- */
-Variant::Variant(const StdClass *object)
-{
-   // there are two options: the object was constructed from user space,
-   // and is already linked to a handle, or it was constructed from C++
-   // space, and no handle does yet exist. But if it was constructed from
-   // C++ space and not yet wrapped, this Value constructor should not be
-   // called directly, but first via the derived Php::Object class.
-   const StdClassImpl *impl = object->implementation();
-   if (nullptr == impl) {
-      throw FatalError("Assigning an unassigned object to a variable");
-   }
-   ZVAL_OBJ(&m_val, impl->getZendObject());
-   Z_ADDREF_P(&m_val);
-}
-
 /**
  * Copy constructor
  * 
@@ -275,12 +255,17 @@ Variant &Variant::operator=(Variant &&value) ZAPI_DECL_NOEXCEPT
    // the other value will then destruct and reduce the refcount
    if (!Z_ISREF(value.m_val) && (!Z_ISREF(m_val))) {
       std::swap(m_val, value.m_val);
-   }else if (Z_ISREF(value.m_val)){
-      std::swap(m_val, value.m_val);
-      ZVAL_UNREF(&m_val);
+   }else if (Z_ISREF(m_val) && !Z_ISREF(value.m_val)){
+      zval *to = Z_REFVAL(m_val);
+      std::swap(*to, value.m_val);
+   } else if(!Z_ISREF(m_val) && Z_ISREF(value.m_val)){
+      zval *from = Z_REFVAL(value.m_val);
+      std::swap(m_val, *from);
    } else {
-      ZVAL_COPY_VALUE(&m_val, &value.m_val);
-   } 
+      zval *to = Z_REFVAL(m_val);
+      zval *from = Z_REFVAL(value.m_val);
+      std::swap(*to, *from);
+   }
    return *this;
 }
 
@@ -292,22 +277,7 @@ Variant &Variant::operator=(Variant &&value) ZAPI_DECL_NOEXCEPT
  */
 Variant &Variant::operator=(const Variant &value)
 {
-   if (this == &value) {
-      return *this;
-   }
-   if (Z_ISREF(m_val)) {
-      int refcount = Z_REFCOUNT(m_val);
-      zval_dtor(&m_val);
-      m_val = value.m_val;
-      zval_copy_ctor(&m_val);
-      ZVAL_MAKE_REF(&m_val);
-      Z_SET_REFCOUNT(m_val, refcount);
-   } else {
-      zval_ptr_dtor(&m_val);
-      m_val = value.m_val;
-      Z_TRY_ADDREF(m_val);
-   }
-   return *this;
+   return operator=(const_cast<zval *>(&value.m_val));
 }
 
 /**
@@ -466,6 +436,48 @@ Variant &Variant::operator=(double value)
    SEPARATE_ZVAL_IF_NOT_REF(&m_val);
    zval_dtor(&m_val);
    ZVAL_DOUBLE(&m_val, value);
+   return *this;
+}
+
+Variant &Variant::operator=(struct _zval_struct *value)
+{
+   zval *to = &m_val;
+   if (Z_ISREF_P(value)) {
+      value = Z_REFVAL_P(value);
+   }
+   if (Z_ISREF_P(to)) {
+      to = Z_REFVAL_P(to);
+   }
+   if (Z_IMMUTABLE_P(to)) {
+      // throw exception here ?
+      return *this;
+   }
+   if (Z_REFCOUNTED_P(to)) {
+      // objects can have their own assignment handler
+      if (Z_TYPE_P(to) == IS_OBJECT && Z_OBJ_HANDLER_P(to, set)) {
+         Z_OBJ_HANDLER_P(to, set)(to, value);
+         return *this;
+      }
+      // If to and from are the same, there is nothing left to do
+      if (to == value) {
+         return *this;
+      }
+      // It is possible to make IS_REF point to another IS_REF, but that's a bug
+      ZAPI_ASSERT(Z_TYPE_P(to) != IS_REFERENCE);
+      if (Z_REFCOUNT_P(to) > 1) {
+         // If reference count is greater than 1, we need to separate zval
+         // This is the optimized version of SEPARATE_ZVAL_NOREF()
+         if (Z_COPYABLE_P(to)) {
+            // this will decrement the reference count and invoke GC_ZVAL_CHECK_FOR_POSSIBLE_ROOT()
+            zval_ptr_dtor(to);
+            zval_copy_ctor_func(to);
+         } else {
+            zval_dtor(to);
+         }
+      }
+   }
+   // Copy the value of b to a and increment the reference count if necessary
+   ZVAL_COPY(to, value);
    return *this;
 }
 

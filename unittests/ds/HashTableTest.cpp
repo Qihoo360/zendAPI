@@ -106,7 +106,24 @@ TEST_F(HashTableTest, testGetValue)
       ASSERT_EQ(table.getValue("name").toString(), "zapi");
       ASSERT_EQ(table.getValue("city").toString(), "beijing");
       ASSERT_EQ(table.getValue("height").toLong(), 123);
+      ASSERT_EQ(table["name"].toString(), "zapi");
+      ASSERT_EQ(table["city"].toString(), "beijing");
+      ASSERT_EQ(table["height"].toLong(), 123);
    }
+}
+
+TEST_F(HashTableTest, testAssignValue)
+{
+   ZapiHashTable table;
+   table.insert("num", Variant(123));
+   table["num"] = Variant(213);
+   ASSERT_EQ(table["num"].toLong(), 213);
+   table["num"] = Variant("zapi");
+   ASSERT_EQ(table["num"].toString(), "zapi");
+   table["name"] = Variant("zzu_softboy");
+   ASSERT_EQ(table["name"].toString(), "zzu_softboy");
+   table["age"] = Variant(123);
+   ASSERT_EQ(table["age"].toLong(), 123);
 }
 
 int main(int argc, char **argv)

@@ -176,7 +176,11 @@ public:
    
    inline Variant operator[](const String &key)
    {
-      return Variant(zend_hash_find(&m_hashTable, key), true);
+      zval *value = zend_hash_find(&m_hashTable, key);
+      if (nullptr == value) {
+          value = zend_hash_add_new(&m_hashTable, key, Variant(nullptr));
+      }
+      return Variant(value, true);
    }
    
    inline Variant operator[](zapi_ulong index)

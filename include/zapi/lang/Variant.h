@@ -118,12 +118,6 @@ public:
    Variant(_zval_struct *zval, bool isRef = false);
    
    /**
-    * Wrap around an object implemented by us
-    * @param object Object to be wrapped
-    */
-   Variant(const StdClass *object);
-   
-   /**
      * Copy constructor
      * @param  value
      */
@@ -165,6 +159,7 @@ public:
    Variant &operator=(const std::string &value);
    Variant &operator=(const char *value);
    Variant &operator=(double value);
+   Variant &operator=(zval *value);
    
    /**
     * Comparison operators for hardcoded Variant
