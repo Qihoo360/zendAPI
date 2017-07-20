@@ -116,6 +116,28 @@ public:
       return *this;
    }
    
+   inline HashTable &insert(int16_t index, const Variant &value, bool forceNew = false)
+   {
+       index = index < 0 ? 0 : index;
+      return insert(static_cast<zapi_ulong>(index), value, forceNew);
+   }
+   
+   inline HashTable &insert(int32_t index, const Variant &value, bool forceNew = false)
+   {
+      index = index < 0 ? 0 : index;
+      return insert(static_cast<zapi_ulong>(index), value, forceNew);
+   }
+   
+   inline HashTable &insert(uint16_t index, const Variant &value, bool forceNew = false)
+   {
+      return insert(static_cast<zapi_ulong>(index), value, forceNew);
+   }
+   
+   inline HashTable &insert(uint32_t index, const Variant &value, bool forceNew = false)
+   {
+      return insert(static_cast<zapi_ulong>(index), value, forceNew);
+   }
+   
    inline HashTable &insert(zapi_ulong index, const Variant &value, bool forceNew = false)
    {
       if (forceNew) {
@@ -134,6 +156,50 @@ public:
    inline Variant update(zapi_ulong index, const Variant &value)
    {
       return zend_hash_index_update(&m_hashTable, index, value);
+   }
+   
+   inline bool remove(const char *key)
+   {
+      return remove(String(key));
+   }
+   
+   inline bool remove(const std::string &key)
+   {
+      return remove(String(key));
+   }
+   
+   inline bool remove(const String &key)
+   {
+      int ret = zend_hash_del(&m_hashTable, key);
+      return ret == ZAPI_SUCCESS ? true : false;
+   }
+   
+   inline bool remove(int16_t index)
+   {
+      index = index < 0 ? 0 : index;
+      return remove(static_cast<zapi_ulong>(index));
+   }
+   
+   inline bool remove(int32_t index)
+   {
+      index = index < 0 ? 0 : index;
+      return remove(static_cast<zapi_ulong>(index));
+   }
+   
+   inline bool remove(uint16_t index)
+   {
+      return remove(static_cast<zapi_ulong>(index));
+   }
+   
+   inline bool remove(uint32_t index)
+   {
+      return remove(static_cast<zapi_ulong>(index));
+   }
+   
+   inline bool remove(zapi_ulong index) 
+   {
+      int ret = zend_hash_index_del(&m_hashTable, index);
+      return ret == ZAPI_SUCCESS ? true : false;
    }
    
    inline Variant getValue(const char *key)

@@ -126,6 +126,28 @@ TEST_F(HashTableTest, testAssignValue)
    ASSERT_EQ(table["age"].toLong(), 123);
 }
 
+TEST_F(HashTableTest, testDeleteItem)
+{
+   ZapiHashTable table;
+   table.insert("item1", Variant(123));
+   table.insert("item2", Variant("softboy"));
+   table.insert("item3", Variant(true));
+   ASSERT_EQ(table.getSize(), 3);
+   ASSERT_FALSE(table.remove("notExist"));
+   ASSERT_TRUE(table.remove("item1"));
+   ASSERT_EQ(table.getSize(), 2);
+   ASSERT_TRUE(table.remove("item2"));
+   ASSERT_TRUE(table.remove("item3"));
+   ASSERT_EQ(table.getSize(), 0);
+   table.insert(0, Variant(true));
+   table.insert(1, Variant(false));
+   ASSERT_EQ(table.getSize(), 2);
+   ASSERT_FALSE(table.remove(3));
+   ASSERT_TRUE(table.remove(1));
+   ASSERT_TRUE(table.remove(0));
+   ASSERT_EQ(table.getSize(), 0);
+}
+
 int main(int argc, char **argv)
 {
    int retCode = 0;
