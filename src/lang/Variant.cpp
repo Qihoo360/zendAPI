@@ -67,7 +67,7 @@ using zapi::ds::String;
  */
 Variant::Variant()
 {
-   ZVAL_NULL(m_val);
+   ZVAL_NULL(&m_val);
 }
 
 /**
@@ -84,7 +84,7 @@ Variant::Variant(std::nullptr_t value) : Variant()
  */
 Variant::Variant(std::int16_t value)
 {
-   ZVAL_LONG(m_val, value);
+   ZVAL_LONG(&m_val, value);
 }
 
 /**
@@ -93,7 +93,7 @@ Variant::Variant(std::int16_t value)
  */
 Variant::Variant(std::int32_t value)
 {
-   ZVAL_LONG(m_val, value);
+   ZVAL_LONG(&m_val, value);
 }
 
 /**
@@ -102,7 +102,7 @@ Variant::Variant(std::int32_t value)
  */
 Variant::Variant(std::int64_t value)
 {
-   ZVAL_LONG(m_val, value);
+   ZVAL_LONG(&m_val, value);
 }
 
 /**
@@ -111,7 +111,7 @@ Variant::Variant(std::int64_t value)
  */
 Variant::Variant(std::uint16_t value)
 {
-   ZVAL_LONG(m_val, static_cast<std::int16_t>(value));
+   ZVAL_LONG(&m_val, static_cast<std::int16_t>(value));
 }
 
 /**
@@ -120,7 +120,7 @@ Variant::Variant(std::uint16_t value)
  */
 Variant::Variant(std::uint32_t value)
 {
-   ZVAL_LONG(m_val, static_cast<std::int32_t>(value));
+   ZVAL_LONG(&m_val, static_cast<std::int32_t>(value));
 }
 
 /**
@@ -129,7 +129,7 @@ Variant::Variant(std::uint32_t value)
  */
 Variant::Variant(std::uint64_t value)
 {
-   ZVAL_LONG(m_val, static_cast<std::int64_t>(value));
+   ZVAL_LONG(&m_val, static_cast<std::int64_t>(value));
 }
 
 /**
@@ -138,7 +138,7 @@ Variant::Variant(std::uint64_t value)
  */
 Variant::Variant(bool value)
 {
-   ZVAL_BOOL(m_val, value);
+   ZVAL_BOOL(&m_val, value);
 }
 
 /**
@@ -147,7 +147,7 @@ Variant::Variant(bool value)
  */
 Variant::Variant(char value)
 {
-   ZVAL_STRINGL(m_val, &value, 1);
+   ZVAL_STRINGL(&m_val, &value, 1);
 }
 
 /**
@@ -156,7 +156,7 @@ Variant::Variant(char value)
  */
 Variant::Variant(const std::string &value)
 {
-   ZVAL_STRINGL(m_val, value.c_str(), value.size());
+   ZVAL_STRINGL(&m_val, value.c_str(), value.size());
 }
 
 /**
@@ -170,9 +170,9 @@ Variant::Variant(const char *value, int size)
       if (size < 0) {
          size = std::strlen(value);
       }
-      ZVAL_STRINGL(m_val, value, size);
+      ZVAL_STRINGL(&m_val, value, size);
    } else {
-      ZVAL_NULL(m_val);
+      ZVAL_NULL(&m_val);
    }
 }
 
@@ -182,7 +182,7 @@ Variant::Variant(const char *value, int size)
  */
 Variant::Variant(double value)
 {
-   ZVAL_DOUBLE(m_val, value);
+   ZVAL_DOUBLE(&m_val, value);
 }
 
 /**
@@ -192,19 +192,19 @@ Variant::Variant(double value)
  */
 Variant::Variant(_zval_struct *value, bool isRef)
 {
-   ZVAL_DUP(m_val, value);
+   ZVAL_DUP(&m_val, value);
    // if value is the primitive type return
-   if (!Z_REFCOUNTED_P(m_val)) {
+   if (!Z_REFCOUNTED_P(&m_val)) {
       return;
    }
-   if (isRef && Z_REFCOUNT_P(m_val) > 1) {
-      SEPARATE_ZVAL_IF_NOT_REF(m_val);
+   if (isRef && Z_REFCOUNT_P(&m_val) > 1) {
+      SEPARATE_ZVAL_IF_NOT_REF(&m_val);
    }
-   Z_ADDREF_P(m_val);
-   if (!isRef || Z_ISREF_P(m_val)) {
+   Z_ADDREF_P(&m_val);
+   if (!isRef || Z_ISREF(m_val)) {
       return;
    }
-   ZVAL_MAKE_REF(m_val);
+   ZVAL_MAKE_REF(&m_val);
 }
 
 /**   
@@ -222,8 +222,8 @@ Variant::Variant(const StdClass *object)
    if (nullptr == impl) {
       throw FatalError("Assigning an unassigned object to a variable");
    }
-   ZVAL_OBJ(m_val, impl->getZendObject());
-   Z_ADDREF_P(m_val);
+   ZVAL_OBJ(&m_val, impl->getZendObject());
+   Z_ADDREF_P(&m_val);
 }
 
 /**
@@ -232,11 +232,10 @@ Variant::Variant(const StdClass *object)
  */
 Variant::Variant(const Variant &other)
 {
-   zval *from = other.m_val;
-   zval *to = m_val;
+   zval *from = const_cast<zval *>(&other.m_val);
    ZVAL_DEREF(from);
    // copy the value
-   ZVAL_COPY(to, from);
+   ZVAL_COPY(&m_val, from);
 }
 
 /**
@@ -245,13 +244,13 @@ Variant::Variant(const Variant &other)
  */
 Variant::Variant(Variant &&other) ZAPI_DECL_NOEXCEPT
 {
-   ZVAL_UNDEF(m_val);
+   ZVAL_UNDEF(&m_val);
    std::swap(m_val, other.m_val);
 }
 
 Variant::~Variant()
 {
-   zval_ptr_dtor(m_val);
+   zval_ptr_dtor(&m_val);
 }
 
 /**
@@ -269,14 +268,14 @@ Variant::~Variant()
 Zval Variant::detach(bool keepRefCount)
 {
    Zval result;
-   ZVAL_COPY_VALUE(result, m_val);
+   ZVAL_COPY_VALUE(result, &m_val);
    // should we keep the reference count?
    /// FIXME: what if reference count becomes 0?
    /// Maybe we should call zval_ptr_dtor()?
    if (!keepRefCount) {
-      Z_TRY_DELREF_P(m_val);
+      Z_TRY_DELREF_P(&m_val);
    }
-   ZVAL_UNDEF(m_val);
+   ZVAL_UNDEF(&m_val);
    return result;
 }
 
@@ -284,13 +283,13 @@ Zval Variant::detach(bool keepRefCount)
  * Retrieve the refcount
  * @return int
  */
-int Variant::getRefCount() const
+int Variant::getRefCount()
 {
-   if (!Z_REFCOUNTED_P(m_val))
+   if (!Z_REFCOUNTED(m_val))
    {
       return 0;
    }
-   return Z_REFCOUNT_P(m_val);
+   return Z_REFCOUNT(m_val);
 }
 
 /**
@@ -305,14 +304,14 @@ Variant &Variant::operator=(Variant &&value) ZAPI_DECL_NOEXCEPT
    }
    // if neither value is a reference we can simply swap the values
    // the other value will then destruct and reduce the refcount
-   if (!Z_ISREF_P(value.m_val) && (!m_val || !Z_ISREF_P(m_val))) {
+   if (!Z_ISREF(value.m_val) && (!Z_ISREF(m_val))) {
       std::swap(m_val, value.m_val);
-   } else if (m_val) {
-      ZVAL_COPY_VALUE(m_val, value.m_val);
+   }else if (Z_ISREF(value.m_val)){
+      std::swap(m_val, value.m_val);
+      ZVAL_UNREF(&m_val);
    } else {
-      std::swap(m_val, value.m_val);
-      ZVAL_UNREF(m_val);
-   }
+      ZVAL_COPY_VALUE(&m_val, &value.m_val);
+   } 
    return *this;
 }
 
@@ -326,17 +325,17 @@ Variant &Variant::operator=(const Variant &value)
    if (this == &value) {
       return *this;
    }
-   if (Z_ISREF_P(m_val)) {
-      int refCount = Z_REFCOUNT_P(m_val);
-      zval_dtor(m_val);
-      *m_val = *value.m_val;
-      zval_copy_ctor(m_val);
-      ZVAL_MAKE_REF(m_val);
-      Z_SET_REFCOUNT_P(m_val, refCount);
-   } else {
-      zval_ptr_dtor(m_val);
+   if (Z_ISREF(m_val)) {
+      int refcount = Z_REFCOUNT(m_val);
+      zval_dtor(&m_val);
       m_val = value.m_val;
-      Z_TRY_ADDREF_P(m_val);
+      zval_copy_ctor(&m_val);
+      ZVAL_MAKE_REF(&m_val);
+      Z_SET_REFCOUNT(m_val, refcount);
+   } else {
+      zval_ptr_dtor(&m_val);
+      m_val = value.m_val;
+      Z_TRY_ADDREF(m_val);
    }
    return *this;
 }
@@ -348,9 +347,9 @@ Variant &Variant::operator=(const Variant &value)
  */
 Variant &Variant::operator=(std::nullptr_t value)
 {
-   SEPARATE_ZVAL_IF_NOT_REF(m_val);
-   zval_dtor(m_val);
-   ZVAL_NULL(m_val);
+   SEPARATE_ZVAL_IF_NOT_REF(&m_val);
+   zval_dtor(&m_val);
+   ZVAL_NULL(&m_val);
    return *this;
 }
 
@@ -361,9 +360,9 @@ Variant &Variant::operator=(std::nullptr_t value)
  */
 Variant &Variant::operator=(std::int16_t value)
 {
-   SEPARATE_ZVAL_IF_NOT_REF(m_val);
-   zval_dtor(m_val);
-   ZVAL_LONG(m_val, value);
+   SEPARATE_ZVAL_IF_NOT_REF(&m_val);
+   zval_dtor(&m_val);
+   ZVAL_LONG(&m_val, value);
    return *this;
 }
 
@@ -374,9 +373,9 @@ Variant &Variant::operator=(std::int16_t value)
  */
 Variant &Variant::operator=(std::int32_t value)
 {
-   SEPARATE_ZVAL_IF_NOT_REF(m_val);
-   zval_dtor(m_val);
-   ZVAL_LONG(m_val, value);
+   SEPARATE_ZVAL_IF_NOT_REF(&m_val);
+   zval_dtor(&m_val);
+   ZVAL_LONG(&m_val, value);
    return *this;
 }
 
@@ -387,9 +386,9 @@ Variant &Variant::operator=(std::int32_t value)
  */
 Variant &Variant::operator=(std::int64_t value)
 {
-   SEPARATE_ZVAL_IF_NOT_REF(m_val);
-   zval_dtor(m_val);
-   ZVAL_LONG(m_val, value);
+   SEPARATE_ZVAL_IF_NOT_REF(&m_val);
+   zval_dtor(&m_val);
+   ZVAL_LONG(&m_val, value);
    return *this;
 }
 
@@ -433,9 +432,9 @@ Variant &Variant::operator=(std::uint64_t value)
  */
 Variant &Variant::operator=(bool value)
 {
-   SEPARATE_ZVAL_IF_NOT_REF(m_val);
-   zval_dtor(m_val);
-   ZVAL_BOOL(m_val, value);
+   SEPARATE_ZVAL_IF_NOT_REF(&m_val);
+   zval_dtor(&m_val);
+   ZVAL_BOOL(&m_val, value);
    return *this;
 }
 
@@ -446,9 +445,9 @@ Variant &Variant::operator=(bool value)
  */
 Variant &Variant::operator=(char value)
 {
-   SEPARATE_ZVAL_IF_NOT_REF(m_val);
-   zval_dtor(m_val);
-   ZVAL_STRINGL(m_val, &value, 1);
+   SEPARATE_ZVAL_IF_NOT_REF(&m_val);
+   zval_dtor(&m_val);
+   ZVAL_STRINGL(&m_val, &value, 1);
    return *this;
 }
 
@@ -459,9 +458,9 @@ Variant &Variant::operator=(char value)
  */
 Variant &Variant::operator=(const std::string &value)
 {
-   SEPARATE_ZVAL_IF_NOT_REF(m_val);
-   zval_dtor(m_val);
-   ZVAL_STRINGL(m_val, value.c_str(), value.size());
+   SEPARATE_ZVAL_IF_NOT_REF(&m_val);
+   zval_dtor(&m_val);
+   ZVAL_STRINGL(&m_val, value.c_str(), value.size());
    return *this;
 }
 
@@ -472,9 +471,9 @@ Variant &Variant::operator=(const std::string &value)
  */
 Variant &Variant::operator=(const char *value)
 {
-   SEPARATE_ZVAL_IF_NOT_REF(m_val);
-   zval_dtor(m_val);
-   ZVAL_STRINGL(m_val, value, std::strlen(value));
+   SEPARATE_ZVAL_IF_NOT_REF(&m_val);
+   zval_dtor(&m_val);
+   ZVAL_STRINGL(&m_val, value, std::strlen(value));
    return *this;
 }
 
@@ -485,9 +484,9 @@ Variant &Variant::operator=(const char *value)
  */
 Variant &Variant::operator=(double value)
 {
-   SEPARATE_ZVAL_IF_NOT_REF(m_val);
-   zval_dtor(m_val);
-   ZVAL_DOUBLE(m_val, value);
+   SEPARATE_ZVAL_IF_NOT_REF(&m_val);
+   zval_dtor(&m_val);
+   ZVAL_DOUBLE(&m_val, value);
    return *this;
 }
 
@@ -497,7 +496,7 @@ Variant &Variant::operator=(double value)
  */
 Type Variant::getType() const
 {
-   return static_cast<Type>(Z_TYPE_P(m_val));
+   return static_cast<Type>(Z_TYPE(m_val));
 }
 
 /**
@@ -509,7 +508,7 @@ bool Variant::isNull() const
    if (getType() == Type::Null) {
       return true;
    }
-   return static_cast<Type>(Z_TYPE_P(m_val.dereference())) == Type::Null;
+   return static_cast<Type>(Z_TYPE(m_val)) == Type::Null;
 }
 
 /**
@@ -521,7 +520,7 @@ bool Variant::isLong() const
    if (getType() == Type::Long) {
       return true;
    }
-   return static_cast<Type>(Z_TYPE_P(m_val.dereference())) == Type::Long;
+   return static_cast<Type>(Z_TYPE(m_val)) == Type::Long;
 }
 
 /**
@@ -533,7 +532,7 @@ bool Variant::isBool() const
    if (getType() == Type::False || getType() == Type::True) {
       return true;
    }
-   Type type = static_cast<Type>(Z_TYPE_P(m_val.dereference()));
+   Type type = static_cast<Type>(Z_TYPE(m_val));
    return getType() == Type::False || getType() == Type::True;
 }
 
@@ -546,7 +545,7 @@ bool Variant::isString() const
    if (getType() == Type::String) {
       return true;
    }
-   return static_cast<Type>(Z_TYPE_P(m_val.dereference())) == Type::String;
+   return static_cast<Type>(Z_TYPE(m_val)) == Type::String;
 }
 
 /**
@@ -558,7 +557,7 @@ bool Variant::isDouble() const
    if (getType() == Type::Double) {
       return true;
    }
-   return static_cast<Type>(Z_TYPE_P(m_val.dereference())) == Type::Double;
+   return static_cast<Type>(Z_TYPE(m_val)) == Type::Double;
 }
 
 /**
@@ -570,7 +569,7 @@ bool Variant::isObject() const
    if (getType() == Type::Object) {
       return true;
    }
-   return static_cast<Type>(Z_TYPE_P(m_val.dereference())) == Type::Object;
+   return static_cast<Type>(Z_TYPE(m_val)) == Type::Object;
 }
 
 /**
@@ -582,7 +581,7 @@ bool Variant::isArray() const
    if (getType() == Type::Array) {
       return true;
    }
-   return static_cast<Type>(Z_TYPE_P(m_val.dereference())) == Type::Array;
+   return static_cast<Type>(Z_TYPE(m_val)) == Type::Array;
 }
 
 /**
@@ -616,40 +615,40 @@ bool Variant::canConvert(Type targetType) const
 bool Variant::convert(Type targetType)
 {
    if (this->getType() == targetType) {
-      return *this;
+      return true;
    } else if (!canConvert(targetType)) {
       return false;
    }
-   SEPARATE_ZVAL_IF_NOT_REF(m_val);
+   SEPARATE_ZVAL_IF_NOT_REF(&m_val);
    switch (targetType) {
    case Type::Null:
-      convert_to_null(m_val);
+      convert_to_null(&m_val);
       break;
    case Type::Long:
-      convert_to_long(m_val);
+      convert_to_long(&m_val);
       break;
    case Type::Double:
-      convert_to_double(m_val);
+      convert_to_double(&m_val);
       break;
    case Type::Boolean:
-      convert_to_boolean(m_val);
+      convert_to_boolean(&m_val);
       break;
    case Type::False:
-      convert_to_boolean(m_val);
-      ZVAL_FALSE(m_val);
+      convert_to_boolean(&m_val);
+      ZVAL_FALSE(&m_val);
       break;
    case Type::True:
-      convert_to_boolean(m_val);
-      ZVAL_TRUE(m_val);
+      convert_to_boolean(&m_val);
+      ZVAL_TRUE(&m_val);
       break;
    case Type::Array:
-      convert_to_array(m_val);
+      convert_to_array(&m_val);
       break;
    case Type::Object:
-      convert_to_object(m_val);
+      convert_to_object(&m_val);
       break;
    case Type::String:
-      convert_to_string(m_val);
+      convert_to_string(&m_val);
       break;
    default:
       return false;
@@ -664,7 +663,7 @@ bool Variant::convert(Type targetType)
 Variant Variant::clone() const
 {
    Variant output;
-   ZVAL_DUP(output.m_val, m_val);
+   ZVAL_DUP(&output.m_val, &m_val);
    return output;
 }
 
@@ -689,7 +688,7 @@ Variant Variant::clone(Type targetType) const
 std::int64_t  Variant::toLong() const
 {
    if (isLong()) {
-      return Z_LVAL_P(m_val);
+      return Z_LVAL(m_val);
    }
    return clone(Type::Long).toLong();
 }
@@ -714,9 +713,9 @@ bool Variant::toBool() const
    case Type::Double:
       return toDouble();
    case Type::String:
-      return Z_STRLEN_P(m_val);
+      return Z_STRLEN(m_val);
    case Type::Array:
-      return zend_hash_num_elements(Z_ARRVAL_P(m_val));
+      return zend_hash_num_elements(Z_ARRVAL(m_val));
    default:
       return clone(Type::Boolean).toBool();
    }
@@ -728,7 +727,7 @@ bool Variant::toBool() const
  */
 std::string Variant::toString() const
 {
-   zend_string *tempStr = zval_get_string(m_val);
+   zend_string *tempStr = zval_get_string(const_cast<zval *>(&m_val));
    std::string ret(ZSTR_VAL(tempStr), ZSTR_LEN(tempStr));
    zend_string_release(tempStr);
    return ret;
@@ -744,7 +743,7 @@ std::string Variant::toString() const
    case Type::Double:
       return std::to_string(toDouble());
    case Type::String:
-      return {Z_STRVAL_P(m_val), Z_STRLEN_P(m_val)};
+      return {Z_STRVAL(m_val), Z_STRLEN(m_val)};
    default:
       break;
    }
@@ -758,44 +757,10 @@ std::string Variant::toString() const
 double Variant::toDouble() const
 {
    if (isDouble()) {
-      return Z_DVAL_P(m_val);
+      return Z_DVAL(m_val);
    }
    return clone(Type::Double).toDouble();
    // why not use zval_get_double(m_val)
-}
-
-/**
- * This function is used in tests to make sure that the way we assign
- * variable is consistent with that of PHP.
- *
- * @internal
- */
-std::string Variant::debugZval() const
-{
-   std::string s;
-   zval* z = m_val;
-   
-   s = "[type=" + std::to_string(static_cast<int>(Z_TYPE_P(z)))
-         + " refcounted=" + std::to_string(Z_REFCOUNTED_P(z))
-         + " isref=" + std::to_string(Z_ISREF_P(z))
-         + " refcount=" + std::to_string(Z_REFCOUNTED_P(z) ? Z_REFCOUNT_P(z) : 0)
-         + "] "
-         ;
-   
-   zend_string* zs = zval_get_string(z);
-   s += std::string(ZSTR_VAL(zs), ZSTR_LEN(zs));
-   zend_string_release(zs);
-   return s;
-}
-
-/**
- * Gete the wrapper Zval object reference
- * 
- * @return 
- */
-const Zval& Variant::getZval() const
-{
-   return m_val;
 }
 
 /**

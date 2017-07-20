@@ -122,13 +122,3 @@ TEST_F(StringTest, testRefCount)
    }
    ASSERT_EQ(str.getRefCount(), 1);
 }
-
-int main(int argc, char **argv)
-{
-   int retCode = 0;
-   PHP_EMBED_START_BLOCK(argc,argv);
-   ::testing::InitGoogleTest(&argc, argv);
-   retCode = RUN_ALL_TESTS();
-   PHP_EMBED_END_BLOCK();
-   return retCode;
-}

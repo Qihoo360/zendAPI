@@ -38,33 +38,6 @@
 #include "zapi/ProcessorDetection.h"
 #include "zapi/CompilerDetection.h"
 
-using z_int8 = signed char;
-using z_uint8 = unsigned char;
-using z_int16 = short;
-using z_uint16 = unsigned short;
-using z_uint32 = unsigned int;
-using z_int32 = int;
-
-#if defined(ZAPI_OS_WIN) && !defined(ZAPI_CC_GNU)
-#  define Z_INT64_C(c) c ## i64
-#  define Z_UINT64_C(c) c ## ui64
-using z_int64 = __int64;
-using z_uint64 = unsigned __int64;
-#else
-#  define Z_INT64_C(c) static_cast<long long>(c ## LL)
-#  define Z_UINT64_C(c) static_cast<unsigned long long>(c ## ULL)
-using z_int64 = long long;
-using z_uint64 = unsigned long long;
-#endif
-
-using z_longlong = z_int64;
-using z_ulonglong = z_uint64;
-
-using z_uchar = unsigned char;
-using z_ushort = unsigned short;
-using z_uint = unsigned int;
-using z_ulong = unsigned long;
-
 #if defined(__ELF__)
 #  define ZAPI_OF_ELF
 #endif
@@ -72,8 +45,6 @@ using z_ulong = unsigned long;
 #if defined(__MACH__) && defined(__APPLE__)
 #  define ZAPI_OF_MACH_O
 #endif
-
-inline void zapi_noop(void) {}
 
 template <typename T>
 static inline T *zapi_get_ptr_helper(T *ptr)
@@ -132,28 +103,9 @@ template <> class ZStaticAssertFailure<true> {};
 #  define ZAPI_STATIC_ASSERT_X(condition, message) ZAPI_STATIC_ASSERT(condition)
 #endif
 
-
-template <int> struct ZIntegerForSize;
-template <> struct ZIntegerForSize<1> { using Unsigned = z_uint8; using Signed = z_int8; };
-template <> struct ZIntegerForSize<2> { using Unsigned = z_uint16; using Signed = z_int16; };
-template <> struct ZIntegerForSize<4> { using Unsigned = z_uint32; using Singed = z_int32; };
-template <> struct ZIntegerForSize<8> { using Unsigned = z_uint64; using Signed = z_int64; };
-#if defined(ZAPI_CC_GNU) && defined(__SIZEOF_INT128__)
-template <> struct ZIntegerForSize<16>
-{
-   __extension__ using Unsigned = unsigned __int128;
-   __extension__ using Signed = __int128;
-};
-#endif
-
-template <typename T> struct ZIntegerForSizeof : ZIntegerForSize<sizeof(T)>
-{};
-
-using z_registerint = ZIntegerForSize<ZAPI_PROCESSOR_WORDSIZE>::Signed;
-using z_registeruint = ZIntegerForSize<ZAPI_PROCESSOR_WORDSIZE>::Unsigned;
-using z_uintptr = ZIntegerForSizeof<void*>::Unsigned;
-using z_ptrdiff = ZIntegerForSizeof<void*>::Signed;
-using z_intptr = z_ptrdiff;
+// define some type alias, because we just API wrapper
+#define zapi_long zend_long
+#define zapi_ulong zend_ulong
 
 namespace internal
 {
@@ -182,7 +134,6 @@ using HANDLE = void *;
 using Callback = std::function<void()>;
 } // zapi
 
-
 #ifdef ZAPI_CC_MSVC
 #  define ZAPI_NEVER_INLINE __declspec(noinline)
 #  define ZAPI_ALWAYS_INLINE __forceinline
@@ -206,8 +157,6 @@ namespace zapi
 inline void noop(void) {}
 ZAPI_DECL_EXPORT void assert_x(const char *where, const char *what, const char *file, int line) ZAPI_DECL_NOEXCEPT;
 } // zapi
-
-
 
 #if !defined(ZAPI_ASSERT_X)
 #  if defined(ZAPI_NO_DEBUG) && !defined(ZAPI_FORCE_ASSERTS)

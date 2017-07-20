@@ -64,7 +64,7 @@ public:
       HasEmptyIndirect = HASH_FLAG_HAS_EMPTY_IND
    };
 public:
-   HashTable(uint32_t tableSize = DEFAULT_HASH_SIZE,
+   inline HashTable(uint32_t tableSize = DEFAULT_HASH_SIZE,
              zapi::lang::HashTableDataDeleter defaultDeleter = zValDataDeleter, 
              bool persistent = false)
    {
@@ -75,7 +75,7 @@ public:
       : HashTable(tableSize, nullptr, persistent)
    {}
    
-   HashTable(const ::HashTable &hashTable)
+   inline HashTable(const ::HashTable &hashTable)
    {
       m_hashTable = hashTable;
       GC_REFCOUNT(&m_hashTable)++;
@@ -86,31 +86,27 @@ public:
       zend_hash_destroy(&m_hashTable);
    }
    
-   //   HashTable(HashTable *hashTable);
-   
-   uint32_t getSize() const
+   inline uint32_t getSize() const
    {
       return zend_hash_num_elements(&m_hashTable);
    }
    
-   //   void find();
-   
-   bool isEmpty() const
+   inline bool isEmpty() const
    {
       return 0 != getSize();
    }
    
-   HashTable &insert(const char *key, const Variant &value, bool forceNew = false)
+   inline HashTable &insert(const char *key, const Variant &value, bool forceNew = false)
    {
       return insert(String(key), value, forceNew);
    }
    
-   HashTable &insert(const std::string &key, const Variant &value, bool forceNew = false)
+   inline HashTable &insert(const std::string &key, const Variant &value, bool forceNew = false)
    {
-      return insert(String(key.c_str(), key.size()), value, forceNew);
+      return insert(String(key), value, forceNew);
    }
    
-   HashTable &insert(const String &key, const Variant &value, bool forceNew = false)
+   inline HashTable &insert(const String &key, const Variant &value, bool forceNew = false)
    {
       if (forceNew) {
          zend_hash_add_new(&m_hashTable, key, value);
@@ -120,12 +116,75 @@ public:
       return *this;
    }
    
-   //   void getKey();
-   const Variant getValue(const char *key) const;
-   const Variant getValue(const std::string &key) const;
-   const Variant getValue(const String &key) const;
-   const Variant getValue(IndexType key);
+   inline HashTable &insert(zapi_ulong index, const Variant &value, bool forceNew = false)
+   {
+      if (forceNew) {
+         zend_hash_index_add_new(&m_hashTable, index, value);
+      } else {
+         zend_hash_index_add(&m_hashTable, index, value);
+      }
+      return *this;
+   }
    
+   inline Variant update(const String &key, const Variant &value)
+   {
+      return zend_hash_update(&m_hashTable, key, value);
+   }
+   
+   inline Variant update(zapi_ulong index, const Variant &value)
+   {
+      return zend_hash_index_update(&m_hashTable, index, value);
+   }
+   
+   inline Variant getValue(const char *key)
+   {
+      return getValue(String(key));
+   }
+
+   inline Variant getValue(const std::string &key)
+   {
+      return getValue(String(key));
+   }
+
+   inline Variant getValue(const String &key)
+   {
+      return zend_hash_find(&m_hashTable, key);
+   }
+
+   inline Variant getValue(zapi_ulong index)
+   {
+      return zend_hash_index_find(&m_hashTable, index);
+   }
+   
+   inline HashTable &clear()
+   {
+      zend_hash_clean(&m_hashTable);
+      return *this;
+   }
+   
+public:
+   
+   inline Variant operator[](const char *key)
+   {
+      return operator[](String(key));
+   }
+   
+   inline Variant operator[](const std::string &key)
+   {
+      return operator[](String(key));
+   }
+   
+   inline Variant operator[](const String &key)
+   {
+      return Variant(zend_hash_find(&m_hashTable, key), true);
+   }
+   
+   inline Variant operator[](zapi_ulong index)
+   {
+      return Variant(zend_hash_index_find(&m_hashTable, index), true);
+   }
+   
+public:
    class iterator 
    {
    public:

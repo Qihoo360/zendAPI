@@ -234,7 +234,7 @@ public:
    
    operator zval * () const
    {
-      return static_cast<zval *>(m_val);
+      return const_cast<zval *>(&m_val);
    }
    
    /**
@@ -302,18 +302,6 @@ public:
    std::int64_t toLong() const;
    
    /**
-    * Retrieve the value as number
-    *
-    * We force this to be a std::int64_t because we assume that most
-    * servers run 64 bits nowadays, and because we use std::int32_t, std::int64_t
-    * almost everywhere, instead of 'long' and on OSX neither of
-    * these intxx_t types is defined as 'long'...
-    *
-    * @return std::int64_t
-    */
-   std::uint64_t toUnsignedLong() const;
-   
-   /**
     * Retrieve the value as boolean
     * @return bool
     */
@@ -331,17 +319,11 @@ public:
     */
    double toDouble() const;
    
-   /**
-    * @internal
-    */
-   std::string debugZval() const;
-   
-   /**
-    * get the zval reference been wrappered
-    * 
-    * @return 
-    */
-   const Zval& getZval() const;
+   inline zval &getZval()
+   {
+      return m_val;
+   }
+
 protected:
    /**
     * Detach the zval
@@ -375,10 +357,10 @@ private:
     * Refcount - the number of references to the value
     * @return int
     */
-   int getRefCount() const;
+   int getRefCount();
    
 protected:
-   Zval m_val;
+   zval m_val;
 };
 
 /**
