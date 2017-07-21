@@ -238,6 +238,48 @@ public:
       return *this;
    }
    
+   inline bool contains(const char *key)
+   {
+      return contains(String(key));
+   }
+   
+   inline bool contains(const std::string &key)
+   {
+      return contains(String(key));
+   }
+   
+   inline bool contains(const String &key) 
+   {
+      return zend_hash_exists(&m_hashTable, key) == 1 ? true : false;
+   }
+   
+   inline bool contains(int16_t index)
+   {
+      index = index < 0 ? 0 : index;
+      return contains(static_cast<zapi_ulong>(index));
+   }
+   
+   inline bool contains(int32_t index)
+   {
+      index = index < 0 ? 0 : index;
+      return contains(static_cast<zapi_ulong>(index));
+   }
+   
+   inline bool contains(uint16_t index)
+   {
+      return contains(static_cast<zapi_ulong>(index));
+   }
+   
+   inline bool contains(uint32_t index)
+   {
+      return contains(static_cast<zapi_ulong>(index));
+   }
+   
+   inline bool contains(const zapi_ulong index) 
+   {
+      return zend_hash_index_exists(&m_hashTable, index) == 1 ? true : false;
+   }
+   
 public:
    
    inline Variant operator[](const char *key)
@@ -254,7 +296,7 @@ public:
    {
       zval *value = zend_hash_find(&m_hashTable, key);
       if (nullptr == value) {
-         value = zend_hash_add_new(&m_hashTable, key, Variant(nullptr));
+         value = zend_hash_add_empty_element(&m_hashTable, key);
       }
       return Variant(value, true);
    }
@@ -285,7 +327,7 @@ public:
    {
       zval *value = zend_hash_index_find(&m_hashTable, index);
       if (nullptr == value) {
-         value = zend_hash_index_add_new(&m_hashTable, index, Variant(nullptr));
+         value = zend_hash_index_add_empty_element(&m_hashTable, index);
       }
       return Variant(value, true);
    }

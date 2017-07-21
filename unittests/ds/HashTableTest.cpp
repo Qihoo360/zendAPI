@@ -154,6 +154,19 @@ TEST_F(HashTableTest, testDeleteItem)
    ASSERT_EQ(table.getSize(), 0);
 }
 
+TEST_F(HashTableTest, testContains) 
+{
+   ZapiHashTable table;
+   ASSERT_FALSE(table.contains(1));
+   table.insert(0, Variant("zapi"));
+   ASSERT_FALSE(table.contains(1));
+   table.insert(1, Variant("zapi"));
+   ASSERT_TRUE(table.contains(1));
+   ASSERT_FALSE(table.contains("name"));
+   table.insert("name", Variant("zapi"));
+   ASSERT_TRUE(table.contains("name"));
+}
+
 int main(int argc, char **argv)
 {
    int retCode = 0;
