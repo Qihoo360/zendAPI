@@ -239,39 +239,47 @@ public:
    
    Variant getKey() const;
    Variant getKey(const Variant &value) const;
-   Variant getKey(const Variant &value, int16_t defaultKey)
+   Variant getKey(const Variant &value, int16_t defaultKey) const
    {
-      return getKey(value, static_cast<zapi_ulong>(defaultKey < 0 ? 0 : defaultKey));
+      return getKey(value, Variant(defaultKey));
    }
    
-   Variant getKey(const Variant &value, int32_t defaultKey)
+   Variant getKey(const Variant &value, int32_t defaultKey) const
    {
-      return getKey(value, static_cast<zapi_ulong>(defaultKey < 0 ? 0 : defaultKey));
+      return getKey(value, Variant(defaultKey));
    }
    
-   Variant getKey(const Variant &value, uint16_t defaultKey)
+   Variant getKey(const Variant &value, uint16_t defaultKey) const
    {
-      return getKey(value, static_cast<zapi_ulong>(defaultKey));
+      return getKey(value, Variant(defaultKey));
    }
    
-   Variant getKey(const Variant &value, uint32_t defaultKey)
+   Variant getKey(const Variant &value, uint32_t defaultKey) const
    {
-      return getKey(value, static_cast<zapi_ulong>(defaultKey));
+      return getKey(value, Variant(defaultKey));
    }
 
-   Variant getKey(const Variant &value, zapi_ulong defaultKey);
+   Variant getKey(const Variant &value, zapi_ulong defaultKey) const
+   {
+      return getKey(value, Variant(defaultKey));
+   }
    
-   Variant getKey(const Variant &value, const std::string &defaultKey)
+   Variant getKey(const Variant &value, const std::string &defaultKey) const
    {
-      return getKey(value, String(defaultKey));
+      return getKey(value, Variant(defaultKey));
    }
 
-   Variant getKey(const Variant &value, const char *defaultKey)
+   Variant getKey(const Variant &value, const char *defaultKey) const
    {
-      return getKey(value, String(defaultKey));
+      return getKey(value, Variant(defaultKey));
    }
 
-   Variant getKey(const Variant &value, const String &defaultKey);
+   Variant getKey(const Variant &value, const String &defaultKey) const
+   {
+      return getKey(value, Variant(defaultKey));
+   }
+   
+   Variant getKey(const Variant &value, const Variant &key) const;
    
    HashTable &clear()
    {

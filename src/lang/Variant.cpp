@@ -739,6 +739,22 @@ double Variant::toDouble() const
    return zval_get_double(const_cast<zval *>(&m_val));
 }
 
+bool Variant::operator==(const Variant &value) const
+{
+   return operator==(const_cast<zval *>(&value.m_val));
+}
+
+bool Variant::operator==(zval *value) const
+{
+   zval result;
+   // run the comparison
+   if (SUCCESS != compare_function(&result, const_cast<zval *>(&m_val), value)) {
+      return false;
+   }
+   // convert to boolean
+   return result.value.lval == 0; 
+}
+
 /**
  * Custom output stream operator
  * @param  stream

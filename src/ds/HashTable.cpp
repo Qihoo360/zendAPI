@@ -128,14 +128,38 @@ Variant HashTable::getKey() const
    return keyType == HASH_KEY_IS_STRING ? Variant(key->val, key->len) : Variant(index);
 }
 
-Variant HashTable::getKey(const Variant &value, const String &defaultKey)
+Variant HashTable::getKey(const Variant &value, const Variant &defaultKey) const
 {
-   
+   zend_string *key = nullptr;
+   zapi_ulong index = 0;
+   zval *targetValue;
+   ZEND_HASH_FOREACH_KEY_VAL(&m_hashTable, index, key, targetValue)
+   if (value == targetValue) {
+      if (key != nullptr) {
+         return Variant(key->val, key->len);
+      } else {
+         return Variant(index);
+      }
+   }
+   ZEND_HASH_FOREACH_END();
+   return defaultKey;
 }
 
-Variant HashTable::getKey(const Variant &value, zapi_ulong defaultKey)
+Variant HashTable::getKey(const Variant &value) const
 {
-   
+   zend_string *key = nullptr;
+   zapi_ulong index = 0;
+   zval *targetValue;
+   ZEND_HASH_FOREACH_KEY_VAL(&m_hashTable, index, key, targetValue)
+   if (value == targetValue) {
+      if (key != nullptr) {
+         return Variant(key->val, key->len);
+      } else {
+         return Variant(index);
+      }
+   }
+   ZEND_HASH_FOREACH_END();
+   return Variant(nullptr);
 }
 
 HashTable::iterator &HashTable::iterator::operator++()

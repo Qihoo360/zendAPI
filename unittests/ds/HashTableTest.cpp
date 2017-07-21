@@ -122,6 +122,18 @@ TEST_F(HashTableTest, testGetKey)
    // table.getKey();
    table.insert("name", Variant("zapi"));
    ASSERT_EQ(table.getKey().toString(), "name");
+   table.insert("key1", Variant("item1"));
+   table.insert("key2", Variant("item2"));
+   table.insert("key3", Variant("item3"));
+   table.insert("anotherKey1", Variant("item1"));
+   table.insert(12, Variant(122));
+   // find the first match key
+   ASSERT_EQ(table.getKey(Variant("item1")).toString(), "key1");
+   ASSERT_EQ(table.getKey(Variant("item2")).toString(), "key2");
+   ASSERT_EQ(table.getKey(Variant(122)).toLong(), 12);
+   // test default key
+   ASSERT_EQ(table.getKey(Variant("notExist"), "defaultKey").toString(), "defaultKey");
+   ASSERT_EQ(table.getKey(Variant(1234), 11).toLong(), 11);
 }
 
 

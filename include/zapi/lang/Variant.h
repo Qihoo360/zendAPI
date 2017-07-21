@@ -163,10 +163,22 @@ public:
    
    /**
     * Comparison operators for hardcoded Variant
+    * 
     * @param  value
     */
    bool operator==(const Variant &value) const;
    bool operator!=(const Variant &value) const
+   {
+      return !operator==(value);
+   }
+   
+   /**
+    * Comparison operators for hardcoded Variant
+    * 
+    * @param  value
+    */
+   bool operator==(zval *value) const;
+   bool operator!=(zval *value) const
    {
       return !operator==(value);
    }
@@ -256,12 +268,14 @@ public:
    
    /**
     * Make a clone of the value with the same type
+    * 
     * @return Value
     */
    Variant clone() const;
    
    /**
     * Make a clone of the value with a different type
+    * 
     * @param  type
     * @return Value
     */
@@ -269,6 +283,7 @@ public:
    
    /**
     * Check if the value is of a certain type
+    * 
     * @return bool
     */
    bool isNull() const;
@@ -297,18 +312,21 @@ public:
    
    /**
     * Retrieve the value as boolean
+    * 
     * @return bool
     */
    bool toBool() const;
    
    /**
     * Retrieve the value as a string
+    * 
     * @return string
     */
    std::string toString() const;
    
    /**
     * Retrieve the value as decimal
+    * 
     * @return double
     */
    double toDouble() const;
@@ -324,6 +342,7 @@ protected:
 
 /**
  * Custom output stream operator
+ * 
  * @param  stream
  * @param  value
  * @return ostream
