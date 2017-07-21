@@ -22,6 +22,7 @@
 
 #include "php/Zend/zend_hash.h"
 #include <string>
+#include <functional>
 
 namespace zapi
 {
@@ -38,6 +39,7 @@ public:
    constexpr static uint32_t DEFAULT_HASH_SIZE = 8;
    using IndexType = zend_ulong;
    using HashPosition = ::HashPosition;
+   using DefaultForeachVisitor = std::function<void(const Variant&, const Variant&)>;
    enum class HashKeyType : unsigned char
    {
       String      = HASH_KEY_IS_STRING,
@@ -81,7 +83,7 @@ public:
       GC_REFCOUNT(&m_hashTable)++;
    }
    
-   ~HashTable()
+   virtual ~HashTable()
    {
       zend_hash_destroy(&m_hashTable);
    }
@@ -182,58 +184,94 @@ public:
       return zend_hash_index_del(&m_hashTable, index) == ZAPI_SUCCESS ? true : false;
    }
    
-   Variant getValue(const char *key)
+   Variant getValue(const char *key) const
    {
       return getValue(String(key));
    }
    
-   Variant getValue(const std::string &key)
+   Variant getValue(const std::string &key) const
    {
       return getValue(String(key));
    }
    
-   Variant getValue(const String &key)
+   Variant getValue(const String &key) const
    {
       return zend_hash_find(&m_hashTable, key);
    }
    
-   Variant getValue(zapi_ulong index)
+   Variant getValue(zapi_ulong index) const
    {
       return zend_hash_index_find(&m_hashTable, index);
    }
    
-   Variant getValue(const std::string &key, const lang::Variant &defaultValue)
+   Variant getValue(const std::string &key, const lang::Variant &defaultValue) const
    {
-      return getValue(key, defaultValue);
+      return getValue(String(key), defaultValue);
    }
    
-   Variant getValue(const char *key, const lang::Variant &defaultValue)
+   Variant getValue(const char *key, const lang::Variant &defaultValue) const
    {
-      return getValue(key, defaultValue);
+      return getValue(String(key), defaultValue);
    }
    
-   Variant getValue(int16_t index, const Variant &defaultValue)
-   {
-      return getValue(static_cast<zapi_ulong>(index < 0 ? 0 : index), defaultValue);
-   }
-   
-   Variant getValue(int32_t index, const Variant &defaultValue)
+   Variant getValue(int16_t index, const Variant &defaultValue) const
    {
       return getValue(static_cast<zapi_ulong>(index < 0 ? 0 : index), defaultValue);
    }
    
-   Variant getValue(uint16_t index, const Variant &defaultValue)
+   Variant getValue(int32_t index, const Variant &defaultValue) const
+   {
+      return getValue(static_cast<zapi_ulong>(index < 0 ? 0 : index), defaultValue);
+   }
+   
+   Variant getValue(uint16_t index, const Variant &defaultValue) const
    {
       return getValue(static_cast<zapi_ulong>(index), defaultValue);
    }
    
-   Variant getValue(uint32_t index, const Variant &defaultValue)
+   Variant getValue(uint32_t index, const Variant &defaultValue) const
    {
       return getValue(static_cast<zapi_ulong>(index), defaultValue);
    }
    
-   Variant getValue(zapi_ulong index, const Variant &defaultValue);
-   Variant getValue(const String &key, const Variant &defaultValue);
+   Variant getValue(zapi_ulong index, const Variant &defaultValue) const;
+   Variant getValue(const String &key, const Variant &defaultValue) const;
+   
+   Variant getKey() const;
+   Variant getKey(const Variant &value) const;
+   Variant getKey(const Variant &value, int16_t defaultKey)
+   {
+      return getKey(value, static_cast<zapi_ulong>(defaultKey < 0 ? 0 : defaultKey));
+   }
+   
+   Variant getKey(const Variant &value, int32_t defaultKey)
+   {
+      return getKey(value, static_cast<zapi_ulong>(defaultKey < 0 ? 0 : defaultKey));
+   }
+   
+   Variant getKey(const Variant &value, uint16_t defaultKey)
+   {
+      return getKey(value, static_cast<zapi_ulong>(defaultKey));
+   }
+   
+   Variant getKey(const Variant &value, uint32_t defaultKey)
+   {
+      return getKey(value, static_cast<zapi_ulong>(defaultKey));
+   }
+
+   Variant getKey(const Variant &value, zapi_ulong defaultKey);
+   
+   Variant getKey(const Variant &value, const std::string &defaultKey)
+   {
+      return getKey(value, String(defaultKey));
+   }
+
+   Variant getKey(const Variant &value, const char *defaultKey)
+   {
+      return getKey(value, String(defaultKey));
+   }
+
+   Variant getKey(const Variant &value, const String &defaultKey);
    
    HashTable &clear()
    {
@@ -401,6 +439,8 @@ public:
    
    class const_iterator : public iterator
    {
+   public:
+      using iterator::iterator;
       virtual Variant getValue() override
       {
          return Variant(zend_hash_get_current_data_ex(m_hashTable, &m_index));
@@ -413,12 +453,24 @@ public:
       return iterator(&m_hashTable, m_hashTable.nInternalPointer);
    }
    
+   const_iterator cbegin()
+   {
+      return const_iterator(&m_hashTable, m_hashTable.nInternalPointer);
+   }
+   
    iterator end()
    {
       return iterator(&m_hashTable, HT_INVALID_IDX);
    }
    
-private:
+   iterator cend()
+   {
+      return const_iterator(&m_hashTable, HT_INVALID_IDX);
+   }
+   
+   void each(DefaultForeachVisitor visitor) const;
+   void reverseEach(DefaultForeachVisitor visitor) const;
+protected:
    ::HashTable m_hashTable;
 };
 

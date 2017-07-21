@@ -101,7 +101,7 @@ HashTable::IndexType HashTable::iterator::getNumericKey()
    return index;
 }
 
-Variant HashTable::getValue(zapi_ulong index, const Variant &defaultValue)
+Variant HashTable::getValue(zapi_ulong index, const Variant &defaultValue) const
 {
    zval *result = zend_hash_index_find(&m_hashTable, index);
    if (nullptr == defaultValue) {
@@ -110,13 +110,32 @@ Variant HashTable::getValue(zapi_ulong index, const Variant &defaultValue)
    return result;
 }
 
-Variant HashTable::getValue(const String &key, const Variant &defaultValue)
+Variant HashTable::getValue(const String &key, const Variant &defaultValue) const
 {
    zval *result = zend_hash_find(&m_hashTable, key);
-   if (nullptr == defaultValue) {
+   if (nullptr == result) {
       return defaultValue;
    }
    return result;
+}
+
+Variant HashTable::getKey() const
+{
+   zend_string *key;
+   zend_ulong index;
+   int keyType = zend_hash_get_current_key(const_cast<::HashTable *>(&m_hashTable), &key, &index);
+   ZAPI_ASSERT_X(keyType != HASH_KEY_NON_EXISTENT, "zapi::ds::HashTable::iterator", "Current key is not exist");
+   return keyType == HASH_KEY_IS_STRING ? Variant(key->val, key->len) : Variant(index);
+}
+
+Variant HashTable::getKey(const Variant &value, const String &defaultKey)
+{
+   
+}
+
+Variant HashTable::getKey(const Variant &value, zapi_ulong defaultKey)
+{
+   
 }
 
 HashTable::iterator &HashTable::iterator::operator++()
@@ -168,6 +187,33 @@ HashTable::iterator HashTable::iterator::operator+(int32_t step)
    return iter;
 }
 
+void HashTable::each(DefaultForeachVisitor visitor) const
+{
+   zend_string *key = nullptr;
+   zapi_ulong index = 0;
+   zval *value;
+   ZEND_HASH_FOREACH_KEY_VAL(&m_hashTable, index, key, value)
+   if (key != nullptr) {
+      visitor(Variant(key->val, key->len), Variant(value));
+   } else {
+      visitor(Variant(index), Variant(value));
+   }
+   ZEND_HASH_FOREACH_END();
+}
+
+void HashTable::reverseEach(DefaultForeachVisitor visitor) const
+{
+   zend_string *key = nullptr;
+   zapi_ulong index = 0;
+   zval *value;
+   ZEND_HASH_REVERSE_FOREACH_KEY_VAL(&m_hashTable, index, key, value)
+   if (key != nullptr) {
+      visitor(Variant(key->val, key->len), Variant(value));
+   } else {
+      visitor(Variant(index), Variant(value));
+   }
+   ZEND_HASH_FOREACH_END();
+}
 
 } // ds
 } // zapi

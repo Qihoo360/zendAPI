@@ -449,6 +449,7 @@ Variant &Variant::operator=(struct _zval_struct *value)
       // throw exception here ?
       return *this;
    }
+   // setup about to zval *
    if (Z_REFCOUNTED_P(to)) {
       // objects can have their own assignment handler
       if (Z_TYPE_P(to) == IS_OBJECT && Z_OBJ_HANDLER_P(to, set)) {

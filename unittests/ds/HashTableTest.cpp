@@ -109,8 +109,21 @@ TEST_F(HashTableTest, testGetValue)
       ASSERT_EQ(table["name"].toString(), "zapi");
       ASSERT_EQ(table["city"].toString(), "beijing");
       ASSERT_EQ(table["height"].toLong(), 123);
+      // test default value
+      ASSERT_EQ(table.getValue("notExistKey", 123).toLong(), 123);
+      ASSERT_EQ(table.getValue("notExistKey", "zapi").toString(), "zapi");
    }
 }
+
+TEST_F(HashTableTest, testGetKey)
+{
+   ZapiHashTable table;
+   // this trigger a warning
+   // table.getKey();
+   table.insert("name", Variant("zapi"));
+   ASSERT_EQ(table.getKey().toString(), "name");
+}
+
 
 TEST_F(HashTableTest, testAssignValue)
 {
@@ -166,6 +179,49 @@ TEST_F(HashTableTest, testContains)
    table.insert("name", Variant("zapi"));
    ASSERT_TRUE(table.contains("name"));
 }
+
+TEST_F(HashTableTest, testEach)
+{
+   ZapiHashTable table;
+   table.insert("item1", Variant(123));
+   table.insert("item2", Variant("softboy"));
+   table.insert("item3", Variant(true));
+   {
+      std::vector<std::string> expectedKeys{"item1", "item2", "item3"};
+      std::vector<std::string> keys;
+      std::vector<Variant> values;
+      table.each([&keys, &values](const Variant &key, const Variant &value) mutable{
+         if (key.getType() == zapi::lang::Type::String) {
+            keys.push_back(key.toString());
+         }
+         values.push_back(value);
+      });
+      ASSERT_EQ(keys.size(), 3);
+      ASSERT_EQ(keys, expectedKeys);
+      ASSERT_EQ(values.size(), 3);
+      ASSERT_EQ(values[0].toLong(), 123);
+      ASSERT_EQ(values[1].toString(), "softboy");
+      ASSERT_EQ(values[2].toBool(), true);
+   }
+   {
+      std::vector<std::string> expectedKeys{"item3", "item2", "item1"};
+      std::vector<std::string> keys;
+      std::vector<Variant> values;
+      table.reverseEach([&keys, &values](const Variant &key, const Variant &value) mutable{
+         if (key.getType() == zapi::lang::Type::String) {
+            keys.push_back(key.toString());
+         }
+         values.push_back(value);
+      });
+      ASSERT_EQ(keys.size(), 3);
+      ASSERT_EQ(keys, expectedKeys);
+      ASSERT_EQ(values.size(), 3);
+      ASSERT_EQ(values[0].toBool(), true);
+      ASSERT_EQ(values[1].toString(), "softboy");
+      ASSERT_EQ(values[2].toLong(), 123);
+   }
+}
+
 
 int main(int argc, char **argv)
 {
