@@ -21,9 +21,7 @@
 
 #include "zapi/lang/FatalError.h"
 #include "zapi/lang/Variant.h"
-#include "zapi/lang/StdClass.h"
 #include "zapi/lang/OrigException.h"
-#include "zapi/vm/StdClassImpl.h"
 #include "zapi/utils/Arithmetic.h"
 #include "zapi/utils/LowerCase.h"
 #include "zapi/ds/String.h"
@@ -36,7 +34,6 @@ namespace zapi
 namespace lang
 {
 
-using zapi::vm::StdClassImpl;
 using zapi::utils::Arithmetic;
 using zapi::utils::LowerCase;
 using zapi::ds::String;
@@ -488,7 +485,11 @@ Variant &Variant::operator=(struct _zval_struct *value)
  */
 Type Variant::getType() const
 {
-   return static_cast<Type>(Z_TYPE(m_val));
+   zval *ptr = const_cast<zval *>(&m_val);
+   if (Z_ISREF(m_val)) {
+      ptr = Z_REFVAL(m_val);
+   }
+   return static_cast<Type>(Z_TYPE_P(ptr));
 }
 
 /**
@@ -683,12 +684,9 @@ Variant Variant::clone(Type targetType) const
  * Retrieve the value as integer
  * @return long
  */
-std::int64_t  Variant::toLong() const
+std::int64_t Variant::toLong() const
 {
-   if (isLong()) {
-      return Z_LVAL(m_val);
-   }
-   return clone(Type::Long).toLong();
+   return zval_get_long(const_cast<zval *>(&m_val));
 }
 
 /**
@@ -725,27 +723,10 @@ bool Variant::toBool() const
  */
 std::string Variant::toString() const
 {
-   zend_string *tempStr = zval_get_string(const_cast<zval *>(&m_val));
-   std::string ret(ZSTR_VAL(tempStr), ZSTR_LEN(tempStr));
-   zend_string_release(tempStr);
+   zend_string* s  = zval_get_string(const_cast<zval *>(&m_val));
+   std::string ret(ZSTR_VAL(s), ZSTR_LEN(s));
+   zend_string_release(s);
    return ret;
-   switch (getType()) {
-   case Type::Null:
-      return {};
-   case Type::False:
-      return "0";
-   case Type::True:
-      return "1";
-   case Type::Long:
-      return std::to_string(toLong());
-   case Type::Double:
-      return std::to_string(toDouble());
-   case Type::String:
-      return {Z_STRVAL(m_val), Z_STRLEN(m_val)};
-   default:
-      break;
-   }
-   return clone(Type::String).toString();
 }
 
 /**
@@ -754,11 +735,7 @@ std::string Variant::toString() const
  */
 double Variant::toDouble() const
 {
-   if (isDouble()) {
-      return Z_DVAL(m_val);
-   }
-   return clone(Type::Double).toDouble();
-   // why not use zval_get_double(m_val)
+   return zval_get_double(const_cast<zval *>(&m_val));
 }
 
 /**

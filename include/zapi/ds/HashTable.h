@@ -391,9 +391,9 @@ public:
          return static_cast<HashKeyType>(type);
       }
       
-      inline Variant getValue() 
+      inline virtual Variant getValue()
       {
-         return zend_hash_get_current_data_ex(m_hashTable, &m_index);
+         return Variant(zend_hash_get_current_data_ex(m_hashTable, &m_index), true);
       }
       
    public:
@@ -476,12 +476,23 @@ public:
          return getValue();
       }
       
-   private:
+      virtual ~iterator()
+      {}
+      
+   protected:
       /**
        * @brief current hash table index 
        */
       HashPosition m_index;
       ::HashTable *m_hashTable;
+   };
+   
+   class const_iterator : public iterator
+   {
+      inline virtual Variant getValue() override
+      {
+         return Variant(zend_hash_get_current_data_ex(m_hashTable, &m_index));
+      }
    };
    
    // STL style
