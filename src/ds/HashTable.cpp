@@ -239,5 +239,30 @@ void HashTable::reverseEach(DefaultForeachVisitor visitor) const
    ZEND_HASH_FOREACH_END();
 }
 
+std::vector<Variant> HashTable::getKeys() const
+{
+   zend_string *key = nullptr;
+   zapi_ulong index = 0;
+   std::vector<Variant> keys;
+   ZEND_HASH_FOREACH_KEY(&m_hashTable, index, key)
+   if (key != nullptr) {
+      keys.push_back(Variant(key->val, key->len));
+   } else {
+      keys.push_back(Variant(index));
+   }
+   ZEND_HASH_FOREACH_END();
+   return keys;
+}
+
+std::vector<Variant> HashTable::getValues() const
+{
+   zval *value;
+   std::vector<Variant> values;
+   ZEND_HASH_FOREACH_VAL(&m_hashTable, value)
+   values.push_back(value);
+   ZEND_HASH_FOREACH_END();
+   return values;
+}
+
 } // ds
 } // zapi

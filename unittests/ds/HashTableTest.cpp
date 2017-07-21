@@ -234,6 +234,17 @@ TEST_F(HashTableTest, testEach)
    }
 }
 
+TEST_F(HashTableTest, testGetKeysAndValues)
+{
+   ZapiHashTable table;
+   table.insert("item1", Variant(123));
+   table.insert("item2", Variant("softboy"));
+   table.insert("item3", Variant(true));
+   std::vector<Variant> expectedValues{123, "softboy", true};
+   std::vector<Variant> expectedKeys{"item1", "item2", "item3"};
+   ASSERT_EQ(table.getKeys(), expectedKeys);
+   ASSERT_EQ(table.getValues(), expectedValues);
+}
 
 int main(int argc, char **argv)
 {

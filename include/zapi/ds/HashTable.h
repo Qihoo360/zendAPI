@@ -93,6 +93,11 @@ public:
       return zend_hash_num_elements(&m_hashTable);
    }
    
+   uint32_t count() const
+   {
+      return zend_hash_num_elements(&m_hashTable);
+   }
+   
    bool isEmpty() const
    {
       return 0 != getSize();
@@ -327,6 +332,8 @@ public:
       return zend_hash_index_exists(&m_hashTable, index) == 1 ? true : false;
    }
    
+   std::vector<Variant> getKeys() const;
+   std::vector<Variant> getValues() const;
 public:
    
    Variant operator[](const char *key)
