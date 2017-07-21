@@ -65,8 +65,8 @@ public:
    };
 public:
    inline HashTable(uint32_t tableSize = DEFAULT_HASH_SIZE,
-             zapi::lang::HashTableDataDeleter defaultDeleter = zValDataDeleter, 
-             bool persistent = false)
+                    zapi::lang::HashTableDataDeleter defaultDeleter = zValDataDeleter, 
+                    bool persistent = false)
    {
       zend_hash_init(&m_hashTable, tableSize, nullptr, defaultDeleter, persistent ? 1 : 0);
    }
@@ -118,7 +118,7 @@ public:
    
    inline HashTable &insert(int16_t index, const Variant &value, bool forceNew = false)
    {
-       index = index < 0 ? 0 : index;
+      index = index < 0 ? 0 : index;
       return insert(static_cast<zapi_ulong>(index), value, forceNew);
    }
    
@@ -144,6 +144,16 @@ public:
          zend_hash_index_add_new(&m_hashTable, index, value);
       } else {
          zend_hash_index_add(&m_hashTable, index, value);
+      }
+      return *this;
+   }
+   
+   inline HashTable &append(const Variant &value, bool forceNew = true)
+   {
+      if (forceNew) {
+         zend_hash_next_index_insert_new(&m_hashTable, value);
+      } else {
+         zend_hash_next_index_insert(&m_hashTable, value);
       }
       return *this;
    }
@@ -206,17 +216,17 @@ public:
    {
       return getValue(String(key));
    }
-
+   
    inline Variant getValue(const std::string &key)
    {
       return getValue(String(key));
    }
-
+   
    inline Variant getValue(const String &key)
    {
       return zend_hash_find(&m_hashTable, key);
    }
-
+   
    inline Variant getValue(zapi_ulong index)
    {
       return zend_hash_index_find(&m_hashTable, index);
@@ -244,15 +254,42 @@ public:
    {
       zval *value = zend_hash_find(&m_hashTable, key);
       if (nullptr == value) {
-          value = zend_hash_add_new(&m_hashTable, key, Variant(nullptr));
+         value = zend_hash_add_new(&m_hashTable, key, Variant(nullptr));
       }
       return Variant(value, true);
    }
    
+   inline Variant operator[](int16_t index)
+   {
+      index = index < 0 ? 0 : index;
+      return operator[](static_cast<zapi_ulong>(index));
+   }
+   
+   inline Variant operator[](int32_t index)
+   {
+      index = index < 0 ? 0 : index;
+      return operator[](static_cast<zapi_ulong>(index));
+   }
+   
+   inline Variant operator[](uint16_t index)
+   {
+      return operator[](static_cast<zapi_ulong>(index));
+   }
+   
+   inline Variant operator[](uint32_t index)
+   {
+      return operator[](static_cast<zapi_ulong>(index));
+   }
+   
    inline Variant operator[](zapi_ulong index)
    {
-      return Variant(zend_hash_index_find(&m_hashTable, index), true);
+      zval *value = zend_hash_index_find(&m_hashTable, index);
+      if (nullptr == value) {
+         value = zend_hash_index_add_new(&m_hashTable, index, Variant(nullptr));
+      }
+      return Variant(value, true);
    }
+   
    
 public:
    class iterator 
@@ -396,7 +433,7 @@ public:
       {
          return getValue();
       }
-
+      
    private:
       /**
        * @brief current hash table index 

@@ -124,6 +124,12 @@ TEST_F(HashTableTest, testAssignValue)
    ASSERT_EQ(table["name"].toString(), "zzu_softboy");
    table["age"] = Variant(123);
    ASSERT_EQ(table["age"].toLong(), 123);
+   table.append(Variant(1234));
+   ASSERT_EQ(table[0].toLong(), 1234);
+   table.append(Variant(4321));
+   ASSERT_EQ(table[1].toLong(), 4321);
+   table.append(Variant("zapi"));
+   ASSERT_EQ(table[2].toString(), "zapi");
 }
 
 TEST_F(HashTableTest, testDeleteItem)
