@@ -202,6 +202,39 @@ public:
       return zend_hash_index_find(&m_hashTable, index);
    }
    
+   Variant getValue(const std::string &key, const lang::Variant &defaultValue)
+   {
+      return getValue(key, defaultValue);
+   }
+   
+   Variant getValue(const char *key, const lang::Variant &defaultValue)
+   {
+      return getValue(key, defaultValue);
+   }
+   
+   Variant getValue(int16_t index, const Variant &defaultValue)
+   {
+      return getValue(static_cast<zapi_ulong>(index < 0 ? 0 : index), defaultValue);
+   }
+   
+   Variant getValue(int32_t index, const Variant &defaultValue)
+   {
+      return getValue(static_cast<zapi_ulong>(index < 0 ? 0 : index), defaultValue);
+   }
+   
+   Variant getValue(uint16_t index, const Variant &defaultValue)
+   {
+      return getValue(static_cast<zapi_ulong>(index), defaultValue);
+   }
+   
+   Variant getValue(uint32_t index, const Variant &defaultValue)
+   {
+      return getValue(static_cast<zapi_ulong>(index), defaultValue);
+   }
+   
+   Variant getValue(zapi_ulong index, const Variant &defaultValue);
+   Variant getValue(const String &key, const Variant &defaultValue);
+   
    HashTable &clear()
    {
       zend_hash_clean(&m_hashTable);
@@ -346,8 +379,7 @@ public:
          return *this = *this + step;
       }
       
-      iterator &operator-=(int step)
-      {
+      iterator &operator-=(int step) {
          return *this = *this - step;
       }
       

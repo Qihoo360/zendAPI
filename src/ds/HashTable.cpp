@@ -101,6 +101,24 @@ HashTable::IndexType HashTable::iterator::getNumericKey()
    return index;
 }
 
+Variant HashTable::getValue(zapi_ulong index, const Variant &defaultValue)
+{
+   zval *result = zend_hash_index_find(&m_hashTable, index);
+   if (nullptr == defaultValue) {
+      return defaultValue;
+   }
+   return result;
+}
+
+Variant HashTable::getValue(const String &key, const Variant &defaultValue)
+{
+   zval *result = zend_hash_find(&m_hashTable, key);
+   if (nullptr == defaultValue) {
+      return defaultValue;
+   }
+   return result;
+}
+
 HashTable::iterator &HashTable::iterator::operator++()
 {
    ZAPI_ASSERT_X(m_hashTable != nullptr, "zapi::ds::HashTable::iterator", "m_hashTable can't be nullptr");
