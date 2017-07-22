@@ -263,6 +263,23 @@ std::vector<Variant> HashTable::getKeys() const
    return keys;
 }
 
+std::vector<Variant> HashTable::getKeys(const Variant &value) const
+{
+   zend_string *key = nullptr;
+   zapi_ulong index = 0;
+   zval *curValue;
+   std::vector<Variant> keys;
+   ZEND_HASH_REVERSE_FOREACH_KEY_VAL(&m_hashTable, index, key, curValue)
+   if (value == curValue) {
+      if (key != nullptr) {
+         keys.push_back(Variant(key->val, key->len));
+      } else {
+         keys.push_back(Variant(index));
+      }
+   }
+   ZEND_HASH_FOREACH_END();
+}
+
 std::vector<Variant> HashTable::getValues() const
 {
    zval *value;

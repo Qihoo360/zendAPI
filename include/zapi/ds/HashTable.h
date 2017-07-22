@@ -333,6 +333,7 @@ public:
    }
    
    std::vector<Variant> getKeys() const;
+   std::vector<Variant> getKeys(const Variant &value) const;
    std::vector<Variant> getValues() const;
 public:
    
