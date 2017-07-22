@@ -70,11 +70,14 @@ Variant HashTable::operator[](zapi_ulong index)
    return Variant(value, true);
 }
 
-Variant HashTable::iterator::getKey()
+Variant HashTable::iterator::getKey() const
 {
    zend_string *key;
    IndexType index;
-   int keyType = zend_hash_get_current_key_ex(m_hashTable, &key, &index, &m_index);
+   int keyType = zend_hash_get_current_key_ex(const_cast<::HashTable *>(m_hashTable), 
+                                              &key, 
+                                              &index, 
+                                              const_cast<::HashPosition *>(&m_index));
    ZAPI_ASSERT_X(keyType != HASH_KEY_NON_EXISTENT, "zapi::ds::HashTable::iterator", "Current key is not exist");
    // we just copy here
    if (keyType == HASH_KEY_IS_STRING) {
@@ -84,19 +87,25 @@ Variant HashTable::iterator::getKey()
    }
 }
 
-std::string HashTable::iterator::getStrKey()
+std::string HashTable::iterator::getStrKey() const
 {
    zend_string *key;
-   int keyType = zend_hash_get_current_key_ex(m_hashTable, &key, nullptr, &m_index);
+   int keyType = zend_hash_get_current_key_ex(const_cast<::HashTable *>(m_hashTable), 
+                                              &key, 
+                                              nullptr,
+                                              const_cast<::HashPosition *>(&m_index));
    ZAPI_ASSERT_X(keyType != HASH_KEY_NON_EXISTENT, "zapi::ds::HashTable::iterator", "Current key is not exist");
    // we just copy here
    return std::string(key->val, key->len);
 }
 
-HashTable::IndexType HashTable::iterator::getNumericKey()
+HashTable::IndexType HashTable::iterator::getNumericKey() const
 {
    IndexType index;
-   int keyType = zend_hash_get_current_key_ex(m_hashTable, nullptr, &index, &m_index);
+   int keyType = zend_hash_get_current_key_ex(const_cast<::HashTable *>(m_hashTable), 
+                                              nullptr, 
+                                              &index, 
+                                              const_cast<::HashPosition *>(&m_index));
    ZAPI_ASSERT_X(keyType != HASH_KEY_NON_EXISTENT, "zapi::ds::HashTable::iterator", "Current key is not exist");
    return index;
 }

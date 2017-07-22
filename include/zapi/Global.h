@@ -46,6 +46,64 @@
 #  define ZAPI_OF_MACH_O
 #endif
 
+namespace zapi
+{
+namespace internal
+{
+
+template<int> struct IntegerForSize;
+
+template <>   
+struct IntegerForSize<1> 
+{
+   typedef uint8_t Unsigned;
+   typedef int8_t Signed;
+};
+
+template <>   
+struct IntegerForSize<2>
+{
+   typedef uint16_t Unsigned;
+   typedef int16_t  Signed;
+};
+
+template <>
+struct IntegerForSize<4>
+{
+   typedef uint32_t Unsigned;
+   typedef int32_t  Signed;
+};
+
+template <>
+struct IntegerForSize<8>
+{
+   typedef uint64_t Unsigned;
+   typedef int64_t  Signed;
+};
+
+#if defined(ZAPI_CC_GNU) && defined(__SIZEOF_INT128__)
+
+template <>
+struct IntegerForSize<16>
+{
+   __extension__ typedef unsigned __int128 Unsigned;
+   __extension__ typedef __int128 Signed;
+};
+
+#endif
+
+template <typename T>
+struct IntegerForSizeof : IntegerForSize<sizeof(T)> {};
+
+} // internal
+} // zapi
+
+typedef zapi::internal::IntegerForSize<ZAPI_PROCESSOR_WORDSIZE>::Signed zapi_registerint;
+typedef zapi::internal::IntegerForSize<ZAPI_PROCESSOR_WORDSIZE>::Unsigned zapi_registeruint;
+typedef zapi::internal::IntegerForSizeof<void *>::Unsigned zapi_uintptr;
+typedef zapi::internal::IntegerForSizeof<void *>::Signed zapi_ptrdiff;
+typedef zapi_ptrdiff zapi_intptr;
+
 template <typename T>
 static inline T *zapi_get_ptr_helper(T *ptr)
 {
@@ -107,6 +165,7 @@ template <> class ZStaticAssertFailure<true> {};
 #define zapi_long zend_long
 #define zapi_ulong zend_ulong
 
+namespace zapi{
 namespace internal
 {
 namespace swapexceptiontester
@@ -118,11 +177,11 @@ void check_swap(T &t) ZAPI_DECL_NOEXCEPT_EXPR(noexcept(swap(t, t)));
 
 } // swapexceptiontester
 } // internal
-
+} // zapi
 
 template <typename T>
 inline void swap(T &left, T &right)
-ZAPI_DECL_NOEXCEPT_EXPR(noexcept(internal::swapexceptiontester::check_swap(left)))
+ZAPI_DECL_NOEXCEPT_EXPR(noexcept(zapi::internal::swapexceptiontester::check_swap(left)))
 {
    using std::swap;
    swap(left, right);

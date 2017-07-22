@@ -67,8 +67,8 @@ public:
    };
 public:
    HashTable(uint32_t tableSize = DEFAULT_HASH_SIZE,
-                    zapi::lang::HashTableDataDeleter defaultDeleter = zValDataDeleter, 
-                    bool persistent = false)
+             zapi::lang::HashTableDataDeleter defaultDeleter = zValDataDeleter, 
+             bool persistent = false)
    {
       zend_hash_init(&m_hashTable, tableSize, nullptr, defaultDeleter, persistent ? 1 : 0);
    }
@@ -263,7 +263,7 @@ public:
    {
       return getKey(value, Variant(defaultKey));
    }
-
+   
    Variant getKey(const Variant &value, zapi_ulong defaultKey) const
    {
       return getKey(value, Variant(defaultKey));
@@ -273,12 +273,12 @@ public:
    {
       return getKey(value, Variant(defaultKey));
    }
-
+   
    Variant getKey(const Variant &value, const char *defaultKey) const
    {
       return getKey(value, Variant(defaultKey));
    }
-
+   
    Variant getKey(const Variant &value, const String &defaultKey) const
    {
       return getKey(value, Variant(defaultKey));
@@ -374,6 +374,7 @@ public:
    {
    public:
       typedef std::bidirectional_iterator_tag iterator_category;
+      typedef zapi_ptrdiff difference_type;
       typedef Variant value_type;
       typedef Variant *pointer;
       typedef Variant &reference;
@@ -384,8 +385,8 @@ public:
       explicit iterator(::HashTable *hashTable, HashPosition index) :m_index(index), m_hashTable(hashTable)
       {}
       
-      std::string getStrKey();
-      IndexType getNumericKey();
+      std::string getStrKey() const;
+      IndexType getNumericKey() const;
       
       iterator &reset()
       {
@@ -393,16 +394,18 @@ public:
          return *this;
       }
       
-      Variant getKey();
+      Variant getKey() const;
       
-      HashKeyType getKeyType()
+      HashKeyType getKeyType() const
       {
-         return static_cast<HashKeyType>(zend_hash_get_current_key_type_ex(m_hashTable, &m_index));
+         return static_cast<HashKeyType>(zend_hash_get_current_key_type_ex(const_cast<::HashTable *>(m_hashTable), 
+                                                                           const_cast<HashPosition *>(&m_index)));
       }
       
-      virtual Variant getValue()
+      virtual Variant getValue() const
       {
-         return Variant(zend_hash_get_current_data_ex(m_hashTable, &m_index), true);
+         return Variant(zend_hash_get_current_data_ex(const_cast<::HashTable *>(m_hashTable), 
+                                                      const_cast<HashPosition *>(&m_index)), true);
       }
       
    public:
@@ -456,31 +459,98 @@ public:
    {
    public:
       using iterator::iterator;
-      virtual Variant getValue() override
+      virtual Variant getValue() const override
       {
-         return Variant(zend_hash_get_current_data_ex(m_hashTable, &m_index));
+         return Variant(zend_hash_get_current_data_ex(const_cast<::HashTable *>(m_hashTable), 
+                                                      const_cast<HashPosition *>(&m_index)));
       }
    };
    
+   class key_iterator 
+   {
+   public:
+      typedef typename const_iterator::iterator_category iterator_category;
+      typedef typename const_iterator::difference_type difference_type;
+      typedef Variant value_type;
+      typedef Variant *pointer;
+      typedef Variant &reference;
+      explicit key_iterator(const_iterator iter) : iter(iter)
+      {}
+      
+      Variant operator*() const
+      {
+         return iter.getKey();
+      }
+      
+      bool operator ==(key_iterator other) const 
+      {
+         return iter == other.iter;
+      }
+      
+      bool operator !=(key_iterator other) const
+      {
+         return iter != other.iter;
+      }
+      
+      key_iterator &operator++()
+      {
+         ++iter;
+         return *this;
+      }
+      
+      key_iterator operator++(int) 
+      {
+         return key_iterator(iter++);
+      }
+      
+      key_iterator &operator--()
+      {
+         --iter;
+         return *this;
+      }
+      
+      key_iterator operator--(int)
+      {
+         return key_iterator(iter--);
+      }
+      
+      const_iterator base() const 
+      {
+         return iter;
+      }
+   private:
+      const_iterator iter;
+   };
+   
    // STL style
-   iterator begin()
+   iterator begin() const
    {
-      return iterator(&m_hashTable, m_hashTable.nInternalPointer);
+      return iterator(const_cast<::HashTable *>(&m_hashTable), m_hashTable.nInternalPointer);
    }
    
-   const_iterator cbegin()
+   const_iterator cbegin() const
    {
-      return const_iterator(&m_hashTable, m_hashTable.nInternalPointer);
+      return const_iterator(const_cast<::HashTable *>(&m_hashTable), m_hashTable.nInternalPointer);
    }
    
-   iterator end()
+   iterator end() const
    {
-      return iterator(&m_hashTable, HT_INVALID_IDX);
+      return iterator(const_cast<::HashTable *>(&m_hashTable), HT_INVALID_IDX);
    }
    
-   iterator cend()
+   const_iterator cend() const
    {
-      return const_iterator(&m_hashTable, HT_INVALID_IDX);
+      return const_iterator(const_cast<::HashTable *>(&m_hashTable), HT_INVALID_IDX);
+   }
+   
+   key_iterator keyBegin() const
+   {
+      return key_iterator(begin());
+   }
+   
+   key_iterator keyEnd() const
+   {
+      return key_iterator(end());
    }
    
    void each(DefaultForeachVisitor visitor) const;
