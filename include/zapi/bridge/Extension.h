@@ -18,22 +18,19 @@
 #define ZAPI_BRIDGE_EXTENSION_H
 
 #include "zapi/Global.h"
+#include "zapi/bridge/internal/ExtensionPrivate.h"
 
-// forward class declare
-namespace zapi
-{
-namespace vm
-{
-class Extension;
-} // vm
-} // zapi
+#include <list>
 
 namespace zapi
 {
+namespace kernel
+{
+class IniEntry;
+} // kernel
+
 namespace bridge
 {
-
-using VmExtension = zapi::vm::Extension;
 
 class ZAPI_DECL_EXPORT Extension
 {
@@ -53,15 +50,19 @@ public:
     * @param  apiversion  ZAPI API version (this should always be ZAPI_API_VERSION, so you better not supply it)
     */
    Extension(const char *name, const char *version = "1.0", int apiVersion = ZAPI_API_VERSION);
-
+   
    Extension(const Extension &extension) = delete;
    Extension(Extension &&extension) = delete;
-
+public:
+   
+   Extension &mount(const IniEntry &iniEntry);
+   Extension &mount(const IniEntry &&iniEntry);
+   
    operator void * ()
    {
       return getModule();
    }
-
+   
    /**
     * Register a function to be called when the PHP engine is ready
     *
@@ -74,7 +75,7 @@ public:
     * @return Extension Same object to allow chaining
     */
    Extension &setStartupHandler(const Callback &callback);
-
+   
    /**
     * Register a function to be called when the PHP engine is going to stop
     *
@@ -85,7 +86,7 @@ public:
     * @return Extension Same object to allow chaining
     */
    Extension &setShutdownHandler(const Callback &callback);
-
+   
    /**
     * Register a callback that is called at the beginning of each pageview/request
     *
@@ -98,7 +99,7 @@ public:
     * @return Extension Same object to allow chaining
     */
    Extension &setRequestHandler(const Callback &callback);
-
+   
    /**
     * Register a callback that is called to cleanup things after a pageview/request
     *
@@ -111,7 +112,7 @@ public:
     * @return Extension Same object to allow chaining
     */
    Extension &setIdleHandler(const Callback &callback);
-
+   
    /**
     * Retrieve the module pointer
     *
@@ -121,21 +122,22 @@ public:
     * @return void*
     */
    void *getModule();
-
+   
    virtual ~Extension()
    {}
-
+   
 protected:
-
+   
    virtual bool locked() const;
-
+   
 private:
    /**
     * The implementation object
     *
     * @var std::unique_ptr<ExtensionPrivate> m_implPtr
     */
-   std::unique_ptr<VmExtension> m_implPtr;
+   std::unique_ptr<internal::ExtensionPrivate> m_implPtr;
+   std::list<std::shared_ptr<zapi::kernel::IniEntry>> m_iniEntries;
 };
 
 } // bridge

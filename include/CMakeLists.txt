@@ -1,7 +1,9 @@
 set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/apidoc.h
    ${ZAPI_INCLUDE_DIR}/zapi/kernel/ExtensionBase.h
+   ${ZAPI_INCLUDE_DIR}/zapi/kernel/IniEntry.h
    ${ZAPI_INCLUDE_DIR}/zapi/bridge/Extension.h
+   ${ZAPI_INCLUDE_DIR}/zapi/bridge/internal/ExtensionPrivate.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Type.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Array.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Variant.h
@@ -18,7 +20,7 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/ds/HashTable.h
    ${ZAPI_INCLUDE_DIR}/zapi/ds/List.h
    ${ZAPI_INCLUDE_DIR}/zapi/ds/String.h
-   ${ZAPI_INCLUDE_DIR}/zapi/utils/Arithmetic.h
+   ${ZAPI_INCLUDE_DIR}/zapi/utils/PhpFuncs.h
    ${ZAPI_INCLUDE_DIR}/zapi/utils/LowerCase.h
    ${ZAPI_INCLUDE_DIR}/zapi/ZendApi.h
    ${ZAPI_INCLUDE_DIR}/zapi/CompilerDetection.h

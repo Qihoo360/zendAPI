@@ -30,6 +30,7 @@
 #include <memory>
 #include <functional>
 #include <cstdint>
+#include <iostream>
 
 #define ZAPI_STRINGIFY2(x) #x
 #define ZAPI_STRINGIFY(x) ZAPI_STRINGIFY2(x)

@@ -22,7 +22,6 @@
 #include "zapi/lang/FatalError.h"
 #include "zapi/lang/Variant.h"
 #include "zapi/lang/OrigException.h"
-#include "zapi/utils/Arithmetic.h"
 #include "zapi/utils/LowerCase.h"
 #include "zapi/ds/String.h"
 
@@ -34,7 +33,6 @@ namespace zapi
 namespace lang
 {
 
-using zapi::utils::Arithmetic;
 using zapi::utils::LowerCase;
 using zapi::ds::String;
 
