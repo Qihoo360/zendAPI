@@ -467,9 +467,9 @@ Variant &Variant::operator=(struct _zval_struct *value)
             // this will decrement the reference count and invoke GC_ZVAL_CHECK_FOR_POSSIBLE_ROOT()
             zval_ptr_dtor(to);
             zval_copy_ctor_func(to);
-         } else {
-            zval_dtor(to);
          }
+      } else {
+         zval_dtor(to);
       }
    }
    // Copy the value of b to a and increment the reference count if necessary

@@ -8,6 +8,7 @@
 
 #include "php/sapi/embed/php_embed.h"
 #include "php/Zend/zend_types.h"
+#include "php/Zend/zend_variables.h"
 
 #include "gtest/gtest.h"
 
@@ -146,8 +147,14 @@ TEST_F(VariantTest, testConstructor)
    zval rawVar1;
    ZVAL_LONG(&rawVar1, 2017);
    Variant constructFromRawRef(&rawVar1, true);
-   ASSERT_EQ(Z_TYPE(constructFromRawRef.getZval()), IS_LONG);
-   ASSERT_EQ(Z_LVAL(constructFromRawRef.getZval()), 2017);
+   std::shared_ptr<zval> rawVal1Ptr(&rawVar1, [](void *rawPtr){
+      zval *ptr = static_cast<zval *>(rawPtr);
+      if (Z_ISREF_P(ptr)) {
+         zval_ptr_dtor(ptr);
+      }
+   });
+   ASSERT_EQ(Z_TYPE_P(Z_REFVAL(constructFromRawRef.getZval())), IS_LONG);
+   ASSERT_EQ(Z_LVAL_P(Z_REFVAL(constructFromRawRef.getZval())), 2017);
    // test copy constructor
    {
       Variant orig(1234);
