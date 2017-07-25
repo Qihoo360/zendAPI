@@ -16,10 +16,14 @@
 #include "zapi/kernel/IniEntry.h"
 #include "zapi/bridge/Extension.h"
 
+ZEND_DECLARE_MODULE_GLOBALS(zapi)
+
 namespace zapi
 {
 namespace bridge
 {
+
+
 
 } // bridge
 } // zapi

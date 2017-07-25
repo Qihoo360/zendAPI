@@ -55,8 +55,8 @@ public:
    Extension(Extension &&extension) = delete;
 public:
    
-   Extension &mount(const IniEntry &iniEntry);
-   Extension &mount(const IniEntry &&iniEntry);
+   Extension &mount(const kernel::IniEntry &iniEntry);
+   Extension &mount(const kernel::IniEntry &&iniEntry);
    
    operator void * ()
    {

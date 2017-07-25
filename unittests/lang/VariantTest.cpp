@@ -3,7 +3,6 @@
 //
 #include "zapi/Global.h"
 #include "zapi/lang/Variant.h"
-#include "zapi/vm/Zval.h"
 #include "zapi/lang/FatalError.h"
 #include "zapi/lang/Type.h"
 
@@ -20,7 +19,6 @@
 using zapi::lang::Variant;
 using zapi::lang::FatalError;
 using zapi::lang::Type;
-using zapi::vm::Zval;
 
 namespace
 {

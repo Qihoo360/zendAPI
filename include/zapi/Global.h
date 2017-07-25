@@ -257,6 +257,6 @@ ZEND_END_MODULE_GLOBALS(zapi)
 // sort of impossible to understand magic pointer-to-a-pointer (for
 // multi-threading builds). We make this a static variable because
 // this already is bad enough.
-ZEND_EXTERN_MODULE_GLOBALS(zapi)
+extern ZEND_DECLARE_MODULE_GLOBALS(zapi)
 
 #endif //ZAPI_GLOBAL_H
