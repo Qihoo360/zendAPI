@@ -15,15 +15,90 @@
 
 #include "zapi/kernel/IniEntry.h"
 #include "zapi/bridge/Extension.h"
+#include "zapi/bridge/internal/ExtensionPrivate.h"
 
+#ifdef ZTS
+#include "TSRM.h"
+#endif
+
+#include <map>
+
+/**
+ * We're almost there, we now need to declare an instance of the
+ * structure defined above (if building for a single thread) or some
+ * sort of impossible to understand magic pointer-to-a-pointer (for
+ * multi-threading builds). We make this a static variable because
+ * this already is bad enough.
+ */
 ZEND_DECLARE_MODULE_GLOBALS(zapi)
+
+namespace
+{
+   using ExtensionPrivate = zapi::bridge::internal::ExtensionPrivate;
+  /**
+   * Function that must be defined to initialize the "globals"
+   * We do not have to initialize anything, but PHP needs to call this
+   * method (crazy)
+   * @param  globals
+   */
+   void init_global(zend_zapi_globals *globals){}
+   
+   std::map<std::string, ExtensionPrivate *> name2extension;
+   std::map<int, ExtensionPrivate *> number2extension;
+   
+   int match_module(zval *value)
+   {
+      
+   }
+   
+   ExtensionPrivate *find_module(int number)
+   {
+      
+   }
+}
 
 namespace zapi
 {
 namespace bridge
 {
 
+Extension::Extension(const char *name, const char *version, int apiVersion)
+   : m_implPtr(new ExtensionPrivate(name, version, apiVersion, this))
+{}
 
+Extension &Extension::setStartupHandler(const Callback &callback)
+{
+   m_implPtr->setStartupHandler(callback);
+   return *this;
+}
+
+Extension &Extension::setRequestHandler(const Callback &callback)
+{
+   m_implPtr->setRequestHandler(callback);
+   return *this;
+}
+
+Extension &Extension::setIdleHandler(const Callback &callback)
+{
+   m_implPtr->setIdleHandler(callback);
+   return *this;
+}
+
+Extension &Extension::setShutdownHandler(const Callback &callback)
+{
+   m_implPtr->setShutdownHandler(callback);
+   return *this;
+}
+
+void *Extension::getModule() const
+{
+   return static_cast<void *>(m_implPtr->getModule());
+}
+
+bool Extension::isLocked() const
+{
+   return m_implPtr->isLocked();
+}
 
 } // bridge
 } // zapi

@@ -114,28 +114,28 @@ static inline T *zapi_get_ptr_helper(T *ptr)
 template <typename T>
 static inline typename T::pointer zapi_get_ptr_helper(const T &p)
 {
-   return p.data();
+   return p.get();
 }
 
 #define ZAPI_DECLARE_PRIVATE(Class)\
    inline Class##Private* getImplPtr()\
    {\
-      return reinterpret_cast<Class##Private *>(zapi_get_ptr_helper(implPtr))\
+      return reinterpret_cast<Class##Private *>(zapi_get_ptr_helper(m_implPtr));\
    }\
    inline const Class##Private* getImplPtr() const\
    {\
-      return reinterpret_cast<const Class##Provate *>(zapi_get_ptr_helper(implPtr))\
+      return reinterpret_cast<const Class##Private *>(zapi_get_ptr_helper(m_implPtr));\
    }\
    friend class Class##Private;
 
 #define ZAPI_DECLARE_PUBLIC(Class)\
    inline Class* getApiPtr()\
    {\
-      return static_cast<Class *>(apiPtr);\
+      return static_cast<Class *>(m_apiPtr);\
    }\
       inline const Class* getApiPtr() const\
    {\
-      return static_const<const Class *>(apiPtr);\
+      return static_cast<const Class *>(m_apiPtr);\
    }\
    friend class Class;
 
@@ -190,8 +190,10 @@ ZAPI_DECL_NOEXCEPT_EXPR(noexcept(zapi::internal::swapexceptiontester::check_swap
 
 namespace zapi
 {
+
 using HANDLE = void *;
 using Callback = std::function<void()>;
+
 } // zapi
 
 #ifdef ZAPI_CC_MSVC

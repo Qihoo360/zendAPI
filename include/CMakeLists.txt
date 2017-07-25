@@ -1,7 +1,7 @@
 set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/apidoc.h
-   ${ZAPI_INCLUDE_DIR}/zapi/kernel/ExtensionBase.h
    ${ZAPI_INCLUDE_DIR}/zapi/kernel/IniEntry.h
+   ${ZAPI_INCLUDE_DIR}/zapi/kernel/Meta.h
    ${ZAPI_INCLUDE_DIR}/zapi/bridge/Extension.h
    ${ZAPI_INCLUDE_DIR}/zapi/bridge/internal/ExtensionPrivate.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Type.h
@@ -15,7 +15,6 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Errors.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/NotImplemented.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/OrigException.h
-   ${ZAPI_INCLUDE_DIR}/zapi/vm/Extension.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/StdClassImpl.h
    ${ZAPI_INCLUDE_DIR}/zapi/ds/HashTable.h
    ${ZAPI_INCLUDE_DIR}/zapi/ds/List.h

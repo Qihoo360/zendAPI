@@ -34,6 +34,7 @@ namespace bridge
 
 class ZAPI_DECL_EXPORT Extension
 {
+   ZAPI_DECLARE_PRIVATE(internal::Extension)
 public:
    /**
     * Constructor that defines a number of functions right away
@@ -121,14 +122,11 @@ public:
     *
     * @return void*
     */
-   void *getModule();
-   
-   virtual ~Extension()
-   {}
+   void *getModule() const;
    
 protected:
    
-   virtual bool locked() const;
+   bool isLocked() const;
    
 private:
    /**

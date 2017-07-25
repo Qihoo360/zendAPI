@@ -2,6 +2,7 @@ set(ZAPI_SRC
    bridge/Extension.cpp
    kernel/Global.cpp
    kernel/IniEntry.cpp
+   kernel/Meta.cpp
    lang/Variant.cpp
    lang/FatalError.cpp
    lang/StdClass.cpp

@@ -278,6 +278,7 @@ std::vector<Variant> HashTable::getKeys(const Variant &value) const
       }
    }
    ZEND_HASH_FOREACH_END();
+   return keys;
 }
 
 std::vector<Variant> HashTable::getValues() const

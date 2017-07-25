@@ -16,9 +16,21 @@
 #ifndef ZAPI_KERNEL_META_H
 #define ZAPI_KERNEL_META_H
 
+#include "zapi/Global.h"
+
 namespace zapi
 {
+namespace kernel
+{
 
-}
+class ZAPI_DECL_EXPORT Meta
+{
+public:
+   void getLoadedExtensions();
+   void getPhpVersion();
+};
+
+} // kernel
+} // zapi
 
 #endif //ZAPI_KERNEL_META_H

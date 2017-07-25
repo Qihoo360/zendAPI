@@ -4,7 +4,6 @@
 
 
 int zapi_init(int a, int b){
-   std::cout << "zapi init" << std::endl;
    return 1;
 }
 

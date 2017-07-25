@@ -19,8 +19,7 @@ extern sapi_module_struct php_embed_module;
 int main(int argc, char **argv)
 {
    int retCode = 0;
-   php_embed_module.php_ini_path_override = PHP_INI_DIR;
-   std::cout << php_embed_module.php_ini_path_override << std::endl;
+   php_embed_module.php_ini_path_override = const_cast<char *>(static_cast<const char *>(PHP_INI_DIR));
    PHP_EMBED_START_BLOCK(argc, argv);
    ::testing::InitGoogleTest(&argc, argv);
    retCode = RUN_ALL_TESTS();
