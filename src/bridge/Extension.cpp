@@ -110,6 +110,12 @@ const char *Extension::getVersion() const
    return getImplPtr()->getVersion();
 }
 
+Extension &Extension::registerFunction(const char *name, ZendCallback function, const lang::Arguments &arguments)
+{
+   getImplPtr()->registerFunction(name, function, arguments);
+   return *this;
+}
+
 namespace internal
 {
 ExtensionPrivate::ExtensionPrivate(const char *name, const char *version, int apiversion, Extension *extension)
@@ -182,6 +188,30 @@ zend_module_entry *ExtensionPrivate::getModule()
       return &m_entry;
    }
    
+}
+
+int ExtensionPrivate::processIdle(int type, int moduleNumber)
+{}
+
+int ExtensionPrivate::processMismatch(int type, int moduleNumber)
+{}
+
+int ExtensionPrivate::processRequest(int type, int moduleNumber)
+{}
+
+int ExtensionPrivate::processStartup(int type, int moduleNumber)
+{}
+
+int ExtensionPrivate::processShutdown(int type, int moduleNumber)
+{}
+
+ExtensionPrivate &ExtensionPrivate::registerFunction(const char *name, ZendCallback function, 
+                                                     const Arguments &arguments)
+{
+   if (isLocked()) {
+      return *this;
+   }
+   return *this;
 }
 
 } // internal

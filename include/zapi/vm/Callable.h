@@ -43,6 +43,8 @@ using zapi::lang::Parameters;
 
 class ZAPI_DECL_EXPORT Callable
 {
+public:
+   virtual ~Callable() = default;
 private:
    static bool checkInvokeArguments(_zend_execute_data *execute_data, _zval_struct *return_value);
    static Parameters retrieveParameters(_zend_execute_data *execute_data);

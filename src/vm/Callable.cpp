@@ -13,6 +13,7 @@
 //
 // Created by zzu_softboy on 26/07/2017.
 
+#include <ostream>
 #include "zapi/vm/Callable.h"
 #include "zapi/lang/OrigException.h"
 
@@ -31,8 +32,8 @@ bool Callable::checkInvokeArguments(_zend_execute_data *execute_data, _zval_stru
    }
    const char *name = get_active_function_name();
    // TODO
-//   zapi::warning << name << "() expects at least " << required << " parameter(s), " 
-//                 << provided << " given" << std::flush;
+   zapi::warning << name << "() expects at least " << required << " parameter(s), " 
+                 << provided << " given" << std::flush;
    RETVAL_NULL();
    return false;
 }

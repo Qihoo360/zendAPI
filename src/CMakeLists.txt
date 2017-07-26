@@ -12,6 +12,7 @@ set(ZAPI_SRC
    ds/HashTable.cpp
    vm/StdClassImpl.cpp
    vm/Callable.cpp
+   vm/NativeFunction.cpp
    utils/PhpFuncs.cpp)
 
 zapi_add_library(${ZAPI_PROJECT_NAME} SHARED ${ZAPI_SRC} ${ZAPI_PUBLIC_HEADERS})

@@ -19,6 +19,7 @@
 #include "zapi/Global.h"
 
 #include "php/Zend/zend_modules.h"
+#include "zapi/lang/Argument.h"
 
 namespace zapi
 {
@@ -29,6 +30,8 @@ class Extension;
 namespace internal
 {
 
+using zapi::lang::Arguments;
+
 class ExtensionPrivate
 {
 public:
@@ -37,11 +40,11 @@ public:
    {}
    
    ExtensionPrivate(const char *name, const char *version, int apiversion, Extension *extension);
-   
    ExtensionPrivate(const ExtensionPrivate &) = delete;
    ExtensionPrivate(const ExtensionPrivate &&) = delete;
    ~ExtensionPrivate();
 public:
+   ExtensionPrivate &registerFunction(const char *name, ZendCallback function, const Arguments &arguments = {});
    const char *getName() const;
    const char *getVersion() const;
    bool isLocked() const;
