@@ -12,3 +12,30 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 // Created by zzu_softboy on 26/07/2017.
+
+#ifndef ZAPI_VM_NATIVEFUNCTION_H
+#define ZAPI_VM_NATIVEFUNCTION_H
+
+#include "zapi/vm/Callable.h"
+#include "zapi/lang/Argument.h"
+
+namespace zapi
+{
+namespace vm
+{
+
+class NativeFunction
+{
+public:
+   NativeFunction(const char *name, ZendCallback function, const Arguments &arguments = {})
+      : Callable(name, function, arguments)
+   {}
+   
+   NativeFunction(const char *name, const zapi::NativeCallable0 &function, const Arguments &arguments = {})
+   {}
+};
+
+} // vm
+} // zapi
+
+#endif // ZAPI_VM_NATIVEFUNCTION_H

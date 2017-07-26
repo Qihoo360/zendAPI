@@ -11,8 +11,9 @@ set(ZAPI_SRC
    ds/String.cpp
    ds/HashTable.cpp
    vm/StdClassImpl.cpp
-   vm/Callable.cpp
+   vm/InvokeBridge.cpp
    vm/NativeFunction.cpp
+   vm/Callable.cpp
    utils/PhpFuncs.cpp)
 
 zapi_add_library(${ZAPI_PROJECT_NAME} SHARED ${ZAPI_SRC} ${ZAPI_PUBLIC_HEADERS})

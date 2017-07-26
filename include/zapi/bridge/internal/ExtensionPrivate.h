@@ -44,7 +44,7 @@ public:
    ExtensionPrivate(const ExtensionPrivate &&) = delete;
    ~ExtensionPrivate();
 public:
-   ExtensionPrivate &registerFunction(const char *name, ZendCallback function, const Arguments &arguments = {});
+   ExtensionPrivate &registerFunction(const char *name, zapi::ZendCallable function, const Arguments &arguments = {});
    const char *getName() const;
    const char *getVersion() const;
    bool isLocked() const;

@@ -110,7 +110,7 @@ const char *Extension::getVersion() const
    return getImplPtr()->getVersion();
 }
 
-Extension &Extension::registerFunction(const char *name, ZendCallback function, const lang::Arguments &arguments)
+Extension &Extension::registerFunction(const char *name, zapi::ZendCallable function, const lang::Arguments &arguments)
 {
    getImplPtr()->registerFunction(name, function, arguments);
    return *this;
@@ -205,7 +205,7 @@ int ExtensionPrivate::processStartup(int type, int moduleNumber)
 int ExtensionPrivate::processShutdown(int type, int moduleNumber)
 {}
 
-ExtensionPrivate &ExtensionPrivate::registerFunction(const char *name, ZendCallback function, 
+ExtensionPrivate &ExtensionPrivate::registerFunction(const char *name, zapi::ZendCallable function, 
                                                      const Arguments &arguments)
 {
    if (isLocked()) {

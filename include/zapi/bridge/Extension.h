@@ -20,7 +20,7 @@
 #include "zapi/Global.h"
 #include "zapi/bridge/internal/ExtensionPrivate.h"
 #include "zapi/lang/Argument.h"
-#include "zapi/vm/Callable.h"
+#include "zapi/vm/InvokeBridge.h"
 
 #include <list>
 
@@ -73,28 +73,28 @@ public:
    template <void (*func)()>
    Extension &registerFunction(const char *name, const Arguments &arguments = {})
    {
-      return registerFunction(name, &zapi::vm::Callable::invoke<func>, arguments);
+      return registerFunction(name, &zapi::vm::InvokeBridge::invoke<func>, arguments);
    }
    
    template <void (*func)(Parameters &parameters)>
    Extension &registerFunction(const char *name, const Arguments &arguments = {})
    {
-      return registerFunction(name, &zapi::vm::Callable::invoke<func>, arguments);
+      return registerFunction(name, &zapi::vm::InvokeBridge::invoke<func>, arguments);
    }
    
    template <Variant (*func)()>
    Extension &registerFunction(const char *name, const Arguments &arguments = {})
    {
-      return registerFunction(name, &zapi::vm::Callable::invoke<func>, arguments);
+      return registerFunction(name, &zapi::vm::InvokeBridge::invoke<func>, arguments);
    }
    
    template <Variant (*func)(Parameters &parameters)>
    Extension &registerFunction(const char *name, const Arguments &arguments = {})
    {
-      return registerFunction(name, &zapi::vm::Callable::invoke<func>, arguments);
+      return registerFunction(name, &zapi::vm::InvokeBridge::invoke<func>, arguments);
    }
    
-   Extension &registerFunction(const char *name, ZendCallback function, const Arguments &arguments = {});
+   Extension &registerFunction(const char *name, zapi::ZendCallable function, const Arguments &arguments = {});
 
    Extension &registerClass();
    Extension &registerNamespace();
