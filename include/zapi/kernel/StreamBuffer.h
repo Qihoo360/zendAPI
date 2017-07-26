@@ -13,7 +13,38 @@
 //
 // Created by zzu_softboy on 27/05/2017.
 
-#ifndef ZAPI_KERNEL_STREAM_H
-#define ZAPI_KERNEL_STREAM_H
+#ifndef ZAPI_KERNEL_STREAMBUFFER_H
+#define ZAPI_KERNEL_STREAMBUFFER_H
 
-#endif //ZAPI_KERNEL_STREAM_H
+#include <streambuf>
+#include <array>
+#include "zapi/Global.h"
+
+namespace zapi
+{
+namespace kernel
+{
+
+class ZAPI_DECL_EXPORT StreamBuffer : public std::streambuf
+{
+public:
+   StreamBuffer(int error);
+   StreamBuffer(const StreamBuffer &buffer) = delete;
+   StreamBuffer(StreamBuffer &&buffer) = delete;
+   virtual ~StreamBuffer() {}
+   StreamBuffer &operator=(const StreamBuffer &buffer) = delete;
+   StreamBuffer &operator=(StreamBuffer &&buffer) = delete;
+   
+protected:
+   virtual int overflow(int c = EOF) override;
+   virtual int sync() override;
+   
+private:
+   int m_error;
+   std::array<char, 1024> m_buffer;
+};
+
+} // kernel
+} // zapi
+
+#endif // ZAPI_KERNEL_STREAMBUFFER_H

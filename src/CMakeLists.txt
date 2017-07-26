@@ -1,8 +1,9 @@
 set(ZAPI_SRC
+   Global.cpp
    bridge/Extension.cpp
-   kernel/Global.cpp
    kernel/IniEntry.cpp
    kernel/Meta.cpp
+   kernel/StreamBuffer.cpp
    lang/Variant.cpp
    lang/FatalError.cpp
    lang/StdClass.cpp

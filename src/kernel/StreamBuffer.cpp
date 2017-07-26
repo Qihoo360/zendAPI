@@ -11,19 +11,48 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by zzu_softboy on 05/06/2017.
+// Created by softboy on 26/07/2017.
 
-#include "zapi/Global.h"
-
-#include <iostream>
+#include <string>
+#include "zapi/kernel/StreamBuffer.h"
 
 namespace zapi
 {
-
-void assert_x(const char *where, const char *what, const char *file, int line) ZAPI_DECL_NOEXCEPT
+namespace kernel
 {
-   std::cerr <<  "ASSERT failure in " << where << ": \"" << what 
-              << "\", file " << file << ", line "<< line << std::endl;
+
+StreamBuffer::StreamBuffer(int error)
+   : m_error(error)
+{
+   setp(m_buffer.begin(), m_buffer.end());
 }
 
+int StreamBuffer::overflow(int c)
+{
+   std::char_traits<char>::int_type eof = std::char_traits<char>::eof();
+   if (m_error) {
+      return c;
+   }
+   if (c == eof) {
+      return sync(), eof;
+   }
+   *pptr() = c;
+   pbump(1);
+   return sync() == -1 ? eof : c;
+}
+
+int StreamBuffer::sync()
+{
+   size_t size = pptr() - pbase();
+   if (m_error) {
+      zend_error(m_error, "%.*s", static_cast<int>(size), pbase());
+   } else {
+      zend_write(pbase(), size);
+   }
+   // reset the buffer
+   pbump(-size);
+   return 0;
+}
+
+} // kernel
 } // zapi

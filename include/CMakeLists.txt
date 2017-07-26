@@ -2,6 +2,7 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/apidoc.h
    ${ZAPI_INCLUDE_DIR}/zapi/kernel/IniEntry.h
    ${ZAPI_INCLUDE_DIR}/zapi/kernel/Meta.h
+   ${ZAPI_INCLUDE_DIR}/zapi/kernel/StreamBuffer.h
    ${ZAPI_INCLUDE_DIR}/zapi/bridge/Extension.h
    ${ZAPI_INCLUDE_DIR}/zapi/bridge/internal/ExtensionPrivate.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Type.h
