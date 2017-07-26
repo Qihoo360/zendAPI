@@ -16,7 +16,7 @@
 //
 
 
-#ifndef NAMESPACE_H
-#define NAMESPACE_H
+#ifndef ZAPI_LANG_NAMESPACE_H
+#define ZAPI_LANG_NAMESPACE_H
 
-#endif // NAMESPACE_H
+#endif // ZAPI_LANG_NAMESPACE_H

@@ -16,7 +16,6 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/lang/OrigException.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Namespace.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Argument.h
-   ${ZAPI_INCLUDE_DIR}/zapi/vm/StdClassImpl.h
    ${ZAPI_INCLUDE_DIR}/zapi/ds/HashTable.h
    ${ZAPI_INCLUDE_DIR}/zapi/ds/List.h
    ${ZAPI_INCLUDE_DIR}/zapi/ds/String.h
@@ -28,7 +27,8 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/Typedefs.h
    ${ZAPI_INCLUDE_DIR}/zapi/ProcessorDetection.h
    ${ZAPI_INCLUDE_DIR}/zapi/SystemDetection.h
-#   ${ZAPI_INCLUDE_DIR}/zapi/std/Functional.h
+   ${ZAPI_INCLUDE_DIR}/zapi/vm/StdClassImpl.h
+   ${ZAPI_INCLUDE_DIR}/zapi/vm/Callable.h
    )
 
 set(ZAPI_PUBLIC_HEADERS ${ZAPI_PUBLIC_HEADERS} PARENT_SCOPE)
