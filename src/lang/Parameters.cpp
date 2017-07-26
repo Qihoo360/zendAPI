@@ -12,3 +12,19 @@
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
 // Created by zzu_softboy on 27/05/2017.
+
+#include "zapi/lang/Parameters.h"
+
+namespace zapi
+{
+namespace lang
+{
+
+Parameters::Parameters(zval *thisPtr, uint32_t argc)
+   : Parameters(nullptr)
+{
+   
+}
+
+} // lang
+} // zapi

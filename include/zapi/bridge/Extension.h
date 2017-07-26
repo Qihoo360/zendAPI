@@ -19,6 +19,7 @@
 
 #include "zapi/Global.h"
 #include "zapi/bridge/internal/ExtensionPrivate.h"
+#include "zapi/lang/Argument.h"
 
 #include <list>
 
@@ -29,8 +30,20 @@ namespace kernel
 class IniEntry;
 } // kernel
 
+namespace lang
+{
+
+class Parameters;
+class Variant;
+
+} // lang
+
 namespace bridge
 {
+
+using zapi::lang::Variant;
+using zapi::lang::Parameters;
+using zapi::lang::Arguments;
 
 class ZAPI_DECL_EXPORT Extension
 {
@@ -54,10 +67,35 @@ public:
    
    Extension(const Extension &extension) = delete;
    Extension(Extension &&extension) = delete;
+   
 public:
    
-   Extension &mount(const kernel::IniEntry &iniEntry);
-   Extension &mount(const kernel::IniEntry &&iniEntry);
+   template <void (*func)()>
+   Extension &registerFunction(const char *name, const Arguments &arguments = {})
+   {
+      
+   }
+   
+   template <void (*func)(Parameters &parameters)>
+   Extension &registerFunction(const char *name, const Arguments &arguments = {})
+   {
+      
+   }
+   
+   template <Variant (*func)()>
+   Extension &registerFunction(const char *name, const Arguments &arguments = {})
+   {
+      
+   }
+   
+   template <Variant (*func)(Parameters &parameters)>
+   Extension &registerFunction(const char *name, const Arguments &arguments = {})
+   {}
+   
+   //Extension &registerFunction(const char *name, ZendCallback function, const Arguments &arguments = {});
+   
+   Extension &registerClass();
+   Extension &registerNamespace();
    
    operator void * ()
    {

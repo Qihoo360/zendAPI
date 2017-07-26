@@ -24,13 +24,11 @@
 #include "zapi/Version.h"
 #include "zapi/Config.h"
 #include "zapi/lang/Type.h"
+#include "zapi/Typedefs.h"
 
 #include <type_traits>
 #include <cstddef>
-#include <memory>
-#include <functional>
 #include <cstdint>
-#include <iostream>
 
 #define ZAPI_STRINGIFY2(x) #x
 #define ZAPI_STRINGIFY(x) ZAPI_STRINGIFY2(x)
@@ -188,14 +186,6 @@ ZAPI_DECL_NOEXCEPT_EXPR(noexcept(zapi::internal::swapexceptiontester::check_swap
    swap(left, right);
 }
 
-namespace zapi
-{
-
-using HANDLE = void *;
-using Callback = std::function<void()>;
-
-} // zapi
-
 #ifdef ZAPI_CC_MSVC
 #  define ZAPI_NEVER_INLINE __declspec(noinline)
 #  define ZAPI_ALWAYS_INLINE __forceinline
@@ -207,17 +197,12 @@ using Callback = std::function<void()>;
 #  define ZAPI_ALWAYS_INLINE inline
 #endif
 
-// Some classes do not permit copies to be made of an object. These
-// classes contains a private copy constructor and assignment
-// operator to disable copying (the compiler gives an error message).
-#define ZAPI_DISALE_COPY(Class) \
-   Class(const Class &) ZAPI_DECL_EQ_DELETE;\
-   Class &operator=(const Class &) ZAPI_DECL_EQ_DELETE;
-
 namespace zapi
 {
+
 inline void noop(void) {}
 ZAPI_DECL_EXPORT void assert_x(const char *where, const char *what, const char *file, int line) ZAPI_DECL_NOEXCEPT;
+
 } // zapi
 
 #if !defined(ZAPI_ASSERT_X)
@@ -261,4 +246,4 @@ ZEND_END_MODULE_GLOBALS(zapi)
 // this already is bad enough.
 extern ZEND_DECLARE_MODULE_GLOBALS(zapi)
 
-#endif //ZAPI_GLOBAL_H
+#endif // ZAPI_GLOBAL_H

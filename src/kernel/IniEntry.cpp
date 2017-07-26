@@ -15,6 +15,7 @@
 
 #include "zapi/kernel/IniEntry.h"
 #include "php/Zend/zend_ini.h"
+#include <iostream>
 
 namespace zapi
 {

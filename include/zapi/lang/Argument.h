@@ -124,6 +124,7 @@ public:
    {}
    
    ValueArgument(ValueArgument &&argument)
+      : Argument(argument)
    {}
    
    virtual ~ValueArgument()

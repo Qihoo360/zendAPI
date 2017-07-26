@@ -11,5 +11,23 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by softboy on 7/25/17.
-//
+// Created by zzu_softboy on 26/07/2017.
+
+#ifndef ZAPI_TYPEDEFS_H
+#define ZAPI_TYPEDEFS_H
+
+#include <functional>
+
+struct _zend_execute_data;
+struct _zval_struct;
+
+namespace zapi
+{
+
+using HANDLE = void *;
+using Callback = std::function<void()>;
+using ZendCallback = void(*)(struct _zend_execute_data *executeData, struct _zval_struct *returnValue);
+
+} // zapi
+
+#endif

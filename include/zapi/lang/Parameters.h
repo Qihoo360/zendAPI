@@ -48,11 +48,20 @@ public:
    using ConstReverseIterator = ParamCollectionType::const_reverse_iterator;
 public:
    Parameters(std::initializer_list<Variant> items)
-      : m_data(init)
+      : m_data(items)
+   {}
+   
+   Parameters(const Parameters &other)
+      : m_data(other.m_data), m_object(other.m_object)
+   {}
+   
+   Parameters(const ParamCollectionType::iterator begin,
+              const ParamCollectionType::iterator end)
+      : m_data(begin, end)
    {}
    
    Parameters(Parameters &&params) ZAPI_DECL_NOEXCEPT
-      : m_data(std::move(params.m_data))
+      : m_data(std::move(params.m_data)), m_object(params.m_object)
    {}
    
    Parameters(StdClass *object) : m_object(object)
