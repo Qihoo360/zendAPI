@@ -16,8 +16,6 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/lang/OrigException.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Namespace.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Argument.h
-   ${ZAPI_INCLUDE_DIR}/zapi/lang/ValueTypeArgument.h
-   ${ZAPI_INCLUDE_DIR}/zapi/lang/RefTypeArgument.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/StdClassImpl.h
    ${ZAPI_INCLUDE_DIR}/zapi/ds/HashTable.h
    ${ZAPI_INCLUDE_DIR}/zapi/ds/List.h

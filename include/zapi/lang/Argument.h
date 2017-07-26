@@ -85,6 +85,51 @@ using Arguments = std::vector<Argument>;
 using Arguments = std::initializer_list<Argument>;
 #endif
 
+class ZAPI_DECL_EXPORT RefArgument : public Argument
+{
+public:
+   RefArgument(const char *name, Type type = Type::Null, bool required = true)
+      : Argument(name, type, required, true)
+   {}
+   
+   RefArgument(const char *name, const char *className, bool nullable = false, bool required = true)
+      : Argument(name, className, nullable, required, true)
+   {}
+   
+   RefArgument(const RefArgument &argument) 
+      : Argument(argument)
+   {}
+   
+   RefArgument(RefArgument &&argument) ZAPI_DECL_NOEXCEPT
+      : Argument(argument)
+   {}
+   
+   virtual ~RefArgument()
+   {}
+};
+
+class ZAPI_DECL_EXPORT ValueArgument : public Argument
+{
+public:
+   ValueArgument(const char *name, Type type = Type::Null, bool required = true)
+      : Argument(name, type, required, false)
+   {}
+   
+   ValueArgument(const char *name, const char *className, bool nullable = false, bool required = true)
+      : Argument(name, className, nullable, required, false)
+   {}
+   
+   ValueArgument(const ValueArgument &argument)
+      : Argument(argument)
+   {}
+   
+   ValueArgument(ValueArgument &&argument)
+   {}
+   
+   virtual ~ValueArgument()
+   {}
+};
+
 } // lang
 } // zapi
 
