@@ -6,6 +6,7 @@ set(ZAPI_SRC
    lang/Variant.cpp
    lang/FatalError.cpp
    lang/StdClass.cpp
+   lang/Parameters.cpp
    ds/String.cpp
    ds/HashTable.cpp
    vm/StdClassImpl.cpp

@@ -11,31 +11,4 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by softboy on 7/25/17.
-
-#ifndef ZAPI_UTILS_PHPFUNCS_H
-#define ZAPI_UTILS_PHPFUNCS_H
-
-namespace zapi
-{
-
-// here we define some php function that can been used in c++ space
-
-namespace kernel
-{
-class IniValue;
-}
-
-static inline kernel::IniValue ini_get(const char *name) 
-{
-   return kernel::IniValue(name, false);
-}
-
-static inline kernel::IniValue ini_get_orig(const char *name)
-{
-   return kernel::IniValue(name, true);
-}
-
-} // zapi
-
-#endif // ZAPI_UTILS_PHPFUNCS_H
+// Created by zzu_softboy on 27/05/2017.

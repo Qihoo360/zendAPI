@@ -31,24 +31,49 @@ class StdClass;
 /**
  * now this is very bad implemention of parameters class, but it works
  */
-class ZAPI_DECL_EXPORT Parameters : public std::vector<Variant>
+class ZAPI_DECL_EXPORT Parameters
 {
+public:
+   using ParamCollectionType = std::vector<Variant>;
+   using ValueType = ParamCollectionType::value_type;
+   using SizeType = ParamCollectionType::size_type;
+   using DifferenceType = ParamCollectionType::difference_type;
+   using Reference = ParamCollectionType::reference;
+   using ConstReference = ParamCollectionType::const_reference;
+   using Pointer = ParamCollectionType::pointer;
+   using ConstPointer = ParamCollectionType::const_pointer;
+   using Iterator = ParamCollectionType::iterator;
+   using ConstIterator = ParamCollectionType::const_iterator;
+   using ReverseIterator = ParamCollectionType::reverse_iterator;
+   using ConstReverseIterator = ParamCollectionType::const_reverse_iterator;
+public:
+   Parameters(std::initializer_list<Variant> items)
+      : m_data(init)
+   {}
+   
+   Parameters(Parameters &&params) ZAPI_DECL_NOEXCEPT
+      : m_data(std::move(params.m_data))
+   {}
+   
+   Parameters(StdClass *object) : m_object(object)
+   {}
+   
+   Parameters(zval *thisPtr, uint32_t argc);
+   
+public:
+   
+   StdClass *getObject() const
+   {
+      return m_object;
+   }
+   
 private:
    /**
     *  The base object
     *  @var Base
     */
    StdClass *m_object = nullptr;
-
-protected:
-   Parameters(StdClass *object) : m_object(object)
-   {}
-
-public:
-   StdClass *getObject() const
-   {
-      return m_object;
-   }
+   std::vector<Variant> m_data;
 };
 
 } // lang
