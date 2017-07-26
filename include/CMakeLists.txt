@@ -7,7 +7,6 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Type.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Array.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Variant.h
-   ${ZAPI_INCLUDE_DIR}/zapi/lang/Variable.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Exception.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/FatalError.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/StdClass.h
@@ -15,6 +14,10 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Errors.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/NotImplemented.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/OrigException.h
+   ${ZAPI_INCLUDE_DIR}/zapi/lang/Namespace.h
+   ${ZAPI_INCLUDE_DIR}/zapi/lang/Argument.h
+   ${ZAPI_INCLUDE_DIR}/zapi/lang/ValueTypeArgument.h
+   ${ZAPI_INCLUDE_DIR}/zapi/lang/RefTypeArgument.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/StdClassImpl.h
    ${ZAPI_INCLUDE_DIR}/zapi/ds/HashTable.h
    ${ZAPI_INCLUDE_DIR}/zapi/ds/List.h
@@ -26,6 +29,7 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/Global.h
    ${ZAPI_INCLUDE_DIR}/zapi/ProcessorDetection.h
    ${ZAPI_INCLUDE_DIR}/zapi/SystemDetection.h
+#   ${ZAPI_INCLUDE_DIR}/zapi/std/Functional.h
    )
 
 set(ZAPI_PUBLIC_HEADERS ${ZAPI_PUBLIC_HEADERS} PARENT_SCOPE)

@@ -122,8 +122,9 @@ public:
     *
     * @return void*
     */
-   void *getModule() const;
-   
+   void *getModule();
+   const char *getName() const;
+   const char *getVersion() const;
 protected:
    
    bool isLocked() const;

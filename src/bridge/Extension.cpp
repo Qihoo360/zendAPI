@@ -68,37 +68,123 @@ Extension::Extension(const char *name, const char *version, int apiVersion)
 
 Extension &Extension::setStartupHandler(const Callback &callback)
 {
-   m_implPtr->setStartupHandler(callback);
+   getImplPtr()->setStartupHandler(callback);
    return *this;
 }
 
 Extension &Extension::setRequestHandler(const Callback &callback)
 {
-   m_implPtr->setRequestHandler(callback);
+   getImplPtr()->setRequestHandler(callback);
    return *this;
 }
 
 Extension &Extension::setIdleHandler(const Callback &callback)
 {
-   m_implPtr->setIdleHandler(callback);
+   getImplPtr()->setIdleHandler(callback);
    return *this;
 }
 
 Extension &Extension::setShutdownHandler(const Callback &callback)
 {
-   m_implPtr->setShutdownHandler(callback);
+   getImplPtr()->setShutdownHandler(callback);
    return *this;
 }
 
-void *Extension::getModule() const
+void *Extension::getModule()
 {
-   return static_cast<void *>(m_implPtr->getModule());
+   return static_cast<void *>(getImplPtr()->getModule());
 }
 
 bool Extension::isLocked() const
 {
-   return m_implPtr->isLocked();
+   return getImplPtr()->isLocked();
 }
+
+const char *Extension::getName() const
+{
+   return getImplPtr()->getName();
+}
+
+const char *Extension::getVersion() const
+{
+   return getImplPtr()->getVersion();
+}
+
+namespace internal
+{
+ExtensionPrivate::ExtensionPrivate(const char *name, const char *version, int apiversion, Extension *extension)
+   : m_apiPtr(extension)
+{
+   name2extension[name] = this;
+   // assign all members (apart from the globals)
+   m_entry.size = sizeof(zend_module_entry);
+   m_entry.zend_api = ZEND_MODULE_API_NO;
+   m_entry.zend_debug = ZEND_DEBUG;
+   m_entry.zts = USING_ZTS;
+   m_entry.ini_entry = nullptr;
+   m_entry.deps = nullptr;
+   m_entry.name = name;
+   m_entry.functions = nullptr;
+   m_entry.module_startup_func = &ExtensionPrivate::processStartup;
+   m_entry.module_shutdown_func = &ExtensionPrivate::processShutdown;
+   m_entry.request_startup_func = &ExtensionPrivate::processRequest;
+   m_entry.request_shutdown_func = &ExtensionPrivate::processIdle;
+   m_entry.info_func = nullptr;
+   m_entry.version = version;
+   m_entry.globals_size = 0;
+   m_entry.globals_ctor = nullptr;
+   m_entry.globals_dtor = nullptr;
+   m_entry.post_deactivate_func = nullptr;
+   m_entry.module_started = 0;
+   m_entry.type = 0;
+   m_entry.handle = nullptr;
+   m_entry.module_number = 0;
+   m_entry.build_id = const_cast<char *>(static_cast<const char *>(ZEND_MODULE_BUILD_ID));
+#ifdef ZTS
+   m_entry.globals_id_ptr = nullptr;
+#else
+   m_entry.globals_ptr = nullptr;
+#endif
+   if (apiversion == ZAPI_API_VERSION) {
+      return;
+   }
+   // mismatch between api versions, the extension is invalid, we use a
+   // different startup function to report to the user
+   m_entry.module_startup_func = &ExtensionPrivate::processMismatch;
+   // the other callback functions are no longer necessary
+   m_entry.module_shutdown_func = nullptr;
+   m_entry.request_startup_func = nullptr;
+   m_entry.request_shutdown_func = nullptr;
+}
+
+ExtensionPrivate::~ExtensionPrivate()
+{
+   name2extension.erase(m_entry.name);
+   delete[] m_entry.functions;
+}
+
+const char *ExtensionPrivate::getName() const
+{
+   return m_entry.name;
+}
+
+const char *ExtensionPrivate::getVersion() const
+{
+   return m_entry.version;
+}
+
+zend_module_entry *ExtensionPrivate::getModule()
+{
+   if (m_entry.functions) {
+      return &m_entry;
+   }
+   if (m_entry.module_startup_func == &ExtensionPrivate::processMismatch) {
+      return &m_entry;
+   }
+   
+}
+
+} // internal
 
 } // bridge
 } // zapi

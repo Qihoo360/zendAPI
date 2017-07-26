@@ -40,11 +40,11 @@ public:
    
    ExtensionPrivate(const ExtensionPrivate &) = delete;
    ExtensionPrivate(const ExtensionPrivate &&) = delete;
-   
+   ~ExtensionPrivate();
 public:
    const char *getName() const;
    const char *getVersion() const;
-   bool isLocked();
+   bool isLocked() const;
    zend_module_entry *getModule();
    operator zend_module_entry * ()
    {
