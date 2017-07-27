@@ -1,7 +1,7 @@
 set(ZAPI_SRC
    Global.cpp
    bridge/Extension.cpp
-   kernel/IniEntry.cpp
+   bridge/IniEntry.cpp
    kernel/Meta.cpp
    kernel/StreamBuffer.cpp
    lang/Variant.cpp

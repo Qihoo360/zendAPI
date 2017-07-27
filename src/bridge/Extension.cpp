@@ -13,7 +13,8 @@
 //
 // Created by softboy on 7/25/17.
 
-#include "zapi/kernel/IniEntry.h"
+#include <ostream>
+#include "zapi/bridge/IniEntry.h"
 #include "zapi/bridge/Extension.h"
 #include "zapi/bridge/internal/ExtensionPrivate.h"
 #include "zapi/vm/Callable.h"
@@ -218,6 +219,11 @@ size_t ExtensionPrivate::getFunctionQuantity() const
    return m_functions.size();
 }
 
+size_t ExtensionPrivate::getIniEntryQuantity() const
+{
+   return m_iniEntries.size(); 
+}
+
 zend_module_entry *ExtensionPrivate::getModule()
 {
    if (m_entry.functions) {
@@ -249,6 +255,13 @@ void ExtensionPrivate::iterateFunctions(const std::function<void(Callable &func)
    }
 }
 
+void ExtensionPrivate::iterateIniEntries(const std::function<void (bridge::IniEntry &)> &callback)
+{
+   for (auto &entry : m_iniEntries) {
+      callback(*entry);
+   }
+}
+
 int ExtensionPrivate::processIdle(int type, int moduleNumber)
 {
    return 0;
@@ -256,11 +269,16 @@ int ExtensionPrivate::processIdle(int type, int moduleNumber)
 
 int ExtensionPrivate::processMismatch(int type, int moduleNumber)
 {
-   return 0;
+   Extension *extension = find_module(moduleNumber);
+   // @TODO is this really good? we need a method to check compatibility more graceful
+   zapi::warning << " Version mismatch between zendAPI and extension " << extension->getName()
+                 << " " << extension->getVersion() << " (recompile needed?) " << std::endl;
+   return BOOL2SUCCESS(true);
 }
 
 int ExtensionPrivate::processRequest(int type, int moduleNumber)
 {
+   
    return 0;
 }
 
@@ -288,7 +306,16 @@ ExtensionPrivate &ExtensionPrivate::registerFunction(const char *name, zapi::Zen
 
 bool ExtensionPrivate::initialize(int moduleNumber)
 {
-   //m_ini.reset(new zend_ini_entry_def[]);
+   m_zendIniDefs.reset(new zend_ini_entry_def[getIniEntryQuantity() + 1]);
+   int i = 0;
+   // fill ini entry def
+   iterateIniEntries([this, &i, moduleNumber](IniEntry &iniEntry){
+      zend_ini_entry_def *zendIniDef = &m_zendIniDefs[i];
+      iniEntry.setupIniEntryDef(zendIniDef, moduleNumber);
+      i++;
+   });
+   memset(&m_zendIniDefs[i], 0, sizeof(m_zendIniDefs[i]));
+   zend_register_ini_entries(m_zendIniDefs.get(), moduleNumber);
    if (m_startupHandler) {
       m_startupHandler();
    }
@@ -300,7 +327,7 @@ bool ExtensionPrivate::initialize(int moduleNumber)
 
 bool ExtensionPrivate::shutdown(int moduleNumber)
 {
-   
+   return true;
 }
 
 

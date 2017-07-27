@@ -2,6 +2,7 @@
 #include "zapi/lang/Variant.h"
 #include "zapi/lang/FatalError.h"
 #include "zapi/lang/Type.h"
+#include "zapi/bridge/Extension.h"
 
 #include "php/sapi/embed/php_embed.h"
 #include "php/Zend/zend_types.h"
@@ -30,6 +31,21 @@ TEST(ExtensionTest, testdummyext)
       return ZEND_HASH_APPLY_KEEP;
    });
    ASSERT_TRUE(dummyExtExist);
+}
+
+TEST(ExtensionTest, testExtConstructor)
+{
+   using zapi::bridge::Extension;
+   {
+      Extension extension("zapi");
+      ASSERT_EQ(extension.getName(), "zapi");
+      ASSERT_EQ(extension.getVersion(), "1.0");
+   }
+   {
+      Extension extension("zapi", "2.0");
+      ASSERT_EQ(extension.getName(), "zapi");
+      ASSERT_EQ(extension.getVersion(), "2.0");
+   }
 }
 
 int main(int argc, char **argv)

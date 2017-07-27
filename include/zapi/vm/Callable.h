@@ -62,7 +62,9 @@ public:
    
 public:
    virtual Variant invoke(Parameters &parameters)
-   {}
+   {
+      return nullptr;
+   }
    void initialize(zend_function_entry *entry, const char *className = nullptr, int flags = 0) const;
    void initialize(zend_internal_function_info *info, const char *className = nullptr) const;
    void initialize(const std::string &prefix, zend_function_entry *entry);

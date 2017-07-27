@@ -17,6 +17,7 @@
 #define ZAPI_ZENDAPI_H
 
 #include "zapi/Global.h"
+#include "zapi/utils/PhpFuncs.h"
 #include "zapi/bridge/Extension.h"
 #include "zapi/kernel/StreamBuffer.h"
 

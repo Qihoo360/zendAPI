@@ -16,24 +16,21 @@
 #ifndef ZAPI_UTILS_PHPFUNCS_H
 #define ZAPI_UTILS_PHPFUNCS_H
 
+#include "zapi/bridge/IniEntry.h"
+
 namespace zapi
 {
 
 // here we define some php function that can been used in c++ space
 
-namespace kernel
+static inline bridge::IniValue ini_get(const char *name) 
 {
-class IniValue;
+   return bridge::IniValue(name, false);
 }
 
-static inline kernel::IniValue ini_get(const char *name) 
+static inline bridge::IniValue ini_get_orig(const char *name)
 {
-   return kernel::IniValue(name, false);
-}
-
-static inline kernel::IniValue ini_get_orig(const char *name)
-{
-   return kernel::IniValue(name, true);
+   return bridge::IniValue(name, true);
 }
 
 } // zapi

@@ -23,7 +23,7 @@ struct _zend_ini_entry;
 
 namespace zapi
 {
-namespace kernel
+namespace bridge
 {
 
 class ZAPI_DECL_EXPORT IniEntry
@@ -61,7 +61,7 @@ public:
       :m_name(name), m_value(std::to_string(value)), m_cfgType(cfgType)
    {}
    
-   void fill(struct _zend_ini_entry_def *iniEntry, int moduleNumber);
+   void setupIniEntryDef(struct _zend_ini_entry_def *zendIniDef, int moduleNumber);
    
 private:
 #ifdef ZAPI_CC_MSVC

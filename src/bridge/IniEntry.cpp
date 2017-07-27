@@ -13,31 +13,31 @@
 //
 // Created by softboy on 7/25/17.
 
-#include "zapi/kernel/IniEntry.h"
+#include "zapi/bridge/IniEntry.h"
 #include "php/Zend/zend_ini.h"
 #include <iostream>
 
 namespace zapi
 {
-namespace kernel
+namespace bridge
 {
 
-void IniEntry::fill(_zend_ini_entry_def *iniEntry, int moduleNumber)
+void IniEntry::setupIniEntryDef(_zend_ini_entry_def *zendIniDef, int moduleNumber)
 {
-   iniEntry->modifiable = static_cast<int>(m_cfgType);
-   iniEntry->name = m_name.data();
-   iniEntry->name_length = m_name.size();
-   iniEntry->on_modify = OnUpdateString;
-   iniEntry->mh_arg1 = nullptr;
+   zendIniDef->modifiable = static_cast<int>(m_cfgType);
+   zendIniDef->name = m_name.data();
+   zendIniDef->name_length = m_name.size();
+   zendIniDef->on_modify = OnUpdateString;
+   zendIniDef->mh_arg1 = nullptr;
 #ifdef ZTS
-   iniEntry->mh_arg2 = (void *) &zapi_globals_id;
+   zendIniDef->mh_arg2 = (void *) &zapi_globals_id;
 #else
-   iniEntry->mh_arg2 = (void *) &zapi_globals;
+   zendIniDef->mh_arg2 = (void *) &zapi_globals;
 #endif
-   iniEntry->mh_arg3 = nullptr;
-   iniEntry->value = m_value.data();
-   iniEntry->value_length = m_value.size();
-   iniEntry->displayer = nullptr;
+   zendIniDef->mh_arg3 = nullptr;
+   zendIniDef->value = m_value.data();
+   zendIniDef->value_length = m_value.size();
+   zendIniDef->displayer = nullptr;
 }
 
 std::string IniValue::getStringValue() const
