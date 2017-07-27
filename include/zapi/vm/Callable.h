@@ -49,7 +49,7 @@ using zapi::lang::Parameters;
 class Callable
 {
 public:
-   Callable(zapi::ZendCallable callable, const char *name, const Arguments &arguments = {});
+   Callable(const char *name, zapi::ZendCallable callable, const Arguments &arguments = {});
    Callable(const Callable &other);
    Callable(Callable &&other)
       : m_name(std::move(other.m_name)),
@@ -74,6 +74,26 @@ protected:
    uint32_t m_required = 0;
    int m_argc = 0;
    std::unique_ptr<zend_internal_arg_info[]> m_argv;
+};
+
+class NativeFunction : public Callable
+{
+public:
+   NativeFunction(const char *name, zapi::ZendCallable function, const Arguments &arguments = {})
+      : Callable(name, function, arguments)
+   {}
+   virtual ~NativeFunction() = default;
+   
+public:
+   void initialize(const std::string &prefix, zend_function_entry *entry)
+   {
+      // if there is a namespace prefix, we should adjust the name
+      if (!prefix.empty()) {
+         m_name = prefix + '\\' + m_name;
+      }
+      // call base initialize
+      Callable::initialize(entry);
+   }
 };
 
 } // vm

@@ -30,7 +30,6 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/SystemDetection.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/StdClassImpl.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/InvokeBridge.h
-   ${ZAPI_INCLUDE_DIR}/zapi/vm/NativeFunction.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/Callable.h
    )
 

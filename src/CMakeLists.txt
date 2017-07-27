@@ -12,7 +12,6 @@ set(ZAPI_SRC
    ds/HashTable.cpp
    vm/StdClassImpl.cpp
    vm/InvokeBridge.cpp
-   vm/NativeFunction.cpp
    vm/Callable.cpp
    utils/PhpFuncs.cpp)
 

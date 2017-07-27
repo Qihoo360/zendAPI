@@ -25,7 +25,7 @@ namespace vm
 
 using zapi::lang::Exception;
 
-Callable::Callable(ZendCallable callable, const char *name, const lang::Arguments &arguments)
+Callable::Callable(const char *name, ZendCallable callable, const lang::Arguments &arguments)
    : m_callable(callable),
      m_name(name),
      m_argc(arguments.size()),
