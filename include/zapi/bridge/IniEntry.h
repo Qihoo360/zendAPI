@@ -26,6 +26,8 @@ namespace zapi
 namespace bridge
 {
 
+class IniEntryPrivate;
+
 class ZAPI_DECL_EXPORT IniEntry
 {
 public:
@@ -36,48 +38,26 @@ public:
       System  = ZEND_INI_SYSTEM,
       All     = ZEND_INI_USER | ZEND_INI_PERDIR | ZEND_INI_SYSTEM
    };
+   
 public:
-   IniEntry(const char *name, const char *value, const CfgType cfgType = CfgType::All) 
-      :m_name(name), m_value(value), m_cfgType(cfgType)
-   {}
+   IniEntry(const char *name, const char *value, const CfgType cfgType = CfgType::All);
+   IniEntry(const char *name, bool value, const CfgType cfgType = CfgType::All);
+   IniEntry(const char *name, const int16_t value, const CfgType cfgType = CfgType::All);
+   IniEntry(const char *name, const int32_t value, const CfgType cfgType = CfgType::All);
+   IniEntry(const char *name, const int64_t value, const CfgType cfgType = CfgType::All);
+   IniEntry(const char *name, const double value, const CfgType cfgType = CfgType::All);
+   ~IniEntry();
    
-   IniEntry(const char *name, bool value, const CfgType cfgType = CfgType::All)
-      :m_name(name), m_value(bool2str(value)), m_cfgType(cfgType)
-   {}
-   
-   IniEntry(const char *name, const int16_t value, const CfgType cfgType = CfgType::All)
-      :m_name(name), m_value(std::to_string(value)), m_cfgType(cfgType)
-   {}
-   
-   IniEntry(const char *name, const int32_t value, const CfgType cfgType = CfgType::All)
-      :m_name(name), m_value(std::to_string(value)), m_cfgType(cfgType)
-   {}
-   
-   IniEntry(const char *name, const int64_t value, const CfgType cfgType = CfgType::All)
-      :m_name(name), m_value(std::to_string(value)), m_cfgType(cfgType)
-   {}
-
-   IniEntry(const char *name, const double value, const CfgType cfgType = CfgType::All)
-      :m_name(name), m_value(std::to_string(value)), m_cfgType(cfgType)
-   {}
-   
+public:
    void setupIniEntryDef(struct _zend_ini_entry_def *zendIniDef, int moduleNumber);
    
 private:
-#ifdef ZAPI_CC_MSVC
-   static const char *bool2str(const bool value)
-#else
-   static constexpr const char *bool2str(const bool value)
-#endif
-   {
-      return (static_cast<bool>(value) ? "On" : "Off");
-   }
-   
-   std::string m_name;
-   std::string m_value;
-   CfgType m_cfgType;
+   ZAPI_DECLARE_PRIVATE(IniEntry)
+   std::unique_ptr<IniEntryPrivate> m_implPtr;
 };
 
+
+class IniValuePrivate;
 
 /**
  * @brief Class IniValue designed for extracting values from ini entries.
@@ -85,11 +65,10 @@ private:
 class ZAPI_DECL_EXPORT IniValue
 {
 public:
-   
-   IniValue(const char *name, const bool isOrig)
-      : m_name(name), m_isOrig(isOrig)
-   {}
-   
+   IniValue(const char *name, const bool isOrig);
+   IniValue(const IniValue &value);
+   IniValue(IniValue &&value);
+   ~IniValue();
 public:
    
    int64_t getNumericValue() const;
@@ -134,17 +113,8 @@ public:
       return getRawValue();
    }
 private:
-   /**
-    * @brief ini entry name
-    * @var std::string
-    */
-   std::string m_name;
-   
-   /**
-    * @brief Is the orig value
-    * @var bool
-    */
-   bool m_isOrig = false;
+   ZAPI_DECLARE_PRIVATE(IniValue)
+   std::unique_ptr<IniValuePrivate> m_implPtr;
 };
 
 ZAPI_DECL_EXPORT std::ostream &operator<<(std::ostream &stream, const IniValue &iniValue);
