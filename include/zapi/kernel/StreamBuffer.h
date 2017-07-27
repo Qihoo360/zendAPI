@@ -18,6 +18,7 @@
 
 #include <streambuf>
 #include <array>
+#include <ostream>
 #include "zapi/Global.h"
 
 namespace zapi

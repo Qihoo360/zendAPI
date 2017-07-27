@@ -257,4 +257,6 @@ ZEND_END_MODULE_GLOBALS(zapi)
 // this already is bad enough.
 extern ZEND_DECLARE_MODULE_GLOBALS(zapi)
 
+#define BOOL2SUCCESS(b) ((b) ? ZAPI_SUCCESS : ZAPI_FAILURE)
+
 #endif // ZAPI_GLOBAL_H

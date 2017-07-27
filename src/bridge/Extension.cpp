@@ -35,26 +35,42 @@ ZEND_DECLARE_MODULE_GLOBALS(zapi)
 
 namespace
 {
-   using ExtensionPrivate = zapi::bridge::internal::ExtensionPrivate;
-  /**
+   using zapi::bridge::Extension;
+   using zapi::bridge::internal::ExtensionPrivate;
+   /**
    * Function that must be defined to initialize the "globals"
    * We do not have to initialize anything, but PHP needs to call this
    * method (crazy)
    * @param  globals
    */
-   void init_global(zend_zapi_globals *globals){}
+   void init_globals(zend_zapi_globals *globals){}
    
-   std::map<std::string, ExtensionPrivate *> name2extension;
-   std::map<int, ExtensionPrivate *> number2extension;
+   std::map<std::string, Extension *> name2extension;
+   std::map<int, Extension *> mid2extension;
    
    int match_module(zval *value)
    {
-      
+      zend_module_entry *entry = static_cast<zend_module_entry *>(Z_PTR_P(value));
+      auto iter = name2extension.find(entry->name);
+      if (iter == name2extension.end()) {
+         return ZEND_HASH_APPLY_KEEP;
+      }
+      mid2extension[entry->module_number] = iter->second;
+      return ZEND_HASH_APPLY_KEEP;
    }
    
-   ExtensionPrivate *find_module(int number)
+   Extension *find_module(int mid)
    {
-      
+      auto iter = mid2extension.find(mid);
+      if (iter != mid2extension.end()) {
+         return iter->second;
+      }
+      zend_hash_apply(&module_registry, match_module);
+      iter = mid2extension.find(mid);
+      if (iter == mid2extension.end()) {
+         return nullptr;
+      }
+      return iter->second;
    }
 }
 
@@ -65,32 +81,38 @@ namespace bridge
 
 Extension::Extension(const char *name, const char *version, int apiVersion)
    : m_implPtr(new ExtensionPrivate(name, version, apiVersion, this))
-{}
+{
+   name2extension[name] = this;
+}
 
 Extension::~Extension()
 {}
 
 Extension &Extension::setStartupHandler(const Callback &callback)
 {
-   getImplPtr()->setStartupHandler(callback);
+   ZAPI_D(Extension);
+   implPtr->m_startupHandler = callback;
    return *this;
 }
 
 Extension &Extension::setRequestHandler(const Callback &callback)
 {
-   getImplPtr()->setRequestHandler(callback);
+   ZAPI_D(Extension);
+   implPtr->m_requestHandler = callback;
    return *this;
 }
 
 Extension &Extension::setIdleHandler(const Callback &callback)
 {
-   getImplPtr()->setIdleHandler(callback);
+   ZAPI_D(Extension);
+   implPtr->m_idleHandler = callback;
    return *this;
 }
 
 Extension &Extension::setShutdownHandler(const Callback &callback)
 {
-   getImplPtr()->setShutdownHandler(callback);
+   ZAPI_D(Extension);
+   implPtr->m_shutdownHandler = callback;
    return *this;
 }
 
@@ -123,12 +145,16 @@ Extension &Extension::registerFunction(const char *name, zapi::ZendCallable func
    return *this;
 }
 
+bool Extension::initialize(int moduleNumber)
+{
+   return getImplPtr()->initialize(moduleNumber);
+}
+
 namespace internal
 {
 ExtensionPrivate::ExtensionPrivate(const char *name, const char *version, int apiversion, Extension *extension)
    : m_apiPtr(extension)
 {
-   name2extension[name] = this;
    // assign all members (apart from the globals)
    m_entry.size = sizeof(zend_module_entry);
    m_entry.zend_api = ZEND_MODULE_API_NO;
@@ -240,7 +266,9 @@ int ExtensionPrivate::processRequest(int type, int moduleNumber)
 
 int ExtensionPrivate::processStartup(int type, int moduleNumber)
 {
-   return 0;
+   ZEND_INIT_MODULE_GLOBALS(zapi, init_globals, nullptr);
+   Extension *extension = find_module(moduleNumber);
+   return BOOL2SUCCESS(extension->initialize(moduleNumber));
 }
 
 int ExtensionPrivate::processShutdown(int type, int moduleNumber)
@@ -257,6 +285,24 @@ ExtensionPrivate &ExtensionPrivate::registerFunction(const char *name, zapi::Zen
    m_functions.push_back(std::make_shared<Callable>(name, function, arguments));
    return *this;
 }
+
+bool ExtensionPrivate::initialize(int moduleNumber)
+{
+   //m_ini.reset(new zend_ini_entry_def[]);
+   if (m_startupHandler) {
+      m_startupHandler();
+   }
+   // remember that we're initialized (when you use "apache reload" it is
+   // possible that the processStartup() method is called more than once)
+   m_locked = true;
+   return true;
+}
+
+bool ExtensionPrivate::shutdown(int moduleNumber)
+{
+   
+}
+
 
 } // internal
 

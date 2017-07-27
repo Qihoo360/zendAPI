@@ -64,30 +64,6 @@ public:
    bool isLocked() const;
    zend_module_entry *getModule();
    size_t getFunctionQuantity() const;
-   operator zend_module_entry * ()
-   {
-      return getModule();
-   }
-   
-   void setStartupHandler(const zapi::Callback &handler)
-   {
-      m_startupHandler = handler;
-   }
-   
-   void setRequestHandler(const zapi::Callback &handler)
-   {
-      m_requestHandler = handler;
-   }
-   
-   void setShutdownHandler(const zapi::Callback &handler)
-   {
-      m_shutdownHandler = handler;
-   }
-   
-   void setIdleHandler(const zapi::Callback &handler)
-   {
-      m_idleHandler = handler;
-   }
    bool initialize(int moduleNumber);
    bool shutdown(int moduleNumber);
    static int processStartup(int type, int moduleNumber);
@@ -106,6 +82,7 @@ public:
    zend_module_entry m_entry;
    bool m_locked = false;
    std::list<std::shared_ptr<zapi::kernel::IniEntry>> m_iniEntries;
+   std::unique_ptr<zend_ini_entry_def[]> m_ini = nullptr;
    std::list<std::shared_ptr<Callable>> m_functions;
 };
 

@@ -15,6 +15,22 @@
 #include <cstring>
 
 extern sapi_module_struct php_embed_module;
+extern ::HashTable module_registry;
+
+static bool dummyExtExist = false;
+
+TEST(ExtensionTest, testdummyext)
+{
+   zend_hash_apply(&module_registry, [](zval *mzval) -> int {
+      zend_module_entry *entry = static_cast<zend_module_entry *>(Z_PTR_P(mzval));
+      if (0 == strcmp(entry->name, "dummyext")) {
+         dummyExtExist = true;
+         return ZEND_HASH_APPLY_STOP;
+      }
+      return ZEND_HASH_APPLY_KEEP;
+   });
+   ASSERT_TRUE(dummyExtExist);
+}
 
 int main(int argc, char **argv)
 {

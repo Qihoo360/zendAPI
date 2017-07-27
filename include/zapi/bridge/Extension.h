@@ -166,6 +166,8 @@ protected:
    
    bool isLocked() const;
 private:
+   bool initialize(int moduleNumber);
+private:
    ZAPI_DECLARE_PRIVATE(internal::Extension)
   /**
    * The implementation object

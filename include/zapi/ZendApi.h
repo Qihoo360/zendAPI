@@ -18,5 +18,6 @@
 
 #include "zapi/Global.h"
 #include "zapi/bridge/Extension.h"
+#include "zapi/kernel/StreamBuffer.h"
 
 #endif //ZAPI_ZENDAPI_H
