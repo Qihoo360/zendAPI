@@ -35,6 +35,8 @@ enum class Type : unsigned char
    False       = IS_FALSE,  // Boolean false
    True        = IS_TRUE,  // Boolean true
    Long        = IS_LONG,  // Integer type
+   Numeric     = IS_LONG,  // alias for Type::Long
+   Float       = IS_DOUBLE, // alias for Type::Double
    Double      = IS_DOUBLE,  // Floating point type
    String      = IS_STRING,  // A string obviously
    Array       = IS_ARRAY,  // An array of things

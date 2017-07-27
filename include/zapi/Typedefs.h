@@ -36,11 +36,6 @@ using HANDLE = void *;
 using Callback = std::function<void()>;
 using ZendCallable = void(*)(struct _zend_execute_data *executeData, struct _zval_struct *returnValue);
 
-using NativeCallable0 = void (*)();
-using NativeCallable1 = void (*)(lang::Parameters &);
-using NativeCallable2 = lang::Variant (*)();
-using NativeCallable3 = lang::Variant (*)(lang::Parameters &);
-
 } // zapi
 
 #endif

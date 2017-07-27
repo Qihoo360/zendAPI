@@ -40,6 +40,16 @@ protected:
         m_required(required), m_byReference(byReference)
    {}
 public:
+   bool isNullable() const
+   {
+      return m_className;
+   }
+   
+   bool isReference() const
+   {
+      return m_byReference;
+   }
+   
    bool isRequired() const
    {
       return m_required;
@@ -59,17 +69,6 @@ public:
    {
       return m_className;
    }
-   
-   bool isNullable() const
-   {
-      return m_className;
-   }
-   
-   bool isReference() const
-   {
-      return m_byReference;
-   }
-   
 private:
    const char *m_name = nullptr;
    Type m_type = Type::Null;
