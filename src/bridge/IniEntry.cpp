@@ -55,7 +55,7 @@ public:
    static constexpr const char *bool2str(const bool value)
 #endif
    {
-      return (static_cast<bool>(value) ? "On" : "Off");
+      return (value ? "On" : "Off");
    }
    std::string m_name;
    std::string m_value;

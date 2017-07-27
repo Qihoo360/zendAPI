@@ -49,7 +49,7 @@ public:
    ~IniEntry();
    
 public:
-   void setupIniEntryDef(struct _zend_ini_entry_def *zendIniDef, int moduleNumber);
+   void setupIniEntryDef(struct _zend_ini_entry_def *zendIniDef, int moduleNumber = -1);
    
 private:
    ZAPI_DECLARE_PRIVATE(IniEntry)

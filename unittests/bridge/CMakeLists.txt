@@ -1,5 +1,6 @@
 set(BRIDGE_TEST_SRCS
    ExtensionTest.cpp
+   IniEntryTest.cpp
    )
 zapi_add_unittest(UnitTests BridgeTest ${BRIDGE_TEST_SRCS})
 
