@@ -18,7 +18,6 @@
 #define ZAPI_BRIDGE_EXTENSION_H
 
 #include "zapi/Global.h"
-#include "zapi/bridge/internal/ExtensionPrivate.h"
 #include "zapi/lang/Argument.h"
 #include "zapi/vm/InvokeBridge.h"
 
@@ -26,11 +25,6 @@
 
 namespace zapi
 {
-namespace kernel
-{
-class IniEntry;
-} // kernel
-
 namespace lang
 {
 
@@ -38,9 +32,14 @@ class Parameters;
 class Variant;
 
 } // lang
-
 namespace bridge
 {
+namespace internal
+{
+
+class ExtensionPrivate;
+
+} // internal
 
 using zapi::lang::Variant;
 using zapi::lang::Parameters;
@@ -48,7 +47,6 @@ using zapi::lang::Arguments;
 
 class ZAPI_DECL_EXPORT Extension
 {
-   ZAPI_DECLARE_PRIVATE(internal::Extension)
 public:
   /**
    * Constructor that defines a number of functions right away
@@ -65,10 +63,9 @@ public:
    * @param  apiversion  ZAPI API version (this should always be ZAPI_API_VERSION, so you better not supply it)
    */
    Extension(const char *name, const char *version = "1.0", int apiVersion = ZAPI_API_VERSION);
-   
    Extension(const Extension &extension) = delete;
    Extension(Extension &&extension) = delete;
-   
+   virtual ~Extension();
 public:
    template <void (*func)()>
    Extension &registerFunction(const char *name, const Arguments &arguments = {})
@@ -168,15 +165,14 @@ public:
 protected:
    
    bool isLocked() const;
-   
 private:
+   ZAPI_DECLARE_PRIVATE(internal::Extension)
   /**
    * The implementation object
    *
    * @var std::unique_ptr<ExtensionPrivate> m_implPtr
    */
    std::unique_ptr<internal::ExtensionPrivate> m_implPtr;
-   std::list<std::shared_ptr<zapi::kernel::IniEntry>> m_iniEntries;
 };
 
 } // bridge

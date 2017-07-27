@@ -16,6 +16,7 @@
 #include "zapi/kernel/IniEntry.h"
 #include "zapi/bridge/Extension.h"
 #include "zapi/bridge/internal/ExtensionPrivate.h"
+#include "zapi/vm/Callable.h"
 
 #ifdef ZTS
 #include "TSRM.h"
@@ -66,6 +67,9 @@ Extension::Extension(const char *name, const char *version, int apiVersion)
    : m_implPtr(new ExtensionPrivate(name, version, apiVersion, this))
 {}
 
+Extension::~Extension()
+{}
+
 Extension &Extension::setStartupHandler(const Callback &callback)
 {
    getImplPtr()->setStartupHandler(callback);
@@ -102,15 +106,18 @@ bool Extension::isLocked() const
 
 const char *Extension::getName() const
 {
-   return getImplPtr()->getName();
+   ZAPI_D(const Extension);
+   return implPtr->m_entry.name;
 }
 
 const char *Extension::getVersion() const
 {
-   return getImplPtr()->getVersion();
+   ZAPI_D(const Extension);
+   return implPtr->m_entry.version;
 }
 
-Extension &Extension::registerFunction(const char *name, zapi::ZendCallable function, const lang::Arguments &arguments)
+Extension &Extension::registerFunction(const char *name, zapi::ZendCallable function, 
+                                       const lang::Arguments &arguments)
 {
    getImplPtr()->registerFunction(name, function, arguments);
    return *this;
@@ -179,6 +186,12 @@ const char *ExtensionPrivate::getVersion() const
    return m_entry.version;
 }
 
+size_t ExtensionPrivate::getFunctionQuantity() const
+{
+   // now just return global namespaces functions
+   return m_functions.size();
+}
+
 zend_module_entry *ExtensionPrivate::getModule()
 {
    if (m_entry.functions) {
@@ -187,23 +200,53 @@ zend_module_entry *ExtensionPrivate::getModule()
    if (m_entry.module_startup_func == &ExtensionPrivate::processMismatch) {
       return &m_entry;
    }
-   
+   size_t count = getFunctionQuantity();
+   if (0 == count) {
+      return &m_entry;
+   }
+   int i = 0;
+   zend_function_entry *entries = new zend_function_entry[count + 1];
+   iterateFunctions([&i, entries](Callable &callable){
+      callable.initialize(&entries[i]);
+      i++;
+   });
+   zend_function_entry *last = &entries[count];
+   memset(last, 0, sizeof(zend_function_entry));
+   m_entry.functions = entries;
+   return &m_entry;
+}
+
+void ExtensionPrivate::iterateFunctions(const std::function<void(Callable &func)> &callback)
+{
+   for (auto &function : m_functions) {
+      callback(*function);
+   }
 }
 
 int ExtensionPrivate::processIdle(int type, int moduleNumber)
-{}
+{
+   return 0;
+}
 
 int ExtensionPrivate::processMismatch(int type, int moduleNumber)
-{}
+{
+   return 0;
+}
 
 int ExtensionPrivate::processRequest(int type, int moduleNumber)
-{}
+{
+   return 0;
+}
 
 int ExtensionPrivate::processStartup(int type, int moduleNumber)
-{}
+{
+   return 0;
+}
 
 int ExtensionPrivate::processShutdown(int type, int moduleNumber)
-{}
+{
+   return 0;
+}
 
 ExtensionPrivate &ExtensionPrivate::registerFunction(const char *name, zapi::ZendCallable function, 
                                                      const Arguments &arguments)
@@ -211,6 +254,7 @@ ExtensionPrivate &ExtensionPrivate::registerFunction(const char *name, zapi::Zen
    if (isLocked()) {
       return *this;
    }
+   m_functions.push_back(std::make_shared<Callable>(name, function, arguments));
    return *this;
 }
 

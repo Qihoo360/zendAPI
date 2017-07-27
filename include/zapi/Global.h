@@ -117,23 +117,23 @@ static inline typename T::pointer zapi_get_ptr_helper(const T &p)
 
 #define ZAPI_DECLARE_PRIVATE(Class)\
    inline Class##Private* getImplPtr()\
-{\
-   return reinterpret_cast<Class##Private *>(zapi_get_ptr_helper(m_implPtr));\
+   {\
+      return reinterpret_cast<Class##Private *>(zapi_get_ptr_helper(m_implPtr));\
    }\
    inline const Class##Private* getImplPtr() const\
-{\
-   return reinterpret_cast<const Class##Private *>(zapi_get_ptr_helper(m_implPtr));\
+   {\
+      return reinterpret_cast<const Class##Private *>(zapi_get_ptr_helper(m_implPtr));\
    }\
    friend class Class##Private;
 
 #define ZAPI_DECLARE_PUBLIC(Class)\
    inline Class* getApiPtr()\
-{\
-   return static_cast<Class *>(m_apiPtr);\
+   {\
+      return static_cast<Class *>(m_apiPtr);\
    }\
    inline const Class* getApiPtr() const\
-{\
-   return static_cast<const Class *>(m_apiPtr);\
+   {\
+      return static_cast<const Class *>(m_apiPtr);\
    }\
    friend class Class;
 

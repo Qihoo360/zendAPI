@@ -17,6 +17,6 @@
 #define ZAPI_ZENDAPI_H
 
 #include "zapi/Global.h"
-
+#include "zapi/bridge/Extension.h"
 
 #endif //ZAPI_ZENDAPI_H

@@ -167,5 +167,15 @@ void Callable::initialize(zend_internal_function_info *info, const char *classNa
    info->_is_variadic = false;
 }
 
+void Callable::initialize(const std::string &prefix, zend_function_entry *entry)
+{
+   // if there is a namespace prefix, we should adjust the name
+   if (!prefix.empty()) {
+      m_name = prefix + '\\' + m_name;
+   }
+   // call base initialize
+   Callable::initialize(entry);
+}
+
 } // vm
 } // zapi

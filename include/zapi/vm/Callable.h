@@ -19,6 +19,7 @@
 #include <string>
 #include "zapi/Global.h"
 #include "zapi/lang/Argument.h"
+#include "zapi/lang/Variant.h"
 
 namespace zapi
 {
@@ -28,7 +29,6 @@ namespace lang
 
 // forward declare
 class Parameters;
-class Variant;
 
 } // lang
 
@@ -61,9 +61,11 @@ public:
    virtual ~Callable() = default;
    
 public:
-   virtual Variant invoke(Parameters &parameters) = 0;
+   virtual Variant invoke(Parameters &parameters)
+   {}
    void initialize(zend_function_entry *entry, const char *className = nullptr, int flags = 0) const;
    void initialize(zend_internal_function_info *info, const char *className = nullptr) const;
+   void initialize(const std::string &prefix, zend_function_entry *entry);
 protected:
    void setupCallableArgInfo(zend_internal_arg_info *info, const Argument &arg) const;
    static void invoke(INTERNAL_FUNCTION_PARAMETERS);
@@ -74,26 +76,6 @@ protected:
    uint32_t m_required = 0;
    int m_argc = 0;
    std::unique_ptr<zend_internal_arg_info[]> m_argv;
-};
-
-class NativeFunction : public Callable
-{
-public:
-   NativeFunction(const char *name, zapi::ZendCallable function, const Arguments &arguments = {})
-      : Callable(name, function, arguments)
-   {}
-   virtual ~NativeFunction() = default;
-   
-public:
-   void initialize(const std::string &prefix, zend_function_entry *entry)
-   {
-      // if there is a namespace prefix, we should adjust the name
-      if (!prefix.empty()) {
-         m_name = prefix + '\\' + m_name;
-      }
-      // call base initialize
-      Callable::initialize(entry);
-   }
 };
 
 } // vm

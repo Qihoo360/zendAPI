@@ -16,13 +16,22 @@
 #ifndef ZAPI_BRIDGE_INTERNAL_EXTENSIONPRIVATE_H
 #define ZAPI_BRIDGE_INTERNAL_EXTENSIONPRIVATE_H
 
+#include <list>
 #include "zapi/Global.h"
-
 #include "php/Zend/zend_modules.h"
 #include "zapi/lang/Argument.h"
 
 namespace zapi
 {
+namespace kernel
+{
+class IniEntry;
+} // kernel
+namespace vm
+{
+class Callable;
+} // vm
+
 namespace bridge
 {
 
@@ -31,10 +40,12 @@ namespace internal
 {
 
 using zapi::lang::Arguments;
+using zapi::vm::Callable;
 
 class ExtensionPrivate
 {
 public:
+   ZAPI_DECLARE_PUBLIC(Extension)
    ExtensionPrivate(Extension *extension)
       :m_apiPtr(extension)
    {}
@@ -43,12 +54,16 @@ public:
    ExtensionPrivate(const ExtensionPrivate &) = delete;
    ExtensionPrivate(const ExtensionPrivate &&) = delete;
    ~ExtensionPrivate();
-public:
+   
+   // methods
+   
    ExtensionPrivate &registerFunction(const char *name, zapi::ZendCallable function, const Arguments &arguments = {});
+   void iterateFunctions(const std::function<void(Callable &func)> &callback);
    const char *getName() const;
    const char *getVersion() const;
    bool isLocked() const;
    zend_module_entry *getModule();
+   size_t getFunctionQuantity() const;
    operator zend_module_entry * ()
    {
       return getModule();
@@ -73,8 +88,6 @@ public:
    {
       m_idleHandler = handler;
    }
-
-private:
    bool initialize(int moduleNumber);
    bool shutdown(int moduleNumber);
    static int processStartup(int type, int moduleNumber);
@@ -82,10 +95,9 @@ private:
    static int processRequest(int type, int moduleNumber);
    static int processIdle(int type, int moduleNumber);
    static int processMismatch(int type, int moduleNumber);
-private:
-   ZAPI_DECLARE_PUBLIC(Extension)
    
-private:
+   // properties
+   
    Extension *m_apiPtr;
    zapi::Callback m_startupHandler;
    zapi::Callback m_requestHandler;
@@ -93,7 +105,8 @@ private:
    zapi::Callback m_shutdownHandler;
    zend_module_entry m_entry;
    bool m_locked = false;
-   std::unique_ptr<zend_ini_entry_def[]> m_iniEntries = nullptr;
+   std::list<std::shared_ptr<zapi::kernel::IniEntry>> m_iniEntries;
+   std::list<std::shared_ptr<Callable>> m_functions;
 };
 
 } // internal
