@@ -25,57 +25,32 @@ namespace zapi
 namespace lang
 {
 
+namespace internal
+{
+class ArgumentPrivate;
+} // internal
+
+using internal::ArgumentPrivate;
+
 class ZAPI_DECL_EXPORT Argument
 {
 public:
-   virtual ~Argument() = default;
+   virtual ~Argument();
+   bool isNullable() const;
+   bool isReference() const;
+   bool isRequired() const;
+   const char *getName() const;
+   Type getType() const;
+   const char *getClassName() const;
+   
 protected:
-   Argument(const char *name, Type type, bool required = true, bool byReference = false)
-      : m_name(name), m_type(type), m_required(required), m_byReference(byReference)
-   {}
-   
+   Argument(const char *name, Type type, bool required = true, bool byReference = false);
    Argument(const char *name, const char *className, bool nullable = true, 
-            bool required = true, bool byReference = false)
-      : m_name(name), m_className(className), m_nullable(nullable), 
-        m_required(required), m_byReference(byReference)
-   {}
-public:
-   bool isNullable() const
-   {
-      return m_className;
-   }
-   
-   bool isReference() const
-   {
-      return m_byReference;
-   }
-   
-   bool isRequired() const
-   {
-      return m_required;
-   }
-   
-   const char *getName() const
-   {
-      return m_name;
-   }
-   
-   Type getType() const 
-   {
-      return m_type;
-   }
-   
-   const char *getClassName() const
-   {
-      return m_className;
-   }
-private:
-   const char *m_name = nullptr;
-   Type m_type = Type::Null;
-   const char *m_className = nullptr;
-   bool m_nullable = false;
-   bool m_required = true;
-   bool m_byReference = false;
+            bool required = true, bool byReference = false);
+   Argument(const Argument &other);
+   Argument(Argument &&other);
+   ZAPI_DECLARE_PRIVATE(Argument)
+   std::unique_ptr<ArgumentPrivate> m_implPtr;
 };
 
 #if defined(ZAPI_CC_MSVC) && ZAPI_CC_MSVC < 1800

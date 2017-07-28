@@ -9,6 +9,7 @@ set(ZAPI_SRC
    lang/StdClass.cpp
    lang/Parameters.cpp
    lang/Function.cpp
+   lang/Argument.cpp
    ds/String.cpp
    ds/HashTable.cpp
    vm/StdClassImpl.cpp
