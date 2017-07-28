@@ -46,20 +46,25 @@ using zapi::lang::Parameters;
 
 }
 
-class Callable
+namespace internal
+{
+
+class CallablePrivate;
+
+} // internal
+
+using internal::CallablePrivate;
+
+class ZAPI_DECL_EXPORT Callable
 {
 public:
    Callable(const char *name, zapi::ZendCallable callable, const Arguments &arguments = {});
    Callable(const Callable &other);
-   Callable(Callable &&other)
-      : m_name(std::move(other.m_name)),
-        m_return(other.m_return),
-        m_required(other.m_required),
-        m_argc(other.m_argc),
-        m_argv(std::move(other.m_argv))
-   {}
-   virtual ~Callable() = default;
-   
+   Callable(Callable &&other);
+   virtual ~Callable();
+public:
+   Callable &operator=(const Callable &other);
+   Callable &operator=(Callable &&other);
 public:
    virtual Variant invoke(Parameters &parameters) = 0;
    void initialize(zend_function_entry *entry, const char *className = nullptr, int flags = 0) const;
@@ -69,12 +74,8 @@ protected:
    void setupCallableArgInfo(zend_internal_arg_info *info, const Argument &arg) const;
    static void invoke(INTERNAL_FUNCTION_PARAMETERS);
 protected:
-   zapi::ZendCallable m_callable;
-   std::string m_name;
-   Type m_return = Type::Undefined;
-   uint32_t m_required = 0;
-   int m_argc = 0;
-   std::unique_ptr<zend_internal_arg_info[]> m_argv;
+   ZAPI_DECLARE_PRIVATE(Callable)
+   std::unique_ptr<CallablePrivate> m_implPtr;
 };
 
 } // vm

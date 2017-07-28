@@ -32,6 +32,7 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/vm/StdClassImpl.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/InvokeBridge.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/Callable.h
+   ${ZAPI_INCLUDE_DIR}/zapi/vm/internal/CallablePrivate.h
    )
 
 set(ZAPI_PUBLIC_HEADERS ${ZAPI_PUBLIC_HEADERS} PARENT_SCOPE)

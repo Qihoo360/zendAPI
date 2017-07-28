@@ -15,6 +15,7 @@
 
 #include <ostream>
 #include "zapi/vm/Callable.h"
+#include "zapi/vm/internal/CallablePrivate.h"
 #include "zapi/lang/Parameters.h"
 #include "zapi/lang/OrigException.h"
 
@@ -23,13 +24,14 @@ namespace zapi
 namespace vm
 {
 
-using zapi::lang::Exception;
+namespace internal
+{
 
-Callable::Callable(const char *name, ZendCallable callable, const lang::Arguments &arguments)
+CallablePrivate::CallablePrivate(const char *name, ZendCallable callable, const lang::Arguments &arguments)
    : m_callable(callable),
      m_name(name),
      m_argc(arguments.size()),
-     m_argv(new zend_internal_arg_info[m_argc + 2])
+     m_argv(new zend_internal_arg_info[arguments.size() + 2])
 {
    // first entry record function infomation, so skip it
    int i = 1;
@@ -44,20 +46,48 @@ Callable::Callable(const char *name, ZendCallable callable, const lang::Argument
    m_argv[i].name = nullptr;
 }
 
-Callable::Callable(const Callable &other)
-   : m_name(other.m_name),
-     m_return(other.m_return),
-     m_required(other.m_required),
-     m_argc(other.m_argc)
+CallablePrivate::CallablePrivate(const CallablePrivate &other)
+   : m_callable(other.m_callable),
+     m_name(other.m_name),
+     m_argc(other.m_argc),
+     m_argv(new zend_internal_arg_info[other.m_argc + 2]) // have two moew slot
 {
-   // we shadow copy here
-   for (int i = 0; i < m_argc + 2; i++)
-   {
+   // we copy here
+   for (int i = 0; i < m_argc + 2; i++) {
       m_argv[i] = other.m_argv[i];
    }
 }
 
-void Callable::setupCallableArgInfo(zend_internal_arg_info *info, const lang::Argument &arg) const
+CallablePrivate::CallablePrivate(CallablePrivate &&other)
+   : m_callable(other.m_callable), // function ptr
+     m_name(std::move(other.m_name)),
+     m_argc(other.m_argc),
+     m_argv(std::move(other.m_argv))
+{}
+
+CallablePrivate &CallablePrivate::operator=(const CallablePrivate &other)
+{
+   m_callable = other.m_callable;
+   m_name = other.m_name;
+   m_argc = other.m_argc;
+   m_argv.reset(new zend_internal_arg_info[m_argc + 2]);
+   // we copy here
+   for (int i = 0; i < m_argc + 2; i++) {
+      m_argv[i] = other.m_argv[i];
+   }
+   return *this;
+}
+
+CallablePrivate &CallablePrivate::operator=(CallablePrivate &&other)
+{
+   m_callable = other.m_callable;
+   m_name = std::move(other.m_name);
+   m_argc = other.m_argc;
+   m_argv = std::move(other.m_argv);
+   return *this;
+}
+
+void CallablePrivate::setupCallableArgInfo(zend_internal_arg_info *info, const lang::Argument &arg) const
 {
    info->name = arg.getName();
    if (arg.getType() == Type::Object) {
@@ -109,6 +139,44 @@ void Callable::setupCallableArgInfo(zend_internal_arg_info *info, const lang::Ar
    info->pass_by_reference = arg.isReference();
 }
 
+} // internal
+
+using zapi::lang::Exception;
+
+Callable::Callable(const char *name, ZendCallable callable, const lang::Arguments &arguments)
+   : m_implPtr(new CallablePrivate(name, callable, arguments))
+{
+}
+
+Callable::Callable(const Callable &other)
+   : m_implPtr(new CallablePrivate(*other.m_implPtr))
+{
+}
+
+Callable::Callable(Callable &&other)
+   : m_implPtr(std::move(other.m_implPtr))
+{}
+
+Callable::~Callable()
+{}
+
+Callable &Callable::operator=(const Callable &other)
+{
+   m_implPtr.reset(new CallablePrivate(*other.m_implPtr));
+   return *this;
+}
+
+Callable &Callable::operator=(Callable &&other)
+{
+   m_implPtr.reset(new CallablePrivate(std::move(*other.m_implPtr)));
+   return *this;
+}
+
+void Callable::setupCallableArgInfo(zend_internal_arg_info *info, const lang::Argument &arg) const
+{
+   getImplPtr()->setupCallableArgInfo(info, arg);
+}
+
 void Callable::invoke(INTERNAL_FUNCTION_PARAMETERS)
 {
    uint32_t argc       = EX(func)->common.num_args;
@@ -118,9 +186,9 @@ void Callable::invoke(INTERNAL_FUNCTION_PARAMETERS)
    
    // check if sufficient parameters were passed (for some reason this check
    // is not done by Zend, so we do it here ourselves)
-   if (ZEND_NUM_ARGS() < callable->m_required) {
+   if (ZEND_NUM_ARGS() < callable->m_implPtr->m_required) {
       zapi::warning << get_active_function_name() << "() expects at least "
-                    << callable->m_required << " parameter(s)," << ZEND_NUM_ARGS() 
+                    << callable->m_implPtr->m_required << " parameter(s)," << ZEND_NUM_ARGS() 
                     << " given" << std::flush;
       RETURN_NULL();
    } else {
@@ -137,27 +205,29 @@ void Callable::invoke(INTERNAL_FUNCTION_PARAMETERS)
 
 void Callable::initialize(zend_function_entry *entry, const char *className, int flags) const
 {
-   if (m_callable) {
-      entry->handler = m_callable;
+   ZAPI_D(const Callable);
+   if (implPtr->m_callable) {
+      entry->handler = implPtr->m_callable;
    } else {
       // install ourselves in the extra argument
-      m_argv[m_argc + 1].class_name = reinterpret_cast<const char*>(this);
+      implPtr->m_argv[implPtr->m_argc + 1].class_name = reinterpret_cast<const char*>(this);
       // we use our own invoke method, which does a lookup
       // in the map we just installed ourselves in
       entry->handler = &Callable::invoke;
    }
-   entry->fname = m_name.data();
-   entry->arg_info = m_argv.get();
-   entry->num_args = m_argc;
+   entry->fname = implPtr->m_name.data();
+   entry->arg_info = implPtr->m_argv.get();
+   entry->num_args = implPtr->m_argc;
    entry->flags = flags;
-   initialize(reinterpret_cast<zend_internal_function_info *>(m_argv.get()), className);
+   initialize(reinterpret_cast<zend_internal_function_info *>(implPtr->m_argv.get()), className);
 }
 
 void Callable::initialize(zend_internal_function_info *info, const char *className) const
 {
+   ZAPI_D(const Callable);
    info->class_name = className;
-   info->required_num_args = m_required;
-   info->type_hint = static_cast<unsigned char>(m_return);
+   info->required_num_args = implPtr->m_required;
+   info->type_hint = static_cast<unsigned char>(implPtr->m_return);
    // current we don't support return by reference
    info->return_reference = false;
    // since php 5.6 there are _allow_null and _is_variadic properties. It's
@@ -169,9 +239,10 @@ void Callable::initialize(zend_internal_function_info *info, const char *classNa
 
 void Callable::initialize(const std::string &prefix, zend_function_entry *entry)
 {
+   ZAPI_D(Callable);
    // if there is a namespace prefix, we should adjust the name
    if (!prefix.empty()) {
-      m_name = prefix + '\\' + m_name;
+      implPtr->m_name = prefix + '\\' + implPtr->m_name;
    }
    // call base initialize
    Callable::initialize(entry);
