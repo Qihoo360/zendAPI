@@ -13,24 +13,18 @@
 //
 // Created by softboy on 27/07/2017.
 
-#ifndef ZAPI_LANG_FUNCTION_H
-#define ZAPI_LANG_FUNCTION_H
-
-#include "zapi/vm/Callable.h"
+#include "zapi/lang/Function.h"
 
 namespace zapi
 {
 namespace lang
 {
 
-class ZAPI_DECL_EXPORT Function : public zapi::vm::Callable
+Variant Function::invoke(Parameters &parameters)
 {
-public:
-   using zapi::vm::Callable::Callable; // we do nothing special
-   virtual Variant invoke(Parameters &parameters);
-};
+   // now we just do nothing
+   return nullptr;
+}
 
 } // lang
 } // zapi
-
-#endif //ZAPI_LANG_FUNCTION_H

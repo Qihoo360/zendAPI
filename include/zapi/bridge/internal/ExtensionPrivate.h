@@ -23,10 +23,10 @@
 
 namespace zapi
 {
-namespace vm
+namespace lang
 {
 
-class Callable;
+class Function;
 
 } // vm
 
@@ -40,7 +40,7 @@ namespace internal
 {
 
 using zapi::lang::Arguments;
-using zapi::vm::Callable;
+using zapi::lang::Function;
 using zapi::bridge::IniEntry;
 
 class ExtensionPrivate
@@ -59,7 +59,7 @@ public:
    // methods
    
    ExtensionPrivate &registerFunction(const char *name, zapi::ZendCallable function, const Arguments &arguments = {});
-   void iterateFunctions(const std::function<void(Callable &func)> &callback);
+   void iterateFunctions(const std::function<void(Function &func)> &callback);
    void iterateIniEntries(const std::function<void(IniEntry &ini)> &callback);
 
    zend_module_entry *getModule();
@@ -84,7 +84,7 @@ public:
    bool m_locked = false;
    std::list<std::shared_ptr<IniEntry>> m_iniEntries;
    std::unique_ptr<zend_ini_entry_def[]> m_zendIniDefs = nullptr;
-   std::list<std::shared_ptr<Callable>> m_functions;
+   std::list<std::shared_ptr<Function>> m_functions;
 };
 
 } // internal

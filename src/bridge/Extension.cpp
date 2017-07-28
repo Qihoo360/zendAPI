@@ -17,7 +17,7 @@
 #include "zapi/bridge/IniEntry.h"
 #include "zapi/bridge/Extension.h"
 #include "zapi/bridge/internal/ExtensionPrivate.h"
-#include "zapi/vm/Callable.h"
+#include "zapi/lang/Function.h"
 
 #ifdef ZTS
 #include "TSRM.h"
@@ -259,7 +259,7 @@ zend_module_entry *ExtensionPrivate::getModule()
    }
    int i = 0;
    zend_function_entry *entries = new zend_function_entry[count + 1];
-   iterateFunctions([&i, entries](Callable &callable){
+   iterateFunctions([&i, entries](Function &callable){
       callable.initialize(&entries[i]);
       i++;
    });
@@ -269,7 +269,7 @@ zend_module_entry *ExtensionPrivate::getModule()
    return &m_entry;
 }
 
-void ExtensionPrivate::iterateFunctions(const std::function<void(Callable &func)> &callback)
+void ExtensionPrivate::iterateFunctions(const std::function<void(Function &func)> &callback)
 {
    for (auto &function : m_functions) {
       callback(*function);
@@ -321,7 +321,7 @@ ExtensionPrivate &ExtensionPrivate::registerFunction(const char *name, zapi::Zen
    if (m_locked) {
       return *this;
    }
-   m_functions.push_back(std::make_shared<Callable>(name, function, arguments));
+   m_functions.push_back(std::make_shared<Function>(name, function, arguments));
    return *this;
 }
 
