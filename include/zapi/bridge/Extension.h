@@ -28,15 +28,21 @@ namespace zapi
 namespace lang
 {
 
+// forward declare
 class Parameters;
 class Variant;
 
 } // lang
 namespace bridge
 {
+
+// forward declare
+class IniEntry;
+
 namespace internal
 {
 
+// forward declare
 class ExtensionPrivate;
 
 } // internal
@@ -92,10 +98,13 @@ public:
    }
    
    Extension &registerFunction(const char *name, zapi::ZendCallable function, const Arguments &arguments = {});
-
+   Extension &registerIniEntry(const IniEntry &entry);
+   Extension &registerIniEntry(IniEntry &&entry);
    Extension &registerClass();
    Extension &registerNamespace();
    
+   size_t getIniEntryQuantity() const;
+   size_t getFunctionQuantity() const;
    operator void * ()
    {
       return getModule();

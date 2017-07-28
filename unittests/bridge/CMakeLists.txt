@@ -18,4 +18,6 @@ set_target_properties(BridgeTest PROPERTIES
    PHP_INI_DIR="${ZAPI_BINARY_DIR}/etc/php.ini"
    )
 file(WRITE ${BUILD_ETC_DIR}/php.ini extension_dir="${ZAPI_BINARY_DIR}/extensions"\n
+   zapi_team_address=shanghai\n
+   zapi_product=libpdk\n
    extension=dummyext.so)

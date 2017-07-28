@@ -49,6 +49,13 @@ public:
    IniEntryPrivate(const char *name, const double value, const CfgType cfgType = CfgType::All)
       :m_name(name), m_value(std::to_string(value)), m_cfgType(cfgType)
    {}
+   
+   IniEntryPrivate(const IniEntryPrivate &other)
+      : m_name(other.m_name),
+        m_value(other.m_value),
+        m_cfgType(other.m_cfgType)
+   {}
+   
 #ifdef ZAPI_CC_MSVC
    static const char *bool2str(const bool value)
 #else
@@ -84,6 +91,22 @@ IniEntry::IniEntry(const char *name, const int64_t value, const CfgType cfgType)
 IniEntry::IniEntry(const char *name, const double value, const CfgType cfgType)
    : m_implPtr(new IniEntryPrivate(name, value, cfgType))
 {}
+
+IniEntry::IniEntry(const IniEntry &other)
+   : m_implPtr(new IniEntryPrivate(*other.m_implPtr.get()))
+{}
+
+IniEntry::IniEntry(IniEntry &&other)
+   : m_implPtr(std::move(other.m_implPtr))
+{}
+
+bool IniEntry::operator==(const IniEntry &other) const
+{
+   ZAPI_D(const IniEntry);
+   return implPtr->m_name == other.m_implPtr->m_name &&
+         implPtr->m_value == other.m_implPtr->m_value &&
+         implPtr->m_cfgType == other.m_implPtr->m_cfgType;
+}
 
 IniEntry::~IniEntry()
 {}

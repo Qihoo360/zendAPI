@@ -46,9 +46,12 @@ public:
    IniEntry(const char *name, const int32_t value, const CfgType cfgType = CfgType::All);
    IniEntry(const char *name, const int64_t value, const CfgType cfgType = CfgType::All);
    IniEntry(const char *name, const double value, const CfgType cfgType = CfgType::All);
+   IniEntry(const IniEntry &other);
+   IniEntry(IniEntry &&other);
    ~IniEntry();
    
 public:
+   bool operator==(const IniEntry &other) const;
    void setupIniEntryDef(struct _zend_ini_entry_def *zendIniDef, int moduleNumber = -1);
    
 private:
@@ -112,6 +115,7 @@ public:
    {
       return getRawValue();
    }
+   
 private:
    ZAPI_DECLARE_PRIVATE(IniValue)
    std::unique_ptr<IniValuePrivate> m_implPtr;

@@ -1,8 +1,7 @@
 #include "zapi/Global.h"
-#include "zapi/lang/Variant.h"
-#include "zapi/lang/FatalError.h"
-#include "zapi/lang/Type.h"
 #include "zapi/bridge/Extension.h"
+#include "zapi/bridge/IniEntry.h"
+#include "zapi/utils/PhpFuncs.h"
 
 #include "php/sapi/embed/php_embed.h"
 #include "php/Zend/zend_types.h"
@@ -19,6 +18,8 @@ extern sapi_module_struct php_embed_module;
 extern ::HashTable module_registry;
 
 static bool dummyExtExist = false;
+using zapi::bridge::Extension;
+using zapi::bridge::IniEntry;
 
 TEST(ExtensionTest, testdummyext)
 {
@@ -33,9 +34,19 @@ TEST(ExtensionTest, testdummyext)
    ASSERT_TRUE(dummyExtExist);
 }
 
+TEST(ExtensionTest, testIniItemGet)
+{
+   // we set this in dummy extension, so we get this from here
+   // this value we get it from zend engine
+   ASSERT_STREQ(zapi::ini_get("zapi_author"), "xiuxiu");
+   // define in php.ini but not regiester 
+   ASSERT_EQ(zapi::ini_get("zapi_leader"), nullptr);
+   ASSERT_STREQ(zapi::ini_get("zapi_team_address"), "shanghai");
+   ASSERT_STREQ(zapi::ini_get("zapi_product"), "libpdk");
+}
+
 TEST(ExtensionTest, testExtConstructor)
 {
-   using zapi::bridge::Extension;
    {
       Extension extension("zapi");
       ASSERT_EQ(extension.getName(), "zapi");
@@ -46,6 +57,15 @@ TEST(ExtensionTest, testExtConstructor)
       ASSERT_EQ(extension.getName(), "zapi");
       ASSERT_EQ(extension.getVersion(), "2.0");
    }
+}
+
+TEST(ExtensionTest, testRegisterIniEntry)
+{
+   Extension extension("zapi");
+   ASSERT_EQ(extension.getIniEntryQuantity(), 0);
+   IniEntry entry("zapi", "2.0");
+   extension.registerIniEntry(entry);
+   ASSERT_EQ(extension.getIniEntryQuantity(), 1);
 }
 
 int main(int argc, char **argv)

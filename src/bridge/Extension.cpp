@@ -124,7 +124,8 @@ void *Extension::getModule()
 
 bool Extension::isLocked() const
 {
-   return getImplPtr()->isLocked();
+   ZAPI_D(const Extension);
+   return implPtr->m_locked;
 }
 
 const char *Extension::getName() const
@@ -149,6 +150,36 @@ Extension &Extension::registerFunction(const char *name, zapi::ZendCallable func
 bool Extension::initialize(int moduleNumber)
 {
    return getImplPtr()->initialize(moduleNumber);
+}
+
+Extension &Extension::registerIniEntry(const IniEntry &entry)
+{
+   ZAPI_D(Extension);
+   if (isLocked()) {
+      return *this;
+   }
+   implPtr->m_iniEntries.emplace_back(new IniEntry(entry));
+   return *this;
+}
+
+Extension &Extension::registerIniEntry(IniEntry &&entry)
+{
+   ZAPI_D(Extension);
+   if (isLocked()) {
+      return *this;
+   }
+   implPtr->m_iniEntries.emplace_back(new IniEntry(std::move(entry)));
+   return *this;
+}
+
+size_t Extension::getFunctionQuantity() const
+{
+   return getImplPtr()->getFunctionQuantity();
+}
+
+size_t Extension::getIniEntryQuantity() const
+{
+   return getImplPtr()->getIniEntryQuantity();
 }
 
 namespace internal
@@ -201,16 +232,6 @@ ExtensionPrivate::~ExtensionPrivate()
 {
    name2extension.erase(m_entry.name);
    delete[] m_entry.functions;
-}
-
-const char *ExtensionPrivate::getName() const
-{
-   return m_entry.name;
-}
-
-const char *ExtensionPrivate::getVersion() const
-{
-   return m_entry.version;
 }
 
 size_t ExtensionPrivate::getFunctionQuantity() const
@@ -297,7 +318,7 @@ int ExtensionPrivate::processShutdown(int type, int moduleNumber)
 ExtensionPrivate &ExtensionPrivate::registerFunction(const char *name, zapi::ZendCallable function, 
                                                      const Arguments &arguments)
 {
-   if (isLocked()) {
+   if (m_locked) {
       return *this;
    }
    m_functions.push_back(std::make_shared<Callable>(name, function, arguments));

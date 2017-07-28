@@ -61,10 +61,7 @@ public:
    ExtensionPrivate &registerFunction(const char *name, zapi::ZendCallable function, const Arguments &arguments = {});
    void iterateFunctions(const std::function<void(Callable &func)> &callback);
    void iterateIniEntries(const std::function<void(IniEntry &ini)> &callback);
-   
-   const char *getName() const;
-   const char *getVersion() const;
-   bool isLocked() const;
+
    zend_module_entry *getModule();
    size_t getFunctionQuantity() const;
    size_t getIniEntryQuantity() const;
