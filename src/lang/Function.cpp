@@ -14,11 +14,31 @@
 // Created by softboy on 27/07/2017.
 
 #include "zapi/lang/Function.h"
+#include "zapi/vm/internal/CallablePrivate.h"
 
 namespace zapi
 {
 namespace lang
 {
+using zapi::vm::internal::CallablePrivate;
+
+class FunctionPrivate : public CallablePrivate
+{
+public:
+   using CallablePrivate::CallablePrivate;
+};
+
+Function::Function(const char *name, zapi::ZendCallable callable, const Arguments &arguments)
+   : Callable(*new FunctionPrivate(name, callable, arguments))
+{}
+
+Function::Function(const Function &other)
+   : Callable(other)
+{}
+
+Function::Function(Callable &&other)
+   : Callable(other)
+{}
 
 Variant Function::invoke(Parameters &parameters)
 {

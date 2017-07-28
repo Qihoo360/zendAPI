@@ -23,11 +23,17 @@ namespace zapi
 namespace lang
 {
 
+class FunctionPrivate;
+
 class ZAPI_DECL_EXPORT Function : public zapi::vm::Callable
 {
 public:
-   using zapi::vm::Callable::Callable; // we do nothing special
+   Function(const char *name, zapi::ZendCallable callable, const Arguments &arguments = {});
+   Function(const Function &other);
+   Function(Callable &&other);
    virtual Variant invoke(Parameters &parameters);
+private:
+   ZAPI_DECLARE_PRIVATE(Function)
 };
 
 } // lang

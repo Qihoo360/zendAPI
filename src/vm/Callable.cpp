@@ -157,6 +157,10 @@ Callable::Callable(Callable &&other)
    : m_implPtr(std::move(other.m_implPtr))
 {}
 
+Callable::Callable(CallablePrivate &implPtr)
+   : m_implPtr(&implPtr)
+{}
+
 Callable::~Callable()
 {}
 

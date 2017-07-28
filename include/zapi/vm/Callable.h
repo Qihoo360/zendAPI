@@ -71,6 +71,7 @@ public:
    void initialize(zend_internal_function_info *info, const char *className = nullptr) const;
    void initialize(const std::string &prefix, zend_function_entry *entry);
 protected:
+   Callable(CallablePrivate &implPtr);
    void setupCallableArgInfo(zend_internal_arg_info *info, const Argument &arg) const;
    static void invoke(INTERNAL_FUNCTION_PARAMETERS);
 protected:
