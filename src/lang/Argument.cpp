@@ -82,6 +82,18 @@ Argument::Argument(Argument &&other)
 {
 }
 
+Argument &Argument::operator=(const Argument &other)
+{
+   m_implPtr.reset(new ArgumentPrivate(*other.m_implPtr));
+   return *this;
+}
+
+Argument &Argument::operator=(Argument &&other)
+{
+   m_implPtr = std::move(other.m_implPtr);
+   return *this;
+}
+
 Argument::~Argument()
 {}
 

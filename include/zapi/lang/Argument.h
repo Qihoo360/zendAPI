@@ -49,6 +49,9 @@ protected:
             bool required = true, bool byReference = false);
    Argument(const Argument &other);
    Argument(Argument &&other);
+   Argument &operator=(const Argument &other);
+   Argument &operator=(Argument &&other);
+   
    ZAPI_DECLARE_PRIVATE(Argument)
    std::unique_ptr<ArgumentPrivate> m_implPtr;
 };
@@ -75,7 +78,7 @@ public:
    {}
    
    RefArgument(RefArgument &&argument) ZAPI_DECL_NOEXCEPT
-      : Argument(argument)
+      : Argument(std::move(argument))
    {}
    
    virtual ~RefArgument()
@@ -98,7 +101,7 @@ public:
    {}
    
    ValueArgument(ValueArgument &&argument)
-      : Argument(argument)
+      : Argument(std::move(argument))
    {}
    
    virtual ~ValueArgument()
