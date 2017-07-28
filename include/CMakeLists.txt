@@ -6,6 +6,7 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/bridge/IniEntry.h
    ${ZAPI_INCLUDE_DIR}/zapi/bridge/internal/ExtensionPrivate.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Type.h
+   ${ZAPI_INCLUDE_DIR}/zapi/lang/Constant.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Array.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Variant.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Exception.h

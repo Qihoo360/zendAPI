@@ -16,4 +16,44 @@
 #ifndef ZAPI_LANG_CONSTANT_H
 #define ZAPI_LANG_CONSTANT_H
 
+#include "zapi/Global.h"
+
+namespace zapi
+{
+namespace lang
+{
+
+namespace internal
+{
+
+class ConstantPrivate;
+
+} // internal
+
+using internal::ConstantPrivate;
+
+class ZAPI_DECL_EXPORT Constant
+{
+public:
+   Constant(const char *name, std::nullptr_t value = nullptr);
+   Constant(const char *name, bool value);
+   Constant(const char *name, int32_t value);
+   Constant(const char *name, int64_t value);
+   Constant(const char *name, double value);
+   Constant(const char *name, const char *value);
+   Constant(const char *name, const char *value, size_t size);
+   Constant(const char *name, const std::string &value);
+   Constant(const Constant &other);
+   Constant(Constant &&other);
+   Constant &operator=(const Constant &other);
+   Constant &operator=(Constant &&other);
+   virtual ~Constant();
+private:
+   ZAPI_DECLARE_PRIVATE(Constant)
+   std::unique_ptr<ConstantPrivate> m_implPtr;
+};
+
+} // lang
+} // zapi
+
 #endif //ZAPI_LANG_CONSTANT_H

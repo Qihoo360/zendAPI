@@ -42,16 +42,15 @@ public:
    const char *getName() const;
    Type getType() const;
    const char *getClassName() const;
-   
-protected:
-   Argument(const char *name, Type type, bool required = true, bool byReference = false);
-   Argument(const char *name, const char *className, bool nullable = true, 
-            bool required = true, bool byReference = false);
+   // is this good?
    Argument(const Argument &other);
    Argument(Argument &&other);
    Argument &operator=(const Argument &other);
    Argument &operator=(Argument &&other);
-   
+protected:
+   Argument(const char *name, Type type, bool required = true, bool byReference = false);
+   Argument(const char *name, const char *className, bool nullable = true, 
+            bool required = true, bool byReference = false);
    ZAPI_DECLARE_PRIVATE(Argument)
    std::unique_ptr<ArgumentPrivate> m_implPtr;
 };

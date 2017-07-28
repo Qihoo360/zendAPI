@@ -38,8 +38,8 @@ CallablePrivate::CallablePrivate(const char *name, ZendCallable callable, const 
    for (auto &argument : arguments) {
       if (argument.isRequired()) {
          m_required++;
-         setupCallableArgInfo(&m_argv[i++], argument);
       }
+      setupCallableArgInfo(&m_argv[i++], argument);
    }
    // last entry, we save extra infomation about class
    m_argv[i].class_name = nullptr;
