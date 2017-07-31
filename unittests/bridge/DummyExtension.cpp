@@ -17,7 +17,7 @@ ZAPI_DECL_EXPORT void *get_module()
    extension.registerIniEntry(zapi::bridge::IniEntry("zapi_product", ""));
   // extension.registerConstant(Constant("MY_CONST", 12333));
    extension.registerConstant(Constant("ZAPI_NAME", "zapi"));
-   extension.registerConstant(Constant("ZAPI_VERSION", 2322));
+   extension.registerConstant(Constant("ZAPI_VERSION", "v0.0.1"));
    return extension;
 }
 

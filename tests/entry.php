@@ -35,6 +35,8 @@ function run_test($filename)
             echo render_green_msg("passed\n");
          } else {
             echo render_red_msg("failed\n");
+            echo "expect: " . $testMeta["expect"]."\n";
+            echo "got: " . $result."\n";
             $failedTests++;
          }
       }

@@ -2,22 +2,16 @@
 Contant register test
 --FILE--
 <?php
-$a=1;
-$b=2;
 
-if($a==0) {
-   echo "bad";
-} elseif($a==3) {
-   echo "bad";
-} else {
-   if($b==1) {
-      echo "bad";
-   } elseif($b==2) {
-      echo "good";
-   } else {
-      echo "bad";
-   }
+if(defined("ZAPI_NAME"))
+{
+   echo ZAPI_NAME;
+}
+echo " ";
+if(defined("ZAPI_VERSION")) 
+{
+   echo ZAPI_VERSION;
 }
 ?>
 --EXPECT--
-good
+zapi v0.0.1
