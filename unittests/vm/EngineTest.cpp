@@ -11,16 +11,31 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by zzu_softboy on 27/05/2017.
+// Created by zzu_softboy on 27/07/2017.
 
-#ifndef ZAPI_ZENDAPI_H
-#define ZAPI_ZENDAPI_H
+#include "php/sapi/embed/php_embed.h"
+#include "gtest/gtest.h"
 
-#include "zapi/Global.h"
-#include "zapi/utils/PhpFuncs.h"
-#include "zapi/lang/Constant.h"
-#include "zapi/bridge/Extension.h"
-#include "zapi/bridge/IniEntry.h"
-#include "zapi/kernel/StreamBuffer.h"
+#include "zapi/vm/Engine.h"
+#include "zapi/lang/Variant.h"
+#include <string>
 
-#endif //ZAPI_ZENDAPI_H
+using zapi::vm::Engine;
+
+TEST(EngineTest, testEval)
+{
+   std::string code;
+   code += "$name = \"zapi\";"
+           "echo $name;";
+   Engine::eval(code);
+}
+
+int main(int argc, char **argv)
+{
+   int retCode = 0;
+   PHP_EMBED_START_BLOCK(argc,argv);
+   ::testing::InitGoogleTest(&argc, argv);
+   retCode = RUN_ALL_TESTS();
+   PHP_EMBED_END_BLOCK();
+   return retCode;
+}

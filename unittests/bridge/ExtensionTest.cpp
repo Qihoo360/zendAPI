@@ -1,7 +1,9 @@
 #include "zapi/Global.h"
 #include "zapi/bridge/Extension.h"
 #include "zapi/bridge/IniEntry.h"
+#include "zapi/lang/Constant.h"
 #include "zapi/utils/PhpFuncs.h"
+#include "zapi/vm/Engine.h"
 
 #include "php/sapi/embed/php_embed.h"
 #include "php/Zend/zend_types.h"
@@ -20,6 +22,10 @@ extern ::HashTable module_registry;
 static bool dummyExtExist = false;
 using zapi::bridge::Extension;
 using zapi::bridge::IniEntry;
+using zapi::lang::Constant;
+using zapi::vm::Engine;
+
+static std::string phpOutput;
 
 TEST(ExtensionTest, testdummyext)
 {
@@ -68,10 +74,36 @@ TEST(ExtensionTest, testRegisterIniEntry)
    ASSERT_EQ(extension.getIniEntryQuantity(), 1);
 }
 
+TEST(ExtensionTest, testRegisterContsant)
+{
+   Extension extension("zapi");
+   Constant const1("MY_CONST", "CONST_VALUE1");
+   ASSERT_EQ(extension.getConstantQuantity(), 0);
+   extension.registerConstant(const1);
+   zend_module_entry *moduleEntry = static_cast<zend_module_entry *>(extension.getModule());
+   ASSERT_EQ(extension.getConstantQuantity(), 1);
+   std::string code;
+   code += "$name = \"zapi\";"
+           "echo ZAPI_NAME;echo \"\\n\";echo \"xiuxiux\";";
+   Engine::eval(code);
+   //std::cout << phpOutput << std::endl;
+   phpOutput.clear();
+   code = "echo ZAPI_VERSION;";
+   Engine::eval(code);
+   //std::cout << phpOutput << std::endl;
+}
+
+size_t buffer_write(const char *str, size_t str_length)
+{
+   phpOutput += str;
+   return str_length;
+}
+
 int main(int argc, char **argv)
 {
    int retCode = 0;
-   php_embed_module.php_ini_path_override = const_cast<char *>(static_cast<const char *>(PHP_INI_DIR));
+   php_embed_module.php_ini_path_override = const_cast<char *>(static_cast<const char *>(PHP_INI_FILENAME));
+   php_embed_module.ub_write = buffer_write;
    PHP_EMBED_START_BLOCK(argc, argv);
    ::testing::InitGoogleTest(&argc, argv);
    retCode = RUN_ALL_TESTS();

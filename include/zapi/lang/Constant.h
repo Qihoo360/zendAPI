@@ -48,6 +48,8 @@ public:
    Constant &operator=(const Constant &other);
    Constant &operator=(Constant &&other);
    virtual ~Constant();
+   void initialize(const std::string &prefix, int moduleNumber);
+   const zend_constant &getZendConstant() const;
 private:
    ZAPI_DECLARE_PRIVATE(Constant)
    std::unique_ptr<ConstantPrivate> m_implPtr;

@@ -11,16 +11,47 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by zzu_softboy on 27/05/2017.
+// Created by zzu_softboy on 26/07/2017.
 
-#ifndef ZAPI_ZENDAPI_H
-#define ZAPI_ZENDAPI_H
+#ifndef ZAPI_VM_ENGING_H
+#define ZAPI_VM_ENGING_H
 
 #include "zapi/Global.h"
-#include "zapi/utils/PhpFuncs.h"
-#include "zapi/lang/Constant.h"
-#include "zapi/bridge/Extension.h"
-#include "zapi/bridge/IniEntry.h"
-#include "zapi/kernel/StreamBuffer.h"
+#include "php/Zend/zend_compile.h"
 
-#endif //ZAPI_ZENDAPI_H
+namespace zapi
+{
+
+namespace lang
+{
+class Variant;
+} // lang
+
+namespace vm
+{
+
+using zapi::lang::Variant;
+
+class ZAPI_DECL_EXPORT Engine
+{
+public:
+   
+   enum class ScriptExecuteType : unsigned int
+   {
+      Eval        = ZEND_EVAL,
+      Include     = ZEND_INCLUDE,
+      IncludeOnce = ZEND_INCLUDE_ONCE,
+      Require     = ZEND_REQUIRE,
+      RequireOnce = ZEND_REQUIRE_ONCE
+   };
+
+public:
+   static Variant eval(const std::string &code);
+private:
+   static Variant executeOpCodes(std::shared_ptr<zend_op_array> opcodes);
+};
+
+} // vm
+} // zapi
+
+#endif // ZAPI_VM_ENGING_H

@@ -16,6 +16,7 @@
 #include <string>
 #include "zapi/lang/Constant.h"
 #include "php/Zend/zend_constants.h"
+#include <iostream>
 
 namespace zapi
 {
@@ -33,28 +34,33 @@ public:
    {}
    ConstantPrivate(const ConstantPrivate &other);
    ConstantPrivate(ConstantPrivate &&other);
+   ~ConstantPrivate();
    void initialize(const std::string &prefix, int moduleNumber);
    std::string m_name;
    zend_constant m_constant;
+   bool m_initialized = false;
 };
 
 ConstantPrivate::ConstantPrivate(const ConstantPrivate &other)
    : m_name(other.m_name)
 {
-   m_constant.name = zend_string_dup(m_constant.name, 1);
+   if (m_initialized) {
+      m_constant.name = zend_string_dup(other.m_constant.name, 1);
+      m_constant.flags = other.m_constant.flags;
+      m_constant.module_number = other.m_constant.module_number;
+   }
    ZVAL_DUP(&m_constant.value, &other.m_constant.value);
-   m_constant.flags = other.m_constant.flags;
-   m_constant.module_number = other.m_constant.module_number;
 }
 
 ConstantPrivate::ConstantPrivate(ConstantPrivate &&other)
    : m_name(std::move(other.m_name))
 {
-   
-   std::swap(m_constant.name, other.m_constant.name);
+   if (m_initialized) {
+      std::swap(m_constant.name, other.m_constant.name);
+      m_constant.flags = other.m_constant.flags;
+      m_constant.module_number = other.m_constant.module_number;
+   }
    std::swap(m_constant.value, other.m_constant.value);
-   m_constant.flags = other.m_constant.flags;
-   m_constant.module_number = other.m_constant.module_number;
 }
 
 void ConstantPrivate::initialize(const std::string &prefix, int moduleNumber)
@@ -65,11 +71,18 @@ void ConstantPrivate::initialize(const std::string &prefix, int moduleNumber)
       std::strncpy(ZSTR_VAL(m_constant.name) + prefix.size(), "\\", 1);
       std::strncpy(ZSTR_VAL(m_constant.name) + prefix.size() + 1, m_name.c_str(), m_name.size() + 1);
    } else {
-      m_constant.name = zend_string_init(m_name.c_str(), m_name.size() + 1, 1);
+      m_constant.name = zend_string_init(m_name.c_str(), m_name.size(), 1);
    }
    m_constant.flags = CONST_CS | CONST_PERSISTENT;
    m_constant.module_number = moduleNumber;
+   zval_add_ref(&m_constant.value);
    zend_register_constant(&m_constant);
+   m_initialized = true;
+}
+
+ConstantPrivate::~ConstantPrivate()
+{
+   zval_ptr_dtor(&m_constant.value);
 }
 
 } // internal
@@ -115,21 +128,21 @@ Constant::Constant(const char *name, const char *value)
    : m_implPtr(new ConstantPrivate(name))
 {
    ZAPI_D(Constant);
-   ZVAL_STRINGL(&implPtr->m_constant.value, value, std::strlen(value));
+   ZVAL_PSTRINGL(&implPtr->m_constant.value, value, ::strlen(value));
 }
 
 Constant::Constant(const char *name, const char *value, size_t size)
    : m_implPtr(new ConstantPrivate(name))
 {
    ZAPI_D(Constant);
-   ZVAL_STRINGL(&implPtr->m_constant.value, value, size);
+   ZVAL_PSTRINGL(&implPtr->m_constant.value, value, size);
 }
 
 Constant::Constant(const char *name, const std::string &value)
    : m_implPtr(new ConstantPrivate(name))
 {
    ZAPI_D(Constant);
-   ZVAL_STRINGL(&implPtr->m_constant.value, value.c_str(), value.size());
+   ZVAL_PSTRINGL(&implPtr->m_constant.value, value.c_str(), value.size());
 }
 
 Constant::Constant(const Constant &other)
@@ -154,6 +167,17 @@ Constant& Constant::operator=(Constant &&other)
 
 Constant::~Constant()
 {}
+
+void Constant::initialize(const std::string &prefix, int moduleNumber)
+{
+   getImplPtr()->initialize(prefix, moduleNumber);
+}
+
+const zend_constant &Constant::getZendConstant() const
+{
+   ZAPI_D(const Constant);
+   return implPtr->m_constant;
+}
 
 } // lang
 } // zapi

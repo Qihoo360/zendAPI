@@ -31,6 +31,7 @@ namespace lang
 // forward declare
 class Parameters;
 class Variant;
+class Constant;
 
 } // lang
 namespace bridge
@@ -50,6 +51,7 @@ class ExtensionPrivate;
 using zapi::lang::Variant;
 using zapi::lang::Parameters;
 using zapi::lang::Arguments;
+using zapi::lang::Constant;
 
 class ZAPI_DECL_EXPORT Extension
 {
@@ -102,9 +104,11 @@ public:
    Extension &registerIniEntry(IniEntry &&entry);
    Extension &registerClass();
    Extension &registerNamespace();
-   
+   Extension &registerConstant(Constant &&constant);
+   Extension &registerConstant(const Constant &constant);
    size_t getIniEntryQuantity() const;
    size_t getFunctionQuantity() const;
+   size_t getConstantQuantity() const;
    operator void * ()
    {
       return getModule();

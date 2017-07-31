@@ -239,7 +239,6 @@ public:
    
    operator zval * () const
    {
-      Z_TRY_ADDREF_P(const_cast<zval *>(&m_val));
       return const_cast<zval *>(&m_val);
    }
    

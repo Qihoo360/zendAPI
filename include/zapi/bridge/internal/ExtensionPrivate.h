@@ -27,6 +27,7 @@ namespace lang
 {
 
 class Function;
+class Constant;
 
 } // vm
 
@@ -41,6 +42,7 @@ namespace internal
 
 using zapi::lang::Arguments;
 using zapi::lang::Function;
+using zapi::lang::Constant;
 using zapi::bridge::IniEntry;
 
 class ExtensionPrivate
@@ -61,7 +63,8 @@ public:
    ExtensionPrivate &registerFunction(const char *name, zapi::ZendCallable function, const Arguments &arguments = {});
    void iterateFunctions(const std::function<void(Function &func)> &callback);
    void iterateIniEntries(const std::function<void(IniEntry &ini)> &callback);
-
+   void iterateConstants(const std::function<void(Constant &constant)> &callback);
+   
    zend_module_entry *getModule();
    size_t getFunctionQuantity() const;
    size_t getIniEntryQuantity() const;
@@ -85,6 +88,7 @@ public:
    std::list<std::shared_ptr<IniEntry>> m_iniEntries;
    std::unique_ptr<zend_ini_entry_def[]> m_zendIniDefs = nullptr;
    std::list<std::shared_ptr<Function>> m_functions;
+   std::list<std::shared_ptr<Constant>> m_constants;
 };
 
 } // internal

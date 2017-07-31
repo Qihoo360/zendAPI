@@ -1,6 +1,13 @@
+set(ZAPI_PHP_INI_FILENAME ${ZAPI_ASSETS_DIR}/php.ini.in)
+set(ZAPI_ETC_DIR ${ZAPI_BINARY_DIR}/etc)
+set(ZAPI_EXTENSION_DIR ${ZAPI_BINARY_DIR}/extensions)
+set(ZAPI_EXTENSIONS "extension=dummyext.so")
+configure_file(${ZAPI_PHP_INI_FILENAME} ${ZAPI_ETC_DIR}/php.ini @ONLY)
+
 add_custom_target(UnitTests)
 set_target_properties(UnitTests PROPERTIES FOLDER "UnitTests")
 add_subdirectory(lang)
 add_subdirectory(ds)
 add_subdirectory(bridge)
+add_subdirectory(vm)
 #zapi_add_unittest(UnitTests EmbedPhpTest EmbedPhpTest.cpp)

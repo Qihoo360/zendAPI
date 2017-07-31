@@ -18,6 +18,9 @@
 #include "zapi/bridge/Extension.h"
 #include "zapi/bridge/internal/ExtensionPrivate.h"
 #include "zapi/lang/Function.h"
+#include "zapi/lang/Constant.h"
+
+#include "php/Zend/zend_constants.h"
 
 #ifdef ZTS
 #include "TSRM.h"
@@ -79,6 +82,8 @@ namespace zapi
 {
 namespace bridge
 {
+
+using zapi::lang::Constant;
 
 Extension::Extension(const char *name, const char *version, int apiVersion)
    : m_implPtr(new ExtensionPrivate(name, version, apiVersion, this))
@@ -147,6 +152,26 @@ Extension &Extension::registerFunction(const char *name, zapi::ZendCallable func
    return *this;
 }
 
+Extension &Extension::registerConstant(const Constant &constant)
+{
+   ZAPI_D(Extension);
+   if (implPtr->m_locked) {
+      return *this;
+   }
+   implPtr->m_constants.push_back(std::unique_ptr<Constant>(new Constant(constant)));
+   return *this;
+}
+
+Extension &Extension::registerConstant(Constant &&constant)
+{
+   ZAPI_D(Extension);
+   if (implPtr->m_locked) {
+      return *this;
+   }
+   implPtr->m_constants.push_back(std::unique_ptr<Constant>(new Constant(std::move(constant))));
+   return *this;
+}
+
 bool Extension::initialize(int moduleNumber)
 {
    return getImplPtr()->initialize(moduleNumber);
@@ -174,12 +199,20 @@ Extension &Extension::registerIniEntry(IniEntry &&entry)
 
 size_t Extension::getFunctionQuantity() const
 {
-   return getImplPtr()->getFunctionQuantity();
+   ZAPI_D(const Extension);
+   return implPtr->m_functions.size();
 }
 
 size_t Extension::getIniEntryQuantity() const
 {
-   return getImplPtr()->getIniEntryQuantity();
+   ZAPI_D(const Extension);
+   return implPtr->m_iniEntries.size();
+}
+
+size_t Extension::getConstantQuantity() const
+{
+   ZAPI_D(const Extension);
+   return implPtr->m_constants.size();
 }
 
 namespace internal
@@ -283,6 +316,13 @@ void ExtensionPrivate::iterateIniEntries(const std::function<void (bridge::IniEn
    }
 }
 
+void ExtensionPrivate::iterateConstants(const std::function<void (lang::Constant &)> &callback)
+{
+   for (auto &constant : m_constants) {
+      callback(*constant);
+   }
+}
+
 int ExtensionPrivate::processIdle(int type, int moduleNumber)
 {
    return 0;
@@ -299,7 +339,6 @@ int ExtensionPrivate::processMismatch(int type, int moduleNumber)
 
 int ExtensionPrivate::processRequest(int type, int moduleNumber)
 {
-   
    return 0;
 }
 
@@ -340,6 +379,9 @@ bool ExtensionPrivate::initialize(int moduleNumber)
    if (m_startupHandler) {
       m_startupHandler();
    }
+   iterateConstants([moduleNumber](Constant &constant) {
+      constant.initialize("", moduleNumber);
+   });
    // remember that we're initialized (when you use "apache reload" it is
    // possible that the processStartup() method is called more than once)
    m_locked = true;

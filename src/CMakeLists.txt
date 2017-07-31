@@ -16,6 +16,7 @@ set(ZAPI_SRC
    vm/StdClassImpl.cpp
    vm/InvokeBridge.cpp
    vm/Callable.cpp
+   vm/Engine.cpp
    utils/PhpFuncs.cpp)
 
 zapi_add_library(${ZAPI_PROJECT_NAME} SHARED ${ZAPI_SRC} ${ZAPI_PUBLIC_HEADERS})

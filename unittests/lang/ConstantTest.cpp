@@ -11,16 +11,17 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by zzu_softboy on 27/05/2017.
+// Created by zzu_softboy on 2017/07/27.
 
-#ifndef ZAPI_ZENDAPI_H
-#define ZAPI_ZENDAPI_H
-
-#include "zapi/Global.h"
-#include "zapi/utils/PhpFuncs.h"
+#include "gtest/gtest.h"
 #include "zapi/lang/Constant.h"
-#include "zapi/bridge/Extension.h"
-#include "zapi/bridge/IniEntry.h"
-#include "zapi/kernel/StreamBuffer.h"
 
-#endif //ZAPI_ZENDAPI_H
+using zapi::lang::Type;
+using zapi::lang::Constant;
+
+TEST(ConstantTest, test)
+{
+   {
+      Constant constant("MY_NAME", "zzu_softboy");
+   }
+}
