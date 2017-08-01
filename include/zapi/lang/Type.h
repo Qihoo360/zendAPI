@@ -16,6 +16,7 @@
 #ifndef ZAPI_LANG_TYPE_H
 #define ZAPI_LANG_TYPE_H
 
+#include "php/Zend/zend_compile.h"
 #include "zapi/CompilerDetection.h"
 
 namespace zapi
@@ -56,29 +57,36 @@ enum class Type : unsigned char
 enum class ClassType : unsigned int
 {
    Regular   = 0x00,
-   Abstract  = 0x20,
-   Final     = 0x04,
-   Interface = 0x40
+   Abstract  = ZEND_ACC_EXPLICIT_ABSTRACT_CLASS, //0x20,
+   Final     = ZEND_ACC_FINAL, //0x04,
+   Interface = ZEND_ACC_INTERFACE, //0x40
+   Trait     = ZEND_ACC_TRAIT // 0x80
 };
 
 enum class  Modifier : unsigned int
 {
-   Static     = 0x01,
-   Abstract   = 0x02,
-   Final      = 0x04,
-   Public     = 0x100,
-   Protected  = 0x200,
-   Private    = 0x400,
-   Const      = 0,
-   Method     = Final | Public | Protected | Private | Static,
-   Property   = Final | Public | Protected | Private | Const | Static
+   Static            = ZEND_ACC_STATIC, //0x01,
+   Abstract          = ZEND_ACC_ABSTRACT, //0x02,
+   Final             = ZEND_ACC_FINAL, //0x04,
+   Public            = ZEND_ACC_PUBLIC, //0x100,
+   Protected         = ZEND_ACC_PROTECTED, //0x200,
+   Private           = ZEND_ACC_PRIVATE, //0x400,
+   Const             = 0,
+   MethodModifiers   = Final | Public | Protected | Private | Static,
+   PropertyModifiers = Final | Public | Protected | Private | Const | Static,
+   // special method type
+   Constructor       = ZEND_ACC_CTOR,
+   Destructor        = ZEND_ACC_DTOR,
+   Clone             = ZEND_ACC_CLONE
 };
 
-ZAPI_DECL_EXPORT Modifier operator|(const Modifier &left, const Modifier &right);
-ZAPI_DECL_EXPORT Modifier operator&(const Modifier &left, const Modifier &right);
-ZAPI_DECL_EXPORT Modifier operator==(const Modifier &left, const Modifier &right);
-ZAPI_DECL_EXPORT bool operator==(const Modifier &left, int value);
+ZAPI_DECL_EXPORT Modifier operator|(Modifier left, Modifier right);
+ZAPI_DECL_EXPORT Modifier operator&(Modifier left, Modifier right);
+ZAPI_DECL_EXPORT Modifier &operator|=(Modifier &left, Modifier right);
+ZAPI_DECL_EXPORT Modifier &operator&=(Modifier &left, Modifier right);
+ZAPI_DECL_EXPORT bool operator==(const Modifier left, int value);
 ZAPI_DECL_EXPORT bool operator==(int value, const Modifier &right);
+ZAPI_DECL_EXPORT bool operator==(Modifier left, Modifier right);
 
 using HashTableDataDeleter = dtor_func_t;
 

@@ -20,24 +20,41 @@ namespace zapi
 namespace lang
 {
 
-Modifier operator|(const Modifier &left, const Modifier &right)
+Modifier operator|(Modifier left, Modifier right)
 {
    return static_cast<Modifier>(static_cast<unsigned int>(left) | static_cast<unsigned int>(right));
 }
 
-Modifier operator&(const Modifier &left, const Modifier &right)
+Modifier operator&(Modifier left, Modifier right)
 {
    return static_cast<Modifier>(static_cast<unsigned int>(left) & static_cast<unsigned int>(right));
 }
 
-bool operator==(int value, const Modifier &right)
+Modifier &operator|=(Modifier &left, Modifier right)
+{
+   left = static_cast<Modifier>(static_cast<unsigned int>(left) | static_cast<unsigned int>(right));
+   return left;
+}
+
+Modifier &operator&=(Modifier &left, Modifier right)
+{
+   left = static_cast<Modifier>(static_cast<unsigned int>(left) & static_cast<unsigned int>(right));
+   return left;
+}
+
+bool operator==(int value, Modifier right)
 {
    return static_cast<unsigned int>(right) == value;
 }
 
-bool operator==(const Modifier &left, int value)
+bool operator==(Modifier left, int value)
 {
    return static_cast<unsigned int>(left) == value;
+}
+
+bool operator==(Modifier left, Modifier right)
+{
+   return static_cast<unsigned int>(left) == static_cast<unsigned int>(right);
 }
 
 } // lang

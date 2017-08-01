@@ -53,8 +53,9 @@ public:
 void MethodPrivate::initialize(zend_function_entry *entry, const std::string &className)
 {
    if ((m_flags & (Modifier::Public | Modifier::Private | Modifier::Protected)) == 0) {
-      
+      m_flags |= Modifier::Public;
    }
+   CallablePrivate::initialize(entry, className.c_str(), static_cast<int>(m_flags));
 }
 
 } // internal
