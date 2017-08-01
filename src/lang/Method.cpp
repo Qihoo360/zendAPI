@@ -11,9 +11,21 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by zzu_softboy on 2017/06/14.
+// Created by zzu_softboy on 2017/08/01.
 
-#ifndef ZAPI_LANG_ARRAY_H
-#define ZAPI_LANG_ARRAY_H
+#include "zapi/lang/Method.h"
 
-#endif //ZAPI_LANG_ARRAY_H
+namespace zapi
+{
+namespace lang
+{
+
+namespace internal
+{
+
+
+
+} // internal
+
+} // lang
+} // zapi

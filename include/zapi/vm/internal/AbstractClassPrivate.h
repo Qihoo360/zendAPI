@@ -13,11 +13,12 @@
 //
 // Created by zzu_softboy on 2017/08/01.
 
-#ifndef ZAPI_VM_ABSTRACT_CLASS_PRIVATE_H
-#define ZAPI_VM_ABSTRACT_CLASS_PRIVATE_H
+#ifndef ZAPI_VM_INTERNAL_ABSTRACT_CLASS_PRIVATE_H
+#define ZAPI_VM_INTERNAL_ABSTRACT_CLASS_PRIVATE_H
 
 #include "zapi/Global.h"
 #include <string>
+#include <list>
 
 namespace zapi
 {
@@ -38,10 +39,15 @@ public:
    ClassType m_type = ClassType::Regular;
    zend_class_entry *m_classEntry = nullptr;
    zend_function_entry *m_funcEntries = nullptr;
+   zend_object_handlers m_handlers;
+   std::list<std::shared_ptr<AbstractClassPrivate>> m_interfaces;
+   std::shared_ptr<AbstractClassPrivate> m_parent;
+   bool m_intialized = false;
+   zend_string *m_self = nullptr;
 };
 
 } // internal
 } // vm
 } // zapi
 
-#endif
+#endif // ZAPI_VM_INTERNAL_ABSTRACT_CLASS_PRIVATE_H

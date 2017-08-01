@@ -1,4 +1,6 @@
 // Copyright 2017-2018 zzu_softboy <zzu_softboy@163.com>
+// Copyright 2013, 2014 Copernica BV
+// Emiel Bruijntjes <emiel.bruijntjes@copernica.com>
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -11,9 +13,30 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by zzu_softboy on 2017/06/14.
+// Created by softboy on 2017/08/01.
 
-#ifndef ZAPI_LANG_ARRAY_H
-#define ZAPI_LANG_ARRAY_H
+#ifndef ZAPI_LANG_METHOD_H
+#define ZAPI_LANG_METHOD_H
 
-#endif //ZAPI_LANG_ARRAY_H
+#include "zapi/Global.h"
+#include "zapi/vm/Callable.h"
+
+namespace zapi
+{
+namespace lang
+{
+
+namespace internal
+{
+
+} // internal
+
+class ZAPI_DECL_EXPORT Method : public zapi::vm::Callable
+{
+   
+};
+
+} // lang
+} // zapi
+
+#endif // ZAPI_LANG_METHOD_H

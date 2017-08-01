@@ -13,8 +13,8 @@
 //
 // Created by zzu_softboy on 27/07/2017.
 
-#ifndef ZAPI_VM_CALLABLE_PRIVATE_H
-#define ZAPI_VM_CALLABLE_PRIVATE_H
+#ifndef ZAPI_VM_INTERNAL_CALLABLE_PRIVATE_H
+#define ZAPI_VM_INTERNAL_CALLABLE_PRIVATE_H
 
 #include "zapi/Global.h"
 
@@ -46,4 +46,4 @@ public:
 } // vm
 } // zapi
 
-#endif // ZAPI_VM_CALLABLE_PRIVATE_H
+#endif // ZAPI_VM_INTERNAL_CALLABLE_PRIVATE_H

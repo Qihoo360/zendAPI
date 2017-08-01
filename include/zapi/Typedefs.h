@@ -50,8 +50,8 @@ using MethodCallback7 = lang::Variant (lang::StdClass::*)(lang::Parameters &) co
 // class getter and setter signature type alias
 using GetterMethodCallback0 = lang::Variant (lang::StdClass::*)();
 using GetterMethodCallback1 = lang::Variant (lang::StdClass::*)() const;
-using SetterMethodCallback0 = void (const lang::Variant &value);
-using SetterMethodCallback1 = void (const lang::Variant &value) const;
+using SetterMethodCallback0 = void (lang::StdClass::*)(const lang::Variant &value);
+using SetterMethodCallback1 = void (lang::StdClass::*)(const lang::Variant &value) const;
 
 } // zapi
 
