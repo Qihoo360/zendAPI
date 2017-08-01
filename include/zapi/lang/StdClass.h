@@ -19,39 +19,26 @@
 #include "zapi/Global.h"
 #include "zapi/lang/Variant.h"
 
-// forward declare
-namespace zapi
-{
-namespace vm
-{
-class StdClassImpl;
-} // vm
-} // zapi
-
 namespace zapi
 {
 namespace lang
 {
 
-using zapi::vm::StdClassImpl;
+namespace internal
+{
+class StdClassPrivate;
+} // internal
+
+using zapi::lang::internal::StdClassPrivate;
 class Parameters;
 
 class ZAPI_DECL_EXPORT StdClass
 {
-
-private:
-   /**
-    * Object handle in the PHP engine
-    * @var StdClassImpl
-    */
-   StdClassImpl *m_implPtr = nullptr;
-
 protected:
    /**
     * Constructor
     */
-   StdClass()
-   {}
+   StdClass();
 
    /**
     * Copy constructor
@@ -63,53 +50,38 @@ protected:
     *
     * @param object
     */
-   StdClass(const StdClass &object) : m_implPtr(nullptr)
-   {}
+   StdClass(const StdClass &object);
 
 public:
-   virtual ~StdClass()
-   {}
+   virtual ~StdClass();
 
    /**
     * Get access to a property by name using the [] operator
     * @param  string
     * @return Value
     */
-   Variant operator[](const char *name) const
-   {
-      return Variant(this);
-   }
+   Variant operator[](const char *name) const;
 
    /**
     * Alternative way to access a property using the [] operator
     * @param  string
     * @return Value
     */
-   Variant operator[](const std::string &name) const
-   {
-      return Variant(this);
-   }
+   Variant operator[](const std::string &name) const;
+   /**
+    * Retrieve a property by name
+    * @param  string
+    * @return Value
+    */
+   Variant property(const char *name) const;
 
    /**
     * Retrieve a property by name
     * @param  string
     * @return Value
     */
-   Variant property(const char *name) const
-   {
-      return Variant(this);
-   }
-
-   /**
-    * Retrieve a property by name
-    * @param  string
-    * @return Value
-    */
-   Variant property(const std::string &name) const
-   {
-      return Variant(this);
-   }
-
+   Variant property(const std::string &name) const;
+   
    /**
     * Overridable method that is called right before an object is destructed
     */
@@ -120,8 +92,7 @@ public:
     *
     * The default implementation does nothing
     */
-   void __clone() const
-   {}
+   void __clone() const;
 
    /**
     * Overridable method that is called to check if a property is set
@@ -239,19 +210,10 @@ public:
     *  @return int
     */
    int __compare(const StdClass &object) const;
-
+   
 private:
-   /**
-    * Get access to the implementation object
-    * @return ObjectImpl
-    */
-   const StdClassImpl *implementation() const
-   {
-      return m_implPtr;
-   }
-
-   friend class StdClassImpl;
-   friend class Variant;
+   ZAPI_DECLARE_PRIVATE(StdClass)
+   std::unique_ptr<StdClassPrivate> m_implPtr;
 };
 
 } // lang

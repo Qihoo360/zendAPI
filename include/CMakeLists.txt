@@ -6,6 +6,7 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/bridge/IniEntry.h
    ${ZAPI_INCLUDE_DIR}/zapi/bridge/internal/ExtensionPrivate.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Type.h
+   ${ZAPI_INCLUDE_DIR}/zapi/lang/Class.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Constant.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Array.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Variant.h
@@ -30,10 +31,11 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/Typedefs.h
    ${ZAPI_INCLUDE_DIR}/zapi/ProcessorDetection.h
    ${ZAPI_INCLUDE_DIR}/zapi/SystemDetection.h
-   ${ZAPI_INCLUDE_DIR}/zapi/vm/StdClassImpl.h
+   ${ZAPI_INCLUDE_DIR}/zapi/vm/AbstractClass.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/InvokeBridge.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/Callable.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/internal/CallablePrivate.h
+   ${ZAPI_INCLUDE_DIR}/zapi/vm/internal/AbstractClassPrivate.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/Engine.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/ExecStateGuard.h
    )

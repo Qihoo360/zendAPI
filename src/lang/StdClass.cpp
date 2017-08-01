@@ -16,12 +16,17 @@
 #include "zapi/lang/StdClass.h"
 #include "zapi/lang/NotImplemented.h"
 #include "zapi/lang/Variant.h"
-#include "zapi/vm/StdClassImpl.h"
+#include "zapi/lang/internal/StdClassPrivate.h"
 
 namespace zapi
 {
 namespace lang
 {
+
+namespace internal
+{
+
+} // internal
 
 /**
  * Overridable method that is called right before an object is destructed
@@ -43,7 +48,6 @@ void StdClass::__destruct() const
 bool StdClass::__isset(const Variant &key) const
 {
    throw NotImplemented();
-   return false;
 }
 
 /**
@@ -72,7 +76,6 @@ void StdClass::__set(const Variant &key, const Variant &value) const
 Variant StdClass::__get(const Variant &key) const
 {
    throw NotImplemented();
-   return nullptr;
 }
 
 /**
@@ -102,7 +105,6 @@ void StdClass::__unset(const Variant &key) const
 Variant StdClass::__call(const char *method, Parameters &params) const
 {
    throw NotImplemented();
-   return nullptr;
 }
 
 /**
@@ -117,7 +119,6 @@ Variant StdClass::__call(const char *method, Parameters &params) const
 Variant StdClass::__invoke(Parameters &params) const
 {
    throw NotImplemented();
-   return nullptr;
 }
 
 /**
@@ -131,7 +132,6 @@ Variant StdClass::__invoke(Parameters &params) const
 Variant StdClass::__toString() const
 {
    throw NotImplemented();
-   return nullptr;
 }
 
 /**
@@ -145,7 +145,6 @@ Variant StdClass::__toString() const
 Variant StdClass::__toInteger() const
 {
    throw NotImplemented();
-   return 0;
 }
 
 /**
@@ -159,7 +158,6 @@ Variant StdClass::__toInteger() const
 Variant StdClass::__toDouble() const
 {
    throw NotImplemented();
-   return 0.0;
 }
 
 /**
@@ -173,7 +171,6 @@ Variant StdClass::__toDouble() const
 Variant StdClass::__toBool() const
 {
    throw NotImplemented();
-   return false;
 }
 
 /**
@@ -187,7 +184,6 @@ Variant StdClass::__toBool() const
 int StdClass::__compare(const StdClass &object) const
 {
    throw NotImplemented();
-   return 1;
 }
 
 } // lang

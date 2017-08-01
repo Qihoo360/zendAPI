@@ -29,12 +29,29 @@ namespace lang
 
 class Parameters;
 class Variant;
+class StdClass;
 
 } // lang
 
 using HANDLE = void *;
 using Callback = std::function<void()>;
 using ZendCallable = void(*)(struct _zend_execute_data *executeData, struct _zval_struct *returnValue);
+
+// class method signature type alias
+using MethodCallback0 = void (lang::StdClass::*)();
+using MethodCallback1 = void (lang::StdClass::*)(lang::Parameters &);
+using MethodCallback2 = lang::Variant (lang::StdClass::*)();
+using MethodCallback3 = lang::Variant (lang::StdClass::*)(lang::Parameters &);
+using MethodCallback4 = void (lang::StdClass::*)() const;
+using MethodCallback5 = void (lang::StdClass::*)(lang::Parameters &) const;
+using MethodCallback6 = lang::Variant (lang::StdClass::*)() const;
+using MethodCallback7 = lang::Variant (lang::StdClass::*)(lang::Parameters &) const;
+
+// class getter and setter signature type alias
+using GetterMethodCallback0 = lang::Variant (lang::StdClass::*)();
+using GetterMethodCallback1 = lang::Variant (lang::StdClass::*)() const;
+using SetterMethodCallback0 = void (const lang::Variant &value);
+using SetterMethodCallback1 = void (const lang::Variant &value) const;
 
 } // zapi
 

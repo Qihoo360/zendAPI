@@ -106,6 +106,7 @@ public:
    Extension &registerNamespace();
    Extension &registerConstant(Constant &&constant);
    Extension &registerConstant(const Constant &constant);
+//   Extension &registerClass();
    size_t getIniEntryQuantity() const;
    size_t getFunctionQuantity() const;
    size_t getConstantQuantity() const;

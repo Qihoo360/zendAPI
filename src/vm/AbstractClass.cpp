@@ -11,17 +11,20 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by softboy on 2017/08/01.
+// Created by zzu_softboy on 08/01/2017.
 
-#ifndef ZAPI_LANG_CLASS_H
-#define ZAPI_LANG_CLASS_H
+#include "zapi/vm/AbstractClass.h"
+#include "zapi/vm/internal/AbstractClassPrivate.h"
 
 namespace zapi
 {
-namespace name
+namespace vm
 {
 
-} // name
-} // zapi
+namespace internal
+{
 
-#endif //ZAPI_LANG_CLASS_H
+} // internal
+
+} // vm
+} // zapi

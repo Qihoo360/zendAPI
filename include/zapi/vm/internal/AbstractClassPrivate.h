@@ -11,17 +11,37 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by softboy on 2017/08/01.
+// Created by zzu_softboy on 2017/08/01.
 
-#ifndef ZAPI_LANG_CLASS_H
-#define ZAPI_LANG_CLASS_H
+#ifndef ZAPI_VM_ABSTRACT_CLASS_PRIVATE_H
+#define ZAPI_VM_ABSTRACT_CLASS_PRIVATE_H
+
+#include "zapi/Global.h"
+#include <string>
 
 namespace zapi
 {
-namespace name
+namespace vm
 {
 
-} // name
+class AbstractClass;
+using zapi::lang::ClassType;
+
+namespace internal
+{
+
+class AbstractClassPrivate
+{
+public:
+   std::unique_ptr<AbstractClass> m_apiPtr;
+   std::string m_name;
+   ClassType m_type = ClassType::Regular;
+   zend_class_entry *m_classEntry = nullptr;
+   zend_function_entry *m_funcEntries = nullptr;
+};
+
+} // internal
+} // vm
 } // zapi
 
-#endif //ZAPI_LANG_CLASS_H
+#endif

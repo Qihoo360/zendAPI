@@ -13,15 +13,33 @@
 //
 // Created by softboy on 2017/08/01.
 
-#ifndef ZAPI_LANG_CLASS_H
-#define ZAPI_LANG_CLASS_H
+#include <list>
+#include <string>
+#include "zapi/lang/Namespace.h"
+#include "zapi/lang/Constant.h"
+#include "zapi/lang/Function.h"
 
 namespace zapi
 {
-namespace name
+namespace lang
 {
 
-} // name
-} // zapi
+using zapi::lang::Constant;
+using zapi::lang::Function;
 
-#endif //ZAPI_LANG_CLASS_H
+namespace internal
+{
+
+class NamespacePrivate
+{
+public:
+   std::string m_name;
+   std::list<std::shared_ptr<Function>> m_functions;
+   std::list<std::shared_ptr<Constant>> m_constants;
+   std::list<std::shared_ptr<Namespace>> m_namespaces;
+};
+
+} // internal
+
+} // zapi
+} // zapi

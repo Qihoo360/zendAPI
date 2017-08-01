@@ -19,4 +19,36 @@
 #ifndef ZAPI_LANG_NAMESPACE_H
 #define ZAPI_LANG_NAMESPACE_H
 
+#include "zapi/Global.h"
+
+namespace zapi
+{
+namespace lang
+{
+
+namespace internal
+{
+class NamespacePrivate;
+} // internal
+
+using internal::NamespacePrivate;
+
+class ZAPI_DECL_EXPORT Namespace
+{
+public:
+   Namespace(const std::string &name);
+   virtual ~Namespace();
+   
+public:
+   void registerConstant();
+   void registerFunction();
+   void registerNamespace();
+private:
+   ZAPI_DECLARE_PRIVATE(Namespace)
+   std::unique_ptr<NamespacePrivate> m_implPtr;
+};
+
+} // lang
+} // zapi
+
 #endif // ZAPI_LANG_NAMESPACE_H

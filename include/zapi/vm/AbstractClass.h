@@ -13,3 +13,35 @@
 //
 // Created by zzu_softboy on 08/06/2017.
 
+#ifndef ZAPI_VM_STDCLASSIMPL_H
+#define ZAPI_VM_STDCLASSIMPL_H
+
+#include "zapi/Global.h"
+
+#include "php/Zend/zend_types.h"
+#include "php/Zend/zend_alloc.h"
+#include "php/Zend/zend_objects_API.h"
+
+namespace zapi
+{
+namespace vm
+{
+
+namespace internal
+{
+class AbstractClassPrivate;
+} // internal
+
+using zapi::vm::internal::AbstractClassPrivate;
+
+class ZAPI_DECL_EXPORT AbstractClass
+{
+private:
+   ZAPI_DECLARE_PRIVATE(AbstractClass)
+   std::unique_ptr<AbstractClassPrivate> m_implPtr;
+};
+
+} // vm
+} // zapi
+
+#endif // ZAPI_VM_STDCLASSIMPL_H

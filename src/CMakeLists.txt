@@ -11,9 +11,10 @@ set(ZAPI_SRC
    lang/Function.cpp
    lang/Argument.cpp
    lang/Constant.cpp
+   lang/Namespace.cpp
    ds/String.cpp
    ds/HashTable.cpp
-   vm/StdClassImpl.cpp
+   vm/AbstractClass.cpp
    vm/InvokeBridge.cpp
    vm/Callable.cpp
    vm/Engine.cpp

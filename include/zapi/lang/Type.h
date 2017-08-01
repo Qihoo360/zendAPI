@@ -54,6 +54,14 @@ enum class Type : unsigned char
    Error       = _IS_ERROR
 };
 
+enum class ClassType : unsigned int
+{
+   Regular   = 0x00,
+   Abstract  = 0x20,
+   Final     = 0x04,
+   Interface = 0x40
+};
+
 using HashTableDataDeleter = dtor_func_t;
 
 } // lang
