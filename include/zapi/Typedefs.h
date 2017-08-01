@@ -37,15 +37,25 @@ using HANDLE = void *;
 using Callback = std::function<void()>;
 using ZendCallable = void(*)(struct _zend_execute_data *executeData, struct _zval_struct *returnValue);
 
+// native function signature type alias
+using NativeCallback0 = void (*)();
+using NativeCallback1 = void (*)(lang::Parameters &);
+using NativeCallback2 = lang::Variant (*)();
+using NativeCallback3 = lang::Variant (*)(lang::Parameters &);
+
 // class method signature type alias
-using MethodCallback0 = void (lang::StdClass::*)();
-using MethodCallback1 = void (lang::StdClass::*)(lang::Parameters &);
-using MethodCallback2 = lang::Variant (lang::StdClass::*)();
-using MethodCallback3 = lang::Variant (lang::StdClass::*)(lang::Parameters &);
-using MethodCallback4 = void (lang::StdClass::*)() const;
-using MethodCallback5 = void (lang::StdClass::*)(lang::Parameters &) const;
-using MethodCallback6 = lang::Variant (lang::StdClass::*)() const;
-using MethodCallback7 = lang::Variant (lang::StdClass::*)(lang::Parameters &) const;
+using MethodCallback0  = void (lang::StdClass::*)();
+using MethodCallback1  = void (lang::StdClass::*)(lang::Parameters &);
+using MethodCallback2  = lang::Variant (lang::StdClass::*)();
+using MethodCallback3  = lang::Variant (lang::StdClass::*)(lang::Parameters &);
+using MethodCallback4  = void (lang::StdClass::*)() const;
+using MethodCallback5  = void (lang::StdClass::*)(lang::Parameters &) const;
+using MethodCallback6  = lang::Variant (lang::StdClass::*)() const;
+using MethodCallback7  = lang::Variant (lang::StdClass::*)(lang::Parameters &) const;
+using MethodCallback8  = NativeCallback0;
+using MethodCallback9  = NativeCallback1;
+using MethodCallback10 = NativeCallback2;
+using MethodCallback11 = NativeCallback3;
 
 // class getter and setter signature type alias
 using GetterMethodCallback0 = lang::Variant (lang::StdClass::*)();

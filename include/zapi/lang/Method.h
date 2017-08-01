@@ -28,12 +28,34 @@ namespace lang
 
 namespace internal
 {
-
+class MethodPrivate;
 } // internal
+
+using internal::MethodPrivate;
 
 class ZAPI_DECL_EXPORT Method : public zapi::vm::Callable
 {
-   
+public:
+   Method(const char *name, zapi::ZendCallable callback, int flags, const Arguments &args);
+   Method(const char *name, zapi::MethodCallback0 callback, int flags, const Arguments &args);
+   Method(const char *name, zapi::MethodCallback1 callback, int flags, const Arguments &args);
+   Method(const char *name, zapi::MethodCallback2 callback, int flags, const Arguments &args);
+   Method(const char *name, zapi::MethodCallback3 callback, int flags, const Arguments &args);
+   Method(const char *name, zapi::MethodCallback4 callback, int flags, const Arguments &args);
+   Method(const char *name, zapi::MethodCallback5 callback, int flags, const Arguments &args);
+   Method(const char *name, zapi::MethodCallback6 callback, int flags, const Arguments &args);
+   Method(const char *name, zapi::MethodCallback7 callback, int flags, const Arguments &args);
+   Method(const char *name, zapi::MethodCallback8 callback, int flags, const Arguments &args);
+   Method(const char *name, zapi::MethodCallback9 callback, int flags, const Arguments &args);
+   Method(const char *name, zapi::MethodCallback10 callback, int flags, const Arguments &args);
+   Method(const char *name, zapi::MethodCallback11 callback, int flags, const Arguments &args);
+   Method(const char *name, int flags, const Arguments &args);
+   Method(const Method &other);
+   Method(Method &&other);
+   virtual ~Method();
+   virtual Variant invoke(Parameters &parameters);
+private:
+   ZAPI_DECLARE_PRIVATE(Method)
 };
 
 } // lang

@@ -87,6 +87,48 @@ CallablePrivate &CallablePrivate::operator=(CallablePrivate &&other)
    return *this;
 }
 
+void CallablePrivate::initialize(zend_function_entry *entry, const char *className, int flags) const
+{
+   if (m_callable) {
+      entry->handler = m_callable;
+   } else {
+      // install ourselves in the extra argument
+      m_argv[m_argc + 1].class_name = reinterpret_cast<const char*>(this);
+      // we use our own invoke method, which does a lookup
+      // in the map we just installed ourselves in
+      entry->handler = &Callable::invoke;
+   }
+   entry->fname = m_name.data();
+   entry->arg_info = m_argv.get();
+   entry->num_args = m_argc;
+   entry->flags = flags;
+   initialize(reinterpret_cast<zend_internal_function_info *>(m_argv.get()), className);
+}
+
+void CallablePrivate::initialize(zend_internal_function_info *info, const char *className) const
+{
+   info->class_name = className;
+   info->required_num_args = m_required;
+   info->type_hint = static_cast<unsigned char>(m_return);
+   // current we don't support return by reference
+   info->return_reference = false;
+   // since php 5.6 there are _allow_null and _is_variadic properties. It's
+   // not exactly clear what they do (@todo find this out) so for now we set
+   // them to false
+   info->allow_null = false;
+   info->_is_variadic = false;
+}
+
+void CallablePrivate::initialize(const std::string &prefix, zend_function_entry *entry)
+{
+   // if there is a namespace prefix, we should adjust the name
+   if (!prefix.empty()) {
+      m_name = prefix + '\\' + m_name;
+   }
+   // call base initialize
+   CallablePrivate::initialize(entry);
+}
+
 void CallablePrivate::setupCallableArgInfo(zend_internal_arg_info *info, const lang::Argument &arg) const
 {
    info->name = arg.getName();
@@ -210,46 +252,19 @@ void Callable::invoke(INTERNAL_FUNCTION_PARAMETERS)
 void Callable::initialize(zend_function_entry *entry, const char *className, int flags) const
 {
    ZAPI_D(const Callable);
-   if (implPtr->m_callable) {
-      entry->handler = implPtr->m_callable;
-   } else {
-      // install ourselves in the extra argument
-      implPtr->m_argv[implPtr->m_argc + 1].class_name = reinterpret_cast<const char*>(this);
-      // we use our own invoke method, which does a lookup
-      // in the map we just installed ourselves in
-      entry->handler = &Callable::invoke;
-   }
-   entry->fname = implPtr->m_name.data();
-   entry->arg_info = implPtr->m_argv.get();
-   entry->num_args = implPtr->m_argc;
-   entry->flags = flags;
-   initialize(reinterpret_cast<zend_internal_function_info *>(implPtr->m_argv.get()), className);
+   implPtr->initialize(entry, className, flags);
 }
 
 void Callable::initialize(zend_internal_function_info *info, const char *className) const
 {
    ZAPI_D(const Callable);
-   info->class_name = className;
-   info->required_num_args = implPtr->m_required;
-   info->type_hint = static_cast<unsigned char>(implPtr->m_return);
-   // current we don't support return by reference
-   info->return_reference = false;
-   // since php 5.6 there are _allow_null and _is_variadic properties. It's
-   // not exactly clear what they do (@todo find this out) so for now we set
-   // them to false
-   info->allow_null = false;
-   info->_is_variadic = false;
+   implPtr->initialize(info, className);
 }
 
 void Callable::initialize(const std::string &prefix, zend_function_entry *entry)
 {
    ZAPI_D(Callable);
-   // if there is a namespace prefix, we should adjust the name
-   if (!prefix.empty()) {
-      implPtr->m_name = prefix + '\\' + implPtr->m_name;
-   }
-   // call base initialize
-   Callable::initialize(entry);
+   implPtr->initialize(prefix, entry);
 }
 
 } // vm

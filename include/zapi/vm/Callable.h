@@ -24,6 +24,14 @@
 namespace zapi
 {
 
+namespace bridge
+{
+namespace internal
+{
+class ExtensionPrivate;
+} // internal
+} // bridge
+
 namespace lang
 {
 
@@ -54,6 +62,7 @@ class CallablePrivate;
 } // internal
 
 using internal::CallablePrivate;
+using zapi::bridge::internal::ExtensionPrivate;
 
 class ZAPI_DECL_EXPORT Callable
 {
@@ -67,16 +76,17 @@ public:
    Callable &operator=(Callable &&other);
 public:
    virtual Variant invoke(Parameters &parameters) = 0;
-   void initialize(zend_function_entry *entry, const char *className = nullptr, int flags = 0) const;
-   void initialize(zend_internal_function_info *info, const char *className = nullptr) const;
-   void initialize(const std::string &prefix, zend_function_entry *entry);
 protected:
    Callable(CallablePrivate &implPtr);
    void setupCallableArgInfo(zend_internal_arg_info *info, const Argument &arg) const;
    static void invoke(INTERNAL_FUNCTION_PARAMETERS);
+   void initialize(zend_function_entry *entry, const char *className = nullptr, int flags = 0) const;
+   void initialize(zend_internal_function_info *info, const char *className = nullptr) const;
+   void initialize(const std::string &prefix, zend_function_entry *entry);
 protected:
    ZAPI_DECLARE_PRIVATE(Callable)
    std::unique_ptr<CallablePrivate> m_implPtr;
+   friend class ExtensionPrivate;
 };
 
 } // vm

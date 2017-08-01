@@ -23,6 +23,7 @@ namespace zapi
 namespace lang
 {
 
+using zapi::bridge::internal::ExtensionPrivate;
 class FunctionPrivate;
 
 class ZAPI_DECL_EXPORT Function : public zapi::vm::Callable

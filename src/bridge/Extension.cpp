@@ -17,9 +17,9 @@
 #include "zapi/bridge/IniEntry.h"
 #include "zapi/bridge/Extension.h"
 #include "zapi/bridge/internal/ExtensionPrivate.h"
+#include "zapi/vm/internal/CallablePrivate.h"
 #include "zapi/lang/Function.h"
 #include "zapi/lang/Constant.h"
-
 #include "php/Zend/zend_constants.h"
 
 #ifdef ZTS
