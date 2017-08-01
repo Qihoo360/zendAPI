@@ -86,11 +86,19 @@ TEST(ExtensionTest, testRegisterContsant)
    code += "$name = \"zapi\";"
            "echo ZAPI_NAME;echo \"\\n\";echo \"xiuxiux\";";
    Engine::eval(code);
-   //std::cout << phpOutput << std::endl;
+   ASSERT_EQ(phpOutput, "zapi\nxiuxiux");
    phpOutput.clear();
    code = "echo ZAPI_VERSION;";
    Engine::eval(code);
-   //std::cout << phpOutput << std::endl;
+   ASSERT_EQ(phpOutput, "v0.0.1");
+   phpOutput.clear();
+}
+
+TEST(ExtensionTest, testFuncRegister)
+{
+   std::string code("myFunction();");
+   Engine::eval(code);
+   std::cout << phpOutput << std::endl;
 }
 
 size_t buffer_write(const char *str, size_t str_length)

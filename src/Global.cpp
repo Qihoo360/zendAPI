@@ -20,6 +20,7 @@
 
 namespace zapi
 {
+using zapi::kernel::StreamBuffer;
 
 void assert_x(const char *where, const char *what, const char *file, int line) ZAPI_DECL_NOEXCEPT
 {
@@ -27,16 +28,16 @@ void assert_x(const char *where, const char *what, const char *file, int line) Z
               << "\", file " << file << ", line "<< line << std::endl;
 }
 
-static thread_local kernel::StreamBuffer bufferOut(0);
-static thread_local kernel::StreamBuffer bufferError(E_ERROR);
-static thread_local kernel::StreamBuffer bufferWarning(E_WARNING);
-static thread_local kernel::StreamBuffer bufferNotice(E_NOTICE);
-static thread_local kernel::StreamBuffer bufferDeprecated(E_DEPRECATED);
+StreamBuffer bufferOut(0);
+StreamBuffer bufferError(E_ERROR);
+StreamBuffer bufferWarning(E_WARNING);
+StreamBuffer bufferNotice(E_NOTICE);
+StreamBuffer bufferDeprecated(E_DEPRECATED);
 
-thread_local std::ostream out(&bufferOut);
-thread_local std::ostream error(&bufferError);
-thread_local std::ostream warning(&bufferWarning);
-thread_local std::ostream notice(&bufferNotice);
-thread_local std::ostream deprecated(&bufferDeprecated);
+std::ostream out(&bufferOut);
+std::ostream error(&bufferError);
+std::ostream warning(&bufferWarning);
+std::ostream notice(&bufferNotice);
+std::ostream deprecated(&bufferDeprecated);
 
 } // zapi

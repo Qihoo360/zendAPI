@@ -29,6 +29,7 @@ StreamBuffer::StreamBuffer(int error)
 
 int StreamBuffer::overflow(int c)
 {
+   std::lock_guard<std::mutex> guard(m_mutex);
    std::char_traits<char>::int_type eof = std::char_traits<char>::eof();
    if (m_error) {
       return c;
@@ -43,6 +44,7 @@ int StreamBuffer::overflow(int c)
 
 int StreamBuffer::sync()
 {
+   std::lock_guard<std::mutex> guard(m_mutex);
    size_t size = pptr() - pbase();
    if (m_error) {
       zend_error(m_error, "%.*s", static_cast<int>(size), pbase());
@@ -53,6 +55,11 @@ int StreamBuffer::sync()
    pbump(-size);
    return 0;
 }
+
+StreamBuffer::~StreamBuffer()
+{}
+
+std::mutex StreamBuffer::m_mutex;
 
 } // kernel
 } // zapi

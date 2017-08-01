@@ -19,6 +19,8 @@
 #include <streambuf>
 #include <array>
 #include <ostream>
+#include <mutex>
+
 #include "zapi/Global.h"
 
 namespace zapi
@@ -32,17 +34,17 @@ public:
    StreamBuffer(int error);
    StreamBuffer(const StreamBuffer &buffer) = delete;
    StreamBuffer(StreamBuffer &&buffer) = delete;
-   virtual ~StreamBuffer() {}
    StreamBuffer &operator=(const StreamBuffer &buffer) = delete;
    StreamBuffer &operator=(StreamBuffer &&buffer) = delete;
-   
+   virtual ~StreamBuffer();
 protected:
    virtual int overflow(int c = EOF) override;
    virtual int sync() override;
    
 private:
    int m_error;
-   std::array<char, 1024> m_buffer;
+   std::array<char, 1024> m_buffer{};
+   static std::mutex m_mutex;
 };
 
 } // kernel

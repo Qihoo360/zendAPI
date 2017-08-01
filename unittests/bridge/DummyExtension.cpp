@@ -1,8 +1,16 @@
-#include "zapi/ZendApi.h"
 #include <iostream>
 #include <string>
 
+#include "zapi/ZendApi.h"
+#include "ExtFuncs.h"
+
 using zapi::lang::Constant;
+void myFunction()
+{
+    zapi::out << "xiuxiux" << std::endl;
+     zapi::out << "xiuxiux" << std::endl;
+      zapi::out << "xiuxiux" << std::endl;
+}
 
 extern "C" {
 
@@ -18,6 +26,7 @@ ZAPI_DECL_EXPORT void *get_module()
   // extension.registerConstant(Constant("MY_CONST", 12333));
    extension.registerConstant(Constant("ZAPI_NAME", "zapi"));
    extension.registerConstant(Constant("ZAPI_VERSION", "v0.0.1"));
+   extension.registerFunction<myFunction>("myFunction");
    return extension;
 }
 

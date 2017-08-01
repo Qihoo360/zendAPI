@@ -4,7 +4,10 @@ set(BRIDGE_TEST_SRCS
    )
 zapi_add_unittest(UnitTests BridgeTest ${BRIDGE_TEST_SRCS})
 
-add_library(dummyext MODULE DummyExtension.cpp)
+add_library(dummyext MODULE 
+   DummyExtension.cpp
+   ExtFuncs.h
+   ExtFuncs.cpp)
 target_link_libraries(dummyext ${PTHREAD_LIB} ${CMAKE_PROJECT_NAME})
 set(BUILD_ETC_DIR ${ZAPI_BINARY_DIR}/etc)
 set_target_properties(dummyext PROPERTIES

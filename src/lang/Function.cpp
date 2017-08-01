@@ -46,5 +46,8 @@ Variant Function::invoke(Parameters &parameters)
    return nullptr;
 }
 
+Function::~Function()
+{}
+
 } // lang
 } // zapi

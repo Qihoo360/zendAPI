@@ -12,6 +12,7 @@ if(defined("ZAPI_VERSION"))
 {
    echo ZAPI_VERSION;
 }
+myFunction();
 ?>
 --EXPECT--
 zapi v0.0.1

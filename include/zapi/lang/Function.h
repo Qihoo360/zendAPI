@@ -32,6 +32,7 @@ public:
    Function(const Function &other);
    Function(Callable &&other);
    virtual Variant invoke(Parameters &parameters);
+   virtual ~Function();
 private:
    ZAPI_DECLARE_PRIVATE(Function)
 };

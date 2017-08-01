@@ -221,11 +221,11 @@ ZAPI_DECL_EXPORT void assert_x(const char *where, const char *what, const char *
 namespace zapi
 {
 
-extern thread_local ZAPI_DECL_EXPORT std::ostream out;
-extern thread_local ZAPI_DECL_EXPORT std::ostream notice;
-extern thread_local ZAPI_DECL_EXPORT std::ostream error;
-extern thread_local ZAPI_DECL_EXPORT std::ostream warning;
-extern thread_local ZAPI_DECL_EXPORT std::ostream deprecated;
+extern ZAPI_DECL_EXPORT std::ostream out;
+extern ZAPI_DECL_EXPORT std::ostream notice;
+extern ZAPI_DECL_EXPORT std::ostream error;
+extern ZAPI_DECL_EXPORT std::ostream warning;
+extern ZAPI_DECL_EXPORT std::ostream deprecated;
 
 } // zapi
 
