@@ -76,6 +76,8 @@ public:
       return m_object;
    }
    
+   Reference at(SizeType pos);
+   ConstReference at(SizeType pos) const;
 private:
    /**
     *  The base object

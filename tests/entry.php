@@ -28,7 +28,7 @@ function run_test($filename)
          echo "run test: " . $testMeta["msg"];
          ob_start();
          eval($testMeta["code"]);
-         $result = ob_get_clean();
+         $result = trim(ob_get_clean());
          echo " -- ";
          if ($testMeta["expect"] == $result) {
             $passedTests++;

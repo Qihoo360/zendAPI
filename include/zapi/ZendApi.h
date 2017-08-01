@@ -19,6 +19,8 @@
 #include "zapi/Global.h"
 #include "zapi/utils/PhpFuncs.h"
 #include "zapi/lang/Constant.h"
+#include "zapi/lang/Variant.h"
+#include "zapi/lang/Parameters.h"
 #include "zapi/bridge/Extension.h"
 #include "zapi/bridge/IniEntry.h"
 #include "zapi/kernel/StreamBuffer.h"

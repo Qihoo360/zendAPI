@@ -50,7 +50,7 @@ void InvokeBridge::yield(_zval_struct *return_value, std::nullptr_t value)
 
 Parameters InvokeBridge::retrieveParameters(_zend_execute_data *execute_data)
 {
-   return Parameters{getThis(), ZEND_NUM_ARGS()};
+   return Parameters(getThis(), ZEND_NUM_ARGS());
 }
 
 void InvokeBridge::handle(Exception &exception)

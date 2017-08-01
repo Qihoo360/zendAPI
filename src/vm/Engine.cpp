@@ -69,9 +69,11 @@ Variant Engine::executeOpCodes(std::shared_ptr<zend_op_array> opcodes)
       zend_rebuild_symbol_table();
    }
    auto *oldException = EG(exception);
-   zend_execute(opcodes.get(), &retValue);
+   zend_try {
+      zend_execute(opcodes.get(), &retValue);
+   }zend_end_try();
    if (oldException != EG(exception) && EG(exception)) {
-      throw OrigException(EG(exception));
+      zend_exception_error(EG(exception), E_ERROR);
    }
    if (ZVAL_IS_NULL(&retValue)) {
       return nullptr;

@@ -23,7 +23,24 @@ namespace lang
 Parameters::Parameters(zval *thisPtr, uint32_t argc)
    : Parameters(nullptr)
 {
-   
+   m_data.reserve(argc);
+   zval arguments[argc];
+   zend_get_parameters_array_ex(argc, arguments);
+   for (uint32_t i = 0; i < argc; i++)
+   {
+      // append value
+      m_data.emplace_back(&arguments[i]);
+   }
+}
+
+Parameters::Reference Parameters::at(SizeType pos)
+{
+   return m_data.at(pos);
+}
+
+Parameters::ConstReference Parameters::at(SizeType pos) const
+{
+   return m_data.at(pos);   
 }
 
 } // lang
