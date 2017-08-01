@@ -14,6 +14,7 @@ set(ZAPI_SRC
    lang/Namespace.cpp
    lang/Method.cpp
    lang/Property.cpp
+   lang/Type.cpp
    ds/String.cpp
    ds/HashTable.cpp
    vm/AbstractClass.cpp

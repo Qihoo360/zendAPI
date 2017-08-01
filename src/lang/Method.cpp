@@ -25,13 +25,14 @@ namespace internal
 {
 
 using zapi::vm::internal::CallablePrivate;
+using zapi::lang::Modifier;
 
 class MethodPrivate : public CallablePrivate
 {
 public:
    void initialize(zend_function_entry *entry, const std::string &className);
    int m_type;
-   int m_flags;
+   Modifier m_flags;
    union {
       zapi::MethodCallback0 methodCallback0;
       zapi::MethodCallback1 methodCallback1;
@@ -49,9 +50,30 @@ public:
    } m_callback;
 };
 
+void MethodPrivate::initialize(zend_function_entry *entry, const std::string &className)
+{
+   if ((m_flags & (Modifier::Public | Modifier::Private | Modifier::Protected)) == 0) {
+      
+   }
+}
+
 } // internal
 
+using internal::MethodPrivate;
 
+Method::~Method()
+{}
+
+Variant Method::invoke(Parameters &parameters)
+{
+   
+}
+
+void Method::initialize(zend_function_entry *entry, const char *className)
+{
+   ZAPI_D(Method);
+   implPtr->initialize(entry, className);
+}
 
 } // lang
 } // zapi

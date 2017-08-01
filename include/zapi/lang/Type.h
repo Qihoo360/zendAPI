@@ -16,8 +16,7 @@
 #ifndef ZAPI_LANG_TYPE_H
 #define ZAPI_LANG_TYPE_H
 
-#include "php/Zend/zend_types.h"
-#include "php/Zend/zend_variables.h"
+#include "zapi/CompilerDetection.h"
 
 namespace zapi
 {
@@ -61,6 +60,25 @@ enum class ClassType : unsigned int
    Final     = 0x04,
    Interface = 0x40
 };
+
+enum class  Modifier : unsigned int
+{
+   Static     = 0x01,
+   Abstract   = 0x02,
+   Final      = 0x04,
+   Public     = 0x100,
+   Protected  = 0x200,
+   Private    = 0x400,
+   Const      = 0,
+   Method     = Final | Public | Protected | Private | Static,
+   Property   = Final | Public | Protected | Private | Const | Static
+};
+
+ZAPI_DECL_EXPORT Modifier operator|(const Modifier &left, const Modifier &right);
+ZAPI_DECL_EXPORT Modifier operator&(const Modifier &left, const Modifier &right);
+ZAPI_DECL_EXPORT Modifier operator==(const Modifier &left, const Modifier &right);
+ZAPI_DECL_EXPORT bool operator==(const Modifier &left, int value);
+ZAPI_DECL_EXPORT bool operator==(int value, const Modifier &right);
 
 using HashTableDataDeleter = dtor_func_t;
 

@@ -23,8 +23,6 @@
 
 #include "zapi/Version.h"
 #include "zapi/Config.h"
-#include "zapi/lang/Type.h"
-#include "zapi/Typedefs.h"
 
 #include <type_traits>
 #include <cstddef>
@@ -36,6 +34,9 @@
 #include "zapi/SystemDetection.h"
 #include "zapi/ProcessorDetection.h"
 #include "zapi/CompilerDetection.h"
+
+#include "zapi/lang/Type.h"
+#include "zapi/Typedefs.h"
 
 #if defined(__ELF__)
 #  define ZAPI_OF_ELF

@@ -36,24 +36,26 @@ using internal::MethodPrivate;
 class ZAPI_DECL_EXPORT Method : public zapi::vm::Callable
 {
 public:
-   Method(const char *name, zapi::ZendCallable callback, int flags, const Arguments &args);
-   Method(const char *name, zapi::MethodCallback0 callback, int flags, const Arguments &args);
-   Method(const char *name, zapi::MethodCallback1 callback, int flags, const Arguments &args);
-   Method(const char *name, zapi::MethodCallback2 callback, int flags, const Arguments &args);
-   Method(const char *name, zapi::MethodCallback3 callback, int flags, const Arguments &args);
-   Method(const char *name, zapi::MethodCallback4 callback, int flags, const Arguments &args);
-   Method(const char *name, zapi::MethodCallback5 callback, int flags, const Arguments &args);
-   Method(const char *name, zapi::MethodCallback6 callback, int flags, const Arguments &args);
-   Method(const char *name, zapi::MethodCallback7 callback, int flags, const Arguments &args);
-   Method(const char *name, zapi::MethodCallback8 callback, int flags, const Arguments &args);
-   Method(const char *name, zapi::MethodCallback9 callback, int flags, const Arguments &args);
-   Method(const char *name, zapi::MethodCallback10 callback, int flags, const Arguments &args);
-   Method(const char *name, zapi::MethodCallback11 callback, int flags, const Arguments &args);
-   Method(const char *name, int flags, const Arguments &args);
+   Method(const char *name, zapi::ZendCallable callback, Modifier flags, const Arguments &args);
+   Method(const char *name, zapi::MethodCallback0 callback, Modifier flags, const Arguments &args);
+   Method(const char *name, zapi::MethodCallback1 callback, Modifier flags, const Arguments &args);
+   Method(const char *name, zapi::MethodCallback2 callback, Modifier flags, const Arguments &args);
+   Method(const char *name, zapi::MethodCallback3 callback, Modifier flags, const Arguments &args);
+   Method(const char *name, zapi::MethodCallback4 callback, Modifier flags, const Arguments &args);
+   Method(const char *name, zapi::MethodCallback5 callback, Modifier flags, const Arguments &args);
+   Method(const char *name, zapi::MethodCallback6 callback, Modifier flags, const Arguments &args);
+   Method(const char *name, zapi::MethodCallback7 callback, Modifier flags, const Arguments &args);
+   Method(const char *name, zapi::MethodCallback8 callback, Modifier flags, const Arguments &args);
+   Method(const char *name, zapi::MethodCallback9 callback, Modifier flags, const Arguments &args);
+   Method(const char *name, zapi::MethodCallback10 callback, Modifier flags, const Arguments &args);
+   Method(const char *name, zapi::MethodCallback11 callback, Modifier flags, const Arguments &args);
+   Method(const char *name, Modifier flags, const Arguments &args);
    Method(const Method &other);
    Method(Method &&other);
    virtual ~Method();
-   virtual Variant invoke(Parameters &parameters);
+   virtual Variant invoke(Parameters &parameters) override;
+protected:
+   void initialize(zend_function_entry *entry, const char *className);
 private:
    ZAPI_DECLARE_PRIVATE(Method)
 };
