@@ -73,6 +73,9 @@ StringMember &StringMember::operator=(const StringMember &other)
    return *this;
 }
 
+StringMember::~StringMember()
+{}
+
 void StringMember::setupConstant(zend_class_entry *entry)
 {
    ZAPI_D(StringMember);

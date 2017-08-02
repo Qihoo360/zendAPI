@@ -19,7 +19,10 @@
 
 #include "zapi/Global.h"
 #include "zapi/lang/Argument.h"
+#include "zapi/lang/Interface.h"
 #include "zapi/vm/InvokeBridge.h"
+#include "zapi/vm/AbstractClass.h"
+#include "zapi/bridge/internal/ExtensionPrivate.h"
 
 #include <list>
 
@@ -32,7 +35,7 @@ namespace lang
 class Parameters;
 class Variant;
 class Constant;
-
+template <typename> class Class;
 } // lang
 namespace bridge
 {
@@ -40,18 +43,14 @@ namespace bridge
 // forward declare
 class IniEntry;
 
-namespace internal
-{
-
-// forward declare
-class ExtensionPrivate;
-
-} // internal
-
 using zapi::lang::Variant;
 using zapi::lang::Parameters;
 using zapi::lang::Arguments;
 using zapi::lang::Constant;
+using zapi::lang::Class;
+using zapi::lang::Interface;
+using internal::ExtensionPrivate;
+using zapi::vm::AbstractClass;
 
 class ZAPI_DECL_EXPORT Extension
 {
@@ -102,11 +101,20 @@ public:
    Extension &registerFunction(const char *name, zapi::ZendCallable function, const Arguments &arguments = {});
    Extension &registerIniEntry(const IniEntry &entry);
    Extension &registerIniEntry(IniEntry &&entry);
-   Extension &registerClass();
+   
+   template <typename T>
+   Extension &registerClass(const Class<T> &nativeClass);
+   template <typename T>
+   Extension &registerClass(Class<T> &&nativeClass);
+   
+   template <typename T>
+   Extension &registerInterface(const Interface &interface);
+   template <typename T>
+   Extension &registerInterface(Interface &&interface);
+   
    Extension &registerNamespace();
    Extension &registerConstant(Constant &&constant);
    Extension &registerConstant(const Constant &constant);
-//   Extension &registerClass();
    size_t getIniEntryQuantity() const;
    size_t getFunctionQuantity() const;
    size_t getConstantQuantity() const;
@@ -182,7 +190,7 @@ protected:
 private:
    bool initialize(int moduleNumber);
 private:
-   ZAPI_DECLARE_PRIVATE(internal::Extension)
+   ZAPI_DECLARE_PRIVATE(Extension)
   /**
    * The implementation object
    *
@@ -190,6 +198,52 @@ private:
    */
    std::unique_ptr<internal::ExtensionPrivate> m_implPtr;
 };
+
+template <typename T>
+Extension &Extension::registerClass(const Class<T> &nativeClass)
+{
+   ZAPI_D(Extension);
+   if (implPtr->m_locked) {
+      return *this;
+   }
+   // just shadow copy 
+   implPtr->m_classes.push_back(std::shared_ptr<AbstractClass>(new Class<T>(nativeClass)));
+   return *this;
+}
+
+template <typename T>
+Extension &Extension::registerClass(Class<T> &&nativeClass)
+{
+   ZAPI_D(Extension);
+   if (implPtr->m_locked) {
+      return *this;
+   }
+   implPtr->m_classes.push_back(std::shared_ptr<AbstractClass>(new Class<T>(std::move(nativeClass))));
+   return *this;
+}
+
+template <typename T>
+Extension &Extension::registerInterface(const Interface &interface)
+{
+   ZAPI_D(Extension);
+   if (implPtr->m_locked) {
+      return *this;
+   }
+   implPtr->m_classes.push_back(std::shared_ptr<AbstractClass>(new Interface(interface)));
+   return *this;
+}
+
+template <typename T>
+Extension &Extension::registerInterface(Interface &&interface)
+{
+   
+   ZAPI_D(Extension);
+   if (implPtr->m_locked) {
+      return *this;
+   }
+   implPtr->m_classes.push_back(std::shared_ptr<AbstractClass>(new Interface(std::move(interface))));
+   return *this;
+}
 
 } // bridge
 } // zapi

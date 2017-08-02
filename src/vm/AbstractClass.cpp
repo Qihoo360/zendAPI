@@ -54,6 +54,16 @@ AbstractClass &AbstractClass::operator=(AbstractClass &&other) ZAPI_DECL_NOEXCEP
    return *this;
 }
 
+StdClass *AbstractClass::construct() const
+{
+   return nullptr;
+}
+
+StdClass *AbstractClass::clone() const
+{
+   return nullptr;
+}
+
 AbstractClass::~AbstractClass()
 {}
 

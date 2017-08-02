@@ -29,6 +29,11 @@ namespace lang
 class Function;
 class Constant;
 
+} // lang
+
+namespace vm
+{
+class AbstractClass;
 } // vm
 
 namespace bridge
@@ -43,6 +48,7 @@ namespace internal
 using zapi::lang::Arguments;
 using zapi::lang::Function;
 using zapi::lang::Constant;
+using zapi::vm::AbstractClass;
 using zapi::bridge::IniEntry;
 
 class ExtensionPrivate
@@ -89,6 +95,7 @@ public:
    std::unique_ptr<zend_ini_entry_def[]> m_zendIniDefs = nullptr;
    std::list<std::shared_ptr<Function>> m_functions;
    std::list<std::shared_ptr<Constant>> m_constants;
+   std::list<std::shared_ptr<AbstractClass>> m_classes;
 };
 
 } // internal

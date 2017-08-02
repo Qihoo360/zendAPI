@@ -24,6 +24,9 @@ Interface::Interface(const char *name)
    : AbstractClass(name, ClassType::Interface)
 {}
 
+Interface::~Interface()
+{}
+
 Interface &Interface::registerMethod(const char *name, const Arguments arguments)
 {
    AbstractClass::registerMethod(name, Modifier::Abstract | Modifier::Public, arguments);
