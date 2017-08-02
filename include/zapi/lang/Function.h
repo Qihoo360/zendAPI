@@ -30,8 +30,9 @@ class ZAPI_DECL_EXPORT Function : public zapi::vm::Callable
 {
 public:
    Function(const char *name, zapi::ZendCallable callable, const Arguments &arguments = {});
+   Function(const char *name, const Arguments &arguments = {});
    Function(const Function &other);
-   Function(Callable &&other);
+   Function &operator=(const Function &other);
    virtual Variant invoke(Parameters &parameters);
    virtual ~Function();
 private:

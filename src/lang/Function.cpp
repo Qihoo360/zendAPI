@@ -29,16 +29,23 @@ public:
 };
 
 Function::Function(const char *name, zapi::ZendCallable callable, const Arguments &arguments)
-   : Callable(*new FunctionPrivate(name, callable, arguments))
+   : Callable(new FunctionPrivate(name, callable, arguments))
+{}
+
+Function::Function(const char *name, const Arguments &arguments)
+   : Callable(new FunctionPrivate(name, nullptr, arguments))
 {}
 
 Function::Function(const Function &other)
-   : Callable(other)
-{}
+{
+   m_implPtr.reset(new FunctionPrivate(*other.m_implPtr));
+}
 
-Function::Function(Callable &&other)
-   : Callable(other)
-{}
+Function &Function::operator=(const Function &other)
+{
+   m_implPtr.reset(new FunctionPrivate(*other.m_implPtr));
+   return *this;
+}
 
 Variant Function::invoke(Parameters &parameters)
 {

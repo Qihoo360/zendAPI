@@ -30,24 +30,157 @@ using zapi::lang::Modifier;
 class MethodPrivate : public CallablePrivate
 {
 public:
+   MethodPrivate(const char *name, MethodCallable0 callback, Modifier flags, const Arguments &args)
+      : CallablePrivate(name, args),
+        m_type(0),
+        m_flags(flags)
+   {
+      m_callable.methodCallback0 = callback;
+   }
+   
+   MethodPrivate(const char *name, MethodCallable1 callback, Modifier flags, const Arguments &args)
+      : CallablePrivate(name, args),
+        m_type(1),
+        m_flags(flags)
+   {
+      m_callable.methodCallback1 = callback;
+   }
+   
+   MethodPrivate(const char *name, MethodCallable2 callback, Modifier flags, const Arguments &args)
+      : CallablePrivate(name, args),
+        m_type(2),
+        m_flags(flags)
+   {
+      m_callable.methodCallback2 = callback;
+   }
+   
+   MethodPrivate(const char *name, MethodCallable3 callback, Modifier flags, const Arguments &args)
+      : CallablePrivate(name, args),
+        m_type(3),
+        m_flags(flags)
+   {
+      m_callable.methodCallback3 = callback;
+   }
+   
+   MethodPrivate(const char *name, MethodCallable4 callback, Modifier flags, const Arguments &args)
+      : CallablePrivate(name, args),
+        m_type(4),
+        m_flags(flags)
+   {
+      m_callable.methodCallback4 = callback;
+   }
+   
+   MethodPrivate(const char *name, MethodCallable5 callback, Modifier flags, const Arguments &args)
+      : CallablePrivate(name, args),
+        m_type(5),
+        m_flags(flags)
+   {
+      m_callable.methodCallback5 = callback;
+   }
+   
+   MethodPrivate(const char *name, MethodCallable6 callback, Modifier flags, const Arguments &args)
+      : CallablePrivate(name, args),
+        m_type(6),
+        m_flags(flags)
+   {
+      m_callable.methodCallback6 = callback;
+   }
+   
+   MethodPrivate(const char *name, MethodCallable7 callback, Modifier flags, const Arguments &args)
+      : CallablePrivate(name, args),
+        m_type(7),
+        m_flags(flags)
+   {
+      m_callable.methodCallback7 = callback;
+   }
+   
+   MethodPrivate(const char *name, MethodCallable8 callback, Modifier flags, const Arguments &args)
+      : CallablePrivate(name, args),
+        m_type(8),
+        m_flags(flags)
+   {
+      m_callable.methodCallback8 = callback;
+   }
+   
+   MethodPrivate(const char *name, MethodCallable9 callback, Modifier flags, const Arguments &args)
+      : CallablePrivate(name, args),
+        m_type(9),
+        m_flags(flags)
+   {
+      m_callable.methodCallback9 = callback;
+   }
+   
+   MethodPrivate(const char *name, MethodCallable10 callback, Modifier flags, const Arguments &args)
+      : CallablePrivate(name, args),
+        m_type(10),
+        m_flags(flags)
+   {
+      m_callable.methodCallback10 = callback;
+   }
+   
+   MethodPrivate(const char *name, MethodCallable11 callback, Modifier flags, const Arguments &args)
+      : CallablePrivate(name, args),
+        m_type(11),
+        m_flags(flags)
+   {
+      m_callable.methodCallback11 = callback;
+   }
+   
+   MethodPrivate(const char *name, Modifier flags, const Arguments &args)
+      : CallablePrivate(name, args),
+        m_type(-1),
+        m_flags(flags)
+   {
+      m_callable.methodCallback0 = nullptr;
+   }
+   
+   MethodPrivate(const MethodPrivate &other)
+      : CallablePrivate(other),
+        m_type(other.m_type),
+        m_flags(other.m_flags)
+   {
+   }
+   
+   MethodPrivate(MethodPrivate &&other) ZAPI_DECL_NOEXCEPT
+      : CallablePrivate(std::move(other)),
+        m_type(other.m_type),
+        m_flags(other.m_flags)
+   {}
+   
+   MethodPrivate &operator=(const MethodPrivate &other)
+   {
+      CallablePrivate::operator=(other);
+      m_type = other.m_type;
+      m_flags = other.m_flags;
+      return *this;
+   }
+   
+   MethodPrivate &operator=(MethodPrivate &&other) ZAPI_DECL_NOEXCEPT
+   {
+      CallablePrivate::operator=(std::move(other));
+      m_type = other.m_type;
+      m_flags = other.m_flags;
+      return *this;
+   }
+   
    void initialize(zend_function_entry *entry, const std::string &className);
    int m_type;
    Modifier m_flags;
    union {
-      zapi::MethodCallback0 methodCallback0;
-      zapi::MethodCallback1 methodCallback1;
-      zapi::MethodCallback2 methodCallback2;
-      zapi::MethodCallback3 methodCallback3;
-      zapi::MethodCallback4 methodCallback4;
-      zapi::MethodCallback5 methodCallback5;
-      zapi::MethodCallback6 methodCallback6;
-      zapi::MethodCallback7 methodCallback7;
+      zapi::MethodCallable0 methodCallback0;
+      zapi::MethodCallable1 methodCallback1;
+      zapi::MethodCallable2 methodCallback2;
+      zapi::MethodCallable3 methodCallback3;
+      zapi::MethodCallable4 methodCallback4;
+      zapi::MethodCallable5 methodCallback5;
+      zapi::MethodCallable6 methodCallback6;
+      zapi::MethodCallable7 methodCallback7;
       // add native signature
-      zapi::NativeCallback0 methodCallback8;
-      zapi::NativeCallback1 methodCallback9;
-      zapi::NativeCallback2 methodCallback10;
-      zapi::NativeCallback3 methodCallback11;
-   } m_callback;
+      zapi::NativeCallable0 methodCallback8;
+      zapi::NativeCallable1 methodCallback9;
+      zapi::NativeCallable2 methodCallback10;
+      zapi::NativeCallable3 methodCallback11;
+   } m_callable;
 };
 
 void MethodPrivate::initialize(zend_function_entry *entry, const std::string &className)
@@ -61,6 +194,71 @@ void MethodPrivate::initialize(zend_function_entry *entry, const std::string &cl
 } // internal
 
 using internal::MethodPrivate;
+
+Method::Method(const char *name, MethodCallable0 callback, Modifier flags, const Arguments &args)
+   : Callable(new MethodPrivate(name, callback, flags, args))
+{}
+
+Method::Method(const char *name, MethodCallable1 callback, Modifier flags, const Arguments &args)
+   : Callable(new MethodPrivate(name, callback, flags, args))
+{}
+
+Method::Method(const char *name, MethodCallable2 callback, Modifier flags, const Arguments &args)
+   : Callable(new MethodPrivate(name, callback, flags, args))
+{}
+
+Method::Method(const char *name, MethodCallable3 callback, Modifier flags, const Arguments &args)
+   : Callable(new MethodPrivate(name, callback, flags, args))
+{}
+
+Method::Method(const char *name, MethodCallable4 callback, Modifier flags, const Arguments &args)
+   : Callable(new MethodPrivate(name, callback, flags, args))
+{}
+
+Method::Method(const char *name, MethodCallable5 callback, Modifier flags, const Arguments &args)
+   : Callable(new MethodPrivate(name, callback, flags, args))
+{}
+
+Method::Method(const char *name, MethodCallable6 callback, Modifier flags, const Arguments &args)
+   : Callable(new MethodPrivate(name, callback, flags, args))
+{}
+
+Method::Method(const char *name, MethodCallable7 callback, Modifier flags, const Arguments &args)
+   : Callable(new MethodPrivate(name, callback, flags, args))
+{}
+
+Method::Method(const char *name, MethodCallable8 callback, Modifier flags, const Arguments &args)
+   : Callable(new MethodPrivate(name, callback, flags, args))
+{}
+
+Method::Method(const char *name, MethodCallable9 callback, Modifier flags, const Arguments &args)
+   : Callable(new MethodPrivate(name, callback, flags, args))
+{}
+
+Method::Method(const char *name, MethodCallable10 callback, Modifier flags, const Arguments &args)
+   : Callable(new MethodPrivate(name, callback, flags, args))
+{}
+
+Method::Method(const char *name, MethodCallable11 callback, Modifier flags, const Arguments &args)
+   : Callable(new MethodPrivate(name, callback, flags, args))
+{}
+
+Method::Method(const char *name, Modifier flags, const Arguments &args)
+   : Callable(new MethodPrivate(name, flags, args))
+{}
+
+Method::Method(const Method &other)
+{
+   ZAPI_D(Method);
+   m_implPtr.reset(new MethodPrivate(*implPtr));
+}
+
+Method &Method::operator=(const Method &other)
+{
+   ZAPI_D(Method);
+   m_implPtr.reset(new MethodPrivate(*implPtr));
+   return *this;
+}
 
 Method::~Method()
 {}

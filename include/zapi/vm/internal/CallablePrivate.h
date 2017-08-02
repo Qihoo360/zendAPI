@@ -39,14 +39,15 @@ class CallablePrivate
 {
 public:
    CallablePrivate(const char *name, ZendCallable callable, const Arguments &arguments);
+   CallablePrivate(const char *name, const Arguments &arguments);
    CallablePrivate(const CallablePrivate &other);
-   CallablePrivate(CallablePrivate &&other);
+   CallablePrivate(CallablePrivate &&other) ZAPI_DECL_NOEXCEPT;
    void setupCallableArgInfo(zend_internal_arg_info *info, const Argument &arg) const;
    void initialize(zend_function_entry *entry, const char *className = nullptr, int flags = 0) const;
    void initialize(zend_internal_function_info *info, const char *className = nullptr) const;
    void initialize(const std::string &prefix, zend_function_entry *entry);
    CallablePrivate &operator=(const CallablePrivate &other);
-   CallablePrivate &operator=(CallablePrivate &&other);
+   CallablePrivate &operator=(CallablePrivate &&other) ZAPI_DECL_NOEXCEPT;
    zapi::ZendCallable m_callable;
    std::string m_name;
    Type m_return = Type::Undefined;

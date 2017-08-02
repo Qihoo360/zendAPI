@@ -67,17 +67,19 @@ using zapi::bridge::internal::ExtensionPrivate;
 class ZAPI_DECL_EXPORT Callable
 {
 public:
+   Callable();
    Callable(const char *name, zapi::ZendCallable callable, const Arguments &arguments = {});
+   Callable(const char *name, const Arguments &arguments = {});
    Callable(const Callable &other);
-   Callable(Callable &&other);
+   Callable(Callable &&other) ZAPI_DECL_NOEXCEPT;
    virtual ~Callable();
 public:
    Callable &operator=(const Callable &other);
-   Callable &operator=(Callable &&other);
+   Callable &operator=(Callable &&other) ZAPI_DECL_NOEXCEPT;
 public:
    virtual Variant invoke(Parameters &parameters) = 0;
 protected:
-   Callable(CallablePrivate &implPtr);
+   Callable(CallablePrivate *implPtr);
    void setupCallableArgInfo(zend_internal_arg_info *info, const Argument &arg) const;
    static void invoke(INTERNAL_FUNCTION_PARAMETERS);
    void initialize(zend_function_entry *entry, const char *className = nullptr, int flags = 0) const;

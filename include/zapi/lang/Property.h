@@ -35,15 +35,15 @@ using internal::PropertyPrivate;
 class ZAPI_DECL_EXPORT Property
 {
 public:
-   Property(const zapi::GetterMethodCallback0 &getter);
-   Property(const zapi::GetterMethodCallback1 &getter);
-   Property(const zapi::SetterMethodCallback0 &setter);
-   Property(const zapi::SetterMethodCallback1 &setter);
-   Property(const zapi::GetterMethodCallback0 &getter, const zapi::SetterMethodCallback0 &setter);
-   Property(const zapi::GetterMethodCallback0 &getter, const zapi::SetterMethodCallback1 &setter);
-   Property(const zapi::GetterMethodCallback1 &getter, const zapi::SetterMethodCallback0 &setter);
-   Property(const zapi::GetterMethodCallback1 &getter, const zapi::SetterMethodCallback1 &setter);
-   Property(const Property &other);
+   Property(const zapi::GetterMethodCallable0 &getter);
+   Property(const zapi::GetterMethodCallable1 &getter);
+   Property(const zapi::SetterMethodCallable0 &setter);
+   Property(const zapi::SetterMethodCallable1 &setter);
+   Property(const zapi::GetterMethodCallable0 &getter, const zapi::SetterMethodCallable0 &setter);
+   Property(const zapi::GetterMethodCallable0 &getter, const zapi::SetterMethodCallable1 &setter);
+   Property(const zapi::GetterMethodCallable1 &getter, const zapi::SetterMethodCallable0 &setter);
+   Property(const zapi::GetterMethodCallable1 &getter, const zapi::SetterMethodCallable1 &setter);
+   Property(const Property &other) = delete;
    virtual ~Property();
 private:
    ZAPI_DECLARE_PRIVATE(Property)

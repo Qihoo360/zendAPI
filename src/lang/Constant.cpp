@@ -149,7 +149,7 @@ Constant::Constant(const Constant &other)
    : m_implPtr(new ConstantPrivate(*other.m_implPtr))
 {}
 
-Constant::Constant(Constant &&other)
+Constant::Constant(Constant &&other) ZAPI_DECL_NOEXCEPT
    : m_implPtr(std::move(other.m_implPtr))
 {}
 
@@ -159,7 +159,7 @@ Constant& Constant::operator=(const Constant &other)
    return *this;
 }
 
-Constant& Constant::operator=(Constant &&other)
+Constant& Constant::operator=(Constant &&other) ZAPI_DECL_NOEXCEPT
 {
    m_implPtr = std::move(other.m_implPtr);
    return *this;

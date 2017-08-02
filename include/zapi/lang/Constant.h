@@ -44,9 +44,9 @@ public:
    Constant(const char *name, const char *value, size_t size);
    Constant(const char *name, const std::string &value);
    Constant(const Constant &other);
-   Constant(Constant &&other);
+   Constant(Constant &&other) ZAPI_DECL_NOEXCEPT;
    Constant &operator=(const Constant &other);
-   Constant &operator=(Constant &&other);
+   Constant &operator=(Constant &&other) ZAPI_DECL_NOEXCEPT;
    virtual ~Constant();
    void initialize(const std::string &prefix, int moduleNumber);
    const zend_constant &getZendConstant() const;

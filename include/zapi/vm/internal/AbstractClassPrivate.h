@@ -34,6 +34,8 @@ namespace internal
 class AbstractClassPrivate
 {
 public:
+   AbstractClassPrivate(const AbstractClass &) = delete;
+   AbstractClassPrivate &operator=(const AbstractClass &) = delete;
    std::unique_ptr<AbstractClass> m_apiPtr;
    std::string m_name;
    ClassType m_type = ClassType::Regular;

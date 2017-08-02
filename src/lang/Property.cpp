@@ -26,31 +26,31 @@ namespace internal
 class PropertyPrivate
 {
 public:
-   PropertyPrivate(const zapi::GetterMethodCallback0 &getter)
+   PropertyPrivate(const zapi::GetterMethodCallable0 &getter)
       : m_getterType(0)
    {
       m_getter.getter0 = getter;
    }
    
-   PropertyPrivate(const zapi::GetterMethodCallback1 &getter)
+   PropertyPrivate(const zapi::GetterMethodCallable1 &getter)
       : m_getterType(0)
    {
       m_getter.getter1 = getter;
    }
    
-   PropertyPrivate(const zapi::SetterMethodCallback0 &setter)
+   PropertyPrivate(const zapi::SetterMethodCallable0 &setter)
       : m_setterType(0)
    {
       m_setter.setter0 = setter;
    }
    
-   PropertyPrivate(const zapi::SetterMethodCallback1 &setter)
+   PropertyPrivate(const zapi::SetterMethodCallable1 &setter)
       : m_setterType(1)
    {
       m_setter.setter1 = setter;
    }
    
-   PropertyPrivate(const zapi::GetterMethodCallback0 &getter, const zapi::SetterMethodCallback0 &setter)
+   PropertyPrivate(const zapi::GetterMethodCallable0 &getter, const zapi::SetterMethodCallable0 &setter)
       : m_getterType(0),
         m_setterType(0)
    {
@@ -58,7 +58,7 @@ public:
       m_setter.setter0 = setter;
    }
    
-   PropertyPrivate(const zapi::GetterMethodCallback0 &getter, const zapi::SetterMethodCallback1 &setter)
+   PropertyPrivate(const zapi::GetterMethodCallable0 &getter, const zapi::SetterMethodCallable1 &setter)
       : m_getterType(0),
         m_setterType(1)
    {
@@ -66,7 +66,7 @@ public:
       m_setter.setter1 = setter;
    }
    
-   PropertyPrivate(const zapi::GetterMethodCallback1 &getter, const zapi::SetterMethodCallback0 &setter)
+   PropertyPrivate(const zapi::GetterMethodCallable1 &getter, const zapi::SetterMethodCallable0 &setter)
       : m_getterType(1),
         m_setterType(0)
    {
@@ -74,7 +74,7 @@ public:
       m_setter.setter0 = setter;
    }
    
-   PropertyPrivate(const zapi::GetterMethodCallback1 &getter, const zapi::SetterMethodCallback1 &setter)
+   PropertyPrivate(const zapi::GetterMethodCallable1 &getter, const zapi::SetterMethodCallable1 &setter)
       : m_getterType(1),
         m_setterType(1)
    {
@@ -90,12 +90,12 @@ public:
    {}
    
    union {
-      zapi::GetterMethodCallback0 getter0;
-      zapi::GetterMethodCallback1 getter1;
+      zapi::GetterMethodCallable0 getter0;
+      zapi::GetterMethodCallable1 getter1;
    } m_getter;
    union {
-      zapi::SetterMethodCallback0 setter0;
-      zapi::SetterMethodCallback1 setter1;
+      zapi::SetterMethodCallable0 setter0;
+      zapi::SetterMethodCallable1 setter1;
    } m_setter;
    int m_getterType = -1;
    int m_setterType = -1;
@@ -103,40 +103,36 @@ public:
 
 } // internal
 
-Property::Property(const zapi::GetterMethodCallback0 &getter)
+Property::Property(const zapi::GetterMethodCallable0 &getter)
    : m_implPtr(new PropertyPrivate(getter))
 {}
 
-Property::Property(const zapi::GetterMethodCallback1 &getter)
+Property::Property(const zapi::GetterMethodCallable1 &getter)
    : m_implPtr(new PropertyPrivate(getter))
 {}
 
-Property::Property(const zapi::SetterMethodCallback0 &setter)
+Property::Property(const zapi::SetterMethodCallable0 &setter)
    : m_implPtr(new PropertyPrivate(setter))
 {}
 
-Property::Property(const zapi::SetterMethodCallback1 &setter)
+Property::Property(const zapi::SetterMethodCallable1 &setter)
    : m_implPtr(new PropertyPrivate(setter))
 {}
 
-Property::Property(const zapi::GetterMethodCallback0 &getter, const zapi::SetterMethodCallback0 &setter)
+Property::Property(const zapi::GetterMethodCallable0 &getter, const zapi::SetterMethodCallable0 &setter)
    : m_implPtr(new PropertyPrivate(getter, setter))
 {}
 
-Property::Property(const zapi::GetterMethodCallback0 &getter, const zapi::SetterMethodCallback1 &setter)
+Property::Property(const zapi::GetterMethodCallable0 &getter, const zapi::SetterMethodCallable1 &setter)
    : m_implPtr(new PropertyPrivate(getter, setter))
 {}
 
-Property::Property(const zapi::GetterMethodCallback1 &getter, const zapi::SetterMethodCallback0 &setter)
+Property::Property(const zapi::GetterMethodCallable1 &getter, const zapi::SetterMethodCallable0 &setter)
    : m_implPtr(new PropertyPrivate(getter, setter))
 {}
 
-Property::Property(const zapi::GetterMethodCallback1 &getter, const zapi::SetterMethodCallback1 &setter)
+Property::Property(const zapi::GetterMethodCallable1 &getter, const zapi::SetterMethodCallable1 &setter)
    : m_implPtr(new PropertyPrivate(getter, setter))
-{}
-
-Property::Property(const Property &other)
-   : m_implPtr(new PropertyPrivate(*other.m_implPtr))
 {}
 
 Property::~Property()

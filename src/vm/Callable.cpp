@@ -46,6 +46,10 @@ CallablePrivate::CallablePrivate(const char *name, ZendCallable callable, const 
    m_argv[i].name = nullptr;
 }
 
+CallablePrivate::CallablePrivate(const char *name, const lang::Arguments &arguments)
+   : CallablePrivate(name, nullptr,  arguments)
+{}
+
 CallablePrivate::CallablePrivate(const CallablePrivate &other)
    : m_callable(other.m_callable),
      m_name(other.m_name),
@@ -58,7 +62,7 @@ CallablePrivate::CallablePrivate(const CallablePrivate &other)
    }
 }
 
-CallablePrivate::CallablePrivate(CallablePrivate &&other)
+CallablePrivate::CallablePrivate(CallablePrivate &&other) ZAPI_DECL_NOEXCEPT
    : m_callable(other.m_callable), // function ptr
      m_name(std::move(other.m_name)),
      m_argc(other.m_argc),
@@ -78,7 +82,7 @@ CallablePrivate &CallablePrivate::operator=(const CallablePrivate &other)
    return *this;
 }
 
-CallablePrivate &CallablePrivate::operator=(CallablePrivate &&other)
+CallablePrivate &CallablePrivate::operator=(CallablePrivate &&other) ZAPI_DECL_NOEXCEPT
 {
    m_callable = other.m_callable;
    m_name = std::move(other.m_name);
@@ -185,22 +189,25 @@ void CallablePrivate::setupCallableArgInfo(zend_internal_arg_info *info, const l
 
 using zapi::lang::Exception;
 
+Callable::Callable()
+{}
+
 Callable::Callable(const char *name, ZendCallable callable, const lang::Arguments &arguments)
    : m_implPtr(new CallablePrivate(name, callable, arguments))
 {
 }
 
-Callable::Callable(const Callable &other)
-   : m_implPtr(new CallablePrivate(*other.m_implPtr))
+Callable::Callable(const char *name, const lang::Arguments &arguments)
+   : Callable(name, nullptr, arguments)
+{}
+
+Callable::Callable(Callable &&other) ZAPI_DECL_NOEXCEPT
+   : m_implPtr(std::move(other.m_implPtr))
 {
 }
 
-Callable::Callable(Callable &&other)
-   : m_implPtr(std::move(other.m_implPtr))
-{}
-
-Callable::Callable(CallablePrivate &implPtr)
-   : m_implPtr(&implPtr)
+Callable::Callable(CallablePrivate *implPtr)
+   : m_implPtr(implPtr)
 {}
 
 Callable::~Callable()
@@ -212,9 +219,9 @@ Callable &Callable::operator=(const Callable &other)
    return *this;
 }
 
-Callable &Callable::operator=(Callable &&other)
+Callable &Callable::operator=(Callable &&other) ZAPI_DECL_NOEXCEPT
 {
-   m_implPtr.reset(new CallablePrivate(std::move(*other.m_implPtr)));
+   m_implPtr = std::move(other.m_implPtr);
    return *this;
 }
 
