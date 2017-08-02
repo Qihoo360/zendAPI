@@ -17,10 +17,7 @@
 #define ZAPI_VM_STDCLASSIMPL_H
 
 #include "zapi/Global.h"
-
-#include "php/Zend/zend_types.h"
-#include "php/Zend/zend_alloc.h"
-#include "php/Zend/zend_objects_API.h"
+#include "zapi/lang/Argument.h"
 
 namespace zapi
 {
@@ -42,6 +39,7 @@ using zapi::vm::internal::AbstractClassPrivate;
 using zapi::lang::Modifier;
 using zapi::lang::ClassType;
 using zapi::lang::StdClass;
+using zapi::lang::Arguments;
 
 class ZAPI_DECL_EXPORT AbstractClass
 {
@@ -49,13 +47,49 @@ public:
    AbstractClass(const char *className, Modifier flags);
    AbstractClass(const char *className, ClassType type);
    AbstractClass(const AbstractClass &other);
-   AbstractClass(AbstractClass &&other);
+   AbstractClass(AbstractClass &&other) ZAPI_DECL_NOEXCEPT;
    AbstractClass &operator=(const AbstractClass &other);
-   AbstractClass &operator=(AbstractClass &&other);
+   AbstractClass &operator=(AbstractClass &&other) ZAPI_DECL_NOEXCEPT;
    virtual ~AbstractClass();
 public:
    virtual StdClass *construct() const;
    virtual StdClass *clone() const;
+protected:
+   void registerMethod(const char *name, zapi::ZendCallable callable, Modifier flags = Modifier::None, const Arguments &args = {});
+   void registerMethod(const char *name, const zapi::MethodCallable0 &method, Modifier flags = Modifier::None, const Arguments &args = {});
+   void registerMethod(const char *name, const zapi::MethodCallable1 &method, Modifier flags = Modifier::None, const Arguments &args = {});
+   void registerMethod(const char *name, const zapi::MethodCallable2 &method, Modifier flags = Modifier::None, const Arguments &args = {});
+   void registerMethod(const char *name, const zapi::MethodCallable3 &method, Modifier flags = Modifier::None, const Arguments &args = {});
+   void registerMethod(const char *name, const zapi::MethodCallable4 &method, Modifier flags = Modifier::None, const Arguments &args = {});
+   void registerMethod(const char *name, const zapi::MethodCallable5 &method, Modifier flags = Modifier::None, const Arguments &args = {});
+   void registerMethod(const char *name, const zapi::MethodCallable6 &method, Modifier flags = Modifier::None, const Arguments &args = {});
+   void registerMethod(const char *name, const zapi::MethodCallable7 &method, Modifier flags = Modifier::None, const Arguments &args = {});
+   // static
+   void registerMethod(const char *name, const zapi::MethodCallable8 &method, Modifier flags = Modifier::None, const Arguments &args = {});
+   void registerMethod(const char *name, const zapi::MethodCallable9 &method, Modifier flags = Modifier::None, const Arguments &args = {});
+   void registerMethod(const char *name, const zapi::MethodCallable10 &method, Modifier flags = Modifier::None, const Arguments &args = {});
+   void registerMethod(const char *name, const zapi::MethodCallable11 &method, Modifier flags = Modifier::None, const Arguments &args = {});
+   // abstract
+   void registerMethod(const char *name, Modifier flags = Modifier::None, const Arguments &args = {});
+   
+   void registerProperty(const char *name, std::nullptr_t value, Modifier flags = Modifier::Public);
+   void registerProperty(const char *name, int16_t value, Modifier flags = Modifier::Public);
+   void registerProperty(const char *name, int32_t value, Modifier flags = Modifier::Public);
+   void registerProperty(const char *name, int64_t value, Modifier flags = Modifier::Public);
+   void registerProperty(const char *name, bool value, Modifier flags = Modifier::Public);
+   void registerProperty(const char *name, char value, Modifier flags = Modifier::Public);
+   void registerProperty(const char *name, const std::string &value, Modifier flags = Modifier::Public);
+   void registerProperty(const char *name, const char *value, Modifier flags = Modifier::Public);
+   void registerProperty(const char *name, double value, Modifier flags = Modifier::Public);
+   // callback property
+   void registerProperty(const char *name, const zapi::GetterMethodCallable0 &getter);
+   void registerProperty(const char *name, const zapi::GetterMethodCallable1 &getter);
+   void registerProperty(const char *name, const zapi::GetterMethodCallable0 &getter, const zapi::GetterMethodCallable0 &setter);
+   void registerProperty(const char *name, const zapi::GetterMethodCallable0 &getter, const zapi::GetterMethodCallable1 &setter);
+   void registerProperty(const char *name, const zapi::GetterMethodCallable1 &getter, const zapi::GetterMethodCallable0 &setter);
+   void registerProperty(const char *name, const zapi::GetterMethodCallable1 &getter, const zapi::GetterMethodCallable1 &setter);
+   void registerInterface(const AbstractClass &interface);
+   void registerBaseClass(const AbstractClass &base);
 private:
    ZAPI_DECLARE_PRIVATE(AbstractClass)
    std::shared_ptr<AbstractClassPrivate> m_implPtr;

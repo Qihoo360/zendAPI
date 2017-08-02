@@ -20,6 +20,11 @@ namespace zapi
 namespace lang
 {
 
+Modifier operator~(Modifier modifier)
+{
+   return static_cast<Modifier>(static_cast<unsigned int>(~modifier));
+}
+
 Modifier operator|(Modifier left, Modifier right)
 {
    return static_cast<Modifier>(static_cast<unsigned int>(left) | static_cast<unsigned int>(right));

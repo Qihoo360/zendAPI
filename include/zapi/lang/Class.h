@@ -31,7 +31,7 @@ template <typename T>
 class ZAPI_DECL_EXPORT Class : public AbstractClass
 {
 public:
-   Class(const char *name, Modifier flags = 0);
+   Class(const char *name, Modifier flags = Modifier::None);
    Class(const Class<T> &other);
    Class(Class<T> &&other) ZAPI_DECL_NOEXCEPT;
    virtual ~Class();
@@ -47,16 +47,19 @@ private:
 };
 
 template <typename T>
-Class::Class(const char *name, Modifier flags = 0)
-{
-   
-}
+Class::Class(const char *name, Modifier flags)
+   : AbstractClass(name, flags)
+{}
 
 template <typename T>
 Class::Class(const Class<T> &other)
-{
-   
-}
+   : AbstractClass(other)
+{}
+
+template <typename T>
+Class::Class(Class<T> &&other) ZAPI_DECL_NOEXCEPT
+   : AbstractClass(std::move(other))
+{}
 
 template <typename T>
 Class::~Class()

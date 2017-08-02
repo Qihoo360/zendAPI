@@ -6,7 +6,9 @@ set(ZAPI_SRC
    kernel/StreamBuffer.cpp
    lang/Variant.cpp
    lang/FatalError.cpp
-   lang/StdClass.cpp
+   lang/Class.cpp
+   lang/Interface.cpp
+   lang/Method.cpp
    lang/Parameters.cpp
    lang/Function.cpp
    lang/Argument.cpp

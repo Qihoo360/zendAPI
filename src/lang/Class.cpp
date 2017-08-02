@@ -11,34 +11,4 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by softboy on 2017/08/02.
-
-#ifndef ZAPI_LANG_INTERFACE_H
-#define ZAPI_LANG_INTERFACE_H
-
-#include "zapi/vm/AbstractClass.h"
-
-namespace zapi
-{
-namespace lang
-{
-
-using zapi::vm::AbstractClass;
-
-class ZAPI_DECL_EXPORT Interface : public AbstractClass
-{
-public:
-   Interface(const char *name);
-   virtual ~Interface();
-public:
-   Interface &registerMethod(const char *name, const Arguments args = {});
-   Interface &registerMethod(const char *name, Modifier flags = Modifier::None, const Arguments args = {});
-   Interface &registerBaseInterface(const Interface &interface);
-protected:
-   template<typename ANYTHING> friend class Class;
-};
-
-} // lang
-} // zapi
-
-#endif //ZAPI_LANG_INTERFACE_H
+// Created by softboy on 2017/07/27.

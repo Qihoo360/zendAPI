@@ -11,51 +11,36 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by zzu_softboy on 2017/08/01.
+// Created by softboy on 2017/07/27.
 
-#include "zapi/vm/AbstractClass.h"
-#include "zapi/vm/internal/AbstractClassPrivate.h"
+#include "zapi/lang/Interface.h"
 
 namespace zapi
 {
-namespace vm
+namespace lang
 {
 
-namespace internal
-{
-
-AbstractClassPrivate::AbstractClassPrivate(const char *classname, lang::ClassType type)
-{
-   
-}
-
-} // internal
-
-
-AbstractClass::AbstractClass(const char *className, lang::ClassType type)
-   : m_implPtr(std::make_shared<AbstractClassPrivate>(className, type))
+Interface::Interface(const char *name)
+   : AbstractClass(name, ClassType::Interface)
 {}
 
-AbstractClass::AbstractClass(const AbstractClass &other)
-   : m_implPtr(other.m_implPtr)
-{}
-
-AbstractClass::AbstractClass(AbstractClass &&other) ZAPI_DECL_NOEXCEPT
-   : m_implPtr(std::move(other.m_implPtr))
-{}
-
-AbstractClass &AbstractClass::operator=(const AbstractClass &other)
+Interface &Interface::registerMethod(const char *name, const Arguments arguments)
 {
+   AbstractClass::registerMethod(name, Modifier::Abstract | Modifier::Public, arguments);
    return *this;
 }
 
-AbstractClass &AbstractClass::operator=(AbstractClass &&other) ZAPI_DECL_NOEXCEPT
+Interface &Interface::registerMethod(const char *name, Modifier flags, const Arguments arguments)
 {
+   AbstractClass::registerMethod(name, (flags | Modifier::Public) & ~Modifier::Abstract, arguments);
    return *this;
 }
 
-AbstractClass::~AbstractClass()
-{}
+Interface &Interface::registerBaseInterface(const Interface &interface)
+{
+   AbstractClass::registerInterface(interface);
+   return *this;
+}
 
-} // vm
+} // lang
 } // zapi
