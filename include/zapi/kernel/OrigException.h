@@ -13,18 +13,18 @@
 //
 // Created by softboy on 08/06/2017.
 
-#ifndef ZAPI_LANG_ORIGEXCEPTION_H
-#define ZAPI_LANG_ORIGEXCEPTION_H
+#ifndef ZAPI_KERNEL_ORIGEXCEPTION_H
+#define ZAPI_KERNEL_ORIGEXCEPTION_H
 
 #include <string>
 
 #include "php/Zend/zend_types.h"
 #include "php/Zend/zend_exceptions.h"
-#include "zapi/lang/Exception.h"
+#include "zapi/kernel/Exception.h"
 
 namespace zapi
 {
-namespace lang
+namespace kernel
 {
 
 class OrigException : public Exception
@@ -191,7 +191,7 @@ inline void process_exception(Exception &exception)
 
 }
 
-} // lang
+} // kernel
 } // zapi
 
-#endif // ZAPI_LANG_ORIGEXCEPTION_H
+#endif // ZAPI_KERNEL_ORIGEXCEPTION_H

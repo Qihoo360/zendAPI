@@ -11,25 +11,24 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by softboy on 6/7/17.
+// Created by zzu_softboy on 2017/08/02.
 
-#include "php/Zend/zend.h"
-#include "zapi/kernel/FatalError.h"
+#ifndef ZAPI_VM_CLASS_MAGIC_METHOD_INVOKER_H
+#define ZAPI_VM_CLASS_MAGIC_METHOD_INVOKER_H
 
 namespace zapi
 {
-namespace kernel
+namespace vm
 {
 
-/**
- * Report this error as a fatal error
- * @return bool
- */
-bool FatalError::report() const
+template <typename Class>
+class ClassMagicMethodInvoker
 {
-   zend_error(E_ERROR, "%s", what());
-   return true;
-}
+public:
+   
+};
 
-} // kernel
+} // vm
 } // zapi
+
+#endif // ZAPI_VM_CLASS_MAGIC_METHOD_INVOKER_H

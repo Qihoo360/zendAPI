@@ -15,7 +15,7 @@
 
 #include <ostream>
 #include "zapi/vm/InvokeBridge.h"
-#include "zapi/lang/OrigException.h"
+#include "zapi/kernel/OrigException.h"
 
 namespace zapi
 {
@@ -55,7 +55,7 @@ Parameters InvokeBridge::retrieveParameters(_zend_execute_data *execute_data)
 
 void InvokeBridge::handle(Exception &exception)
 {
-   zapi::lang::process_exception(exception);
+   zapi::kernel::process_exception(exception);
 }
 
 } // vm

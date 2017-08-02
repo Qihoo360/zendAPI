@@ -14,19 +14,16 @@
 // Created by zzu_softboy on 08/06/2017.
 
 #include "zapi/lang/StdClass.h"
-#include "zapi/lang/NotImplemented.h"
 #include "zapi/lang/Variant.h"
 #include "zapi/lang/internal/StdClassPrivate.h"
+#include "zapi/kernel/NotImplemented.h"
 
 namespace zapi
 {
 namespace lang
 {
 
-namespace internal
-{
-
-} // internal
+using zapi::kernel::NotImplemented;
 
 /**
  * Overridable method that is called right before an object is destructed

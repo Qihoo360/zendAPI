@@ -2,6 +2,10 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/apidoc.h
    ${ZAPI_INCLUDE_DIR}/zapi/kernel/Meta.h
    ${ZAPI_INCLUDE_DIR}/zapi/kernel/StreamBuffer.h
+   ${ZAPI_INCLUDE_DIR}/zapi/kernel/NotImplemented.h
+   ${ZAPI_INCLUDE_DIR}/zapi/kernel/OrigException.h
+   ${ZAPI_INCLUDE_DIR}/zapi/kernel/FatalError.h
+   ${ZAPI_INCLUDE_DIR}/zapi/kernel/Exception.h
    ${ZAPI_INCLUDE_DIR}/zapi/bridge/Extension.h
    ${ZAPI_INCLUDE_DIR}/zapi/bridge/IniEntry.h
    ${ZAPI_INCLUDE_DIR}/zapi/bridge/internal/ExtensionPrivate.h
@@ -10,18 +14,15 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Constant.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Array.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Variant.h
-   ${ZAPI_INCLUDE_DIR}/zapi/lang/Exception.h
-   ${ZAPI_INCLUDE_DIR}/zapi/lang/FatalError.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/StdClass.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Parameters.h
-   ${ZAPI_INCLUDE_DIR}/zapi/lang/Errors.h
-   ${ZAPI_INCLUDE_DIR}/zapi/lang/NotImplemented.h
-   ${ZAPI_INCLUDE_DIR}/zapi/lang/OrigException.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Namespace.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Argument.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Function.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Property.h
+   ${ZAPI_INCLUDE_DIR}/zapi/lang/StringMember.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Method.h
+   ${ZAPI_INCLUDE_DIR}/zapi/lang/Interface.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/internal/StdClassPrivate.h
    ${ZAPI_INCLUDE_DIR}/zapi/ds/HashTable.h
    ${ZAPI_INCLUDE_DIR}/zapi/ds/List.h
@@ -39,7 +40,9 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/vm/Callable.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/internal/CallablePrivate.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/internal/AbstractClassPrivate.h
+   ${ZAPI_INCLUDE_DIR}/zapi/vm/internal/AbstractMemberPrivate.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/Engine.h
+   ${ZAPI_INCLUDE_DIR}/zapi/vm/ClassMagicMethodInvoker.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/ExecStateGuard.h
    )
 

@@ -24,6 +24,12 @@
 
 namespace zapi
 {
+
+namespace lang
+{
+class StdClass;
+} // lang
+
 namespace vm
 {
 
@@ -33,12 +39,26 @@ class AbstractClassPrivate;
 } // internal
 
 using zapi::vm::internal::AbstractClassPrivate;
+using zapi::lang::Modifier;
+using zapi::lang::ClassType;
+using zapi::lang::StdClass;
 
 class ZAPI_DECL_EXPORT AbstractClass
 {
+public:
+   AbstractClass(const char *className, Modifier flags);
+   AbstractClass(const char *className, ClassType type);
+   AbstractClass(const AbstractClass &other);
+   AbstractClass(AbstractClass &&other);
+   AbstractClass &operator=(const AbstractClass &other);
+   AbstractClass &operator=(AbstractClass &&other);
+   virtual ~AbstractClass();
+public:
+   virtual StdClass *construct() const;
+   virtual StdClass *clone() const;
 private:
    ZAPI_DECLARE_PRIVATE(AbstractClass)
-   std::unique_ptr<AbstractClassPrivate> m_implPtr;
+   std::shared_ptr<AbstractClassPrivate> m_implPtr;
 };
 
 } // vm

@@ -13,8 +13,8 @@
 //
 // Created by zzu_softboy on 07/06/2017.
 
-#ifndef ZAPI_LANG_EXCEPTION_H
-#define ZAPI_LANG_EXCEPTION_H
+#ifndef ZAPI_KERNEL_EXCEPTION_H
+#define ZAPI_KERNEL_EXCEPTION_H
 
 #include <exception>
 #include <string>
@@ -23,7 +23,7 @@
 
 namespace zapi
 {
-namespace lang
+namespace kernel
 {
 
 class ZAPI_DECL_EXPORT Exception : public std::exception
@@ -119,7 +119,7 @@ public:
    }
 };
 
-} // lang
+} // kernel
 } // zapi
 
-#endif //ZAPI_LANG_EXCEPTION_H
+#endif //ZAPI_KERNEL_EXCEPTION_H

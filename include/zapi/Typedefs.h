@@ -17,6 +17,7 @@
 #define ZAPI_TYPEDEFS_H
 
 #include <functional>
+#include "php/Zend/zend_errors.h"
 
 struct _zend_execute_data;
 struct _zval_struct;
@@ -62,6 +63,29 @@ using GetterMethodCallable0 = lang::Variant (lang::StdClass::*)();
 using GetterMethodCallable1 = lang::Variant (lang::StdClass::*)() const;
 using SetterMethodCallable0 = void (lang::StdClass::*)(const lang::Variant &value);
 using SetterMethodCallable1 = void (lang::StdClass::*)(const lang::Variant &value) const;
+
+enum class Error : int
+{
+   Error            = E_ERROR,
+   Warning          = E_WARNING,
+   Parse            = E_PARSE,
+   Notice           = E_NOTICE,
+   CoreError        = E_CORE_ERROR,
+   CoreWarning      = E_CORE_WARNING,
+   CompileError     = E_COMPILE_ERROR,
+   CompileWarning   = E_COMPILE_WARNING,
+   UserError        = E_USER_ERROR,
+   UserNotice       = E_USER_NOTICE,
+   Strict           = E_STRICT,
+   RecoverableError = E_RECOVERABLE_ERROR,
+   Deprecated       = E_DEPRECATED,
+   UserDeprecated   = E_USER_DEPRECATED,
+
+   Core             = (E_CORE_ERROR | E_CORE_WARNING),
+   All              = (E_ERROR | E_WARNING | E_PARSE | E_NOTICE | E_CORE_ERROR | E_CORE_WARNING | E_COMPILE_ERROR |
+                       E_COMPILE_WARNING | E_USER_ERROR | E_USER_NOTICE | E_STRICT | E_RECOVERABLE_ERROR |
+                       E_DEPRECATED | E_USER_DEPRECATED)
+};
 
 } // zapi
 

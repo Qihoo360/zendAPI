@@ -14,10 +14,12 @@ set(ZAPI_SRC
    lang/Namespace.cpp
    lang/Method.cpp
    lang/Property.cpp
+   lang/StringMember.cpp
    lang/Type.cpp
    ds/String.cpp
    ds/HashTable.cpp
    vm/AbstractClass.cpp
+   vm/AbstractMember.cpp
    vm/InvokeBridge.cpp
    vm/Callable.cpp
    vm/Engine.cpp

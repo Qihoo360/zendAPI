@@ -17,7 +17,7 @@
 #include "zapi/vm/Callable.h"
 #include "zapi/vm/internal/CallablePrivate.h"
 #include "zapi/lang/Parameters.h"
-#include "zapi/lang/OrigException.h"
+#include "zapi/kernel/OrigException.h"
 
 namespace zapi
 {
@@ -187,7 +187,7 @@ void CallablePrivate::setupCallableArgInfo(zend_internal_arg_info *info, const l
 
 } // internal
 
-using zapi::lang::Exception;
+using zapi::kernel::Exception;
 
 Callable::Callable()
 {}
@@ -251,7 +251,7 @@ void Callable::invoke(INTERNAL_FUNCTION_PARAMETERS)
          Variant result(callable->invoke(params));
          RETVAL_ZVAL(&result.getZval(), 1, 0);
       } catch (Exception &exception) {
-         lang::process_exception(exception);
+         kernel::process_exception(exception);
       }
    }
 }

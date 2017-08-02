@@ -116,6 +116,12 @@ static inline typename T::pointer zapi_get_ptr_helper(const T &p)
    return p.get();
 }
 
+template <typename T>
+static inline T *zapi_get_ptr_helper(const std::shared_ptr<T> &p)
+{
+   return p.get();
+}
+
 #define ZAPI_DECLARE_PRIVATE(Class)\
    inline Class##Private* getImplPtr()\
    {\

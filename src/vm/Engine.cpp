@@ -16,14 +16,14 @@
 #include "zapi/vm/Engine.h"
 #include "zapi/vm/ExecStateGuard.h"
 #include "zapi/lang/Variant.h"
-#include "zapi/lang/OrigException.h"
+#include "zapi/kernel/OrigException.h"
 
 namespace zapi
 {
 namespace vm
 {
 
-using zapi::lang::OrigException;
+using zapi::kernel::OrigException;
 
 namespace
 {

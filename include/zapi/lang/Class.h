@@ -16,12 +16,53 @@
 #ifndef ZAPI_LANG_CLASS_H
 #define ZAPI_LANG_CLASS_H
 
+#include "zapi/vm/AbstractClass.h"
+#include "zapi/vm/ClassMagicMethodInvoker.h"
+
 namespace zapi
 {
-namespace name
+namespace lang
 {
 
-} // name
+using zapi::vm::AbstractClass;
+using zapi::vm::ClassMagicMethodInvoker;
+
+template <typename T>
+class ZAPI_DECL_EXPORT Class : public AbstractClass
+{
+public:
+   Class(const char *name, Modifier flags = 0);
+   Class(const Class<T> &other);
+   Class(Class<T> &&other) ZAPI_DECL_NOEXCEPT;
+   virtual ~Class();
+   Class<T> &operator=(const Class<T> &other);
+   Class<T> &operator=(Class<T> &&other);
+public:
+   void registerConstant();
+   void registerMethod();
+   void registerProperty();
+   void registerInterface();
+private:
+   std::unique_ptr<ClassMagicMethodInvoker<T>> m_magicInvoker;
+};
+
+template <typename T>
+Class::Class(const char *name, Modifier flags = 0)
+{
+   
+}
+
+template <typename T>
+Class::Class(const Class<T> &other)
+{
+   
+}
+
+template <typename T>
+Class::~Class()
+{}
+
+} // lang
 } // zapi
 
 #endif //ZAPI_LANG_CLASS_H

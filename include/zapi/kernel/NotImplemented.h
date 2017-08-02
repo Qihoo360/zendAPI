@@ -11,25 +11,31 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by softboy on 6/7/17.
+// Created by zzu_softboy on 08/06/2017.
 
-#include "php/Zend/zend.h"
-#include "zapi/kernel/FatalError.h"
+#ifndef ZAPI_KERNEL_NOTIMPLEMENTED_H
+#define ZAPI_KERNEL_NOTIMPLEMENTED_H
+
+#include <exception>
+
+#include "zapi/Global.h"
 
 namespace zapi
 {
 namespace kernel
 {
 
-/**
- * Report this error as a fatal error
- * @return bool
- */
-bool FatalError::report() const
+class ZAPI_DECL_EXPORT NotImplemented : public std::exception
 {
-   zend_error(E_ERROR, "%s", what());
-   return true;
-}
+public:
+   NotImplemented() : std::exception()
+   {}
+
+   virtual ~NotImplemented() ZAPI_DECL_NOEXCEPT
+   {}
+};
 
 } // kernel
 } // zapi
+
+#endif //ZAPI_KERNEL_NOTIMPLEMENTED_H

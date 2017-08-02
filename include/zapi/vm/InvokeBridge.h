@@ -17,7 +17,7 @@
 #define ZAPI_VM_INVOKE_BRIDGE_H
 
 #include "zapi/Global.h"
-#include "zapi/lang/Exception.h"
+#include "zapi/kernel/Exception.h"
 #include "zapi/lang/Parameters.h"
 #include "zapi/lang/Variant.h"
 #include "zapi/lang/Argument.h"
@@ -38,7 +38,7 @@ class Parameters;
 namespace vm
 {
 
-using zapi::lang::Exception;
+using zapi::kernel::Exception;
 using zapi::lang::Variant;
 using zapi::lang::Parameters;
 using zapi::lang::Arguments;

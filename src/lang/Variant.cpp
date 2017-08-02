@@ -19,9 +19,9 @@
 #include "php/Zend/zend_string.h"
 #include "php/Zend/zend_alloc.h"
 
-#include "zapi/lang/FatalError.h"
+#include "zapi/kernel/FatalError.h"
+#include "zapi/kernel/OrigException.h"
 #include "zapi/lang/Variant.h"
-#include "zapi/lang/OrigException.h"
 #include "zapi/utils/LowerCase.h"
 #include "zapi/ds/String.h"
 

@@ -13,14 +13,14 @@
 //
 // Created by zzu_softboy on 07/06/2017.
 
-#ifndef ZAPI_LANG_FATALERROR_H
-#define ZAPI_LANG_FATALERROR_H
+#ifndef ZAPI_KERNEL_FATALERROR_H
+#define ZAPI_KERNEL_FATALERROR_H
 
-#include "zapi/lang/Exception.h"
+#include "zapi/kernel/Exception.h"
 
 namespace zapi
 {
-namespace lang
+namespace kernel
 {
 
 class ZAPI_DECL_EXPORT FatalError : public Exception
@@ -56,7 +56,7 @@ public:
    virtual bool report() const override;
 };
 
-} // lang
+} // kernel
 } // zapi
 
-#endif //ZAPI_LANG_FATALERROR_H
+#endif //ZAPI_KERNEL_FATALERROR_H

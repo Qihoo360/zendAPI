@@ -19,23 +19,39 @@
 #include "zapi/Global.h"
 #include <string>
 #include <list>
+#include <map>
 
 namespace zapi
 {
+
+namespace lang
+{
+class Method;
+class Interface;
+class Property;
+class Member;
+} // lang
+
 namespace vm
 {
 
 class AbstractClass;
-using zapi::lang::ClassType;
 
 namespace internal
 {
+
+using zapi::lang::ClassType;
+using zapi::lang::Method;
+using zapi::lang::Member;
+using zapi::lang::Property;
 
 class AbstractClassPrivate
 {
 public:
    AbstractClassPrivate(const AbstractClass &) = delete;
+   AbstractClassPrivate(AbstractClass &&) = delete;
    AbstractClassPrivate &operator=(const AbstractClass &) = delete;
+   AbstractClassPrivate &operator=(AbstractClass &&) = delete;
    std::unique_ptr<AbstractClass> m_apiPtr;
    std::string m_name;
    ClassType m_type = ClassType::Regular;
@@ -43,6 +59,9 @@ public:
    zend_function_entry *m_funcEntries = nullptr;
    zend_object_handlers m_handlers;
    std::list<std::shared_ptr<AbstractClassPrivate>> m_interfaces;
+   std::list<std::shared_ptr<Method>> m_methods;
+   std::list<std::shared_ptr<Method>> m_members;
+   std::map<std::string, std::shared_ptr<Property>> m_properties;
    std::shared_ptr<AbstractClassPrivate> m_parent;
    bool m_intialized = false;
    zend_string *m_self = nullptr;

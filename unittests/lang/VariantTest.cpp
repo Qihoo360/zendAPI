@@ -14,8 +14,8 @@
 // Created by zzu_softboy on 27/07/2017.
 
 #include "zapi/Global.h"
+#include "zapi/kernel/FatalError.h"
 #include "zapi/lang/Variant.h"
-#include "zapi/lang/FatalError.h"
 #include "zapi/lang/Type.h"
 
 #include "php/sapi/embed/php_embed.h"
@@ -29,8 +29,8 @@
 #include <string>
 #include <cstring>
 
+using zapi::kernel::FatalError;
 using zapi::lang::Variant;
-using zapi::lang::FatalError;
 using zapi::lang::Type;
 
 namespace
