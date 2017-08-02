@@ -15,3 +15,41 @@
 //
 // Created by softboy on 2017/08/02.
 
+#ifndef ZAPI_LANG_STRING_MEMBER_H
+#define ZAPI_LANG_STRING_MEMBER_H
+
+#include "zapi/Global.h"
+#include "zapi/vm/AbstractMember.h"
+
+namespace zapi
+{
+namespace lang
+{
+
+namespace internal
+{
+class StringMemberPrivate;
+} // internal
+
+using zapi::vm::AbstractMember;
+using zapi::lang::internal::StringMemberPrivate;
+
+class ZAPI_DECL_EXPORT StringMember : public AbstractMember
+{
+public:
+   StringMember(const char *name, const char *value, size_t size, Modifier flags);
+   StringMember(const char *name, const char *value, Modifier flags);
+   StringMember(const char *name, const std::string &value, Modifier flags);
+   StringMember(const StringMember &other);
+   StringMember &operator=(const StringMember &other);
+   virtual ~StringMember();
+protected:
+   virtual void setupConstant(zend_class_entry *entry) override;
+   virtual void declare(zend_class_entry *entry) override;
+   ZAPI_DECLARE_PRIVATE(StringMember)
+};
+
+} // lang
+} // zapi
+
+#endif // ZAPI_LANG_STRING_MEMBER_H

@@ -292,14 +292,12 @@ Method::Method(const char *name, Modifier flags, const Arguments &args)
 
 Method::Method(const Method &other)
 {
-   ZAPI_D(Method);
-   m_implPtr.reset(new MethodPrivate(*implPtr));
+   m_implPtr.reset(new MethodPrivate(*static_cast<MethodPrivate *>(other.m_implPtr.get())));
 }
 
 Method &Method::operator=(const Method &other)
 {
-   ZAPI_D(Method);
-   m_implPtr.reset(new MethodPrivate(*implPtr));
+   m_implPtr.reset(new MethodPrivate(*static_cast<MethodPrivate *>(other.m_implPtr.get())));
    return *this;
 }
 

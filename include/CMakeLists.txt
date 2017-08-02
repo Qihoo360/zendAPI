@@ -42,6 +42,7 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/vm/internal/AbstractClassPrivate.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/internal/AbstractMemberPrivate.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/Engine.h
+   ${ZAPI_INCLUDE_DIR}/zapi/vm/AbstractMember.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/ClassMagicMethodInvoker.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/ExecStateGuard.h
    )
