@@ -14,6 +14,8 @@
 // Created by zzu_softboy on 2017/08/01.
 
 #include "zapi/lang/Method.h"
+#include "zapi/lang/Parameters.h"
+#include "zapi/lang/StdClass.h"
 #include "zapi/vm/internal/CallablePrivate.h"
 
 namespace zapi
@@ -26,6 +28,7 @@ namespace internal
 
 using zapi::vm::internal::CallablePrivate;
 using zapi::lang::Modifier;
+using zapi::lang::StdClass;
 
 class MethodPrivate : public CallablePrivate
 {
@@ -164,6 +167,7 @@ public:
    }
    
    void initialize(zend_function_entry *entry, const std::string &className);
+   Variant invoke(Parameters &parameters);
    int m_type;
    Modifier m_flags;
    union {
@@ -189,6 +193,45 @@ void MethodPrivate::initialize(zend_function_entry *entry, const std::string &cl
       m_flags |= Modifier::Public;
    }
    CallablePrivate::initialize(entry, className.c_str(), static_cast<int>(m_flags));
+}
+
+Variant MethodPrivate::invoke(Parameters &parameters)
+{
+   StdClass *object = parameters.getObject();
+   switch(m_type) {
+   case 0:
+      (object->*m_callable.methodCallback0)();
+      return Variant(nullptr);
+   case 1:
+      (object->*m_callable.methodCallback1)(parameters);
+      return Variant(nullptr);
+   case 2:
+      return (object->*m_callable.methodCallback2)();
+   case 3:
+      return (object->*m_callable.methodCallback3)(parameters);
+   case 4:
+      (object->*m_callable.methodCallback4)();
+      return Variant(nullptr);
+   case 5:
+      (object->*m_callable.methodCallback5)(parameters);
+      return Variant(nullptr);
+   case 6:
+      return (object->*m_callable.methodCallback6)();
+   case 7:
+      return (object->*m_callable.methodCallback7)(parameters);
+   case 8:
+      m_callable.methodCallback8();
+      return Variant(nullptr);
+   case 9:
+      m_callable.methodCallback9(parameters);
+      return Variant(nullptr);
+   case 10:
+      return m_callable.methodCallback10();
+   case 11:
+      return m_callable.methodCallback11(parameters);
+   default:
+      return Variant(nullptr);
+   }
 }
 
 } // internal
@@ -265,7 +308,8 @@ Method::~Method()
 
 Variant Method::invoke(Parameters &parameters)
 {
-   
+   ZAPI_D(Method);
+   return implPtr->invoke(parameters);
 }
 
 void Method::initialize(zend_function_entry *entry, const char *className)
