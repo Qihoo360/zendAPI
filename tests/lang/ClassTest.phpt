@@ -1,10 +1,17 @@
 --TEST--
-Class register test
+Contant register test
 --FILE--
 <?php
 if (class_exists("Person")) {
    echo "class Person exist";
 }
+
+$person = new Person;
+var_dump($person);
+//$person = new Person;
+
 ?>
 --EXPECT--
-class Person exist
+zapi v0.0.1 hello world, zapi
+
+

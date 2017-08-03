@@ -49,7 +49,12 @@ ConstantPrivate::ConstantPrivate(const ConstantPrivate &other)
       m_constant.flags = other.m_constant.flags;
       m_constant.module_number = other.m_constant.module_number;
    }
-   ZVAL_DUP(&m_constant.value, &other.m_constant.value);
+   if (Z_TYPE_P(&other.m_constant.value) == IS_STRING) {
+      ZVAL_COPY_VALUE(&m_constant.value, &other.m_constant.value);
+      ZVAL_NEW_STR(&m_constant.value, zend_string_dup(Z_STR(other.m_constant.value), 1));
+   } else {
+       ZVAL_DUP(&m_constant.value, &other.m_constant.value);
+   }
 }
 
 ConstantPrivate::ConstantPrivate(ConstantPrivate &&other)
@@ -128,21 +133,21 @@ Constant::Constant(const char *name, const char *value)
    : m_implPtr(new ConstantPrivate(name))
 {
    ZAPI_D(Constant);
-   ZVAL_PSTRINGL(&implPtr->m_constant.value, value, ::strlen(value));
+   ZVAL_STRINGL(&implPtr->m_constant.value, value, ::strlen(value));
 }
 
 Constant::Constant(const char *name, const char *value, size_t size)
    : m_implPtr(new ConstantPrivate(name))
 {
    ZAPI_D(Constant);
-   ZVAL_PSTRINGL(&implPtr->m_constant.value, value, size);
+   ZVAL_STRINGL(&implPtr->m_constant.value, value, size);
 }
 
 Constant::Constant(const char *name, const std::string &value)
    : m_implPtr(new ConstantPrivate(name))
 {
    ZAPI_D(Constant);
-   ZVAL_PSTRINGL(&implPtr->m_constant.value, value.c_str(), value.size());
+   ZVAL_STRINGL(&implPtr->m_constant.value, value.c_str(), value.size());
 }
 
 Constant::Constant(const Constant &other)

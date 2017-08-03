@@ -87,9 +87,11 @@ function main($argc, $argv)
    $totalTests = count($tests);
    print_header();
    foreach ($tests as $testfilename) {
+
       run_test($testfilename);
    }
    print_summary();
+
 }
 
 function render_red_msg($msg)
