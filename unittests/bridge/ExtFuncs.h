@@ -1,3 +1,5 @@
+#ifndef ZAPI_UNITTEST_BRIDGE_DUMMYEXT_FUNCS_H
+#define ZAPI_UNITTEST_BRIDGE_DUMMYEXT_FUNCS_H
 #include "zapi/ZendApi.h"
 
 namespace dummyext
@@ -12,3 +14,5 @@ void ZAPI_DECL_EXPORT print_name(Parameters &params);
 void ZAPI_DECL_EXPORT print_name_and_age(Parameters &params);
 Variant add_two_number(Parameters &params);
 } // dummyext
+
+#endif // ZAPI_UNITTEST_BRIDGE_DUMMYEXT_FUNCS_H

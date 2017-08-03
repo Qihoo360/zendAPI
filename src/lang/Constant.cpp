@@ -173,6 +173,11 @@ void Constant::initialize(const std::string &prefix, int moduleNumber)
    getImplPtr()->initialize(prefix, moduleNumber);
 }
 
+void Constant::initialize(int moduleNumber)
+{
+   getImplPtr()->initialize("", moduleNumber);
+}
+
 const zend_constant &Constant::getZendConstant() const
 {
    ZAPI_D(const Constant);

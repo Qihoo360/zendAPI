@@ -20,6 +20,14 @@
 
 namespace zapi
 {
+namespace bridge
+{
+namespace internal
+{
+class ExtensionPrivate;
+} // internal
+} // bridge
+
 namespace lang
 {
 
@@ -48,11 +56,14 @@ public:
    Constant &operator=(const Constant &other);
    Constant &operator=(Constant &&other) ZAPI_DECL_NOEXCEPT;
    virtual ~Constant();
-   void initialize(const std::string &prefix, int moduleNumber);
    const zend_constant &getZendConstant() const;
+private:
+   void initialize(const std::string &prefix, int moduleNumber);
+   void initialize(int moduleNumber);
 private:
    ZAPI_DECLARE_PRIVATE(Constant)
    std::unique_ptr<ConstantPrivate> m_implPtr;
+   friend class zapi::bridge::internal::ExtensionPrivate;
 };
 
 } // lang

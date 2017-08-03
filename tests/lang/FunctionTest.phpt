@@ -1,5 +1,5 @@
 --TEST--
-function register test
+unction register test
 --FILE--
 <?php
 if (function_exists("show_something")) {

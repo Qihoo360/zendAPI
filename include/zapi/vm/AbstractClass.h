@@ -22,6 +22,14 @@
 namespace zapi
 {
 
+namespace bridge
+{
+namespace internal
+{
+class ExtensionPrivate;
+} // internal
+} // bridge
+
 namespace lang
 {
 class StdClass;
@@ -29,7 +37,6 @@ class StdClass;
 
 namespace vm
 {
-
 namespace internal
 {
 class AbstractClassPrivate;
@@ -44,7 +51,6 @@ using zapi::lang::Arguments;
 class ZAPI_DECL_EXPORT AbstractClass
 {
 public:
-   AbstractClass(const char *className, Modifier flags);
    AbstractClass(const char *className, ClassType type);
    AbstractClass(const AbstractClass &other);
    AbstractClass(AbstractClass &&other) ZAPI_DECL_NOEXCEPT;
@@ -91,8 +97,12 @@ protected:
    void registerInterface(const AbstractClass &interface);
    void registerBaseClass(const AbstractClass &base);
 private:
+   zend_class_entry *initialize(const std::string &ns);
+   zend_class_entry *initialize();
+private:
    ZAPI_DECLARE_PRIVATE(AbstractClass)
    std::shared_ptr<AbstractClassPrivate> m_implPtr;
+   friend class zapi::bridge::internal::ExtensionPrivate;
 };
 
 } // vm

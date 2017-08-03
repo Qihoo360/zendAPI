@@ -76,22 +76,22 @@ TEST(ExtensionTest, testRegisterIniEntry)
 
 TEST(ExtensionTest, testRegisterContsant)
 {
-//   Extension extension("zapi");
-//   Constant const1("MY_CONST", "CONST_VALUE1");
-//   ASSERT_EQ(extension.getConstantQuantity(), 0);
-//   extension.registerConstant(const1);
-//   zend_module_entry *moduleEntry = static_cast<zend_module_entry *>(extension.getModule());
-//   ASSERT_EQ(extension.getConstantQuantity(), 1);
-//   std::string code;
-//   code += "$name = \"zapi\";"
-//           "echo ZAPI_NAME;echo \"\\n\";echo \"xiuxiux\";";
-//   Engine::eval(code);
-//   ASSERT_EQ(phpOutput, "zapi\nxiuxiux");
-//   phpOutput.clear();
-//   code = "echo ZAPI_VERSION;";
-//   Engine::eval(code);
-//   ASSERT_EQ(phpOutput, "v0.0.1");
-//   phpOutput.clear();
+   Extension extension("zapi");
+   Constant const1("MY_CONST", "CONST_VALUE1");
+   ASSERT_EQ(extension.getConstantQuantity(), 0);
+   extension.registerConstant(const1);
+   zend_module_entry *moduleEntry = static_cast<zend_module_entry *>(extension.getModule());
+   ASSERT_EQ(extension.getConstantQuantity(), 1);
+   std::string code;
+   code += "$name = \"zapi\";"
+           "echo ZAPI_NAME;echo \"\\n\";echo \"xiuxiux\";";
+   Engine::eval(code);
+   ASSERT_EQ(phpOutput, "zapi\nxiuxiux");
+   phpOutput.clear();
+   code = "echo ZAPI_VERSION;";
+   Engine::eval(code);
+   ASSERT_EQ(phpOutput, "v0.0.1");
+   phpOutput.clear();
 }
 
 TEST(ExtensionTest, testFuncRegister)
@@ -106,7 +106,16 @@ TEST(ExtensionTest, testFuncRegister)
    phpOutput.clear();
    code = "print_name_and_age(\"zzu_softboy\", 27);";
    Engine::eval(code);
-  std::cout << phpOutput << std::endl;
+   ASSERT_EQ(phpOutput, "name: zzu_softboy age: 27");
+}
+
+TEST(ExtensionTest, testClassRegister)
+{
+   phpOutput.clear();
+   std::string code("var_dump(class_exists('\\Person'));");
+   Engine::eval(code);
+   std::cout << phpOutput << std::endl;
+   //ASSERT_EQ(phpOutput, "hello world, zapi");
 }
 
 size_t buffer_write(const char *str, size_t str_length)

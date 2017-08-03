@@ -11,9 +11,36 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by zzu_softboy on 2017/06/14.
+// Created by zzu_softboy on 2017/08/03.
 
-#ifndef ZAPI_LANG_ARRAY_H
-#define ZAPI_LANG_ARRAY_H
+#include "zapi/ds/AbstractIterator.h"
 
-#endif //ZAPI_LANG_ARRAY_H
+namespace zapi
+{
+namespace ds
+{
+namespace internal
+{
+
+using zapi::lang::Variant;
+using zapi::lang::StdClass;
+
+class AbstractIteratorPrivate 
+{
+public:
+   AbstractIteratorPrivate(StdClass *stdClass)
+   {}
+   Variant m_object;
+};
+
+} // internal
+
+AbstractIterator::AbstractIterator(lang::StdClass *stdClass)
+   : m_implPtr(new AbstractIteratorPrivate(stdClass))
+{}
+
+AbstractIterator::~AbstractIterator()
+{}
+
+} // ds
+} // zapi

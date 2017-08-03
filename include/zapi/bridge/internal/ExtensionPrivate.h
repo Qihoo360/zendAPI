@@ -70,7 +70,7 @@ public:
    void iterateFunctions(const std::function<void(Function &func)> &callback);
    void iterateIniEntries(const std::function<void(IniEntry &ini)> &callback);
    void iterateConstants(const std::function<void(Constant &constant)> &callback);
-   
+   void iterateClasses(const std::function<void(AbstractClass &cls)> &callback);
    zend_module_entry *getModule();
    size_t getFunctionQuantity() const;
    size_t getIniEntryQuantity() const;

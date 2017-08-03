@@ -11,9 +11,45 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by softboy on 5/26/17.
+// Created by zzu_softboy on 2017/08/03.
 
-#ifndef ZAPI_LANG_CONFIG_H
-#define ZAPI_LANG_CONFIG_H
+#include "zapi/lang/Variant.h"
 
-#endif //ZAPI_LANG_CONFIG_H
+namespace zapi
+{
+
+namespace lang
+{
+class StdClass;
+} // lang
+namespace ds
+{
+
+namespace internal
+{
+class AbstractIteratorPrivate;
+} // internal
+
+using zapi::lang::Variant;
+using zapi::lang::StdClass;
+using internal::AbstractIteratorPrivate;
+
+class ZAPI_DECL_EXPORT AbstractIterator
+{
+public:
+   AbstractIterator(StdClass *stdClass);
+   virtual ~AbstractIterator();
+   
+   virtual bool valid() = 0;
+   virtual Variant current() = 0;
+   virtual Variant key() = 0;
+   virtual void next() = 0;
+   virtual void rewind() = 0;
+   
+protected:
+   ZAPI_DECLARE_PRIVATE(AbstractIterator)
+   std::unique_ptr<AbstractIteratorPrivate> m_implPtr;
+};
+
+} // ds
+} // zapi

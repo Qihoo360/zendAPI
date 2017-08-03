@@ -323,6 +323,13 @@ void ExtensionPrivate::iterateConstants(const std::function<void (lang::Constant
    }
 }
 
+void ExtensionPrivate::iterateClasses(const std::function<void(AbstractClass &cls)> &callback)
+{
+   for (auto &cls : m_classes) {
+      callback(*cls);
+   }
+}
+
 int ExtensionPrivate::processIdle(int type, int moduleNumber)
 {
    return 0;
@@ -380,7 +387,11 @@ bool ExtensionPrivate::initialize(int moduleNumber)
       m_startupHandler();
    }
    iterateConstants([moduleNumber](Constant &constant) {
-      constant.initialize("", moduleNumber);
+      constant.initialize(moduleNumber);
+   });
+   // here we register all global classes and interfaces
+   iterateClasses([](AbstractClass &cls) {
+      cls.initialize();
    });
    // remember that we're initialized (when you use "apache reload" it is
    // possible that the processStartup() method is called more than once)

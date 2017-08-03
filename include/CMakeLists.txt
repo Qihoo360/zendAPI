@@ -13,7 +13,6 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Class.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Interface.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Constant.h
-   ${ZAPI_INCLUDE_DIR}/zapi/lang/Array.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Variant.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/StdClass.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Parameters.h
@@ -27,6 +26,7 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/ds/HashTable.h
    ${ZAPI_INCLUDE_DIR}/zapi/ds/List.h
    ${ZAPI_INCLUDE_DIR}/zapi/ds/String.h
+   ${ZAPI_INCLUDE_DIR}/zapi/ds/AbstractIterator.h
    ${ZAPI_INCLUDE_DIR}/zapi/utils/PhpFuncs.h
    ${ZAPI_INCLUDE_DIR}/zapi/utils/LowerCase.h
    ${ZAPI_INCLUDE_DIR}/zapi/ZendApi.h
@@ -45,6 +45,7 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/vm/AbstractMember.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/ClassMagicMethodInvoker.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/ExecStateGuard.h
+   ${ZAPI_INCLUDE_DIR}/zapi/vm/IterateBridge.h
    )
 
 set(ZAPI_PUBLIC_HEADERS ${ZAPI_PUBLIC_HEADERS} PARENT_SCOPE)

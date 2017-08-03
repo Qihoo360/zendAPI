@@ -4,8 +4,8 @@ set(ZAPI_SRC
    bridge/IniEntry.cpp
    kernel/Meta.cpp
    kernel/StreamBuffer.cpp
+   kernel/FatalError.cpp
    lang/Variant.cpp
-   lang/FatalError.cpp
    lang/Class.cpp
    lang/Interface.cpp
    lang/Method.cpp
@@ -20,6 +20,7 @@ set(ZAPI_SRC
    lang/Type.cpp
    ds/String.cpp
    ds/HashTable.cpp
+   ds/AbstractIterator.cpp
    vm/AbstractClass.cpp
    vm/AbstractMember.cpp
    vm/InvokeBridge.cpp

@@ -23,6 +23,15 @@
 
 namespace zapi
 {
+
+namespace vm
+{
+namespace internal
+{
+class AbstractClassPrivate;
+} // internal
+} // vm
+
 namespace lang
 {
 
@@ -58,6 +67,7 @@ protected:
    void initialize(zend_function_entry *entry, const char *className);
 private:
    ZAPI_DECLARE_PRIVATE(Method)
+   friend class zapi::vm::internal::AbstractClassPrivate;
 };
 
 } // lang

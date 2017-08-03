@@ -3,6 +3,7 @@
 
 #include "zapi/ZendApi.h"
 #include "ExtFuncs.h"
+#include "ClassDef.h"
 
 using zapi::lang::Constant;
 using zapi::lang::ValueArgument;
@@ -35,6 +36,8 @@ ZAPI_DECL_EXPORT void *get_module()
                                                        ValueArgument("number1", zapi::lang::Type::Long),
                                                        ValueArgument("number2", zapi::lang::Type::Long)
                                                     });
+   zapi::lang::Class<Person> personClass("Person");
+   extension.registerClass(personClass);
    return extension;
 }
 

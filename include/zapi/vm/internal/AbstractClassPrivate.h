@@ -51,12 +51,21 @@ class AbstractClassPrivate
 {
 public:
    AbstractClassPrivate(const char *classname, ClassType type);
+   zend_class_entry *initialize(const std::string &ns);
+   std::unique_ptr<zend_function_entry[]> &getMethodEntries();
+   // php class system facility static handle methods
+   static zend_object *createObject(zend_class_entry *entry);
+   static zend_object *cloneObject(zval *value);
+   static void destructObject(zend_object *object);
+   static void freeObject(zend_object *object);
+   
+   static zend_function *getStaticMethod(zend_class_entry *entry, zend_string *methodName);
 public:
    std::unique_ptr<AbstractClass> m_apiPtr;
    std::string m_name;
    ClassType m_type = ClassType::Regular;
    zend_class_entry *m_classEntry = nullptr;
-   zend_function_entry *m_funcEntries = nullptr;
+   std::unique_ptr<zend_function_entry[]> m_methodEntries;
    zend_object_handlers m_handlers;
    std::list<std::shared_ptr<AbstractClassPrivate>> m_interfaces;
    std::list<std::shared_ptr<Method>> m_methods;
