@@ -8,6 +8,8 @@ using zapi::lang::StdClass;
 
 class Person : public StdClass
 {
+public:
+   Person();
 private:
    /**
      *  The initial value

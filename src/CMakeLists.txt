@@ -18,6 +18,7 @@ set(ZAPI_SRC
    lang/Property.cpp
    lang/StringMember.cpp
    lang/Type.cpp
+   lang/StdClass.cpp
    ds/String.cpp
    ds/HashTable.cpp
    ds/AbstractIterator.cpp
@@ -26,6 +27,8 @@ set(ZAPI_SRC
    vm/InvokeBridge.cpp
    vm/Callable.cpp
    vm/Engine.cpp
+   vm/IterateBridge.cpp
+   vm/ObjectBinder.cpp
    utils/PhpFuncs.cpp)
 
 zapi_add_library(${ZAPI_PROJECT_NAME} SHARED ${ZAPI_SRC} ${ZAPI_PUBLIC_HEADERS})

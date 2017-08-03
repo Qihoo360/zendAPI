@@ -46,6 +46,7 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/vm/ClassMagicMethodInvoker.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/ExecStateGuard.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/IterateBridge.h
+   ${ZAPI_INCLUDE_DIR}/zapi/vm/ObjectBinder.h
    )
 
 set(ZAPI_PUBLIC_HEADERS ${ZAPI_PUBLIC_HEADERS} PARENT_SCOPE)

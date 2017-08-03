@@ -57,10 +57,8 @@ public:
    AbstractClass &operator=(const AbstractClass &other);
    AbstractClass &operator=(AbstractClass &&other) ZAPI_DECL_NOEXCEPT;
    virtual ~AbstractClass();
+   
 public:
-   virtual StdClass *construct() const;
-   virtual StdClass *clone() const;
-protected:
    void registerMethod(const char *name, zapi::ZendCallable callable, Modifier flags = Modifier::None, const Arguments &args = {});
    void registerMethod(const char *name, const zapi::MethodCallable0 &method, Modifier flags = Modifier::None, const Arguments &args = {});
    void registerMethod(const char *name, const zapi::MethodCallable1 &method, Modifier flags = Modifier::None, const Arguments &args = {});
@@ -96,6 +94,14 @@ protected:
    void registerProperty(const char *name, const zapi::GetterMethodCallable1 &getter, const zapi::GetterMethodCallable1 &setter);
    void registerInterface(const AbstractClass &interface);
    void registerBaseClass(const AbstractClass &base);
+protected:
+   virtual StdClass *construct() const;
+   virtual StdClass *clone() const;
+   virtual bool clonable() const;
+   virtual bool serializable() const;
+   virtual bool traversable() const;
+   virtual void callClone(StdClass *nativeObject) const;
+   virtual void callDestruct(StdClass *nativeObject) const;
 private:
    zend_class_entry *initialize(const std::string &ns);
    zend_class_entry *initialize();

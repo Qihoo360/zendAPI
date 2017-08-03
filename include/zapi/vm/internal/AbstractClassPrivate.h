@@ -30,6 +30,7 @@ class Method;
 class Interface;
 class Property;
 class Member;
+class StdClass;
 } // lang
 
 namespace vm
@@ -51,17 +52,37 @@ class AbstractClassPrivate
 {
 public:
    AbstractClassPrivate(const char *classname, ClassType type);
-   zend_class_entry *initialize(const std::string &ns);
+   zend_class_entry *initialize(AbstractClass *cls, const std::string &ns);
    std::unique_ptr<zend_function_entry[]> &getMethodEntries();
+   zend_object_handlers *getObjectHandlers();
+   
    // php class system facility static handle methods
    static zend_object *createObject(zend_class_entry *entry);
    static zend_object *cloneObject(zval *value);
+   
+   // php object handlers
+   static int countElements(zval *objecy, zend_long *count);
+   static zval *readDimension(zval *object, zval *offset, int type, zval *rv);
+   static void writeDimension(zval *object, zval *offset, zval *value);
+   static int hasDimension(zval *object, zval *offset, int checkEmpty);
+   static void unsetDimension(zval *object, zval *offset);
+   // property
+   static zval *readProperty(zval *object, zval *name, int type, void **cacheSlot, zval *rv);
+   static void writeProperty(zval *object, zval *name, zval *value, void **cacheSlot);
+   static int hasProperty(zval *object, zval *name, int hasSetExists, void **cacheSlot);
+   static void unsetProperty(zval *object, zval *member, void **cacheSlot);
+   // method call
+   static zend_function *getMethod(zend_object **object, zend_string *method, const zval *key);
+   static zend_function *getStaticMethod(zend_class_entry *entry, zend_string *methodName);
+   static int getClosure(zval *object, zend_class_entry **entry, zend_function **func, zend_object **objectPtr);
+   // destruct object
    static void destructObject(zend_object *object);
    static void freeObject(zend_object *object);
-   
-   static zend_function *getStaticMethod(zend_class_entry *entry, zend_string *methodName);
+   // cast
+   static int cast(zval *object, zval *retValue, int type);
+   static int compare(zval *left, zval *right);
 public:
-   std::unique_ptr<AbstractClass> m_apiPtr;
+   AbstractClass *m_apiPtr;
    std::string m_name;
    ClassType m_type = ClassType::Regular;
    zend_class_entry *m_classEntry = nullptr;
@@ -73,7 +94,7 @@ public:
    std::map<std::string, std::shared_ptr<Property>> m_properties;
    std::shared_ptr<AbstractClassPrivate> m_parent;
    bool m_intialized = false;
-   zend_string *m_self = nullptr;
+   std::unique_ptr<zend_string, std::function<void(zend_string *)>> m_self = nullptr;
 };
 
 } // internal

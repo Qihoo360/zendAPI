@@ -1,6 +1,4 @@
 // Copyright 2017-2018 zzu_softboy <zzu_softboy@163.com>
-// Copyright 2013, 2014 Copernica BV
-// Emiel Bruijntjes <emiel.bruijntjes@copernica.com>
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -13,26 +11,50 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by softboy on 2017/08/01 .
+// Created by zzu_softboy on 2017/08/03.
 
-#ifndef ZAPI_LANG_INTERNAL_STDCLASS_PRIVATE_H
-#define ZAPI_LANG_INTERNAL_STDCLASS_PRIVATE_H
+#ifndef ZAPI_VM_OBJECT_BINDER_H
+#define ZAPI_VM_OBJECT_BINDER_H
 
 #include "zapi/Global.h"
 
 namespace zapi
 {
+
 namespace lang
 {
-namespace internal
+class StdClass;
+} // lang
+
+namespace vm
 {
-class StdClassPrivate
+
+using zapi::lang::StdClass;
+class ObjectBinder
 {
 public:
-   StdClassPrivate();
+   ObjectBinder(zend_class_entry *entry, StdClass *nativeObject, const zend_object_handlers *objectHandlers, int refCount);
+   ~ObjectBinder();
+   void destroy();
+   zend_object *getZendObject() const;
+   StdClass *getNativeObject() const;
+   static ObjectBinder *retrieveSelfFromZendObject(const zend_object *object);
+private:
+   static constexpr size_t calculateZendObjectOffset()
+   {
+      return offsetof(Container, m_zendObject);
+   }
+
+private:
+   struct Container
+   {
+      ObjectBinder *m_self;
+      zend_object m_zendObject;
+   } *m_container;
+   std::unique_ptr<StdClass> m_nativeObject;
 };
-} // internal
-} // lang
+
+} // vm
 } // zapi
 
-#endif // ZAPI_LANG_INTERNAL_STDCLASS_PRIVATE_H
+#endif // ZAPI_VM_OBJECT_BINDER_H

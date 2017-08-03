@@ -23,7 +23,26 @@ namespace zapi
 namespace lang
 {
 
+namespace internal
+{
+
+StdClassPrivate::StdClassPrivate()
+{}
+
+} // internal
+
 using zapi::kernel::NotImplemented;
+
+StdClass::StdClass()
+   : m_implPtr(new StdClassPrivate)
+{}
+
+StdClass::~StdClass()
+{}
+
+StdClass::StdClass(const StdClass &object)
+   : m_implPtr(nullptr)
+{}
 
 /**
  * Overridable method that is called right before an object is destructed

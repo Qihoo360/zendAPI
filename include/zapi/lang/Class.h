@@ -37,13 +37,21 @@ public:
    virtual ~Class();
    Class<T> &operator=(const Class<T> &other);
    Class<T> &operator=(Class<T> &&other);
-public:
-   void registerConstant();
-   void registerMethod();
-   void registerProperty();
-   void registerInterface();
+private:
+   virtual StdClass *construct() const override;
+   virtual StdClass *clone() const override;
+   virtual void callDestruct(StdClass *nativeObject) const override;
+   template <typename X = T>
+   typename std::enable_if<std::is_default_constructible<X>::value, StdClass *>::type
+   static doConstructObject();
+   
+   template <typename X = T>
+   typename std::enable_if<!std::is_default_constructible<X>::value, StdClass *>::type
+   static doConstructObject();
+   
 private:
    std::unique_ptr<ClassMagicMethodInvoker<T>> m_magicInvoker;
+   friend class zapi::vm::AbstractClassPrivate;
 };
 
 template <typename T>
@@ -60,6 +68,40 @@ template <typename T>
 Class<T>::Class(Class<T> &&other) ZAPI_DECL_NOEXCEPT
    : AbstractClass(std::move(other))
 {}
+
+template <typename T>
+StdClass *Class<T>::construct() const
+{
+   return doConstructObject<T>();
+}
+
+template <typename T>
+template <typename X>
+typename std::enable_if<std::is_default_constructible<X>::value, StdClass *>::type
+Class<T>::doConstructObject()
+{
+   return new X();
+}
+
+template <typename T>
+template <typename X>
+typename std::enable_if<!std::is_default_constructible<X>::value, StdClass *>::type
+Class<T>::doConstructObject()
+{
+   return nullptr;
+}
+template <typename T>
+void Class<T>::callDestruct(StdClass *nativeObject) const
+{
+   T *object = (T *)nativeObject;
+   return object->__destruct();
+}
+
+template <typename T>
+StdClass *Class<T>::clone() const
+{
+   return nullptr;
+}
 
 template <typename T>
 Class<T>::~Class()

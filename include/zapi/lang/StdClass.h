@@ -21,6 +21,11 @@
 
 namespace zapi
 {
+
+namespace vm
+{
+class ObjectBinder;
+} // vm
 namespace lang
 {
 
@@ -211,7 +216,7 @@ public:
     */
    int __compare(const StdClass &object) const;
    
-private:
+protected:
    ZAPI_DECLARE_PRIVATE(StdClass)
    std::unique_ptr<StdClassPrivate> m_implPtr;
 };

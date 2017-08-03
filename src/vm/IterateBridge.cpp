@@ -1,6 +1,4 @@
 // Copyright 2017-2018 zzu_softboy <zzu_softboy@163.com>
-// Copyright 2013, 2014 Copernica BV
-// Emiel Bruijntjes <emiel.bruijntjes@copernica.com>
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -13,26 +11,15 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by softboy on 2017/08/01 .
+// Created by zzu_softboy on 2017/08/03.
 
-#ifndef ZAPI_LANG_INTERNAL_STDCLASS_PRIVATE_H
-#define ZAPI_LANG_INTERNAL_STDCLASS_PRIVATE_H
-
-#include "zapi/Global.h"
+#include "zapi/vm/IterateBridge.h"
 
 namespace zapi
 {
-namespace lang
+namespace vm
 {
-namespace internal
-{
-class StdClassPrivate
-{
-public:
-   StdClassPrivate();
-};
-} // internal
-} // lang
-} // zapi
 
-#endif // ZAPI_LANG_INTERNAL_STDCLASS_PRIVATE_H
+
+} // vm
+} // zapi

@@ -116,6 +116,9 @@ TEST(ExtensionTest, testClassRegister)
    Engine::eval(code);
    std::cout << phpOutput << std::endl;
    //ASSERT_EQ(phpOutput, "hello world, zapi");
+   code = "$person = new Person();var_dump($person);";
+   Engine::eval(code);
+   std::cout << phpOutput << std::endl;
 }
 
 size_t buffer_write(const char *str, size_t str_length)
