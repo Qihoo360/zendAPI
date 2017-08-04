@@ -52,6 +52,11 @@ HashTable &HashTable::append(const Variant &value, bool forceNew)
    return *this;
 }
 
+HashTable::~HashTable()
+{
+   zend_hash_destroy(&m_hashTable);
+}
+
 Variant HashTable::operator[](const String &key)
 {
    zval *value = zend_hash_find(&m_hashTable, key);
@@ -290,6 +295,9 @@ std::vector<Variant> HashTable::getValues() const
    ZEND_HASH_FOREACH_END();
    return values;
 }
+
+HashTable::iterator::~iterator()
+{}
 
 } // ds
 } // zapi

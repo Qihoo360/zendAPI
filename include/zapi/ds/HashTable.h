@@ -83,10 +83,7 @@ public:
       GC_REFCOUNT(&m_hashTable)++;
    }
    
-   virtual ~HashTable()
-   {
-      zend_hash_destroy(&m_hashTable);
-   }
+   virtual ~HashTable();
    
    uint32_t getSize() const
    {
@@ -445,8 +442,7 @@ public:
          return getValue();
       }
       
-      virtual ~iterator()
-      {}
+      virtual ~iterator();
       
    protected:
       /**
