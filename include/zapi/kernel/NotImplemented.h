@@ -28,11 +28,9 @@ namespace kernel
 class ZAPI_DECL_EXPORT NotImplemented : public std::exception
 {
 public:
-   NotImplemented() : std::exception()
-   {}
+   NotImplemented();
 
-   virtual ~NotImplemented() ZAPI_DECL_NOEXCEPT
-   {}
+   virtual ~NotImplemented() ZAPI_DECL_NOEXCEPT;
 };
 
 } // kernel

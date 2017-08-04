@@ -26,7 +26,7 @@ using zapi::lang::StdClass;
 using zapi::lang::internal::StdClassPrivate;
 
 ObjectBinder::ObjectBinder(zend_class_entry *entry, StdClass *nativeObject, 
-                           const zend_object_handlers *objectHandlers, int refCount)
+                           const zend_object_handlers *objectHandlers, uint32_t refCount)
    : m_nativeObject(nativeObject)
 {
    // here can be negative ？ 
@@ -35,9 +35,9 @@ ObjectBinder::ObjectBinder(zend_class_entry *entry, StdClass *nativeObject,
    // ((ce->ce_flags & ZEND_ACC_USE_GUARDS) ? 0 : 1));
    // maybe -16
    // or we may not set something not correct
-   int propertiesSize = zend_object_properties_size(entry);
+   ssize_t propertiesSize = static_cast<ssize_t>(zend_object_properties_size(entry));
    propertiesSize = propertiesSize < 0 ? 0 : propertiesSize;
-   m_container = static_cast<Container *>(ecalloc(1, sizeof(Container) + propertiesSize));
+   m_container = static_cast<Container *>(ecalloc(1, sizeof(Container) + static_cast<size_t>(propertiesSize)));
    m_container->m_zendObject.ce = entry;
    m_container->m_self = this;
    zend_object_std_init(&m_container->m_zendObject, entry);

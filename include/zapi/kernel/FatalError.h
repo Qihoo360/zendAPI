@@ -30,25 +30,19 @@ public:
     * Constructor
     * @param  message
     */
-   FatalError(const std::string &message) : Exception(message)
-   {}
+   FatalError(const std::string &message);
 
    /**
     * Destructor
     */
-   virtual ~FatalError() = default;
+   virtual ~FatalError();
 
    /**
     * Is this a native exception (one that was thrown from C++ code)
     * @return bool
     */
-   virtual bool native() const override
-   {
-      // although it is native, we return 0 because it should not persist
-      // as exception, but it should live on as zend_error() in stead
-      return false;
-   }
-
+   virtual bool native() const override;
+   
    /**
     * Report this error as a fatal error
     * @return bool

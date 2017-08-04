@@ -29,6 +29,65 @@ namespace kernel
 
 class OrigException : public Exception
 {
+public:
+   /**
+    * Constructor
+    * @param  object  The object that was thrown
+    */
+   OrigException(zend_object *object);
+
+   /**
+    * Copy constructor
+    * @param  exception
+    */
+   OrigException(const OrigException &exception);
+
+   /**
+    * Move constructor
+    * @param  exception
+    */
+   OrigException(OrigException &&exception);
+   /**
+    * Destructor
+    */
+   virtual ~OrigException() ZAPI_DECL_NOEXCEPT;
+
+   /**
+    * This is _not_ a native exception, it was thrown by a PHP script
+    * @return bool
+    */
+   virtual bool native() const override;
+
+   /**
+    * Reactivate the exception
+    */
+   void reactivate();
+
+   /**
+    * Returns the exception code
+    *
+    * @note   This only works if the exception was originally
+    *         thrown in PHP userland. If the native() member
+    *         function returns true, this function will not
+    *         be able to correctly provide the filename.
+    *
+    * @return The exception code
+    */
+   virtual long int getCode() const ZAPI_DECL_NOEXCEPT override;
+
+   /**
+    * Retrieve the filename the exception was thrown in
+    *
+    * @return The filename the exception was thrown in
+    */
+   virtual const std::string &getFileName() const ZAPI_DECL_NOEXCEPT override;
+   
+   /**
+    * Retrieve the line at which the exception was thrown
+    *
+    * @return The line number the exception was thrown at
+    */
+   virtual long int getLine() const ZAPI_DECL_NOEXCEPT override;
 private:
    /**
     * Is this a an exception that was caught by extension C++ code.
@@ -59,118 +118,7 @@ private:
     * @var long int
     */
    long int m_line;
-
-public:
-   /**
-    * Constructor
-    * @param  object  The object that was thrown
-    */
-   OrigException(zend_object *object)
-      : Exception(std::string{ZSTR_VAL(object->ce->name), ZSTR_LEN(object->ce->name)})
-   {
-      // the result value from zend and the object zval
-      zval result;
-      zval properties;
-      ZVAL_OBJ(&properties, object);
-      // retrieve the message, filename, error code and line number
-      auto message = zval_get_string(zend_read_property(Z_OBJCE(properties), &properties,
-                                                        ZEND_STRL("message"), 1, &result));
-      auto file = zval_get_string(zend_read_property(Z_OBJCE(properties), &properties, ZEND_STRL("file"), 1, &result));
-      auto code = zval_get_long(zend_read_property(Z_OBJCE(properties), &properties, ZEND_STRL("code"), 1, &result));
-      auto line = zval_get_long(zend_read_property(Z_OBJCE(properties), &properties, ZEND_STRL("line"), 1, &result));
-      // store the message, code, filename and line number
-      m_message.assign(ZSTR_VAL(message), ZSTR_LEN(message));
-      m_code = code;
-      m_file.assign(ZSTR_VAL(file), ZSTR_LEN(file));
-      m_line = line;
-      // clean up message and file strings
-      zend_string_release(message);
-      zend_string_release(file);
-   }
-
-   /**
-    * Copy constructor
-    * @param  exception
-    */
-   OrigException(const OrigException &exception)
-      : Exception("OrigException"),
-        m_handled(exception.m_handled)
-   {}
-
-   /**
-    * Move constructor
-    * @param  exception
-    */
-   OrigException(OrigException &&exception)
-      : Exception("OrigException"),
-        m_handled(exception.m_handled)
-   {
-      exception.m_handled = true;
-   }
-
-   /**
-    * Destructor
-    */
-   virtual ~OrigException() ZAPI_DECL_NOEXCEPT
-   {
-      if (!m_handled) {
-         return;
-      }
-      zend_clear_exception();
-   }
-
-   /**
-    * This is _not_ a native exception, it was thrown by a PHP script
-    * @return bool
-    */
-   virtual bool native() const override
-   {
-      return false;
-   }
-
-   /**
-    * Reactivate the exception
-    */
-   void reactivate()
-   {
-      // it was not handled by extension C++ code
-      m_handled = false;
-   }
-
-   /**
-    * Returns the exception code
-    *
-    * @note   This only works if the exception was originally
-    *         thrown in PHP userland. If the native() member
-    *         function returns true, this function will not
-    *         be able to correctly provide the filename.
-    *
-    * @return The exception code
-    */
-   virtual long int getCode() const ZAPI_DECL_NOEXCEPT override
-   {
-      return m_code;
-   }
-
-   /**
-    * Retrieve the filename the exception was thrown in
-    *
-    * @return The filename the exception was thrown in
-    */
-   virtual const std::string &getFileName() const ZAPI_DECL_NOEXCEPT override
-   {
-      return m_file;
-   }
-
-   /**
-    * Retrieve the line at which the exception was thrown
-    *
-    * @return The line number the exception was thrown at
-    */
-   virtual long int getLine() const ZAPI_DECL_NOEXCEPT override
-   {
-      return m_line;
-   }
+   
 };
 
 namespace

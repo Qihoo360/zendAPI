@@ -227,7 +227,7 @@ zend_class_entry *AbstractClassPrivate::initialize(AbstractClass *cls, const std
    // we need save the address of this pointer
    AbstractClassPrivate *selfPtr = this;
    m_self.reset(zend_string_alloc(sizeof(this), 1));
-   m_classEntry->ce_flags = static_cast<int>(m_type);
+   m_classEntry->ce_flags = static_cast<uint32_t>(m_type);
    // make the string look like empty
    ZSTR_VAL(m_self)[0] = '\0';
    ZSTR_LEN(m_self) = 0;
@@ -244,7 +244,7 @@ std::unique_ptr<zend_function_entry[]>& AbstractClassPrivate::getMethodEntries()
       return m_methodEntries;
    }
    m_methodEntries.reset(new zend_function_entry[m_methods.size() + 1]);
-   int i = 0;
+   size_t i = 0;
    for (std::shared_ptr<Method> &method : m_methods) {
       zend_function_entry *entry = &m_methodEntries[i++];
       method->initialize(entry, m_name.c_str());

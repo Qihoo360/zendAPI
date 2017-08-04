@@ -28,53 +28,36 @@ namespace kernel
 
 class ZAPI_DECL_EXPORT Exception : public std::exception
 {
-protected:
-   /**
-    * The exception message
-    * @var    char*
-    */
-    std::string m_message;
 public:
    /**
     * Constructor
     *
     * @param  message The exception message
     */
-   Exception(std::string message) : m_message(std::move(message))
-   {}
-
+   Exception(std::string message);
    /**
     * Destructor
     */
-   virtual ~Exception() = default;
+   virtual ~Exception();
 
    /**
     * Overridden what method
     * @return const char *
     */
-   virtual const char *what() const ZAPI_DECL_NOEXCEPT override
-   {
-      return m_message.c_str();
-   }
+   virtual const char *what() const ZAPI_DECL_NOEXCEPT override;
 
    /**
     *  Returns the message of the exception.
     *  @return &string
     */
-   const std::string &getMessage() const ZAPI_DECL_NOEXCEPT
-   {
-      return m_message;
-   }
+   const std::string &getMessage() const ZAPI_DECL_NOEXCEPT;
 
    /**
     * Returns the exception code
     *
     * @return The exception code
     */
-   virtual long int getCode() const ZAPI_DECL_NOEXCEPT
-   {
-      return -1;
-   }
+   virtual long int getCode() const ZAPI_DECL_NOEXCEPT;
 
    /**
     * Retrieve the filename the exception was thrown in
@@ -86,37 +69,29 @@ public:
     *
     * @return The filename the exception was thrown in
     */
-   virtual const std::string &getFileName() const ZAPI_DECL_NOEXCEPT
-   {
-      static std::string file{"<filename unknown>"};
-      return file;
-   }
+   virtual const std::string &getFileName() const ZAPI_DECL_NOEXCEPT;
 
    /**
     * Retrieve the line at which the exception was thrown
     */
-   virtual long int getLine() const ZAPI_DECL_NOEXCEPT
-   {
-      return -1;
-   }
+   virtual long int getLine() const ZAPI_DECL_NOEXCEPT;
 
    /**
     * Is this a native exception (one that was thrown from C++ code)
     * @return bool
     */
-   virtual bool native() const
-   {
-      return true;
-   }
-
+   virtual bool native() const;
    /**
     * Report this error as a fatal error
     * @return bool
     */
-   virtual bool report() const
-   {
-      return false;
-   }
+   virtual bool report() const;
+protected:
+   /**
+    * The exception message
+    * @var    char*
+    */
+    std::string m_message;
 };
 
 } // kernel
