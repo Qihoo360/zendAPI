@@ -14,9 +14,16 @@
 // Created by zzu_softboy on 2017/08/01.
 
 #include <iostream>
+#include <cstring>
 #include "zapi/vm/AbstractClass.h"
 #include "zapi/vm/internal/AbstractClassPrivate.h"
 #include "zapi/vm/ObjectBinder.h"
+#include "zapi/vm/AbstractMember.h"
+#include "zapi/vm/StringMember.h"
+#include "zapi/vm/BoolMember.h"
+#include "zapi/vm/FloatMember.h"
+#include "zapi/vm/NumericMember.h"
+#include "zapi/vm/NullMember.h"
 #include "zapi/lang/Method.h"
 #include "zapi/lang/StdClass.h"
 #include "zapi/kernel/NotImplemented.h"
@@ -363,49 +370,66 @@ zend_class_entry *AbstractClass::initialize()
    return initialize("");
 }
 
-void AbstractClass::registerProperty(const char *name, std::nullptr_t value, Modifier flags)
+void AbstractClass::registerProperty(const char *name, std::nullptr_t, Modifier flags)
 {
-   
+   ZAPI_D(AbstractClass);
+   implPtr->m_members.push_back(std::make_shared<NullMember>(name, flags & Modifier::PropertyModifiers));
 }
 
 void AbstractClass::registerProperty(const char *name, int16_t value, Modifier flags)
 {
-   
+   ZAPI_D(AbstractClass);
+   implPtr->m_members.push_back(std::make_shared<NumericMember>(name, value, 
+                                                                flags & Modifier::PropertyModifiers));
 }
 
 void AbstractClass::registerProperty(const char *name, int32_t value, Modifier flags)
 {
-   
+   ZAPI_D(AbstractClass);
+   implPtr->m_members.push_back(std::make_shared<NumericMember>(name, value, 
+                                                                flags & Modifier::PropertyModifiers));
 }
 
 void AbstractClass::registerProperty(const char *name, int64_t value, Modifier flags)
 {
-   
+   ZAPI_D(AbstractClass);
+   implPtr->m_members.push_back(std::make_shared<NumericMember>(name, value, 
+                                                                flags & Modifier::PropertyModifiers));
 }
 
 void AbstractClass::registerProperty(const char *name, char value, Modifier flags)
 {
-   
+   ZAPI_D(AbstractClass);
+   implPtr->m_members.push_back(std::make_shared<StringMember>(name, &value, 1, 
+                                                               flags & Modifier::PropertyModifiers));
 }
 
 void AbstractClass::registerProperty(const char *name, const std::string &value, Modifier flags)
 {
-   
+   ZAPI_D(AbstractClass);
+   implPtr->m_members.push_back(std::make_shared<StringMember>(name, value, 
+                                                               flags & Modifier::PropertyModifiers));
 }
 
-void AbstractClass::registerProperty(const char *name, const char *value, Modifier)
+void AbstractClass::registerProperty(const char *name, const char *value, Modifier flags)
 {
-   
+   ZAPI_D(AbstractClass);
+   implPtr->m_members.push_back(std::make_shared<StringMember>(name, value, std::strlen(value), 
+                                                               flags & Modifier::PropertyModifiers));
 }
 
 void AbstractClass::registerProperty(const char *name, bool value, Modifier flags)
 {
-   
+   ZAPI_D(AbstractClass);
+   implPtr->m_members.push_back(std::make_shared<BoolMember>(name, value,
+                                                             flags & Modifier::PropertyModifiers));
 }
 
 void AbstractClass::registerProperty(const char *name, double value, Modifier flags)
 {
-   
+   ZAPI_D(AbstractClass);
+   implPtr->m_members.push_back(std::make_shared<FloatMember>(name, value,
+                                                              flags & Modifier::PropertyModifiers));
 }
 
 } // vm

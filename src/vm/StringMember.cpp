@@ -64,8 +64,9 @@ StringMember::StringMember(const char *name, const std::string &value, Modifier 
 {}
 
 StringMember::StringMember(const StringMember &other)
+   : AbstractMember(new StringMemberPrivate(*static_cast<StringMemberPrivate *>(other.m_implPtr.get())))
 {
-   m_implPtr.reset(new StringMemberPrivate(*static_cast<StringMemberPrivate *>(other.m_implPtr.get())));
+   
 }
 
 StringMember &StringMember::operator=(const StringMember &other)

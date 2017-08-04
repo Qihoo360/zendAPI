@@ -29,13 +29,12 @@ namespace lang
 class Method;
 class Interface;
 class Property;
-class Member;
 class StdClass;
 } // lang
 
 namespace vm
 {
-
+class AbstractMember;
 class AbstractClass;
 
 namespace internal
@@ -43,7 +42,6 @@ namespace internal
 
 using zapi::lang::ClassType;
 using zapi::lang::Method;
-using zapi::lang::Member;
 using zapi::lang::Property;
 using zapi::lang::Modifier;
 using zapi::lang::ClassType;
@@ -90,7 +88,7 @@ public:
    zend_object_handlers m_handlers;
    std::list<std::shared_ptr<AbstractClassPrivate>> m_interfaces;
    std::list<std::shared_ptr<Method>> m_methods;
-   std::list<std::shared_ptr<Member>> m_members;
+   std::list<std::shared_ptr<AbstractMember>> m_members;
    std::map<std::string, std::shared_ptr<Property>> m_properties;
    std::shared_ptr<AbstractClassPrivate> m_parent;
    bool m_intialized = false;

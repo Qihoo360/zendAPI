@@ -13,8 +13,8 @@
 //
 // Created by zzu_softboy on 2017/08/02.
 
-#ifndef ZAPI_VM_ABSTRACT_MEMBER_PRIVATE_H
-#define ZAPI_VM_ABSTRACT_MEMBER_PRIVATE_H
+#ifndef ZAPI_VM_ABSTRACT_MEMBER_H
+#define ZAPI_VM_ABSTRACT_MEMBER_H
 
 #include "zapi/Global.h"
 
@@ -30,7 +30,7 @@ class AbstractMemberPrivate;
 using zapi::lang::Modifier;
 using zapi::vm::internal::AbstractMemberPrivate;
 
-class ZAPI_DECL_EXPORT AbstractMember
+class AbstractMember
 {
 public:
    AbstractMember();
@@ -53,4 +53,4 @@ protected:
 } // vm
 } // zapi
 
-#endif // ZAPI_VM_ABSTRACT_MEMBER_PRIVATE_H
+#endif // ZAPI_VM_ABSTRACT_MEMBER_H

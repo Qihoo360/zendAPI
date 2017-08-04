@@ -25,6 +25,10 @@ set(ZAPI_SRC
    vm/AbstractClass.cpp
    vm/AbstractMember.cpp
    vm/StringMember.cpp
+   vm/BoolMember.cpp
+   vm/FloatMember.cpp
+   vm/NumericMember.cpp
+   vm/NullMember.cpp
    vm/InvokeBridge.cpp
    vm/Callable.cpp
    vm/Engine.cpp

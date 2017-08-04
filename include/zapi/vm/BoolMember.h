@@ -1,6 +1,4 @@
 // Copyright 2017-2018 zzu_softboy <zzu_softboy@163.com>
-// Copyright 2013, 2014 Copernica BV
-// Emiel Bruijntjes <emiel.bruijntjes@copernica.com>
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -13,12 +11,11 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by softboy on 2017/08/02.
+// Created by zzu_softboy on 2017/08/04.
 
-#ifndef ZAPI_VM_STRING_MEMBER_H
-#define ZAPI_VM_STRING_MEMBER_H
+#ifndef ZAPI_VM_BOOL_MEMBER_H
+#define ZAPI_VM_BOOL_MEMBER_H
 
-#include "zapi/Global.h"
 #include "zapi/vm/AbstractMember.h"
 
 namespace zapi
@@ -28,28 +25,23 @@ namespace vm
 
 namespace internal
 {
-class StringMemberPrivate;
+class BoolMemberPrivate;
 } // internal
-
-using zapi::vm::AbstractMember;
-using zapi::vm::internal::StringMemberPrivate;
-
-class ZAPI_DECL_EXPORT StringMember : public AbstractMember
+using internal::BoolMemberPrivate;
+class BoolMember : public AbstractMember
 {
 public:
-   StringMember(const char *name, const char *value, size_t size, Modifier flags);
-   StringMember(const char *name, const char *value, Modifier flags);
-   StringMember(const char *name, const std::string &value, Modifier flags);
-   StringMember(const StringMember &other);
-   StringMember &operator=(const StringMember &other);
-   virtual ~StringMember();
+   BoolMember(const char *name, double value, Modifier flags);
+   BoolMember(const BoolMember &other);
+   BoolMember &operator=(const BoolMember &other);
+   virtual ~BoolMember();
 protected:
    virtual void setupConstant(zend_class_entry *entry) override;
    virtual void setupProperty(zend_class_entry *entry) override;
-   ZAPI_DECLARE_PRIVATE(StringMember)
+   ZAPI_DECLARE_PRIVATE(BoolMember)
 };
 
 } // vm
 } // zapi
 
-#endif // ZAPI_VM_STRING_MEMBER_H
+#endif // ZAPI_VM_BOOL_MEMBER_H
