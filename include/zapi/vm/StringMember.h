@@ -23,7 +23,7 @@
 
 namespace zapi
 {
-namespace lang
+namespace vm
 {
 
 namespace internal
@@ -32,7 +32,7 @@ class StringMemberPrivate;
 } // internal
 
 using zapi::vm::AbstractMember;
-using zapi::lang::internal::StringMemberPrivate;
+using zapi::vm::internal::StringMemberPrivate;
 
 class ZAPI_DECL_EXPORT StringMember : public AbstractMember
 {
@@ -45,11 +45,11 @@ public:
    virtual ~StringMember();
 protected:
    virtual void setupConstant(zend_class_entry *entry) override;
-   virtual void declare(zend_class_entry *entry) override;
+   virtual void setupProperty(zend_class_entry *entry) override;
    ZAPI_DECLARE_PRIVATE(StringMember)
 };
 
-} // lang
+} // vm
 } // zapi
 
 #endif // ZAPI_LANG_STRING_MEMBER_H

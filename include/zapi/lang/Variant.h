@@ -67,7 +67,7 @@ public:
    Variant(bool value);
    Variant(char value);
    Variant(const std::string &value);
-   Variant(const char *value, int length = -1);
+   Variant(const char *value, size_t length = 0);
    Variant(double value);
    
    Variant(Type targetType) : Variant()
@@ -78,7 +78,6 @@ public:
    template <typename T>
    Variant(const std::vector<T> &values) : Variant(Type::Array)
    {
-      int i = 0;
       for (auto &item : values)
       {
          
@@ -89,7 +88,6 @@ public:
    template <typename T>
    Variant(const std::initializer_list<T> &values) : Variant(Type::Array)
    {
-      int i = 0;
       for (auto &item : values)
       {
          

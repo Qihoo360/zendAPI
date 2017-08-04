@@ -20,7 +20,6 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Argument.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Function.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Property.h
-   ${ZAPI_INCLUDE_DIR}/zapi/lang/StringMember.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Method.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/internal/StdClassPrivate.h
    ${ZAPI_INCLUDE_DIR}/zapi/ds/HashTable.h
@@ -43,6 +42,7 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/vm/internal/AbstractMemberPrivate.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/Engine.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/AbstractMember.h
+   ${ZAPI_INCLUDE_DIR}/zapi/vm/StringMember.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/ClassMagicMethodInvoker.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/ExecStateGuard.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/IterateBridge.h

@@ -169,7 +169,7 @@ Variant::Variant(const std::string &value)
  * @param  value
  * @param  size
  */
-Variant::Variant(const char *value, int size)
+Variant::Variant(const char *value, size_t size)
 {
    if (value != nullptr) {
       ZVAL_STRINGL(&m_val, value, size < 0 ? std::strlen(value) : size);

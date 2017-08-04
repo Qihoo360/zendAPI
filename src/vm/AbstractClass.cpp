@@ -363,5 +363,50 @@ zend_class_entry *AbstractClass::initialize()
    return initialize("");
 }
 
+void AbstractClass::registerProperty(const char *name, std::nullptr_t value, Modifier flags)
+{
+   
+}
+
+void AbstractClass::registerProperty(const char *name, int16_t value, Modifier flags)
+{
+   
+}
+
+void AbstractClass::registerProperty(const char *name, int32_t value, Modifier flags)
+{
+   
+}
+
+void AbstractClass::registerProperty(const char *name, int64_t value, Modifier flags)
+{
+   
+}
+
+void AbstractClass::registerProperty(const char *name, char value, Modifier flags)
+{
+   
+}
+
+void AbstractClass::registerProperty(const char *name, const std::string &value, Modifier flags)
+{
+   
+}
+
+void AbstractClass::registerProperty(const char *name, const char *value, Modifier)
+{
+   
+}
+
+void AbstractClass::registerProperty(const char *name, bool value, Modifier flags)
+{
+   
+}
+
+void AbstractClass::registerProperty(const char *name, double value, Modifier flags)
+{
+   
+}
+
 } // vm
 } // zapi

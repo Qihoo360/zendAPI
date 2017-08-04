@@ -60,7 +60,7 @@ void AbstractMember::initialize(zend_class_entry *entry)
    if (implPtr->m_flags == Modifier::Const) {
       setupConstant(entry);
    } else {
-      declare(entry);
+      setupProperty(entry);
    }
 }
 

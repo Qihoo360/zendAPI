@@ -44,7 +44,7 @@ protected:
    AbstractMember(AbstractMemberPrivate *implPtr);
    void initialize(zend_class_entry *entry);
    virtual void setupConstant(zend_class_entry *entry) = 0;
-   virtual void declare(zend_class_entry *entry) = 0;
+   virtual void setupProperty(zend_class_entry *entry) = 0;
    
    ZAPI_DECLARE_PRIVATE(AbstractMember)
    std::unique_ptr<AbstractMemberPrivate> m_implPtr;

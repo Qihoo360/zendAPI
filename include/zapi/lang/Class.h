@@ -37,6 +37,16 @@ public:
    virtual ~Class();
    Class<T> &operator=(const Class<T> &other);
    Class<T> &operator=(Class<T> &&other);
+public:
+   Class<T> &registerProperty(const char *name, std::nullptr_t value, Modifier flags = Modifier::Public);
+   Class<T> &registerProperty(const char *name, int16_t value, Modifier flags = Modifier::Public);
+   Class<T> &registerProperty(const char *name, int32_t value, Modifier flags = Modifier::Public);
+   Class<T> &registerProperty(const char *name, int64_t value, Modifier flags = Modifier::Public);
+   Class<T> &registerProperty(const char *name, char value, Modifier flags = Modifier::Public);
+   Class<T> &registerProperty(const char *name, const char *value, Modifier flags = Modifier::Public);
+   Class<T> &registerProperty(const char *name, const std::string &value, Modifier flags = Modifier::Public);
+   Class<T> &registerProperty(const char *name, bool value, Modifier flags = Modifier::Public);
+   Class<T> &registerProperty(const char *name, double value, Modifier flags = Modifier::Public);
 private:
    virtual StdClass *construct() const override;
    virtual StdClass *clone() const override;
@@ -93,7 +103,7 @@ Class<T>::doConstructObject()
 template <typename T>
 void Class<T>::callDestruct(StdClass *nativeObject) const
 {
-   T *object = (T *)nativeObject;
+   T *object = dynamic_cast<T *>(nativeObject);
    return object->__destruct();
 }
 
@@ -106,6 +116,68 @@ StdClass *Class<T>::clone() const
 template <typename T>
 Class<T>::~Class()
 {}
+
+template <typename T>
+Class<T> &Class<T>::registerProperty(const char *name, std::nullptr_t value, Modifier flags)
+{
+   AbstractClass::registerProperty(name, value, flags);
+   return *this;
+}
+template <typename T>
+Class<T> &Class<T>::registerProperty(const char *name, int16_t value, Modifier flags)
+{
+   AbstractClass::registerProperty(name, value, flags);
+   return *this;
+}
+
+template <typename T>
+Class<T> &Class<T>::registerProperty(const char *name, int32_t value, Modifier flags)
+{
+   AbstractClass::registerProperty(name, value, flags);
+   return *this;
+}
+
+template <typename T>
+Class<T> &Class<T>::registerProperty(const char *name, int64_t value, Modifier flags)
+{
+   AbstractClass::registerProperty(name, value, flags);
+   return *this;
+}
+
+template <typename T>
+Class<T> &Class<T>::registerProperty(const char *name, char value, Modifier flags)
+{
+   AbstractClass::registerProperty(name, value, flags);
+   return *this;
+}
+
+template <typename T>
+Class<T> &Class<T>::registerProperty(const char *name, const char *value, Modifier flags)
+{
+   AbstractClass::registerProperty(name, value, flags);
+   return *this;
+}
+
+template <typename T>
+Class<T> &Class<T>::registerProperty(const char *name, const std::string &value, Modifier flags)
+{
+   AbstractClass::registerProperty(name, value, flags);
+   return *this;
+}
+
+template <typename T>
+Class<T> &Class<T>::registerProperty(const char *name, bool value, Modifier flags)
+{
+   AbstractClass::registerProperty(name, value, flags);
+   return *this;
+}
+
+template <typename T>
+Class<T> &Class<T>::registerProperty(const char *name, double value, Modifier flags)
+{
+   AbstractClass::registerProperty(name, value, flags);
+   return *this;
+}
 
 } // lang
 } // zapi

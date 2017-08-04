@@ -80,10 +80,10 @@ public:
    void registerProperty(const char *name, int16_t value, Modifier flags = Modifier::Public);
    void registerProperty(const char *name, int32_t value, Modifier flags = Modifier::Public);
    void registerProperty(const char *name, int64_t value, Modifier flags = Modifier::Public);
-   void registerProperty(const char *name, bool value, Modifier flags = Modifier::Public);
    void registerProperty(const char *name, char value, Modifier flags = Modifier::Public);
    void registerProperty(const char *name, const std::string &value, Modifier flags = Modifier::Public);
    void registerProperty(const char *name, const char *value, Modifier flags = Modifier::Public);
+   void registerProperty(const char *name, bool value, Modifier flags = Modifier::Public);
    void registerProperty(const char *name, double value, Modifier flags = Modifier::Public);
    // callback property
    void registerProperty(const char *name, const zapi::GetterMethodCallable0 &getter);

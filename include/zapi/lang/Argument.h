@@ -80,8 +80,7 @@ public:
       : Argument(std::move(argument))
    {}
    
-   virtual ~RefArgument()
-   {}
+   virtual ~RefArgument();
 };
 
 class ZAPI_DECL_EXPORT ValueArgument : public Argument
@@ -103,8 +102,7 @@ public:
       : Argument(std::move(argument))
    {}
    
-   virtual ~ValueArgument()
-   {}
+   virtual ~ValueArgument();
 };
 
 } // lang

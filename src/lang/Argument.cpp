@@ -30,36 +30,36 @@ public:
    ArgumentPrivate(const char *name, const char *className, bool nullable = true, 
                    bool required = true, bool byReference = false);
    ArgumentPrivate(const ArgumentPrivate &other);
-   const char *m_name = nullptr;
    Type m_type = Type::Null;
-   const char *m_className = nullptr;
    bool m_nullable = false;
    bool m_required = true;
    bool m_byReference = false;
+   const char *m_name = nullptr;
+   const char *m_className = nullptr;
 };
 
 ArgumentPrivate::ArgumentPrivate(const char *name, Type type, bool required, bool byReference)
-   : m_name(name), 
-     m_type(type), 
+   : m_type(type), 
      m_required(required), 
-     m_byReference(byReference)
+     m_byReference(byReference),
+     m_name(name)
 {}
 
 ArgumentPrivate::ArgumentPrivate(const char *name, const char *className, bool nullable, 
                                  bool required, bool byReference)
-   : m_name(name), 
-     m_className(className), 
-     m_nullable(nullable), 
+   : m_nullable(nullable), 
      m_required(required), 
-     m_byReference(byReference)
+     m_byReference(byReference),
+     m_name(name), 
+     m_className(className)
 {}
 
 ArgumentPrivate::ArgumentPrivate(const ArgumentPrivate &other)
-   : m_name(other.m_name), 
-     m_className(other.m_className), 
-     m_nullable(other.m_nullable), 
+   : m_nullable(other.m_nullable), 
      m_required(other.m_required), 
-     m_byReference(other.m_byReference)
+     m_byReference(other.m_byReference),
+     m_name(other.m_name), 
+     m_className(other.m_className)
 {}
 
 } // internal
@@ -132,6 +132,12 @@ const char *Argument::getClassName() const
    ZAPI_D(const Argument);
    return implPtr->m_className;
 }
+
+ValueArgument::~ValueArgument()
+{}
+
+RefArgument::~RefArgument()
+{}
 
 } // lang
 } // zapi

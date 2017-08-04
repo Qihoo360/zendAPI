@@ -13,13 +13,13 @@
 //
 // Created by zzu_softboy on 2017/08/02.
 
-#include "zapi/lang/StringMember.h"
+#include "zapi/vm/StringMember.h"
 #include "zapi/vm/internal/AbstractMemberPrivate.h"
 #include <cstring>
 
 namespace zapi
 {
-namespace lang
+namespace vm
 {
 
 using zapi::vm::internal::AbstractMemberPrivate;
@@ -49,7 +49,7 @@ public:
 } // internal
 
 using zapi::vm::AbstractMember;
-using zapi::lang::internal::StringMemberPrivate;
+using zapi::vm::internal::StringMemberPrivate;
 
 StringMember::StringMember(const char *name, const char *value, size_t size, Modifier flags)
    : AbstractMember(new StringMemberPrivate(name, value, size, flags))
@@ -84,11 +84,11 @@ void StringMember::setupConstant(zend_class_entry *entry)
                                        implPtr->m_value.c_str(), implPtr->m_value.size());
 }
 
-void StringMember::declare(zend_class_entry *entry)
+void StringMember::setupProperty(zend_class_entry *entry)
 {
    ZAPI_D(StringMember);
    zend_declare_property_stringl(entry, implPtr->m_name.c_str(), implPtr->m_name.size(), 
-                         implPtr->m_value.c_str(), implPtr->m_value.size(), static_cast<int>(implPtr->m_flags));
+                                 implPtr->m_value.c_str(), implPtr->m_value.size(), static_cast<int>(implPtr->m_flags));
 }
 
 } // lang

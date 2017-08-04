@@ -33,11 +33,12 @@ class AbstractMemberPrivate
 public:
    AbstractMemberPrivate(const AbstractMemberPrivate &other) = default;
    AbstractMemberPrivate(std::string name, Modifier flags)
-      : m_name(name),
-        m_flags(flags)
+      : m_flags(flags),
+        m_name(name)
    {}
-   std::string m_name;
+   
    Modifier m_flags;
+   std::string m_name;
 };
 
 } // internal
