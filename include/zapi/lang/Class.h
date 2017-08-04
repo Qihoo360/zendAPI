@@ -27,6 +27,8 @@ namespace lang
 using zapi::vm::AbstractClass;
 using zapi::vm::ClassMagicMethodInvoker;
 
+class Constant;
+
 template <typename T>
 class ZAPI_DECL_EXPORT Class : public AbstractClass
 {
@@ -47,6 +49,18 @@ public:
    Class<T> &registerProperty(const char *name, const std::string &value, Modifier flags = Modifier::Public);
    Class<T> &registerProperty(const char *name, bool value, Modifier flags = Modifier::Public);
    Class<T> &registerProperty(const char *name, double value, Modifier flags = Modifier::Public);
+   
+   Class<T> &registerConstant(const char *name, std::nullptr_t value);
+   Class<T> &registerConstant(const char *name, int16_t value);
+   Class<T> &registerConstant(const char *name, int32_t value);
+   Class<T> &registerConstant(const char *name, int64_t value);
+   Class<T> &registerConstant(const char *name, char value);
+   Class<T> &registerConstant(const char *name, const char *value);
+   Class<T> &registerConstant(const char *name, const std::string &value);
+   Class<T> &registerConstant(const char *name, bool value);
+   Class<T> &registerConstant(const char *name, double value);
+   Class<T> &registerConstant(const Constant &constant);
+   
 private:
    virtual StdClass *construct() const override;
    virtual StdClass *clone() const override;
@@ -61,7 +75,6 @@ private:
    
 private:
    std::unique_ptr<ClassMagicMethodInvoker<T>> m_magicInvoker;
-   friend class zapi::vm::AbstractClassPrivate;
 };
 
 template <typename T>
@@ -176,6 +189,76 @@ template <typename T>
 Class<T> &Class<T>::registerProperty(const char *name, double value, Modifier flags)
 {
    AbstractClass::registerProperty(name, value, flags);
+   return *this;
+}
+
+template <typename T>
+Class<T> &Class<T>::registerConstant(const char *name, std::nullptr_t value)
+{
+   AbstractClass::registerProperty(name, value, Modifier::Const);
+   return *this;
+}
+
+template <typename T>
+Class<T> &Class<T>::registerConstant(const char *name, int16_t value)
+{
+   AbstractClass::registerProperty(name, value, Modifier::Const);
+   return *this;
+}
+
+template <typename T>
+Class<T> &Class<T>::registerConstant(const char *name, int32_t value)
+{
+   AbstractClass::registerProperty(name, value, Modifier::Const);
+   return *this;
+}
+
+template <typename T>
+Class<T> &Class<T>::registerConstant(const char *name, int64_t value)
+{
+   AbstractClass::registerProperty(name, value, Modifier::Const);
+   return *this;
+}
+
+template <typename T>
+Class<T> &Class<T>::registerConstant(const char *name, char value)
+{
+   AbstractClass::registerProperty(name, value, Modifier::Const);
+   return *this;
+}
+
+template <typename T>
+Class<T> &Class<T>::registerConstant(const char *name, const char *value)
+{
+   AbstractClass::registerProperty(name, value, Modifier::Const);
+   return *this;
+}
+
+template <typename T>
+Class<T> &Class<T>::registerConstant(const char *name, const std::string &value)
+{
+   AbstractClass::registerProperty(name, value, Modifier::Const);
+   return *this;
+}
+
+template <typename T>
+Class<T> &Class<T>::registerConstant(const char *name, bool value)
+{
+   AbstractClass::registerProperty(name, value, Modifier::Const);
+   return *this;
+}
+
+template <typename T>
+Class<T> &Class<T>::registerConstant(const char *name, double value)
+{
+   AbstractClass::registerProperty(name, value, Modifier::Const);
+   return *this;
+}
+
+template <typename T>
+Class<T> &Class<T>::registerConstant(const Constant &constant)
+{
+   AbstractClass::registerConstant(constant);
    return *this;
 }
 

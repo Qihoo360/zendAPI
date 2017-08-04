@@ -33,6 +33,7 @@ class ExtensionPrivate;
 namespace lang
 {
 class StdClass;
+class Constant;
 } // lang
 
 namespace vm
@@ -47,6 +48,7 @@ using zapi::lang::Modifier;
 using zapi::lang::ClassType;
 using zapi::lang::StdClass;
 using zapi::lang::Arguments;
+using zapi::lang::Constant;
 
 class ZAPI_DECL_EXPORT AbstractClass
 {
@@ -58,7 +60,7 @@ public:
    AbstractClass &operator=(AbstractClass &&other) ZAPI_DECL_NOEXCEPT;
    virtual ~AbstractClass();
    
-public:
+protected:
    void registerMethod(const char *name, zapi::ZendCallable callable, Modifier flags = Modifier::None, const Arguments &args = {});
    void registerMethod(const char *name, const zapi::MethodCallable0 &method, Modifier flags = Modifier::None, const Arguments &args = {});
    void registerMethod(const char *name, const zapi::MethodCallable1 &method, Modifier flags = Modifier::None, const Arguments &args = {});
@@ -94,6 +96,7 @@ public:
    void registerProperty(const char *name, const zapi::GetterMethodCallable1 &getter, const zapi::GetterMethodCallable1 &setter);
    void registerInterface(const AbstractClass &interface);
    void registerBaseClass(const AbstractClass &base);
+   void registerConstant(const Constant &constant);
 protected:
    virtual StdClass *construct() const;
    virtual StdClass *clone() const;

@@ -63,16 +63,16 @@ enum class ClassType : unsigned int
    Trait     = ZEND_ACC_TRAIT // 0x80
 };
 
-enum class  Modifier : unsigned int
+enum class  Modifier : unsigned long
 {
    None              = 0,
-   Static            = ZEND_ACC_STATIC, //0x01,
-   Abstract          = ZEND_ACC_ABSTRACT, //0x02,
-   Final             = ZEND_ACC_FINAL, //0x04,
-   Public            = ZEND_ACC_PUBLIC, //0x100,
-   Protected         = ZEND_ACC_PROTECTED, //0x200,
-   Private           = ZEND_ACC_PRIVATE, //0x400,
-   Const             = 0, // is this a bug?
+   Static            = ZEND_ACC_STATIC,
+   Abstract          = ZEND_ACC_ABSTRACT,
+   Final             = ZEND_ACC_FINAL,
+   Public            = ZEND_ACC_PUBLIC,
+   Protected         = ZEND_ACC_PROTECTED,
+   Private           = ZEND_ACC_PRIVATE,
+   Const             = 0x10000, // we define this number ourself
    MethodModifiers   = Final | Public | Protected | Private | Static,
    PropertyModifiers = Final | Public | Protected | Private | Const | Static,
    // special method type

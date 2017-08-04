@@ -55,8 +55,9 @@ public:
    Constant(Constant &&other) ZAPI_DECL_NOEXCEPT;
    Constant &operator=(const Constant &other);
    Constant &operator=(Constant &&other) ZAPI_DECL_NOEXCEPT;
-   virtual ~Constant();
+   const std::string &getName() const;
    const zend_constant &getZendConstant() const;
+   virtual ~Constant();
 private:
    void initialize(const std::string &prefix, int moduleNumber);
    void initialize(int moduleNumber);

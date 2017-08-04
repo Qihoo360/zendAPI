@@ -25,6 +25,7 @@ namespace vm
 namespace internal
 {
 class AbstractMemberPrivate;
+class AbstractClassPrivate;
 } // internal
 
 using zapi::lang::Modifier;
@@ -48,6 +49,7 @@ protected:
    
    ZAPI_DECLARE_PRIVATE(AbstractMember)
    std::unique_ptr<AbstractMemberPrivate> m_implPtr;
+   friend class zapi::vm::internal::AbstractClassPrivate;
 };
 
 } // vm

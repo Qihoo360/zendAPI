@@ -190,5 +190,11 @@ const zend_constant &Constant::getZendConstant() const
    return implPtr->m_constant;
 }
 
+const std::string &Constant::getName() const
+{
+   ZAPI_D(const Constant);
+   return implPtr->m_name;
+}
+
 } // lang
 } // zapi

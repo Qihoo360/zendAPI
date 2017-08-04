@@ -26,6 +26,7 @@
 #include "zapi/vm/NullMember.h"
 #include "zapi/lang/Method.h"
 #include "zapi/lang/StdClass.h"
+#include "zapi/lang/Constant.h"
 #include "zapi/kernel/NotImplemented.h"
 #include "zapi/kernel/OrigException.h"
 
@@ -33,6 +34,8 @@ namespace zapi
 {
 namespace vm
 {
+
+using zapi::lang::Constant;
 
 namespace internal
 {
@@ -229,19 +232,22 @@ zend_class_entry *AbstractClassPrivate::initialize(AbstractClass *cls, const std
          
       }
    }
+   m_classEntry->ce_flags = static_cast<uint32_t>(m_type);
+   
+   for (std::shared_ptr<AbstractMember> &member : m_members) {
+      member->initialize(m_classEntry);
+   }
    
    // save AbstractClassPrivate instance pointer into the info.user.doc_comment of zend_class_entry
    // we need save the address of this pointer
    AbstractClassPrivate *selfPtr = this;
    m_self.reset(zend_string_alloc(sizeof(this), 1));
-   m_classEntry->ce_flags = static_cast<uint32_t>(m_type);
    // make the string look like empty
    ZSTR_VAL(m_self)[0] = '\0';
    ZSTR_LEN(m_self) = 0;
    std::memcpy(ZSTR_VAL(m_self.get()) + 1, &selfPtr, sizeof(selfPtr));
    // save into the doc_comment
    m_classEntry->info.user.doc_comment = m_self.get();
-   // TODO all member variables
    return m_classEntry;
 }
 
@@ -430,6 +436,42 @@ void AbstractClass::registerProperty(const char *name, double value, Modifier fl
    ZAPI_D(AbstractClass);
    implPtr->m_members.push_back(std::make_shared<FloatMember>(name, value,
                                                               flags & Modifier::PropertyModifiers));
+}
+
+void AbstractClass::registerConstant(const Constant &constant)
+{
+   ZAPI_D(AbstractClass);
+   const zend_constant &zendConst = constant.getZendConstant();
+   const std::string &name = constant.getName();
+   switch (Z_TYPE(zendConst.value)) {
+   case IS_NULL:
+      registerProperty(name.c_str(), nullptr, Modifier::Const);
+      break;
+   case IS_LONG:
+      registerProperty(name.c_str(), static_cast<int64_t>(Z_LVAL(zendConst.value)), Modifier::Const);
+      break;
+   case IS_DOUBLE:
+      registerProperty(name.c_str(), Z_DVAL(zendConst.value), Modifier::Const);
+      break;
+   case IS_TRUE:
+      registerProperty(name.c_str(), true, Modifier::Const);
+      break;
+   case IS_FALSE:
+      registerProperty(name.c_str(), false, Modifier::Const);
+      break;
+   case IS_STRING:
+      registerProperty(name.c_str(), std::string(Z_STRVAL(zendConst.value), Z_STRLEN(zendConst.value)), Modifier::Const);
+      break;
+   default:
+      // this should not happend
+      // but we workaround this
+      // shadow copy
+      zval copy;
+      ZVAL_DUP(&copy, &zendConst.value);
+      convert_to_string(&copy);
+      registerProperty(name.c_str(), std::string(Z_STRVAL(copy), Z_STRLEN(copy)), Modifier::Const);
+      break;
+   }
 }
 
 } // vm
