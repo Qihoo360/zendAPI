@@ -13,7 +13,7 @@ if(defined("ZAPI_VERSION"))
    echo ZAPI_VERSION;
 }
 echo " ";
-//show_something();
+
 ?>
 --EXPECT--
 zapi v0.0.1 hello world, zapi

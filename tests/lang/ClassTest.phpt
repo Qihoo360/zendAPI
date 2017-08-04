@@ -1,5 +1,5 @@
 --TEST--
-Contant register test
+Class register test
 --FILE--
 <?php
 if (class_exists("Person")) {

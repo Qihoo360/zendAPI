@@ -20,6 +20,7 @@
 
 #include "zapi/Global.h"
 #include <string>
+#include <cstring>
 
 namespace zapi
 {

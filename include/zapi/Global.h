@@ -27,6 +27,7 @@
 #include <type_traits>
 #include <cstddef>
 #include <cstdint>
+#include <memory>
 
 #define ZAPI_STRINGIFY2(x) #x
 #define ZAPI_STRINGIFY(x) ZAPI_STRINGIFY2(x)
@@ -170,28 +171,6 @@ template <> class ZStaticAssertFailure<true> {};
 // define some type alias, because we just API wrapper
 #define zapi_long zend_long
 #define zapi_ulong zend_ulong
-
-namespace zapi{
-namespace internal
-{
-namespace swapexceptiontester
-{
-
-using std::swap;
-template <typename T>
-void check_swap(T &t) ZAPI_DECL_NOEXCEPT_EXPR(noexcept(swap(t, t)));
-
-} // swapexceptiontester
-} // internal
-} // zapi
-
-template <typename T>
-inline void swap(T &left, T &right)
-ZAPI_DECL_NOEXCEPT_EXPR(noexcept(zapi::internal::swapexceptiontester::check_swap(left)))
-{
-   using std::swap;
-   swap(left, right);
-}
 
 #ifdef ZAPI_CC_MSVC
 #  define ZAPI_NEVER_INLINE __declspec(noinline)

@@ -231,7 +231,7 @@ zend_class_entry *AbstractClassPrivate::initialize(AbstractClass *cls, const std
    // make the string look like empty
    ZSTR_VAL(m_self)[0] = '\0';
    ZSTR_LEN(m_self) = 0;
-   std::memcpy(ZSTR_VAL(m_self) + 1, &selfPtr, sizeof(selfPtr));
+   std::memcpy(ZSTR_VAL(m_self.get()) + 1, &selfPtr, sizeof(selfPtr));
    // save into the doc_comment
    m_classEntry->info.user.doc_comment = m_self.get();
    // TODO all member variables

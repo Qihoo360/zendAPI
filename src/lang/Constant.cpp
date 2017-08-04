@@ -17,6 +17,7 @@
 #include "zapi/lang/Constant.h"
 #include "php/Zend/zend_constants.h"
 #include <iostream>
+#include <cstring>
 
 namespace zapi
 {
@@ -133,21 +134,21 @@ Constant::Constant(const char *name, const char *value)
    : m_implPtr(new ConstantPrivate(name))
 {
    ZAPI_D(Constant);
-   ZVAL_STRINGL(&implPtr->m_constant.value, value, ::strlen(value));
+   ZVAL_PSTRINGL(&implPtr->m_constant.value, value, ::strlen(value));
 }
 
 Constant::Constant(const char *name, const char *value, size_t size)
    : m_implPtr(new ConstantPrivate(name))
 {
    ZAPI_D(Constant);
-   ZVAL_STRINGL(&implPtr->m_constant.value, value, size);
+   ZVAL_PSTRINGL(&implPtr->m_constant.value, value, size);
 }
 
 Constant::Constant(const char *name, const std::string &value)
    : m_implPtr(new ConstantPrivate(name))
 {
    ZAPI_D(Constant);
-   ZVAL_STRINGL(&implPtr->m_constant.value, value.c_str(), value.size());
+   ZVAL_PSTRINGL(&implPtr->m_constant.value, value.c_str(), value.size());
 }
 
 Constant::Constant(const Constant &other)

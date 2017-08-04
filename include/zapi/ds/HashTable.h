@@ -465,6 +465,52 @@ public:
          return Variant(zend_hash_get_current_data_ex(const_cast<::HashTable *>(m_hashTable), 
                                                       const_cast<HashPosition *>(&m_index)));
       }
+      const_iterator &operator++()
+      {
+         iterator::operator ++();
+         return *this;
+      }
+
+      const_iterator operator++(int)
+      {
+         const_iterator iter = *this;
+         iterator::operator++();
+         return iter;
+      }
+
+      const_iterator &operator--()
+      {
+         iterator::operator--();
+         return *this;
+      }
+
+      const_iterator operator--(int)
+      {
+         const_iterator iter = *this;
+         iterator::operator--();
+         return iter;
+      }
+
+      const_iterator operator+(int32_t step)
+      {
+         iterator::operator+(step);
+         return *this;
+      }
+      
+      const_iterator operator-(int32_t step)
+      {
+         return operator+(-step);
+      }
+      
+      const_iterator &operator+=(int step)
+      {
+         return *this = *this + step;
+      }
+      
+      const_iterator &operator-=(int step) {
+         return *this = *this - step;
+      }
+      
    };
    
    class key_iterator 
@@ -546,12 +592,12 @@ public:
    
    key_iterator keyBegin() const
    {
-      return key_iterator(begin());
+      return key_iterator(cbegin());
    }
    
    key_iterator keyEnd() const
    {
-      return key_iterator(end());
+      return key_iterator(cend());
    }
    
    void each(DefaultForeachVisitor visitor) const;

@@ -29,7 +29,15 @@ ObjectBinder::ObjectBinder(zend_class_entry *entry, StdClass *nativeObject,
                            const zend_object_handlers *objectHandlers, int refCount)
    : m_nativeObject(nativeObject)
 {
-   m_container = static_cast<Container *>(ecalloc(1, sizeof(Container) + zend_object_properties_size(entry)));
+   // here can be negative ？ 
+   // return sizeof(zval) *
+   // (ce->default_properties_count -
+   // ((ce->ce_flags & ZEND_ACC_USE_GUARDS) ? 0 : 1));
+   // maybe -16
+   // or we may not set something not correct
+   int propertiesSize = zend_object_properties_size(entry);
+   propertiesSize = propertiesSize < 0 ? 0 : propertiesSize;
+   m_container = static_cast<Container *>(ecalloc(1, sizeof(Container) + propertiesSize));
    m_container->m_zendObject.ce = entry;
    m_container->m_self = this;
    zend_object_std_init(&m_container->m_zendObject, entry);

@@ -15,6 +15,7 @@
 
 #include "zapi/lang/StringMember.h"
 #include "zapi/vm/internal/AbstractMemberPrivate.h"
+#include <cstring>
 
 namespace zapi
 {
