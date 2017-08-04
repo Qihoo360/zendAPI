@@ -5,11 +5,13 @@
 #include <string>
 
 using zapi::lang::StdClass;
+using zapi::lang::Variant;
 
 class Person : public StdClass
 {
 public:
    Person();
+   Variant __get(const std::string &name);
 private:
    /**
      *  The initial value

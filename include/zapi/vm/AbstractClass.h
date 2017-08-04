@@ -34,6 +34,7 @@ namespace lang
 {
 class StdClass;
 class Constant;
+class Variant;
 } // lang
 
 namespace vm
@@ -49,6 +50,7 @@ using zapi::lang::ClassType;
 using zapi::lang::StdClass;
 using zapi::lang::Arguments;
 using zapi::lang::Constant;
+using zapi::lang::Variant;
 
 class ZAPI_DECL_EXPORT AbstractClass
 {
@@ -105,6 +107,11 @@ protected:
    virtual bool traversable() const;
    virtual void callClone(StdClass *nativeObject) const;
    virtual void callDestruct(StdClass *nativeObject) const;
+   // property
+   virtual Variant callGet(StdClass *nativeObject, const std::string &name) const;
+   virtual void callSet(StdClass *nativeObject, const std::string &name, const Variant &value) const;
+   virtual bool callIsset(StdClass *nativeObject, const std::string &name) const;
+   virtual void callUnset(StdClass *nativeObject, const std::string &name) const;
 private:
    zend_class_entry *initialize(const std::string &ns);
    zend_class_entry *initialize();

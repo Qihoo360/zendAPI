@@ -72,10 +72,15 @@ StdClass *ObjectBinder::getNativeObject() const
    return m_nativeObject.get();
 }
 
-ObjectBinder *ObjectBinder::retrieveSelfFromZendObject(const zend_object *object)
+ObjectBinder *ObjectBinder::retrieveSelfPtr(const zend_object *object)
 {
    Container *container = reinterpret_cast<Container *>(const_cast<char *>(reinterpret_cast<const char *>(object) - calculateZendObjectOffset()));
    return container->m_self;
+}
+
+ObjectBinder *ObjectBinder::retrieveSelfPtr(zval *object)
+{
+   return retrieveSelfPtr(Z_OBJ_P(object));
 }
 
 } // vm

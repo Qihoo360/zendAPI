@@ -27,6 +27,8 @@
 #include "zapi/lang/Method.h"
 #include "zapi/lang/StdClass.h"
 #include "zapi/lang/Constant.h"
+#include "zapi/lang/Variant.h"
+#include "zapi/lang/Property.h"
 #include "zapi/kernel/NotImplemented.h"
 #include "zapi/kernel/OrigException.h"
 
@@ -36,6 +38,8 @@ namespace vm
 {
 
 using zapi::lang::Constant;
+using zapi::lang::Variant;
+using zapi::lang::Property;
 
 namespace internal
 {
@@ -126,9 +130,66 @@ void AbstractClassPrivate::unsetDimension(zval *object, zval *offset)
    
 }
 
+zval *AbstractClassPrivate::toZval(Variant &&value, int type, zval *rv)
+{
+   zval result;
+   if (type == 0 || value.refcount() <= 1) {
+       result = value.detach(true);
+   } else {
+      // editable zval return a reference to it
+      zval orig = value.detach(false);
+      result = Variant(&orig, true).detach(true);
+   }
+   ZVAL_COPY_VALUE(rv, &result);
+   return rv;
+}
+
 zval *AbstractClassPrivate::readProperty(zval *object, zval *name, int type, void **cacheSlot, zval *rv)
 {
-   
+   // what to do with the type?
+   //
+   // the type parameter tells us whether the property was read in READ
+   // mode, WRITE mode, READWRITE mode or UNSET mode.
+   //
+   // In 99 out of 100 situations, it is called in regular READ mode (value 0),
+   // only when it is called from a PHP script that has statements like
+   // $x =& $object->x, $object->x->y = "something" or unset($object->x->y)
+   // the type parameter is set to a different value.
+   //
+   // But we must ask ourselves the question what we should be doing with such
+   // cases. Internally, the object most likely has a full native implementation,
+   // and the property that is returned is just a string or integer or some
+   // other value, that is temporary WRAPPED into a zval to make it accessible
+   // from PHP. If someone wants to get a reference to such an internal variable,
+   // that is in most cases simply impossible.
+   // retrieve the object and class
+   ObjectBinder *objectBinder = ObjectBinder::retrieveSelfPtr(object);
+   zend_class_entry *entry = Z_OBJCE_P(object);
+   AbstractClassPrivate *selfPtr = retrieve_acp_ptr_from_cls_entry(entry);
+   AbstractClass *meta = selfPtr->m_apiPtr;
+   StdClass *nativeObject = objectBinder->getNativeObject();
+   try {
+      std::string key(Z_STRVAL_P(name), Z_STRLEN_P(name));
+      std::cout << key;
+      auto iter = selfPtr->m_properties.find(key);
+      if (iter != selfPtr->m_properties.end()) {
+         // self defined getter method
+         return toZval(iter->second->get(nativeObject), type, rv);
+      } else {
+         return toZval(meta->callGet(nativeObject, key), type, rv);
+      }
+   } catch (const NotImplemented &exception) {
+      if (!std_object_handlers.read_property) {
+         zval *ret = (zval *) emalloc(sizeof(zval));
+         ZVAL_NULL(ret);
+         return ret;
+      }
+      return std_object_handlers.read_property(object, name, type, cacheSlot, rv);
+   } catch (Exception &exception) {
+      kernel::process_exception(exception);
+   }
+   // this statement will never execute
+   return nullptr;
 }
 
 void AbstractClassPrivate::writeProperty(zval *object, zval *name, zval *value, void **cacheSlot)
@@ -169,7 +230,7 @@ int AbstractClassPrivate::compare(zval *left, zval *right)
 
 void AbstractClassPrivate::destructObject(zend_object *object)
 {
-   ObjectBinder *binder = ObjectBinder::retrieveSelfFromZendObject(object);
+   ObjectBinder *binder = ObjectBinder::retrieveSelfPtr(object);
    AbstractClassPrivate *selfPtr = retrieve_acp_ptr_from_cls_entry(object->ce);
    try {
       if (binder->getNativeObject()) {
@@ -186,7 +247,7 @@ void AbstractClassPrivate::destructObject(zend_object *object)
 
 void AbstractClassPrivate::freeObject(zend_object *object)
 {
-   ObjectBinder *binder = ObjectBinder::retrieveSelfFromZendObject(object);
+   ObjectBinder *binder = ObjectBinder::retrieveSelfPtr(object);
    binder->destroy();
 }
 
@@ -347,6 +408,24 @@ void AbstractClass::callClone(StdClass *nativeObject) const
 
 void AbstractClass::callDestruct(StdClass *nativeObject) const
 {}
+
+Variant AbstractClass::callGet(StdClass *nativeObject, const std::string &name) const
+{
+   return nullptr;
+}
+
+void AbstractClass::callSet(StdClass *nativeObject, const std::string &name, const Variant &value) const
+{
+}
+
+bool AbstractClass::callIsset(StdClass *nativeObject, const std::string &name) const
+{
+   return false;
+}
+
+void AbstractClass::callUnset(StdClass *nativeObject, const std::string &name) const
+{
+}
 
 bool AbstractClass::clonable() const
 {

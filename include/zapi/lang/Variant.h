@@ -67,7 +67,8 @@ public:
    Variant(bool value);
    Variant(char value);
    Variant(const std::string &value);
-   Variant(const char *value, size_t length = 0);
+   Variant(const char *value, size_t length);
+   Variant(const char *value);
    Variant(double value);
    
    Variant(Type targetType) : Variant()
@@ -333,6 +334,27 @@ public:
       return m_val;
    }
    
+   uint32_t refcount() const
+   {
+      if (!Z_REFCOUNTED_P(const_cast<zval *>(&m_val))) {
+         return 0;
+      }
+      return Z_REFCOUNT_P(const_cast<zval *>(&m_val));
+   }
+   
+   zval detach(bool keeprefcount)
+   {
+      zval result;
+      // copy the value
+      ZVAL_COPY_VALUE(&result, &m_val);
+      if (!keeprefcount) {
+         Z_TRY_DELREF(m_val);
+      }
+      // we no longer represent a valid value
+      ZVAL_UNDEF(&m_val);
+      // done
+      return result;
+   }
 protected:
    zval m_val;
 };

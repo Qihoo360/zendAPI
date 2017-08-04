@@ -178,6 +178,12 @@ Variant::Variant(const char *value, size_t size)
    }
 }
 
+Variant::Variant(const char *value)
+   : Variant(value, std::strlen(value))
+{
+}
+
+
 /**
  * Constructor based on decimal value
  * 

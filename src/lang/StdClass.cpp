@@ -61,7 +61,7 @@ void StdClass::__destruct() const
  * @param  key
  * @return bool
  */
-bool StdClass::__isset(const Variant &key) const
+bool StdClass::__isset(const std::string &key) const
 {
    throw NotImplemented();
 }
@@ -75,7 +75,7 @@ bool StdClass::__isset(const Variant &key) const
  * @param key
  * @param value
  */
-void StdClass::__set(const Variant &key, const Variant &value) const
+void StdClass::__set(const std::string &key, const Variant &value) const
 {
    throw NotImplemented();
 }
@@ -89,7 +89,7 @@ void StdClass::__set(const Variant &key, const Variant &value) const
  * @param  key
  * @return value
  */
-Variant StdClass::__get(const Variant &key) const
+Variant StdClass::__get(const std::string &key) const
 {
    throw NotImplemented();
 }
@@ -102,7 +102,7 @@ Variant StdClass::__get(const Variant &key) const
  *
  * @param key
  */
-void StdClass::__unset(const Variant &key) const
+void StdClass::__unset(const std::string &key) const
 {
    throw NotImplemented();
 }
@@ -118,7 +118,7 @@ void StdClass::__unset(const Variant &key) const
  * @param  params      The parameters that were passed to the function
  * @return Value       The return value
  */
-Variant StdClass::__call(const char *method, Parameters &params) const
+Variant StdClass::__call(const std::string &method, Parameters &params) const
 {
    throw NotImplemented();
 }

@@ -47,7 +47,6 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/vm/FloatMember.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/NumericMember.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/NullMember.h
-   ${ZAPI_INCLUDE_DIR}/zapi/vm/ClassMagicMethodInvoker.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/ExecStateGuard.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/IterateBridge.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/ObjectBinder.h

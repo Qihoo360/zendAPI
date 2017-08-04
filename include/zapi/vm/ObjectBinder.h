@@ -38,7 +38,8 @@ public:
    void destroy();
    zend_object *getZendObject() const;
    StdClass *getNativeObject() const;
-   static ObjectBinder *retrieveSelfFromZendObject(const zend_object *object);
+   static ObjectBinder *retrieveSelfPtr(const zend_object *object);
+   static ObjectBinder *retrieveSelfPtr(zval *object);
 private:
    static constexpr size_t calculateZendObjectOffset()
    {

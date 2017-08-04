@@ -22,6 +22,15 @@
 
 namespace zapi
 {
+
+namespace vm
+{
+namespace internal
+{
+class AbstractClassPrivate;
+} // internal
+} // vm
+
 namespace lang
 {
 
@@ -46,8 +55,12 @@ public:
    Property(const Property &other) = delete;
    virtual ~Property();
 private:
+   Variant get(StdClass *nativeObject);
+   bool set(StdClass *nativeObject, const Variant &value);
+private:
    ZAPI_DECLARE_PRIVATE(Property)
    std::unique_ptr<PropertyPrivate> m_implPtr;   
+   friend class zapi::vm::internal::AbstractClassPrivate;
 };
 
 } // lang

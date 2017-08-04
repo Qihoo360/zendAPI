@@ -108,7 +108,7 @@ public:
     * @param  key
     * @return bool
     */
-   bool __isset(const Variant &key) const;
+   bool __isset(const std::string &key) const;
 
    /**
     * Overridable method that is called to set a new property
@@ -119,7 +119,7 @@ public:
     * @param  key
     * @param  value
     */
-   void __set(const Variant &key, const Variant &value) const;
+   void __set(const std::string &key, const Variant &value) const;
 
    /**
     * Retrieve a property
@@ -130,7 +130,7 @@ public:
     * @param  key
     * @return value
     */
-   Variant __get(const Variant &key) const;
+   Variant __get(const std::string &key) const;
 
    /**
     * Remove a member
@@ -140,7 +140,7 @@ public:
     *
     * @param key
     */
-   void __unset(const Variant &key) const;
+   void __unset(const std::string &key) const;
 
    /**
     * Call a method
@@ -153,7 +153,7 @@ public:
     * @param  params      The parameters that were passed to the function
     * @return Value       The return value
     */
-   Variant __call(const char *method, Parameters &params) const;
+   Variant __call(const std::string &method, Parameters &params) const;
 
    /**
     * Call the class as if it was a function

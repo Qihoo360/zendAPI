@@ -39,6 +39,7 @@ ZAPI_DECL_EXPORT void *get_module()
    zapi::lang::Class<Person> personClass("Person");
    personClass.registerConstant("MY_CONST", "MY_CONST_VALUE");
    personClass.registerConstant(Constant("PI", 3.1415926));
+   personClass.registerProperty("name", "zzu_softboy");
    extension.registerClass(personClass);
    return extension;
 }

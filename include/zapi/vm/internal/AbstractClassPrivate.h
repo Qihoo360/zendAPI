@@ -30,6 +30,7 @@ class Method;
 class Interface;
 class Property;
 class StdClass;
+class Variant;
 } // lang
 
 namespace vm
@@ -45,6 +46,7 @@ using zapi::lang::Method;
 using zapi::lang::Property;
 using zapi::lang::Modifier;
 using zapi::lang::ClassType;
+using zapi::lang::Variant;
 
 class AbstractClassPrivate
 {
@@ -79,6 +81,7 @@ public:
    // cast
    static int cast(zval *object, zval *retValue, int type);
    static int compare(zval *left, zval *right);
+   static zval *toZval(Variant &&value, int type, zval *rv);
 public:
    AbstractClass *m_apiPtr;
    std::string m_name;

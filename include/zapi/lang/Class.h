@@ -17,7 +17,6 @@
 #define ZAPI_LANG_CLASS_H
 
 #include "zapi/vm/AbstractClass.h"
-#include "zapi/vm/ClassMagicMethodInvoker.h"
 
 namespace zapi
 {
@@ -25,7 +24,6 @@ namespace lang
 {
 
 using zapi::vm::AbstractClass;
-using zapi::vm::ClassMagicMethodInvoker;
 
 class Constant;
 
@@ -65,6 +63,11 @@ private:
    virtual StdClass *construct() const override;
    virtual StdClass *clone() const override;
    virtual void callDestruct(StdClass *nativeObject) const override;
+   virtual Variant callGet(StdClass *nativeObject, const std::string &name) const override;
+   virtual void callSet(StdClass *nativeObject, const std::string &name, const Variant &value) const override;
+   virtual bool callIsset(StdClass *nativeObject, const std::string &name) const override;
+   virtual void callUnset(StdClass *nativeObject, const std::string &name) const override;
+   
    template <typename X = T>
    typename std::enable_if<std::is_default_constructible<X>::value, StdClass *>::type
    static doConstructObject();
@@ -72,9 +75,6 @@ private:
    template <typename X = T>
    typename std::enable_if<!std::is_default_constructible<X>::value, StdClass *>::type
    static doConstructObject();
-   
-private:
-   std::unique_ptr<ClassMagicMethodInvoker<T>> m_magicInvoker;
 };
 
 template <typename T>
@@ -118,6 +118,34 @@ void Class<T>::callDestruct(StdClass *nativeObject) const
 {
    T *object = dynamic_cast<T *>(nativeObject);
    return object->__destruct();
+}
+
+template <typename T>
+Variant Class<T>::callGet(StdClass *nativeObject, const std::string &name) const
+{
+   T *object = dynamic_cast<T *>(nativeObject);
+   return object->__get(name);
+}
+
+template <typename T>
+void Class<T>::callSet(StdClass *nativeObject, const std::string &name, const Variant &value) const
+{
+   T *object = dynamic_cast<T *>(nativeObject);
+   object->__set(name, value);
+}
+
+template <typename T>
+bool Class<T>::callIsset(StdClass *nativeObject, const std::string &name) const
+{
+   T *object = dynamic_cast<T *>(nativeObject);
+   return object->__isset(name);
+}
+
+template <typename T>
+void Class<T>::callUnset(StdClass *nativeObject, const std::string &name) const
+{
+   T *object = dynamic_cast<T *>(nativeObject);
+   object->__unset(name);
 }
 
 template <typename T>
