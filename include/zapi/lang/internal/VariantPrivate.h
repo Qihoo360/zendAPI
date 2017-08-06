@@ -13,12 +13,13 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by softboy on 2017/08/01.
+// Created by softboy on 2017/08/06.
 
-#ifndef ZAPI_LANG_INTERNAL_STDCLASS_PRIVATE_H
-#define ZAPI_LANG_INTERNAL_STDCLASS_PRIVATE_H
+#ifndef ZAPI_LANG_INTERNAL_VARIANT_PRIVATE_H
+#define ZAPI_LANG_INTERNAL_VARIANT_PRIVATE_H
 
-#include "zapi/Global.h"
+#include <type_traits>
+#include "php/Zend/zend_types.h"
 
 namespace zapi
 {
@@ -26,13 +27,19 @@ namespace lang
 {
 namespace internal
 {
-class StdClassPrivate
+
+class VariantPrivate
 {
 public:
-   StdClassPrivate();
+   operator _zval_struct *() const &;
+   operator const _zval_struct *() const &;
+   _zval_struct &operator*() const &;
+   _zval_struct *dereference() const;
+   std::aligned_storage<16>::type m_buffer; 
 };
+
 } // internal
 } // lang
 } // zapi
 
-#endif // ZAPI_LANG_INTERNAL_STDCLASS_PRIVATE_H
+#endif // ZAPI_LANG_INTERNAL_VARIANT_PRIVATE_H

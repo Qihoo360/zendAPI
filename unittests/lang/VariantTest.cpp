@@ -98,7 +98,7 @@ TEST_F(VariantTest, testConstructor)
    ASSERT_EQ(std::strncmp(zapiStrPtr, "zapi", 4), 0);
    ASSERT_EQ(Z_TYPE(zapiStrVar.getZval()), IS_STRING);
    // test constructor(const char *value, int length = -1)
-   Variant sizeStr1("hello zapi!", -1);
+   Variant sizeStr1("hello zapi!");
    ASSERT_EQ(Z_STRLEN(sizeStr1.getZval()), 11);
    ASSERT_EQ(std::strncmp(Z_STRVAL(sizeStr1.getZval()), "hello zapi!", 11), 0);
    ASSERT_EQ(Z_TYPE(sizeStr1.getZval()), IS_STRING);
@@ -182,7 +182,6 @@ TEST_F(VariantTest, testConstructor)
       // test move constructor 
       Variant orig("zapi", 4);
       Variant me(std::move(orig));
-      ASSERT_EQ(Z_TYPE(orig.getZval()), IS_UNDEF);
       ASSERT_EQ(Z_TYPE(me.getZval()), IS_STRING);
       ASSERT_EQ(std::strncmp(Z_STRVAL(me.getZval()), "zapi", 4), 0);
    }

@@ -14,6 +14,7 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Interface.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Constant.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Variant.h
+   ${ZAPI_INCLUDE_DIR}/zapi/lang/internal/VariantPrivate.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/StdClass.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Parameters.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Namespace.h

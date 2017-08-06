@@ -39,6 +39,6 @@ TEST(TypeTest, testModifierOperator)
       ASSERT_TRUE(modifier == Modifier::Const);
       ASSERT_TRUE((Modifier::MethodModifiers & Modifier::Final) == Modifier::Final);
       ASSERT_TRUE((Modifier::MethodModifiers & Modifier::Public) == Modifier::Public);
-      ASSERT_TRUE((Modifier::MethodModifiers & Modifier::Const) == Modifier::Const);
+      ASSERT_FALSE((Modifier::MethodModifiers & Modifier::Const) == Modifier::Const);
    }
 }

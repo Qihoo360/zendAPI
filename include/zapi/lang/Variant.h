@@ -29,7 +29,13 @@ namespace zapi
 namespace lang
 {
 
+namespace internal
+{
+class VariantPrivate;
+}
+
 class StdClass;
+using internal::VariantPrivate;
 /**
  * Base class for values that are stored in the Zend engine. One instance
  * of the value class represents a variable that exists in user space in
@@ -236,10 +242,7 @@ public:
       return toDouble();
    }
    
-   operator zval * () const
-   {
-      return const_cast<zval *>(&m_val);
-   }
+   operator zval * () const;
    
    /**
     * The type of object
@@ -328,35 +331,12 @@ public:
     * @return double
     */
    double toDouble() const;
-   
-   inline zval &getZval()
-   {
-      return m_val;
-   }
-   
-   uint32_t refcount() const
-   {
-      if (!Z_REFCOUNTED_P(const_cast<zval *>(&m_val))) {
-         return 0;
-      }
-      return Z_REFCOUNT_P(const_cast<zval *>(&m_val));
-   }
-   
-   zval detach(bool keeprefcount)
-   {
-      zval result;
-      // copy the value
-      ZVAL_COPY_VALUE(&result, &m_val);
-      if (!keeprefcount) {
-         Z_TRY_DELREF(m_val);
-      }
-      // we no longer represent a valid value
-      ZVAL_UNDEF(&m_val);
-      // done
-      return result;
-   }
-protected:
-   zval m_val;
+   zval &getZval();
+   uint32_t refcount() const;
+   zval detach(bool keeprefcount);
+protected: 
+   ZAPI_DECLARE_PRIVATE(Variant)
+   std::unique_ptr<VariantPrivate> m_implPtr;
 };
 
 /**

@@ -22,6 +22,7 @@
 #include "zapi/kernel/FatalError.h"
 #include "zapi/kernel/OrigException.h"
 #include "zapi/lang/Variant.h"
+#include "zapi/lang/internal/VariantPrivate.h"
 #include "zapi/utils/LowerCase.h"
 #include "zapi/ds/String.h"
 
@@ -33,8 +34,38 @@ namespace zapi
 namespace lang
 {
 
+namespace internal
+{
+
+_zval_struct & VariantPrivate::operator*() const &
+{
+   return *const_cast<_zval_struct *>(reinterpret_cast<const _zval_struct *>(&m_buffer));
+}
+
+VariantPrivate::operator _zval_struct*() const &
+{
+   return const_cast<_zval_struct *>(reinterpret_cast<const _zval_struct *>(&m_buffer));
+}
+
+VariantPrivate::operator const _zval_struct*() const &
+{
+   return reinterpret_cast<const _zval_struct *>(&m_buffer);
+}
+
+_zval_struct * VariantPrivate::dereference() const
+{
+   _zval_struct *self = const_cast<_zval_struct *>(reinterpret_cast<const _zval_struct*>(&m_buffer));
+   if (Z_TYPE_P(self) != IS_REFERENCE) {
+      return self;
+   }
+   return Z_REFVAL_P(self);
+}
+
+} // internal
+
 using zapi::utils::LowerCase;
 using zapi::ds::String;
+using internal::VariantPrivate;
 
 /**
  * Implementation for the Value class, which wraps a PHP userspace
@@ -61,8 +92,9 @@ using zapi::ds::String;
  * Constructor (value = NULL)
  */
 Variant::Variant()
+   : m_implPtr(new VariantPrivate)
 {
-   ZVAL_NULL(&m_val);
+   ZVAL_NULL(*m_implPtr);
 }
 
 /**
@@ -79,8 +111,9 @@ Variant::Variant(std::nullptr_t value) : Variant()
  * @param  value
  */
 Variant::Variant(std::int16_t value)
+   : m_implPtr(new VariantPrivate)
 {
-   ZVAL_LONG(&m_val, value);
+   ZVAL_LONG(*m_implPtr, value);
 }
 
 /**
@@ -89,8 +122,9 @@ Variant::Variant(std::int16_t value)
  * @param  value
  */
 Variant::Variant(std::int32_t value)
+   : m_implPtr(new VariantPrivate)
 {
-   ZVAL_LONG(&m_val, value);
+   ZVAL_LONG(*m_implPtr, value);
 }
 
 /**
@@ -99,8 +133,9 @@ Variant::Variant(std::int32_t value)
  * @param  value
  */
 Variant::Variant(std::int64_t value)
+   : m_implPtr(new VariantPrivate)
 {
-   ZVAL_LONG(&m_val, value);
+   ZVAL_LONG(*m_implPtr, value);
 }
 
 /**
@@ -109,8 +144,9 @@ Variant::Variant(std::int64_t value)
  * @param  value
  */
 Variant::Variant(std::uint16_t value)
+   : m_implPtr(new VariantPrivate)
 {
-   ZVAL_LONG(&m_val, static_cast<std::int16_t>(value));
+   ZVAL_LONG(*m_implPtr, static_cast<std::int16_t>(value));
 }
 
 /**
@@ -119,8 +155,9 @@ Variant::Variant(std::uint16_t value)
  * @param  value
  */
 Variant::Variant(std::uint32_t value)
+   : m_implPtr(new VariantPrivate)
 {
-   ZVAL_LONG(&m_val, static_cast<std::int32_t>(value));
+   ZVAL_LONG(*m_implPtr, static_cast<std::int32_t>(value));
 }
 
 /**
@@ -129,8 +166,9 @@ Variant::Variant(std::uint32_t value)
  * @param  value
  */
 Variant::Variant(std::uint64_t value)
+   : m_implPtr(new VariantPrivate)
 {
-   ZVAL_LONG(&m_val, static_cast<std::int64_t>(value));
+   ZVAL_LONG(*m_implPtr, static_cast<std::int64_t>(value));
 }
 
 /**
@@ -139,8 +177,9 @@ Variant::Variant(std::uint64_t value)
  * @param  value
  */
 Variant::Variant(bool value)
+   : m_implPtr(new VariantPrivate)
 {
-   ZVAL_BOOL(&m_val, value);
+   ZVAL_BOOL(*m_implPtr, value);
 }
 
 /**
@@ -149,8 +188,9 @@ Variant::Variant(bool value)
  * @param  value
  */
 Variant::Variant(char value)
+   : m_implPtr(new VariantPrivate)
 {
-   ZVAL_STRINGL(&m_val, &value, 1);
+   ZVAL_STRINGL(*m_implPtr, &value, 1);
 }
 
 /**
@@ -159,8 +199,9 @@ Variant::Variant(char value)
  * @param  value
  */
 Variant::Variant(const std::string &value)
+   : m_implPtr(new VariantPrivate)
 {
-   ZVAL_STRINGL(&m_val, value.c_str(), value.size());
+   ZVAL_STRINGL(*m_implPtr, value.c_str(), value.size());
 }
 
 /**
@@ -170,11 +211,12 @@ Variant::Variant(const std::string &value)
  * @param  size
  */
 Variant::Variant(const char *value, size_t size)
+   : m_implPtr(new VariantPrivate)
 {
    if (value != nullptr) {
-      ZVAL_STRINGL(&m_val, value, size < 0 ? std::strlen(value) : size);
+      ZVAL_STRINGL(*m_implPtr, value, size);
    } else {
-      ZVAL_NULL(&m_val);
+      ZVAL_NULL(*m_implPtr);
    }
 }
 
@@ -190,8 +232,9 @@ Variant::Variant(const char *value)
  * @param  value
  */
 Variant::Variant(double value)
+   : m_implPtr(new VariantPrivate)
 {
-   ZVAL_DOUBLE(&m_val, value);
+   ZVAL_DOUBLE(*m_implPtr, value);
 }
 
 /**
@@ -201,14 +244,15 @@ Variant::Variant(double value)
  * @param  ref         Force this to be a reference
  */
 Variant::Variant(zval *value, bool isRef)
+   : m_implPtr(new VariantPrivate)
 {
    if (!isRef) {
-      ZVAL_DUP(&m_val, value);
+      ZVAL_DUP(*m_implPtr, value);
    } else {
       ZVAL_MAKE_REF(value);
       zend_reference *ref = Z_REF_P(value);
       ++GC_REFCOUNT(ref);
-      ZVAL_REF(&m_val, ref);
+      ZVAL_REF(*m_implPtr, ref);
    }
 }
 
@@ -218,11 +262,13 @@ Variant::Variant(zval *value, bool isRef)
  * @param  value
  */
 Variant::Variant(const Variant &other)
+   : m_implPtr(new VariantPrivate)
 {
-   zval *from = const_cast<zval *>(&other.m_val);
+   zval *from = const_cast<zval *>(static_cast<const zval *>(*other.m_implPtr));
+   // make sure what we are copied is not a reference
    ZVAL_DEREF(from);
    // copy the value
-   ZVAL_COPY(&m_val, from);
+   ZVAL_COPY(*m_implPtr, from);
 }
 
 /**
@@ -232,13 +278,14 @@ Variant::Variant(const Variant &other)
  */
 Variant::Variant(Variant &&other) ZAPI_DECL_NOEXCEPT
 {
-   ZVAL_UNDEF(&m_val);
-   std::swap(m_val, other.m_val);
+   m_implPtr = std::move(other.m_implPtr);
 }
 
 Variant::~Variant()
 {
-   zval_ptr_dtor(&m_val);
+   if (m_implPtr) {
+      zval_ptr_dtor(*m_implPtr);
+   }
 }
 
 /**
@@ -252,21 +299,7 @@ Variant &Variant::operator=(Variant &&value) ZAPI_DECL_NOEXCEPT
    if (this == &value) {
       return *this;
    }
-   // if neither value is a reference we can simply swap the values
-   // the other value will then destruct and reduce the refcount
-   if (!Z_ISREF(value.m_val) && (!Z_ISREF(m_val))) {
-      std::swap(m_val, value.m_val);
-   }else if (Z_ISREF(m_val) && !Z_ISREF(value.m_val)){
-      zval *to = Z_REFVAL(m_val);
-      std::swap(*to, value.m_val);
-   } else if(!Z_ISREF(m_val) && Z_ISREF(value.m_val)){
-      zval *from = Z_REFVAL(value.m_val);
-      std::swap(m_val, *from);
-   } else {
-      zval *to = Z_REFVAL(m_val);
-      zval *from = Z_REFVAL(value.m_val);
-      std::swap(*to, *from);
-   }
+   m_implPtr = std::move(value.m_implPtr);
    return *this;
 }
 
@@ -278,7 +311,7 @@ Variant &Variant::operator=(Variant &&value) ZAPI_DECL_NOEXCEPT
  */
 Variant &Variant::operator=(const Variant &value)
 {
-   return operator=(const_cast<zval *>(&value.m_val));
+   return operator=(const_cast<zval *>(static_cast<const zval *>(*(value.m_implPtr))));
 }
 
 /**
@@ -289,9 +322,9 @@ Variant &Variant::operator=(const Variant &value)
  */
 Variant &Variant::operator=(std::nullptr_t value)
 {
-   SEPARATE_ZVAL_IF_NOT_REF(&m_val);
-   zval_dtor(&m_val);
-   ZVAL_NULL(&m_val);
+   SEPARATE_ZVAL_IF_NOT_REF(*m_implPtr);
+   zval_dtor(*m_implPtr);
+   ZVAL_NULL(*m_implPtr);
    return *this;
 }
 
@@ -303,9 +336,9 @@ Variant &Variant::operator=(std::nullptr_t value)
  */
 Variant &Variant::operator=(std::int16_t value)
 {
-   SEPARATE_ZVAL_IF_NOT_REF(&m_val);
-   zval_dtor(&m_val);
-   ZVAL_LONG(&m_val, value);
+   SEPARATE_ZVAL_IF_NOT_REF(*m_implPtr);
+   zval_dtor(*m_implPtr);
+   ZVAL_LONG(*m_implPtr, value);
    return *this;
 }
 
@@ -317,9 +350,9 @@ Variant &Variant::operator=(std::int16_t value)
  */
 Variant &Variant::operator=(std::int32_t value)
 {
-   SEPARATE_ZVAL_IF_NOT_REF(&m_val);
-   zval_dtor(&m_val);
-   ZVAL_LONG(&m_val, value);
+   SEPARATE_ZVAL_IF_NOT_REF(*m_implPtr);
+   zval_dtor(*m_implPtr);
+   ZVAL_LONG(*m_implPtr, value);
    return *this;
 }
 
@@ -331,9 +364,9 @@ Variant &Variant::operator=(std::int32_t value)
  */
 Variant &Variant::operator=(std::int64_t value)
 {
-   SEPARATE_ZVAL_IF_NOT_REF(&m_val);
-   zval_dtor(&m_val);
-   ZVAL_LONG(&m_val, value);
+   SEPARATE_ZVAL_IF_NOT_REF(*m_implPtr);
+   zval_dtor(*m_implPtr);
+   ZVAL_LONG(*m_implPtr, value);
    return *this;
 }
 
@@ -378,9 +411,9 @@ Variant &Variant::operator=(std::uint64_t value)
  */
 Variant &Variant::operator=(bool value)
 {
-   SEPARATE_ZVAL_IF_NOT_REF(&m_val);
-   zval_dtor(&m_val);
-   ZVAL_BOOL(&m_val, value);
+   SEPARATE_ZVAL_IF_NOT_REF(*m_implPtr);
+   zval_dtor(*m_implPtr);
+   ZVAL_BOOL(*m_implPtr, value);
    return *this;
 }
 
@@ -392,9 +425,9 @@ Variant &Variant::operator=(bool value)
  */
 Variant &Variant::operator=(char value)
 {
-   SEPARATE_ZVAL_IF_NOT_REF(&m_val);
-   zval_dtor(&m_val);
-   ZVAL_STRINGL(&m_val, &value, 1);
+   SEPARATE_ZVAL_IF_NOT_REF(*m_implPtr);
+   zval_dtor(*m_implPtr);
+   ZVAL_STRINGL(*m_implPtr, &value, 1);
    return *this;
 }
 
@@ -406,9 +439,9 @@ Variant &Variant::operator=(char value)
  */
 Variant &Variant::operator=(const std::string &value)
 {
-   SEPARATE_ZVAL_IF_NOT_REF(&m_val);
-   zval_dtor(&m_val);
-   ZVAL_STRINGL(&m_val, value.c_str(), value.size());
+   SEPARATE_ZVAL_IF_NOT_REF(*m_implPtr);
+   zval_dtor(*m_implPtr);
+   ZVAL_STRINGL(*m_implPtr, value.c_str(), value.size());
    return *this;
 }
 
@@ -420,9 +453,9 @@ Variant &Variant::operator=(const std::string &value)
  */
 Variant &Variant::operator=(const char *value)
 {
-   SEPARATE_ZVAL_IF_NOT_REF(&m_val);
-   zval_dtor(&m_val);
-   ZVAL_STRINGL(&m_val, value, std::strlen(value));
+   SEPARATE_ZVAL_IF_NOT_REF(*m_implPtr);
+   zval_dtor(*m_implPtr);
+   ZVAL_STRINGL(*m_implPtr, value, std::strlen(value));
    return *this;
 }
 
@@ -434,15 +467,15 @@ Variant &Variant::operator=(const char *value)
  */
 Variant &Variant::operator=(double value)
 {
-   SEPARATE_ZVAL_IF_NOT_REF(&m_val);
-   zval_dtor(&m_val);
-   ZVAL_DOUBLE(&m_val, value);
+   SEPARATE_ZVAL_IF_NOT_REF(*m_implPtr);
+   zval_dtor(*m_implPtr);
+   ZVAL_DOUBLE(*m_implPtr, value);
    return *this;
 }
 
 Variant &Variant::operator=(struct _zval_struct *value)
 {
-   zval *to = &m_val;
+   zval *to = static_cast<zval *>(*m_implPtr);
    if (Z_ISREF_P(value)) {
       value = Z_REFVAL_P(value);
    }
@@ -483,6 +516,38 @@ Variant &Variant::operator=(struct _zval_struct *value)
    return *this;
 }
 
+zval &Variant::getZval()
+{
+   return *static_cast<zval *>(*m_implPtr);
+}
+
+Variant::operator zval * () const
+{
+   return const_cast<zval *>(static_cast<const zval *>(*m_implPtr));
+}
+
+uint32_t Variant::refcount() const
+{
+   if (!Z_REFCOUNTED_P(const_cast<zval *>(static_cast<const zval *>(*m_implPtr)))) {
+      return 0;
+   }
+   return Z_REFCOUNT_P(const_cast<zval *>(static_cast<const zval *>(*m_implPtr)));
+}
+
+zval Variant::detach(bool keeprefcount)
+{
+   zval result;
+   // copy the value
+   ZVAL_COPY_VALUE(&result, *m_implPtr);
+   if (!keeprefcount) {
+      Z_TRY_DELREF_P(*m_implPtr);
+   }
+   // we no longer represent a valid value
+   ZVAL_UNDEF(*(m_implPtr.get()));
+   // done
+   return result;
+}
+
 /**
  * The type of object
  * 
@@ -490,9 +555,9 @@ Variant &Variant::operator=(struct _zval_struct *value)
  */
 Type Variant::getType() const
 {
-   zval *ptr = const_cast<zval *>(&m_val);
-   if (Z_ISREF(m_val)) {
-      ptr = Z_REFVAL(m_val);
+   zval *ptr = const_cast<zval *>(static_cast<const zval *>(*m_implPtr));
+   if (Z_ISREF_P(ptr)) {
+      ptr = Z_REFVAL_P(ptr);
    }
    return static_cast<Type>(Z_TYPE_P(ptr));
 }
@@ -507,7 +572,7 @@ bool Variant::isNull() const
    if (getType() == Type::Null) {
       return true;
    }
-   return static_cast<Type>(Z_TYPE(m_val)) == Type::Null;
+   return static_cast<Type>(Z_TYPE_P(*m_implPtr)) == Type::Null;
 }
 
 /**
@@ -520,7 +585,7 @@ bool Variant::isLong() const
    if (getType() == Type::Long) {
       return true;
    }
-   return static_cast<Type>(Z_TYPE(m_val)) == Type::Long;
+   return static_cast<Type>(Z_TYPE_P(*m_implPtr)) == Type::Long;
 }
 
 /**
@@ -533,7 +598,7 @@ bool Variant::isBool() const
    if (getType() == Type::False || getType() == Type::True) {
       return true;
    }
-   Type type = static_cast<Type>(Z_TYPE(m_val));
+   Type type = static_cast<Type>(Z_TYPE_P(*m_implPtr));
    return getType() == Type::False || getType() == Type::True;
 }
 
@@ -547,7 +612,7 @@ bool Variant::isString() const
    if (getType() == Type::String) {
       return true;
    }
-   return static_cast<Type>(Z_TYPE(m_val)) == Type::String;
+   return static_cast<Type>(Z_TYPE_P(*m_implPtr)) == Type::String;
 }
 
 /**
@@ -560,7 +625,7 @@ bool Variant::isDouble() const
    if (getType() == Type::Double) {
       return true;
    }
-   return static_cast<Type>(Z_TYPE(m_val)) == Type::Double;
+   return static_cast<Type>(Z_TYPE_P(*m_implPtr)) == Type::Double;
 }
 
 /**
@@ -573,7 +638,7 @@ bool Variant::isObject() const
    if (getType() == Type::Object) {
       return true;
    }
-   return static_cast<Type>(Z_TYPE(m_val)) == Type::Object;
+   return static_cast<Type>(Z_TYPE_P(*m_implPtr)) == Type::Object;
 }
 
 /**
@@ -585,7 +650,7 @@ bool Variant::isArray() const
    if (getType() == Type::Array) {
       return true;
    }
-   return static_cast<Type>(Z_TYPE(m_val)) == Type::Array;
+   return static_cast<Type>(Z_TYPE_P(*m_implPtr)) == Type::Array;
 }
 
 /**
@@ -623,36 +688,36 @@ bool Variant::convert(Type targetType)
    } else if (!canConvert(targetType)) {
       return false;
    }
-   SEPARATE_ZVAL_IF_NOT_REF(&m_val);
+   SEPARATE_ZVAL_IF_NOT_REF(*m_implPtr);
    switch (targetType) {
    case Type::Null:
-      convert_to_null(&m_val);
+      convert_to_null(*m_implPtr);
       break;
    case Type::Long:
-      convert_to_long(&m_val);
+      convert_to_long(*m_implPtr);
       break;
    case Type::Double:
-      convert_to_double(&m_val);
+      convert_to_double(*m_implPtr);
       break;
    case Type::Boolean:
-      convert_to_boolean(&m_val);
+      convert_to_boolean(*m_implPtr);
       break;
    case Type::False:
-      convert_to_boolean(&m_val);
-      ZVAL_FALSE(&m_val);
+      convert_to_boolean(*m_implPtr);
+      ZVAL_FALSE(*m_implPtr);
       break;
    case Type::True:
-      convert_to_boolean(&m_val);
-      ZVAL_TRUE(&m_val);
+      convert_to_boolean(*m_implPtr);
+      ZVAL_TRUE(*m_implPtr);
       break;
    case Type::Array:
-      convert_to_array(&m_val);
+      convert_to_array(*m_implPtr);
       break;
    case Type::Object:
-      convert_to_object(&m_val);
+      convert_to_object(*m_implPtr);
       break;
    case Type::String:
-      convert_to_string(&m_val);
+      convert_to_string(*m_implPtr);
       break;
    default:
       return false;
@@ -667,7 +732,7 @@ bool Variant::convert(Type targetType)
 Variant Variant::clone() const
 {
    Variant output;
-   ZVAL_DUP(&output.m_val, &m_val);
+   ZVAL_DUP(*output.m_implPtr, *m_implPtr);
    return output;
 }
 
@@ -691,7 +756,7 @@ Variant Variant::clone(Type targetType) const
  */
 std::int64_t Variant::toLong() const
 {
-   return zval_get_long(const_cast<zval *>(&m_val));
+   return zval_get_long(*m_implPtr);
 }
 
 /**
@@ -714,9 +779,9 @@ bool Variant::toBool() const
    case Type::Double:
       return toDouble();
    case Type::String:
-      return Z_STRLEN(m_val);
+      return Z_STRLEN_P(*m_implPtr);
    case Type::Array:
-      return zend_hash_num_elements(Z_ARRVAL(m_val));
+      return zend_hash_num_elements(Z_ARRVAL_P(*m_implPtr));
    default:
       return clone(Type::Boolean).toBool();
    }
@@ -728,7 +793,7 @@ bool Variant::toBool() const
  */
 std::string Variant::toString() const
 {
-   zend_string* s  = zval_get_string(const_cast<zval *>(&m_val));
+   zend_string *s  = zval_get_string(*m_implPtr);
    std::string ret(ZSTR_VAL(s), ZSTR_LEN(s));
    zend_string_release(s);
    return ret;
@@ -740,19 +805,19 @@ std::string Variant::toString() const
  */
 double Variant::toDouble() const
 {
-   return zval_get_double(const_cast<zval *>(&m_val));
+   return zval_get_double(*m_implPtr);
 }
 
 bool Variant::operator==(const Variant &value) const
 {
-   return operator==(const_cast<zval *>(&value.m_val));
+   return operator==(const_cast<zval *>(static_cast<const zval *>(*m_implPtr)));
 }
 
 bool Variant::operator==(zval *value) const
 {
    zval result;
    // run the comparison
-   if (SUCCESS != compare_function(&result, const_cast<zval *>(&m_val), value)) {
+   if (SUCCESS != compare_function(&result, const_cast<zval *>(static_cast<const zval *>(*m_implPtr)), value)) {
       return false;
    }
    // convert to boolean
