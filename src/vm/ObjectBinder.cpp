@@ -16,7 +16,7 @@
 #include "zapi/vm/ObjectBinder.h"
 #include "zapi/lang/StdClass.h"
 #include "zapi/lang/internal/StdClassPrivate.h"
-
+#include <cstring>
 namespace zapi
 {
 namespace vm
@@ -29,16 +29,9 @@ ObjectBinder::ObjectBinder(zend_class_entry *entry, StdClass *nativeObject,
                            const zend_object_handlers *objectHandlers, uint32_t refCount)
    : m_nativeObject(nativeObject)
 {
-   // here can be negative ？ 
-   // return sizeof(zval) *
-   // (ce->default_properties_count -
-   // ((ce->ce_flags & ZEND_ACC_USE_GUARDS) ? 0 : 1));
-   // maybe -16
-   // or we may not set something not correct
-   ssize_t propertiesSize = static_cast<ssize_t>(zend_object_properties_size(entry));
-   propertiesSize = propertiesSize < 0 ? 0 : propertiesSize;
-   m_container = static_cast<Container *>(ecalloc(1, sizeof(Container) + static_cast<size_t>(propertiesSize)));
-   m_container->m_zendObject.ce = entry;
+   ssize_t psize = zend_object_properties_size(entry);
+   psize = psize < 0 ? 0 : psize;
+   m_container = static_cast<Container *>(ecalloc(1, sizeof(Container) + psize));
    m_container->m_self = this;
    zend_object_std_init(&m_container->m_zendObject, entry);
    object_properties_init(&m_container->m_zendObject, entry);
@@ -56,10 +49,6 @@ zend_object *ObjectBinder::getZendObject() const
 ObjectBinder::~ObjectBinder()
 {
    zend_object_std_dtor(&m_container->m_zendObject);
-   // maybe be free twice, but no error, very strange
-   // if you delete this statement, zend memory manager 
-   // complain memory leak
-   efree(m_container);
 }
 
 void ObjectBinder::destroy()

@@ -40,7 +40,6 @@ public:
    StdClass *getNativeObject() const;
    static ObjectBinder *retrieveSelfPtr(const zend_object *object);
    static ObjectBinder *retrieveSelfPtr(zval *object);
-private:
    static constexpr size_t calculateZendObjectOffset()
    {
       return offsetof(Container, m_zendObject);

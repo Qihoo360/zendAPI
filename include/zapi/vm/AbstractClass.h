@@ -35,6 +35,7 @@ namespace lang
 class StdClass;
 class Constant;
 class Variant;
+class Interface;
 } // lang
 
 namespace vm
@@ -51,6 +52,7 @@ using zapi::lang::StdClass;
 using zapi::lang::Arguments;
 using zapi::lang::Constant;
 using zapi::lang::Variant;
+using zapi::lang::Interface;
 
 class ZAPI_DECL_EXPORT AbstractClass
 {
@@ -96,7 +98,8 @@ protected:
    void registerProperty(const char *name, const zapi::GetterMethodCallable0 &getter, const zapi::GetterMethodCallable1 &setter);
    void registerProperty(const char *name, const zapi::GetterMethodCallable1 &getter, const zapi::GetterMethodCallable0 &setter);
    void registerProperty(const char *name, const zapi::GetterMethodCallable1 &getter, const zapi::GetterMethodCallable1 &setter);
-   void registerInterface(const AbstractClass &interface);
+   void registerInterface(const Interface &interface);
+   void registerInterface(Interface &&interface);
    void registerBaseClass(const AbstractClass &base);
    void registerConstant(const Constant &constant);
 protected:

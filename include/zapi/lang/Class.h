@@ -26,6 +26,7 @@ namespace lang
 using zapi::vm::AbstractClass;
 
 class Constant;
+class Interface;
 
 template <typename T>
 class ZAPI_DECL_EXPORT Class : public AbstractClass
@@ -59,6 +60,8 @@ public:
    Class<T> &registerConstant(const char *name, double value);
    Class<T> &registerConstant(const Constant &constant);
    
+   Class<T> &registerInterface(const Interface &interface);
+   Class<T> &registerInterface(Interface &&interface);
 private:
    virtual StdClass *construct() const override;
    virtual StdClass *clone() const override;
@@ -157,6 +160,20 @@ StdClass *Class<T>::clone() const
 template <typename T>
 Class<T>::~Class()
 {}
+
+template <typename T>
+Class<T> &Class<T>::registerInterface(const Interface &interface)
+{
+   AbstractClass::registerInterface(interface);
+   return *this;
+}
+
+template <typename T>
+Class<T> &Class<T>::registerInterface(Interface &&interface)
+{
+   AbstractClass::registerInterface(std::move(interface));
+   return *this;
+}
 
 template <typename T>
 Class<T> &Class<T>::registerProperty(const char *name, std::nullptr_t value, Modifier flags)

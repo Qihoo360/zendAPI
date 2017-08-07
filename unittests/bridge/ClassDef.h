@@ -12,6 +12,7 @@ class Person : public StdClass
 public:
    Person();
    Variant __get(const std::string &name);
+//   void __destruct();
 private:
    /**
      *  The initial value

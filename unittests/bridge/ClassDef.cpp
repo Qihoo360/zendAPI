@@ -8,3 +8,9 @@ Variant Person::__get(const std::string &name)
 {
    return "zapi";
 }
+
+
+//void Person::__destruct()
+//{
+   
+//}

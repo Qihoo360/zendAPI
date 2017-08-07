@@ -89,11 +89,11 @@ public:
    zend_class_entry *m_classEntry = nullptr;
    std::unique_ptr<zend_function_entry[]> m_methodEntries;
    zend_object_handlers m_handlers;
-   std::list<std::shared_ptr<AbstractClassPrivate>> m_interfaces;
+   std::list<std::shared_ptr<AbstractClass>> m_interfaces;
    std::list<std::shared_ptr<Method>> m_methods;
    std::list<std::shared_ptr<AbstractMember>> m_members;
    std::map<std::string, std::shared_ptr<Property>> m_properties;
-   std::shared_ptr<AbstractClassPrivate> m_parent;
+   std::shared_ptr<AbstractClass> m_parent;
    bool m_intialized = false;
    std::unique_ptr<zend_string, std::function<void(zend_string *)>> m_self = nullptr;
 };

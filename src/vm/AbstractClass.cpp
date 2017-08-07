@@ -30,6 +30,7 @@
 #include "zapi/lang/Variant.h"
 #include "zapi/lang/Property.h"
 #include "zapi/lang/Method.h"
+#include "zapi/lang/Interface.h"
 #include "zapi/kernel/NotImplemented.h"
 #include "zapi/kernel/OrigException.h"
 
@@ -42,6 +43,7 @@ using zapi::lang::Constant;
 using zapi::lang::Variant;
 using zapi::lang::Property;
 using zapi::lang::Method;
+using zapi::lang::Interface;
 
 namespace internal
 {
@@ -98,7 +100,7 @@ zend_object *AbstractClassPrivate::createObject(zend_class_entry *entry)
    // here we assocaited a native object with an ObjectBinder object
    // ObjectBinder can make an relationship on nativeObject and zend_object
    // don't warry about memory, we do relase
-   ObjectBinder *binder = new ObjectBinder(entry, nativeObject, abstractClsPrivatePtr->getObjectHandlers(), 1);
+   ObjectBinder *binder = new ObjectBinder(entry, nullptr, abstractClsPrivatePtr->getObjectHandlers(), 1);
    return binder->getZendObject();
 }
 
@@ -235,8 +237,9 @@ void AbstractClassPrivate::destructObject(zend_object *object)
    ObjectBinder *binder = ObjectBinder::retrieveSelfPtr(object);
    AbstractClassPrivate *selfPtr = retrieve_acp_ptr_from_cls_entry(object->ce);
    try {
-      if (binder->getNativeObject()) {
-         selfPtr->m_apiPtr->callDestruct(binder->getNativeObject());
+      StdClass *nativeObject = binder->getNativeObject();
+      if (nativeObject) {
+         selfPtr->m_apiPtr->callDestruct(nativeObject);
       }
    } catch (const NotImplemented &exception) {
       zend_objects_destroy_object(object);
@@ -272,10 +275,10 @@ zend_class_entry *AbstractClassPrivate::initialize(AbstractClass *cls, const std
    // check if traversable
    // check if serializable
    if (m_parent) {
-      if (m_parent->m_classEntry) {
-         m_classEntry = zend_register_internal_class_ex(&entry, m_parent->m_classEntry);
+      if (m_parent->m_implPtr->m_classEntry) {
+         m_classEntry = zend_register_internal_class_ex(&entry, m_parent->m_implPtr->m_classEntry);
       } else {
-         std::cerr << "Derived class " << m_name << " is initialized before base class " << m_parent->m_name
+         std::cerr << "Derived class " << m_name << " is initialized before base class " << m_parent->m_implPtr->m_name
                    << ": base class is ignored" << std::endl;
          // ignore base class
          m_classEntry = zend_register_internal_class(&entry);
@@ -284,13 +287,13 @@ zend_class_entry *AbstractClassPrivate::initialize(AbstractClass *cls, const std
       m_classEntry = zend_register_internal_class(&entry);
    }
    // register the interfaces of the class
-   for (std::shared_ptr<AbstractClassPrivate> &interface : m_interfaces) {
-      if (interface->m_classEntry) {
-         zend_class_implements(m_classEntry, 1, interface->m_classEntry);
+   for (std::shared_ptr<AbstractClass> &interface : m_interfaces) {
+      if (interface->m_implPtr->m_classEntry) {
+         zend_class_implements(m_classEntry, 1, interface->m_implPtr->m_classEntry);
       } else {
          // interface that want to implement is not initialized
          std::cerr << "Derived class " << m_name << " is initialized before base class "
-                   << interface->m_name << ": interface is ignored"
+                   << interface->m_implPtr->m_name << ": interface is ignored"
                    << std::endl;
          
       }
@@ -300,7 +303,6 @@ zend_class_entry *AbstractClassPrivate::initialize(AbstractClass *cls, const std
    for (std::shared_ptr<AbstractMember> &member : m_members) {
       member->initialize(m_classEntry);
    }
-   
    // save AbstractClassPrivate instance pointer into the info.user.doc_comment of zend_class_entry
    // we need save the address of this pointer
    AbstractClassPrivate *selfPtr = this;
@@ -365,6 +367,9 @@ zend_object_handlers *AbstractClassPrivate::getObjectHandlers()
    // functions for type cast
    m_handlers.cast_object = &AbstractClassPrivate::cast;
    m_handlers.compare_objects = &AbstractClassPrivate::compare;
+   // we set offset here zend engine will free ObjectBinder::m_container
+   // resource automatic
+   m_handlers.offset = ObjectBinder::calculateZendObjectOffset();
    m_intialized = true;
    return &m_handlers;
 }
@@ -455,6 +460,18 @@ zend_class_entry *AbstractClass::initialize(const std::string &prefix)
 zend_class_entry *AbstractClass::initialize()
 {
    return initialize("");
+}
+
+void AbstractClass::registerInterface(const Interface &interface)
+{
+   ZAPI_D(AbstractClass);
+   implPtr->m_interfaces.push_back(std::shared_ptr<AbstractClass>(new Interface(interface)));
+}
+
+void AbstractClass::registerInterface(Interface &&interface)
+{
+   ZAPI_D(AbstractClass);
+   implPtr->m_interfaces.push_back(std::shared_ptr<AbstractClass>(new Interface(std::move(interface))));
 }
 
 void AbstractClass::registerProperty(const char *name, std::nullptr_t, Modifier flags)
