@@ -39,12 +39,14 @@ namespace lang
 // forward declare
 class Function;
 class Constant;
+class Namespace;
 
 namespace internal
 {
 using zapi::lang::Arguments;
 using zapi::lang::Function;
 using zapi::lang::Constant;
+using zapi::lang::Namespace;
 using zapi::vm::AbstractClass;
 
 class NamespacePrivate
@@ -71,7 +73,7 @@ public:
    std::list<std::shared_ptr<Function>> m_functions;
    std::list<std::shared_ptr<AbstractClass>> m_classes;
    std::list<std::shared_ptr<Constant>> m_constants;
-   std::list<std::shared_ptr<NamespacePrivate>> m_namespaces;
+   std::list<std::shared_ptr<Namespace>> m_namespaces;
 };
 
 } // internal

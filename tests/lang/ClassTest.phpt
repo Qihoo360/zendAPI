@@ -20,6 +20,8 @@ var_dump(interface_exists("InfoProvider"));
 var_dump(method_exists("InfoProvider", "getName"));
 var_dump($person instanceof InfoProvider);
 var_dump(function_exists("zapi\\get_name"));
+var_dump(function_exists("zapi\\io\\print_name"));
+var_dump(function_exists("zapi\\io\\show_something"));
 ?>
 --EXPECT--
 zapi v0.0.1 hello world, zapi

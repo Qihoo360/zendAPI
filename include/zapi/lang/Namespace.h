@@ -81,7 +81,8 @@ public:
       return registerFunction(name, &InvokeBridge::invoke<func>, arguments);
    }
    
-   void registerNamespace();
+   Namespace &registerNamespace(const Namespace &ns);
+   Namespace &registerNamespace(Namespace &&ns);
    size_t getFunctionQuantity() const;
 protected:
    Namespace(NamespacePrivate *implPtr);

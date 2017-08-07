@@ -182,7 +182,7 @@ Extension &Extension::registerInterface(const Interface &interface)
    if (implPtr->m_locked) {
       return *this;
    }
-   implPtr->m_classes.push_back(std::shared_ptr<AbstractClass>(new Interface(interface)));
+   implPtr->m_classes.push_back(std::make_shared<Interface>(interface));
    return *this;
 }
 
@@ -193,7 +193,7 @@ Extension &Extension::registerInterface(Interface &&interface)
    if (implPtr->m_locked) {
       return *this;
    }
-   implPtr->m_classes.push_back(std::shared_ptr<AbstractClass>(new Interface(std::move(interface))));
+   implPtr->m_classes.push_back(std::make_shared<Interface>(std::move(interface)));
    return *this;
 }
 
@@ -203,7 +203,7 @@ Extension &Extension::registerNamespace(const Namespace &ns)
    if (implPtr->m_locked) {
       return *this;
    }
-   implPtr->m_namepsaces.push_back(std::shared_ptr<Namespace>(new Namespace(ns)));
+   implPtr->m_namepsaces.push_back(std::make_shared<Namespace>(ns));
    return *this;
 }
 
@@ -213,7 +213,7 @@ Extension &Extension::registerNamespace(Namespace &&ns)
    if (implPtr->m_locked) {
       return *this;
    }
-   implPtr->m_namepsaces.push_back(std::shared_ptr<Namespace>(new Namespace(std::move(ns))));
+   implPtr->m_namepsaces.push_back(std::make_shared<Namespace>(std::move(ns)));
    return *this;
 }
 

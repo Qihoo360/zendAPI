@@ -37,8 +37,8 @@ void NamespacePrivate::initialize(const std::string &ns)
    initializeConstants(ns);
    initializeClasses(ns);
    // recursive initialize
-   for (std::shared_ptr<NamespacePrivate> &subns : m_namespaces) {
-      subns->initialize(ns + "\\" + subns->m_name);
+   for (std::shared_ptr<Namespace> &subns : m_namespaces) {
+      subns->m_implPtr->initialize(ns + "\\" + subns->m_implPtr->m_name);
    }
 }
 
@@ -47,8 +47,8 @@ void NamespacePrivate::iterateFunctions(const std::function<void(const std::stri
    for (std::shared_ptr<Function> &func : m_functions) {
       callback(m_name, *func);
    }
-   for (std::shared_ptr<NamespacePrivate> &subns : m_namespaces) {
-      subns->iterateFunctions([this, callback](const std::string &ns, Function &func){
+   for (std::shared_ptr<Namespace> &subns : m_namespaces) {
+      subns->m_implPtr->iterateFunctions([this, callback](const std::string &ns, Function &func){
          callback(m_name + "\\" + ns, func);
       });
    }
@@ -67,8 +67,8 @@ void NamespacePrivate::initializeClasses(const std::string &ns)
 size_t NamespacePrivate::calculateFunctionQuantity() const
 {
    size_t ret = m_functions.size();
-   for (const std::shared_ptr<NamespacePrivate> &ns : m_namespaces) {
-      ret += ns->calculateFunctionQuantity();
+   for (const std::shared_ptr<Namespace> &ns : m_namespaces) {
+      ret += ns->m_implPtr->calculateFunctionQuantity();
    }
    return ret;
 }
@@ -124,6 +124,20 @@ size_t Namespace::getFunctionQuantity() const
 {
    ZAPI_D(const Namespace);
    return implPtr->calculateFunctionQuantity();
+}
+
+Namespace &Namespace::registerNamespace(const Namespace &ns)
+{
+   ZAPI_D(Namespace);
+   implPtr->m_namespaces.push_back(std::make_shared<Namespace>(ns));
+   return *this;
+}
+
+Namespace &Namespace::registerNamespace(Namespace &&ns)
+{
+    ZAPI_D(Namespace);
+    implPtr->m_namespaces.push_back(std::make_shared<Namespace>(std::move(ns)));
+    return *this;
 }
 
 Namespace::~Namespace()
