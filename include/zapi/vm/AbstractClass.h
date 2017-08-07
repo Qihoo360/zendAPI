@@ -36,6 +36,10 @@ class StdClass;
 class Constant;
 class Variant;
 class Interface;
+namespace internal
+{
+class NamespacePrivate;
+} // internal
 } // lang
 
 namespace vm
@@ -116,12 +120,13 @@ protected:
    virtual bool callIsset(StdClass *nativeObject, const std::string &name) const;
    virtual void callUnset(StdClass *nativeObject, const std::string &name) const;
 private:
-   zend_class_entry *initialize(const std::string &ns);
-   zend_class_entry *initialize();
+   zend_class_entry *initialize(const std::string &ns, int moduleNumber);
+   zend_class_entry *initialize(int moduleNumber);
 private:
    ZAPI_DECLARE_PRIVATE(AbstractClass)
    std::shared_ptr<AbstractClassPrivate> m_implPtr;
    friend class zapi::bridge::internal::ExtensionPrivate;
+   friend class zapi::lang::internal::NamespacePrivate;
 };
 
 } // vm

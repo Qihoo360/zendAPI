@@ -11,7 +11,7 @@ class Person : public StdClass
 {
 public:
    Person();
-   Variant __get(const std::string &name);
+//   Variant __get(const std::string &name);
 //   void __destruct();
 private:
    /**
@@ -19,6 +19,14 @@ private:
      *  @var    int
      */
    std::string name;
+};
+
+class Address : public StdClass
+{
+public:
+   Address();
+protected:
+   std::string address;
 };
 
 #endif // ZAPI_UNITTEST_BRIDGE_DUMMYEXT_CLASS_DEF_H

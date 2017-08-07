@@ -260,7 +260,7 @@ zend_function *AbstractClassPrivate::getStaticMethod(zend_class_entry *entry, ze
    return nullptr;
 }
 
-zend_class_entry *AbstractClassPrivate::initialize(AbstractClass *cls, const std::string &ns)
+zend_class_entry *AbstractClassPrivate::initialize(AbstractClass *cls, const std::string &ns, int moduleNumber)
 {
    m_apiPtr = cls;
    zend_class_entry entry;
@@ -456,14 +456,14 @@ bool AbstractClass::traversable() const
 AbstractClass::~AbstractClass()
 {}
 
-zend_class_entry *AbstractClass::initialize(const std::string &prefix)
+zend_class_entry *AbstractClass::initialize(const std::string &prefix, int moduleNumber)
 {
-   return getImplPtr()->initialize(this, prefix);
+   return getImplPtr()->initialize(this, prefix, moduleNumber);
 }
 
-zend_class_entry *AbstractClass::initialize()
+zend_class_entry *AbstractClass::initialize(int moduleNumber)
 {
-   return initialize("");
+   return initialize("", moduleNumber);
 }
 
 void AbstractClass::registerInterface(const Interface &interface)

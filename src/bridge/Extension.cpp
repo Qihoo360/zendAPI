@@ -445,8 +445,8 @@ bool ExtensionPrivate::initialize(int moduleNumber)
       constant.initialize(moduleNumber);
    });
    // here we register all global classes and interfaces
-   iterateClasses([](AbstractClass &cls) {
-      cls.initialize();
+   iterateClasses([moduleNumber](AbstractClass &cls) {
+      cls.initialize(moduleNumber);
    });
    // work with register namespaces
    

@@ -52,7 +52,7 @@ class AbstractClassPrivate
 {
 public:
    AbstractClassPrivate(const char *classname, ClassType type);
-   zend_class_entry *initialize(AbstractClass *cls, const std::string &ns);
+   zend_class_entry *initialize(AbstractClass *cls, const std::string &ns, int moduleNumber);
    std::unique_ptr<zend_function_entry[]> &getMethodEntries();
    zend_object_handlers *getObjectHandlers();
    

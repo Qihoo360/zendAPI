@@ -21,6 +21,8 @@
 
 #include "zapi/Global.h"
 #include "zapi/vm/InvokeBridge.h"
+#include "zapi/lang/Class.h"
+#include "zapi/lang/internal/NamespacePrivate.h"
 
 namespace zapi
 {
@@ -38,11 +40,6 @@ namespace lang
 {
 
 class Constant;
-
-namespace internal
-{
-class NamespacePrivate;
-} // internal
 
 using internal::NamespacePrivate;
 using zapi::vm::InvokeBridge;
@@ -86,6 +83,12 @@ public:
    Namespace &registerNamespace(Namespace &&ns);
    Namespace &registerConstant(const Constant &constant);
    Namespace &registerConstant(Constant &&constant);
+   
+   template <typename T>
+   Namespace &registerClass(const Class<T> &nativeClass);
+   template <typename T>
+   Namespace &registerClass(Class<T> &&nativeClass);
+
    size_t getFunctionQuantity() const;
    size_t getConstantQuanlity() const;
    size_t getClassQuanlity() const;
@@ -99,6 +102,22 @@ private:
    std::shared_ptr<NamespacePrivate> m_implPtr;
    friend class zapi::bridge::internal::ExtensionPrivate;
 };
+
+template <typename T>
+Namespace &Namespace::registerClass(const Class<T> &nativeClass)
+{
+   ZAPI_D(Namespace);
+   implPtr->m_classes.push_back(std::shared_ptr<AbstractClass>(new Class<T>(nativeClass)));
+   return *this;
+}
+
+template <typename T>
+Namespace &Namespace::registerClass(Class<T> &&nativeClass)
+{
+   ZAPI_D(Namespace);
+   implPtr->m_classes.push_back(std::shared_ptr<AbstractClass>(new Class<T>(std::move(nativeClass))));
+   return *this;
+}
 
 } // lang
 } // zapi

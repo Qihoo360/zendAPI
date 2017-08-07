@@ -10,7 +10,7 @@ $person = new Person;
 $person = new Person;
 $person1 = new Person;
 var_dump($person);
-
+var_dump($person::$staticProp);
 var_dump(defined("Person::MY_CONST"));
 var_dump(Person::MY_CONST);
 var_dump(defined("Person::PI"));
@@ -23,6 +23,7 @@ var_dump(function_exists("zapi\\get_name"));
 var_dump(function_exists("zapi\\io\\print_name"));
 var_dump(function_exists("zapi\\io\\show_something"));
 var_dump(defined("zapi\\SYS_VERSION"));
+var_dump(class_exists("zapi\\Address"));
 ?>
 --EXPECT--
 zapi v0.0.1 hello world, zapi
