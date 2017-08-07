@@ -84,6 +84,8 @@ public:
    Namespace &registerNamespace(const Namespace &ns);
    Namespace &registerNamespace(Namespace &&ns);
    size_t getFunctionQuantity() const;
+   size_t getConstantQuanlity() const;
+   size_t getClassQuanlity() const;
 protected:
    Namespace(NamespacePrivate *implPtr);
    Namespace &registerFunction(const char *name, zapi::ZendCallable function, const Arguments &arguments = {});

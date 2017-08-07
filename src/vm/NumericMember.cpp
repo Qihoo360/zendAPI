@@ -47,7 +47,9 @@ NumericMember::NumericMember(const NumericMember &other)
 
 NumericMember &NumericMember::operator=(const NumericMember &other)
 {
-   m_implPtr.reset(new NumericMemberPrivate(*static_cast<NumericMemberPrivate *>(other.m_implPtr.get())));
+   if (this != &other) {
+      AbstractMember::operator=(other);
+   }
    return *this;
 }
 
@@ -55,14 +57,14 @@ void NumericMember::setupConstant(zend_class_entry *entry)
 {
    ZAPI_D(NumericMember);
    zend_declare_class_constant_long(entry, implPtr->m_name.c_str(), implPtr->m_name.size(),
-                                      implPtr->m_value);
+                                    implPtr->m_value);
 }
 
 void NumericMember::setupProperty(zend_class_entry *entry)
 {
    ZAPI_D(NumericMember);
    zend_declare_property_long(entry, implPtr->m_name.c_str(), implPtr->m_name.size(),
-                                implPtr->m_value, static_cast<int>(implPtr->m_flags));
+                              implPtr->m_value, static_cast<int>(implPtr->m_flags));
 }
 
 NumericMember::~NumericMember()

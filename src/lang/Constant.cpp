@@ -33,41 +33,12 @@ public:
    ConstantPrivate(const char *name)
       : m_name(name)
    {}
-   ConstantPrivate(const ConstantPrivate &other);
-   ConstantPrivate(ConstantPrivate &&other);
    ~ConstantPrivate();
    void initialize(const std::string &prefix, int moduleNumber);
    std::string m_name;
    zend_constant m_constant;
    bool m_initialized = false;
 };
-
-ConstantPrivate::ConstantPrivate(const ConstantPrivate &other)
-   : m_name(other.m_name)
-{
-   if (m_initialized) {
-      m_constant.name = zend_string_dup(other.m_constant.name, 1);
-      m_constant.flags = other.m_constant.flags;
-      m_constant.module_number = other.m_constant.module_number;
-   }
-   if (Z_TYPE_P(&other.m_constant.value) == IS_STRING) {
-      ZVAL_COPY_VALUE(&m_constant.value, &other.m_constant.value);
-      ZVAL_NEW_STR(&m_constant.value, zend_string_dup(Z_STR(other.m_constant.value), 1));
-   } else {
-       ZVAL_DUP(&m_constant.value, &other.m_constant.value);
-   }
-}
-
-ConstantPrivate::ConstantPrivate(ConstantPrivate &&other)
-   : m_name(std::move(other.m_name))
-{
-   if (m_initialized) {
-      std::swap(m_constant.name, other.m_constant.name);
-      m_constant.flags = other.m_constant.flags;
-      m_constant.module_number = other.m_constant.module_number;
-   }
-   std::swap(m_constant.value, other.m_constant.value);
-}
 
 void ConstantPrivate::initialize(const std::string &prefix, int moduleNumber)
 {
@@ -152,7 +123,7 @@ Constant::Constant(const char *name, const std::string &value)
 }
 
 Constant::Constant(const Constant &other)
-   : m_implPtr(new ConstantPrivate(*other.m_implPtr))
+   : m_implPtr(other.m_implPtr)
 {}
 
 Constant::Constant(Constant &&other) ZAPI_DECL_NOEXCEPT
@@ -161,12 +132,15 @@ Constant::Constant(Constant &&other) ZAPI_DECL_NOEXCEPT
 
 Constant& Constant::operator=(const Constant &other)
 {
-   m_implPtr.reset(new ConstantPrivate(*other.m_implPtr));
+   if (this != &other) {
+      m_implPtr = other.m_implPtr;
+   }
    return *this;
 }
 
 Constant& Constant::operator=(Constant &&other) ZAPI_DECL_NOEXCEPT
 {
+   assert(this != &other);
    m_implPtr = std::move(other.m_implPtr);
    return *this;
 }

@@ -391,12 +391,15 @@ AbstractClass::AbstractClass(AbstractClass &&other) ZAPI_DECL_NOEXCEPT
 
 AbstractClass &AbstractClass::operator=(const AbstractClass &other)
 {
-   m_implPtr = other.m_implPtr;
+   if (this != &other) {
+      m_implPtr = other.m_implPtr;
+   }
    return *this;
 }
 
 AbstractClass &AbstractClass::operator=(AbstractClass &&other) ZAPI_DECL_NOEXCEPT
 {
+   assert(this != &other);
    m_implPtr = std::move(other.m_implPtr);
    return *this;
 }

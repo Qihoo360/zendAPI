@@ -68,6 +68,8 @@ public:
    void initializeConstants(const std::string &ns);
    void initializeClasses(const std::string &ns);
    size_t calculateFunctionQuantity() const;
+   size_t calculateClassQuantity() const;
+   size_t calculateConstantQuantity() const;
 public:
    std::string m_name;
    std::list<std::shared_ptr<Function>> m_functions;

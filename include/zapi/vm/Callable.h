@@ -87,7 +87,7 @@ protected:
    void initialize(const std::string &prefix, zend_function_entry *entry);
 protected:
    ZAPI_DECLARE_PRIVATE(Callable)
-   std::unique_ptr<CallablePrivate> m_implPtr;
+   std::shared_ptr<CallablePrivate> m_implPtr;
    friend class ExtensionPrivate;
 };
 

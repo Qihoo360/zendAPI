@@ -37,13 +37,15 @@ Function::Function(const char *name, const Arguments &arguments)
 {}
 
 Function::Function(const Function &other)
+   : Callable(other)
 {
-   m_implPtr.reset(new FunctionPrivate(*static_cast<FunctionPrivate *>(other.m_implPtr.get())));
 }
 
 Function &Function::operator=(const Function &other)
 {
-   m_implPtr.reset(new FunctionPrivate(*static_cast<FunctionPrivate *>(other.m_implPtr.get())));
+   if (this != &other) {
+      Callable::operator=(other);
+   }
    return *this;
 }
 

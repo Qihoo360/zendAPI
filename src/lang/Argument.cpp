@@ -77,19 +77,22 @@ Argument::Argument(const Argument &other)
 {
 }
 
-Argument::Argument(Argument &&other)
+Argument::Argument(Argument &&other) ZAPI_DECL_NOEXCEPT
    : m_implPtr(std::move(other.m_implPtr))
 {
 }
 
 Argument &Argument::operator=(const Argument &other)
 {
-   m_implPtr.reset(new ArgumentPrivate(*other.m_implPtr));
+   if (this != &other) {
+      m_implPtr.reset(new ArgumentPrivate(*other.m_implPtr));
+   }
    return *this;
 }
 
-Argument &Argument::operator=(Argument &&other)
+Argument &Argument::operator=(Argument &&other) ZAPI_DECL_NOEXCEPT
 {
+   assert(this != &other);
    m_implPtr = std::move(other.m_implPtr);
    return *this;
 }

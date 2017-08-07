@@ -42,12 +42,14 @@ BoolMember::BoolMember(const char *name, double value, Modifier flags)
 {}
 
 BoolMember::BoolMember(const BoolMember &other)
-   : AbstractMember(new BoolMemberPrivate(*static_cast<BoolMemberPrivate *>(other.m_implPtr.get())))
+   : AbstractMember(other)
 {}
 
 BoolMember &BoolMember::operator=(const BoolMember &other)
 {
-   m_implPtr.reset(new BoolMemberPrivate(*static_cast<BoolMemberPrivate *>(other.m_implPtr.get())));
+   if (this != &other) {
+      AbstractMember::operator=(other);
+   }
    return *this;
 }
 

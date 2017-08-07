@@ -37,9 +37,9 @@ class ZAPI_DECL_EXPORT Argument
 {
 public:
    Argument(const Argument &other);
-   Argument(Argument &&other);
+   Argument(Argument &&other) ZAPI_DECL_NOEXCEPT;
    Argument &operator=(const Argument &other);
-   Argument &operator=(Argument &&other);
+   Argument &operator=(Argument &&other) ZAPI_DECL_NOEXCEPT;
    virtual ~Argument();
    bool isNullable() const;
    bool isReference() const;
@@ -99,7 +99,7 @@ public:
       : Argument(argument)
    {}
    
-   ValueArgument(ValueArgument &&argument)
+   ValueArgument(ValueArgument &&argument) ZAPI_DECL_NOEXCEPT
       : Argument(std::move(argument))
    {}
    

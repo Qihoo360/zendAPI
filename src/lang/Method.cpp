@@ -137,35 +137,6 @@ public:
       m_callable.methodCallback0 = nullptr;
    }
    
-   MethodPrivate(const MethodPrivate &other)
-      : CallablePrivate(other),
-        m_type(other.m_type),
-        m_flags(other.m_flags)
-   {
-   }
-   
-   MethodPrivate(MethodPrivate &&other) ZAPI_DECL_NOEXCEPT
-      : CallablePrivate(std::move(other)),
-        m_type(other.m_type),
-        m_flags(other.m_flags)
-   {}
-   
-   MethodPrivate &operator=(const MethodPrivate &other)
-   {
-      CallablePrivate::operator=(other);
-      m_type = other.m_type;
-      m_flags = other.m_flags;
-      return *this;
-   }
-   
-   MethodPrivate &operator=(MethodPrivate &&other) ZAPI_DECL_NOEXCEPT
-   {
-      CallablePrivate::operator=(std::move(other));
-      m_type = other.m_type;
-      m_flags = other.m_flags;
-      return *this;
-   }
-   
    void initialize(zend_function_entry *entry, const std::string &className);
    Variant invoke(Parameters &parameters);
    int m_type;
@@ -291,13 +262,15 @@ Method::Method(const char *name, Modifier flags, const Arguments &args)
 {}
 
 Method::Method(const Method &other)
+   : Callable(other)
 {
-   m_implPtr.reset(new MethodPrivate(*static_cast<MethodPrivate *>(other.m_implPtr.get())));
 }
 
 Method &Method::operator=(const Method &other)
 {
-   m_implPtr.reset(new MethodPrivate(*static_cast<MethodPrivate *>(other.m_implPtr.get())));
+   if (this != &other) {
+      Callable::operator=(other);
+   }
    return *this;
 }
 

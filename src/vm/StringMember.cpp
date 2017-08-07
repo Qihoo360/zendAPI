@@ -30,7 +30,6 @@ namespace internal
 class StringMemberPrivate : public AbstractMemberPrivate
 {
 public:
-   StringMemberPrivate(const StringMemberPrivate &other) = default;
    StringMemberPrivate(const char *name, const char *value, size_t size, Modifier flags)
       : AbstractMemberPrivate(name, flags),
         m_value(value, size)
@@ -64,14 +63,16 @@ StringMember::StringMember(const char *name, const std::string &value, Modifier 
 {}
 
 StringMember::StringMember(const StringMember &other)
-   : AbstractMember(new StringMemberPrivate(*static_cast<StringMemberPrivate *>(other.m_implPtr.get())))
+   : AbstractMember(other)
 {
    
 }
 
 StringMember &StringMember::operator=(const StringMember &other)
 {
-   m_implPtr.reset(new StringMemberPrivate(*static_cast<StringMemberPrivate *>(other.m_implPtr.get())));
+   if (this != &other) {
+      AbstractMember::operator=(other);
+   }
    return *this;
 }
 

@@ -31,7 +31,6 @@ using zapi::lang::Modifier;
 class AbstractMemberPrivate
 {
 public:
-   AbstractMemberPrivate(const AbstractMemberPrivate &other) = default;
    AbstractMemberPrivate(std::string name, Modifier flags)
       : m_flags(flags),
         m_name(name)

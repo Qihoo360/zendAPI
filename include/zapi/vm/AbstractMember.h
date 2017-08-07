@@ -48,7 +48,7 @@ protected:
    virtual void setupProperty(zend_class_entry *entry) = 0;
    
    ZAPI_DECLARE_PRIVATE(AbstractMember)
-   std::unique_ptr<AbstractMemberPrivate> m_implPtr;
+   std::shared_ptr<AbstractMemberPrivate> m_implPtr;
    friend class zapi::vm::internal::AbstractClassPrivate;
 };
 

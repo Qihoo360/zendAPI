@@ -29,7 +29,6 @@ public:
       : AbstractMemberPrivate(name, flags),
         m_value(value)
    {}
-   FloatMemberPrivate(const FloatMemberPrivate &other) = default;
    double m_value;
 };
 
@@ -42,12 +41,14 @@ FloatMember::FloatMember(const char *name, double value, Modifier flags)
 {}
 
 FloatMember::FloatMember(const FloatMember &other)
-   : AbstractMember(new FloatMemberPrivate(*static_cast<FloatMemberPrivate *>(other.m_implPtr.get())))
+   : AbstractMember(other)
 {}
 
 FloatMember &FloatMember::operator=(const FloatMember &other)
 {
-   m_implPtr.reset(new FloatMemberPrivate(*static_cast<FloatMemberPrivate *>(other.m_implPtr.get())));
+   if (this != &other) {
+      AbstractMember::operator=(other);
+   }
    return *this;
 }
 

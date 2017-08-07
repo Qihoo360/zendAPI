@@ -31,7 +31,7 @@ AbstractMember::AbstractMember(const char *name, lang::Modifier flags)
 {}
 
 AbstractMember::AbstractMember(const AbstractMember &other)
-   : m_implPtr(new AbstractMemberPrivate(*other.m_implPtr))
+   : m_implPtr(other.m_implPtr)
 {}
 
 AbstractMember::AbstractMember(AbstractMember &&other) ZAPI_DECL_EXPORT
@@ -44,12 +44,15 @@ AbstractMember::AbstractMember(AbstractMemberPrivate *implPtr)
 
 AbstractMember &AbstractMember::operator=(const AbstractMember &other)
 {
-   m_implPtr.reset(new AbstractMemberPrivate(*other.m_implPtr));
+   if (this != &other) {
+      m_implPtr = other.m_implPtr;
+   }
    return *this;
 }
 
 AbstractMember &AbstractMember::operator=(AbstractMember &&other) ZAPI_DECL_EXPORT
 {
+   assert(this != &other);
    m_implPtr = std::move(other.m_implPtr);
    return *this;
 }

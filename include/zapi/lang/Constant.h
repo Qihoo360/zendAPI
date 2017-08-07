@@ -63,7 +63,7 @@ private:
    void initialize(int moduleNumber);
 private:
    ZAPI_DECLARE_PRIVATE(Constant)
-   std::unique_ptr<ConstantPrivate> m_implPtr;
+   std::shared_ptr<ConstantPrivate> m_implPtr;
    friend class zapi::bridge::internal::ExtensionPrivate;
 };
 

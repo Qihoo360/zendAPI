@@ -50,47 +50,6 @@ CallablePrivate::CallablePrivate(const char *name, const lang::Arguments &argume
    : CallablePrivate(name, nullptr,  arguments)
 {}
 
-CallablePrivate::CallablePrivate(const CallablePrivate &other)
-   : m_callable(other.m_callable),
-     m_name(other.m_name),
-     m_argc(other.m_argc),
-     m_argv(new zend_internal_arg_info[other.m_argc + 2]) // have two moew slot
-{
-   // we copy here
-   for (int i = 0; i < m_argc + 2; i++) {
-      m_argv[i] = other.m_argv[i];
-   }
-}
-
-CallablePrivate::CallablePrivate(CallablePrivate &&other) ZAPI_DECL_NOEXCEPT
-   : m_callable(other.m_callable), // function ptr
-     m_name(std::move(other.m_name)),
-     m_argc(other.m_argc),
-     m_argv(std::move(other.m_argv))
-{}
-
-CallablePrivate &CallablePrivate::operator=(const CallablePrivate &other)
-{
-   m_callable = other.m_callable;
-   m_name = other.m_name;
-   m_argc = other.m_argc;
-   m_argv.reset(new zend_internal_arg_info[m_argc + 2]);
-   // we copy here
-   for (int i = 0; i < m_argc + 2; i++) {
-      m_argv[i] = other.m_argv[i];
-   }
-   return *this;
-}
-
-CallablePrivate &CallablePrivate::operator=(CallablePrivate &&other) ZAPI_DECL_NOEXCEPT
-{
-   m_callable = other.m_callable;
-   m_name = std::move(other.m_name);
-   m_argc = other.m_argc;
-   m_argv = std::move(other.m_argv);
-   return *this;
-}
-
 void CallablePrivate::initialize(zend_function_entry *entry, const char *className, int flags) const
 {
    if (m_callable) {
@@ -211,7 +170,7 @@ Callable::Callable(CallablePrivate *implPtr)
 {}
 
 Callable::Callable(const Callable &other)
-   : m_implPtr(new CallablePrivate(*other.m_implPtr))
+   : m_implPtr(other.m_implPtr)
 {}
 
 
@@ -220,12 +179,15 @@ Callable::~Callable()
 
 Callable &Callable::operator=(const Callable &other)
 {
-   m_implPtr.reset(new CallablePrivate(*other.m_implPtr));
+   if (this != &other) {
+      m_implPtr = other.m_implPtr;
+   }
    return *this;
 }
 
 Callable &Callable::operator=(Callable &&other) ZAPI_DECL_NOEXCEPT
 {
+   assert(this != &other);
    m_implPtr = std::move(other.m_implPtr);
    return *this;
 }

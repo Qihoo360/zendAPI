@@ -73,6 +73,24 @@ size_t NamespacePrivate::calculateFunctionQuantity() const
    return ret;
 }
 
+size_t NamespacePrivate::calculateClassQuantity() const
+{
+   size_t ret = m_classes.size();
+   for (const std::shared_ptr<Namespace> &ns : m_namespaces) {
+      ret += ns->m_implPtr->calculateClassQuantity();
+   }
+   return ret;
+}
+
+size_t NamespacePrivate::calculateConstantQuantity() const
+{
+   size_t ret = m_constants.size();
+   for (const std::shared_ptr<Namespace> &ns : m_namespaces) {
+      ret += ns->m_implPtr->calculateConstantQuantity();
+   }
+   return ret;
+}
+
 } // internal
 
 Namespace::Namespace(const std::string &name)
@@ -97,12 +115,15 @@ Namespace::Namespace(Namespace &&other) ZAPI_DECL_NOEXCEPT
 
 Namespace &Namespace::operator=(const Namespace &other)
 {
-   m_implPtr = other.m_implPtr;
+   if (this != &other) {
+      m_implPtr = other.m_implPtr;
+   }
    return *this;
 }
 
 Namespace &Namespace::operator=(Namespace &&other) ZAPI_DECL_NOEXCEPT
 {
+   assert(this != &other);
    m_implPtr = std::move(other.m_implPtr);
    return *this;
 }
@@ -126,6 +147,18 @@ size_t Namespace::getFunctionQuantity() const
    return implPtr->calculateFunctionQuantity();
 }
 
+size_t Namespace::getClassQuanlity() const
+{
+   ZAPI_D(const Namespace);
+   return implPtr->calculateClassQuantity();
+}
+
+size_t Namespace::getConstantQuanlity() const
+{
+   ZAPI_D(const Namespace);
+   return implPtr->calculateConstantQuantity();
+}
+
 Namespace &Namespace::registerNamespace(const Namespace &ns)
 {
    ZAPI_D(Namespace);
@@ -135,9 +168,9 @@ Namespace &Namespace::registerNamespace(const Namespace &ns)
 
 Namespace &Namespace::registerNamespace(Namespace &&ns)
 {
-    ZAPI_D(Namespace);
-    implPtr->m_namespaces.push_back(std::make_shared<Namespace>(std::move(ns)));
-    return *this;
+   ZAPI_D(Namespace);
+   implPtr->m_namespaces.push_back(std::make_shared<Namespace>(std::move(ns)));
+   return *this;
 }
 
 Namespace::~Namespace()
