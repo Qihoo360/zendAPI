@@ -45,29 +45,29 @@ public:
     * @param  string  The string to wrap
     */
    String(zend_string *string)
-         : m_string(string)
+      : m_string(string)
    {
       zend_string_addref(string);
    }
-
+   
    /**
     * Constructor
     *
     * @param string The string to wrap
     */
    String(const std::string &string)
-         : String(string.data(), string.size(), true)
+      : String(string.data(), string.size(), true)
    {}
-
+   
    /**
     * Constructor
     *
     * @param  string  The string to wrap
     */
    String(const char *string)
-         : String(string, std::strlen(string), true)
+      : String(string, std::strlen(string), true)
    {}
-
+   
    /**
     * Constructor
     *
@@ -75,9 +75,9 @@ public:
     * @param  size    Number of bytes in the string
     */
    String(const char *string, size_t size)
-         : String(string, size, true)
+      : String(string, size, true)
    {}
-
+   
    /**
     *  Constructor
     *
@@ -91,29 +91,29 @@ public:
    String(const char *string, size_t size, bool persistent)
       : m_string(zend_string_init(string, size, persistent ? 1 : 0))
    {}
-
+   
    /**
     * Move constructor
     *
     * @param other The string to move
     */
    String(const String &other)
-         : m_string(other.m_string)
+      : m_string(other.m_string)
    {
       zend_string_addref(m_string);
    }
-
+   
    /**
     * Move constructor
     *
     * @param  that The string to move
     */
    String(String &&other)
-         : m_string(other.m_string)
+      : m_string(other.m_string)
    {
       other.m_string = nullptr;
    }
-
+   
    /**
     * Destructor
     */
@@ -124,7 +124,7 @@ public:
          m_string = nullptr;
       }
    }
-
+   
    /**
     * Retrieve the data for the string
     *
@@ -134,7 +134,7 @@ public:
    {
       return ZSTR_VAL(m_string);
    }
-
+   
    /**
     * Retrieve the data for the string
     *
@@ -144,7 +144,7 @@ public:
    {
       return ZSTR_VAL(m_string);
    }
-
+   
    /**
     * Retrieve number of characters in the string
     *
@@ -170,7 +170,7 @@ public:
       }
       return false;
    }
-
+   
    /**
     * Retrieve the underlying string
     *
@@ -180,7 +180,7 @@ public:
    {
       return m_string;
    }
-
+   
    /**
     * Retrieve the underlying string
     *

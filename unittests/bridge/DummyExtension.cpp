@@ -7,6 +7,8 @@
 
 using zapi::lang::Constant;
 using zapi::lang::ValueArgument;
+using zapi::lang::Interface;
+using zapi::lang::Modifier;
 
 extern "C" {
 
@@ -40,7 +42,10 @@ ZAPI_DECL_EXPORT void *get_module()
    personClass.registerConstant("MY_CONST", "MY_CONST_VALUE");
    personClass.registerConstant(Constant("PI", 3.1415926));
    personClass.registerProperty("name", "zzu_softboy");
-   extension.registerClass(personClass);
+   Interface infoInterface("InfoProvider");
+   infoInterface.registerMethod("getName");
+   //extension.registerClass(personClass);
+   extension.registerInterface(infoInterface);
    return extension;
 }
 

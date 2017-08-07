@@ -35,7 +35,7 @@ Interface &Interface::registerMethod(const char *name, const Arguments arguments
 
 Interface &Interface::registerMethod(const char *name, Modifier flags, const Arguments arguments)
 {
-   AbstractClass::registerMethod(name, (flags | Modifier::Public) & ~Modifier::Abstract, arguments);
+   AbstractClass::registerMethod(name, (flags | Modifier::Public | Modifier::Abstract), arguments);
    return *this;
 }
 

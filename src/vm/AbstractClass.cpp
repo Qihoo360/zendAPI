@@ -29,6 +29,7 @@
 #include "zapi/lang/Constant.h"
 #include "zapi/lang/Variant.h"
 #include "zapi/lang/Property.h"
+#include "zapi/lang/Method.h"
 #include "zapi/kernel/NotImplemented.h"
 #include "zapi/kernel/OrigException.h"
 
@@ -40,6 +41,7 @@ namespace vm
 using zapi::lang::Constant;
 using zapi::lang::Variant;
 using zapi::lang::Property;
+using zapi::lang::Method;
 
 namespace internal
 {
@@ -134,7 +136,7 @@ zval *AbstractClassPrivate::toZval(Variant &&value, int type, zval *rv)
 {
    zval result;
    if (type == 0 || value.refcount() <= 1) {
-       result = value.detach(true);
+      result = value.detach(true);
    } else {
       // editable zval return a reference to it
       zval orig = value.detach(false);
@@ -551,6 +553,91 @@ void AbstractClass::registerConstant(const Constant &constant)
       registerProperty(name.c_str(), std::string(Z_STRVAL(copy), Z_STRLEN(copy)), Modifier::Const);
       break;
    }
+}
+
+void AbstractClass::registerMethod(const char *name, zapi::ZendCallable callable, 
+                                   Modifier flags, const Arguments &args)
+{
+   
+}
+
+void AbstractClass::registerMethod(const char *name, const zapi::MethodCallable0 &method, 
+                                   Modifier flags, const Arguments &args)
+{
+   
+}
+
+void AbstractClass::registerMethod(const char *name, const zapi::MethodCallable1 &method, 
+                                   Modifier flags, const Arguments &args)
+{
+   
+}
+
+void AbstractClass::registerMethod(const char *name, const zapi::MethodCallable2 &method,
+                                   Modifier flags, const Arguments &args)
+{
+   
+}
+
+void AbstractClass::registerMethod(const char *name, const zapi::MethodCallable3 &method,
+                                   Modifier flags, const Arguments &args)
+{
+   
+}
+
+void AbstractClass::registerMethod(const char *name, const zapi::MethodCallable4 &method,
+                                   Modifier flags, const Arguments &args)
+{
+   
+}
+
+void AbstractClass::registerMethod(const char *name, const zapi::MethodCallable5 &method,
+                                   Modifier flags, const Arguments &args)
+{
+   
+}
+
+void AbstractClass::registerMethod(const char *name, const zapi::MethodCallable6 &method,
+                                   Modifier flags, const Arguments &args)
+{
+   
+}
+
+void AbstractClass::registerMethod(const char *name, const zapi::MethodCallable7 &method,
+                                   Modifier flags, const Arguments &args)
+{
+   
+}
+
+// static
+void AbstractClass::registerMethod(const char *name, const zapi::MethodCallable8 &method, 
+                                   Modifier flags, const Arguments &args)
+{
+   
+}
+
+void AbstractClass::registerMethod(const char *name, const zapi::MethodCallable9 &method,
+                                   Modifier flags, const Arguments &args)
+{
+   
+}
+
+void AbstractClass::registerMethod(const char *name, const zapi::MethodCallable10 &method,
+                                   Modifier flags, const Arguments &args)
+{
+   
+}
+
+void AbstractClass::registerMethod(const char *name, const zapi::MethodCallable11 &method,
+                                   Modifier flags, const Arguments &args)
+{
+   
+}
+
+// abstract
+void AbstractClass::registerMethod(const char *name, Modifier flags, const Arguments &args)
+{
+   m_implPtr->m_methods.push_back(std::make_shared<Method>(name, (flags & (Modifier::MethodModifiers | Modifier::Abstract)), args));
 }
 
 } // vm

@@ -84,6 +84,7 @@ namespace bridge
 {
 
 using zapi::lang::Constant;
+using zapi::bridge::internal::ExtensionPrivate;
 
 Extension::Extension(const char *name, const char *version, int apiVersion)
    : m_implPtr(new ExtensionPrivate(name, version, apiVersion, this))
@@ -169,6 +170,27 @@ Extension &Extension::registerConstant(Constant &&constant)
       return *this;
    }
    implPtr->m_constants.push_back(std::unique_ptr<Constant>(new Constant(std::move(constant))));
+   return *this;
+}
+
+Extension &Extension::registerInterface(const Interface &interface)
+{
+   ZAPI_D(Extension);
+   if (implPtr->m_locked) {
+      return *this;
+   }
+   implPtr->m_classes.push_back(std::shared_ptr<AbstractClass>(new Interface(interface)));
+   return *this;
+}
+
+Extension &Extension::registerInterface(Interface &&interface)
+{
+   
+   ZAPI_D(Extension);
+   if (implPtr->m_locked) {
+      return *this;
+   }
+   implPtr->m_classes.push_back(std::shared_ptr<AbstractClass>(new Interface(std::move(interface))));
    return *this;
 }
 

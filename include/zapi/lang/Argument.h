@@ -19,6 +19,7 @@
 #define ZAPI_LANG_ARGUMENT_H
 
 #include "zapi/Global.h"
+#include <initializer_list>
 
 namespace zapi
 {
@@ -35,6 +36,10 @@ using internal::ArgumentPrivate;
 class ZAPI_DECL_EXPORT Argument
 {
 public:
+   Argument(const Argument &other);
+   Argument(Argument &&other);
+   Argument &operator=(const Argument &other);
+   Argument &operator=(Argument &&other);
    virtual ~Argument();
    bool isNullable() const;
    bool isReference() const;
@@ -42,11 +47,7 @@ public:
    const char *getName() const;
    Type getType() const;
    const char *getClassName() const;
-   // is this good?
-   Argument(const Argument &other);
-   Argument(Argument &&other);
-   Argument &operator=(const Argument &other);
-   Argument &operator=(Argument &&other);
+   
 protected:
    Argument(const char *name, Type type, bool required = true, bool byReference = false);
    Argument(const char *name, const char *className, bool nullable = true, 

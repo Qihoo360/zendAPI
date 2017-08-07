@@ -107,9 +107,7 @@ public:
    template <typename T>
    Extension &registerClass(Class<T> &&nativeClass);
    
-   template <typename T>
    Extension &registerInterface(const Interface &interface);
-   template <typename T>
    Extension &registerInterface(Interface &&interface);
    
    Extension &registerNamespace();
@@ -219,29 +217,6 @@ Extension &Extension::registerClass(Class<T> &&nativeClass)
       return *this;
    }
    implPtr->m_classes.push_back(std::shared_ptr<AbstractClass>(new Class<T>(std::move(nativeClass))));
-   return *this;
-}
-
-template <typename T>
-Extension &Extension::registerInterface(const Interface &interface)
-{
-   ZAPI_D(Extension);
-   if (implPtr->m_locked) {
-      return *this;
-   }
-   implPtr->m_classes.push_back(std::shared_ptr<AbstractClass>(new Interface(interface)));
-   return *this;
-}
-
-template <typename T>
-Extension &Extension::registerInterface(Interface &&interface)
-{
-   
-   ZAPI_D(Extension);
-   if (implPtr->m_locked) {
-      return *this;
-   }
-   implPtr->m_classes.push_back(std::shared_ptr<AbstractClass>(new Interface(std::move(interface))));
    return *this;
 }
 

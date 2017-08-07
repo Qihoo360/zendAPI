@@ -9,7 +9,8 @@ add_library(dummyext MODULE
    ExtFuncs.h
    ExtFuncs.cpp
    ClassDef.h
-   ClassDef.cpp)
+   ClassDef.cpp
+   Interface.h)
 target_link_libraries(dummyext ${PTHREAD_LIB} ${CMAKE_PROJECT_NAME})
 set(BUILD_ETC_DIR ${ZAPI_BINARY_DIR}/etc)
 set_target_properties(dummyext PROPERTIES
