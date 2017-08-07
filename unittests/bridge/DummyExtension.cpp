@@ -9,6 +9,7 @@ using zapi::lang::Constant;
 using zapi::lang::ValueArgument;
 using zapi::lang::Interface;
 using zapi::lang::Modifier;
+using zapi::lang::Namespace;
 
 extern "C" {
 
@@ -39,14 +40,17 @@ ZAPI_DECL_EXPORT void *get_module()
 //                                                       ValueArgument("number2", zapi::lang::Type::Long)
 //                                                    });
    zapi::lang::Class<Person> personClass("Person");
-//   personClass.registerConstant("MY_CONST", "MY_CONST_VALUE");
-//   personClass.registerConstant(Constant("PI", 3.1415926));
-//   personClass.registerProperty("name", "zzu_softboy");
-//   Interface infoInterface("InfoProvider");
-//   infoInterface.registerMethod("getName");
-//   personClass.registerInterface(infoInterface);
-//   extension.registerInterface(infoInterface);
+   personClass.registerConstant("MY_CONST", "MY_CONST_VALUE");
+   personClass.registerConstant(Constant("PI", 3.1415926));
+   personClass.registerProperty("name", "zzu_softboy");
+   Interface infoInterface("InfoProvider");
+   infoInterface.registerMethod("getName");
+   personClass.registerInterface(infoInterface);
+   extension.registerInterface(infoInterface);
    extension.registerClass(personClass);
+   Namespace ns("zapi");
+   ns.registerFunction<dummyext::get_name>("get_name");
+   extension.registerNamespace(ns);
    return extension;
 }
 

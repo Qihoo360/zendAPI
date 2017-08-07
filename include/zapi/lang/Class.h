@@ -29,7 +29,7 @@ class Constant;
 class Interface;
 
 template <typename T>
-class ZAPI_DECL_EXPORT Class : public AbstractClass
+class ZAPI_DECL_EXPORT Class final : public AbstractClass
 {
 public:
    Class(const char *name, ClassType classType = ClassType::Regular);

@@ -18,8 +18,10 @@
 #include "zapi/bridge/Extension.h"
 #include "zapi/bridge/internal/ExtensionPrivate.h"
 #include "zapi/vm/internal/CallablePrivate.h"
+#include "zapi/lang/internal/NamespacePrivate.h"
 #include "zapi/lang/Function.h"
 #include "zapi/lang/Constant.h"
+#include "zapi/lang/Namespace.h"
 #include "php/Zend/zend_constants.h"
 
 #ifdef ZTS
@@ -85,6 +87,7 @@ namespace bridge
 
 using zapi::lang::Constant;
 using zapi::bridge::internal::ExtensionPrivate;
+using zapi::lang::internal::NamespacePrivate;
 
 Extension::Extension(const char *name, const char *version, int apiVersion)
    : m_implPtr(new ExtensionPrivate(name, version, apiVersion, this))
@@ -194,6 +197,26 @@ Extension &Extension::registerInterface(Interface &&interface)
    return *this;
 }
 
+Extension &Extension::registerNamespace(const Namespace &ns)
+{
+   ZAPI_D(Extension);
+   if (implPtr->m_locked) {
+      return *this;
+   }
+   implPtr->m_namepsaces.push_back(std::shared_ptr<Namespace>(new Namespace(ns)));
+   return *this;
+}
+
+Extension &Extension::registerNamespace(Namespace &&ns)
+{
+   ZAPI_D(Extension);
+   if (implPtr->m_locked) {
+      return *this;
+   }
+   implPtr->m_namepsaces.push_back(std::shared_ptr<Namespace>(new Namespace(std::move(ns))));
+   return *this;
+}
+
 bool Extension::initialize(int moduleNumber)
 {
    return getImplPtr()->initialize(moduleNumber);
@@ -292,7 +315,11 @@ ExtensionPrivate::~ExtensionPrivate()
 size_t ExtensionPrivate::getFunctionQuantity() const
 {
    // now just return global namespaces functions
-   return m_functions.size();
+   size_t ret = m_functions.size();
+   for (const std::shared_ptr<Namespace> &ns : m_namepsaces) {
+      ret += ns->getFunctionQuantity();
+   }
+   return ret;
 }
 
 size_t ExtensionPrivate::getIniEntryQuantity() const
@@ -318,6 +345,12 @@ zend_module_entry *ExtensionPrivate::getModule()
       callable.initialize(&entries[i]);
       i++;
    });
+   for (std::shared_ptr<Namespace> &ns : m_namepsaces) {
+      ns->m_implPtr->iterateFunctions([&i, entries](const std::string &ns, Function &callable){
+         callable.initialize(ns, &entries[i]);
+         i++;
+      });
+   }
    zend_function_entry *last = &entries[count];
    memset(last, 0, sizeof(zend_function_entry));
    m_entry.functions = entries;
@@ -415,9 +448,18 @@ bool ExtensionPrivate::initialize(int moduleNumber)
    iterateClasses([](AbstractClass &cls) {
       cls.initialize();
    });
+   // work with register namespaces
+   
+   for (std::shared_ptr<Namespace> &ns : m_namepsaces) {
+      ns->initialize();
+   }
+   
    // remember that we're initialized (when you use "apache reload" it is
    // possible that the processStartup() method is called more than once)
    m_locked = true;
+   if (m_startupHandler) {
+      m_startupHandler();
+   }
    return true;
 }
 

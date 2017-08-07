@@ -31,7 +31,7 @@ class StdClass;
 /**
  * now this is very bad implemention of parameters class, but it works
  */
-class ZAPI_DECL_EXPORT Parameters
+class ZAPI_DECL_EXPORT Parameters final
 {
 public:
    using ParamCollectionType = std::vector<Variant>;

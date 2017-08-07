@@ -174,7 +174,6 @@ zval *AbstractClassPrivate::readProperty(zval *object, zval *name, int type, voi
    StdClass *nativeObject = objectBinder->getNativeObject();
    try {
       std::string key(Z_STRVAL_P(name), Z_STRLEN_P(name));
-      std::cout << key;
       auto iter = selfPtr->m_properties.find(key);
       if (iter != selfPtr->m_properties.end()) {
          // self defined getter method
@@ -392,11 +391,13 @@ AbstractClass::AbstractClass(AbstractClass &&other) ZAPI_DECL_NOEXCEPT
 
 AbstractClass &AbstractClass::operator=(const AbstractClass &other)
 {
+   m_implPtr = other.m_implPtr;
    return *this;
 }
 
 AbstractClass &AbstractClass::operator=(AbstractClass &&other) ZAPI_DECL_NOEXCEPT
 {
+   m_implPtr = std::move(other.m_implPtr);
    return *this;
 }
 

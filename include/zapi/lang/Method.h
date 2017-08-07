@@ -42,7 +42,7 @@ class MethodPrivate;
 
 using internal::MethodPrivate;
 
-class ZAPI_DECL_EXPORT Method : public zapi::vm::Callable
+class ZAPI_DECL_EXPORT Method final : public zapi::vm::Callable
 {
 public:
    Method(const char *name, zapi::ZendCallable callback, Modifier flags, const Arguments &args);

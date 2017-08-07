@@ -41,7 +41,7 @@ class PropertyPrivate;
 
 using internal::PropertyPrivate;
 
-class ZAPI_DECL_EXPORT Property
+class ZAPI_DECL_EXPORT Property final
 {
 public:
    Property(const zapi::GetterMethodCallable0 &getter);

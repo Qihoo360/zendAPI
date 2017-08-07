@@ -210,6 +210,11 @@ Callable::Callable(CallablePrivate *implPtr)
    : m_implPtr(implPtr)
 {}
 
+Callable::Callable(const Callable &other)
+   : m_implPtr(new CallablePrivate(*other.m_implPtr))
+{}
+
+
 Callable::~Callable()
 {}
 

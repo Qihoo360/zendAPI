@@ -40,7 +40,7 @@ class ConstantPrivate;
 
 using internal::ConstantPrivate;
 
-class ZAPI_DECL_EXPORT Constant
+class ZAPI_DECL_EXPORT Constant final
 {
 public:
    Constant(const char *name, std::nullptr_t value = nullptr);

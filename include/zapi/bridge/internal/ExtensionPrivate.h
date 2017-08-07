@@ -16,10 +16,9 @@
 #ifndef ZAPI_BRIDGE_INTERNAL_EXTENSIONPRIVATE_H
 #define ZAPI_BRIDGE_INTERNAL_EXTENSIONPRIVATE_H
 
-#include <list>
-#include "zapi/Global.h"
 #include "php/Zend/zend_modules.h"
 #include "zapi/lang/Argument.h"
+#include <list>
 
 namespace zapi
 {
@@ -28,6 +27,7 @@ namespace lang
 
 class Function;
 class Constant;
+class Namespace;
 
 } // lang
 
@@ -48,6 +48,7 @@ namespace internal
 using zapi::lang::Arguments;
 using zapi::lang::Function;
 using zapi::lang::Constant;
+using zapi::lang::Namespace;
 using zapi::vm::AbstractClass;
 using zapi::bridge::IniEntry;
 
@@ -71,6 +72,7 @@ public:
    void iterateIniEntries(const std::function<void(IniEntry &ini)> &callback);
    void iterateConstants(const std::function<void(Constant &constant)> &callback);
    void iterateClasses(const std::function<void(AbstractClass &cls)> &callback);
+
    zend_module_entry *getModule();
    size_t getFunctionQuantity() const;
    size_t getIniEntryQuantity() const;
@@ -96,6 +98,7 @@ public:
    std::list<std::shared_ptr<Function>> m_functions;
    std::list<std::shared_ptr<Constant>> m_constants;
    std::list<std::shared_ptr<AbstractClass>> m_classes;
+   std::list<std::shared_ptr<Namespace>> m_namepsaces;
 };
 
 } // internal

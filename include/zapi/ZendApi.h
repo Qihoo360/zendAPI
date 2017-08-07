@@ -24,6 +24,7 @@
 #include "zapi/lang/Class.h"
 #include "zapi/lang/StdClass.h"
 #include "zapi/lang/Interface.h"
+#include "zapi/lang/Namespace.h"
 #include "zapi/bridge/Extension.h"
 #include "zapi/bridge/IniEntry.h"
 #include "zapi/kernel/StreamBuffer.h"

@@ -35,6 +35,7 @@ namespace lang
 class Parameters;
 class Variant;
 class Constant;
+class Namespace;
 template <typename> class Class;
 } // lang
 namespace bridge
@@ -49,8 +50,10 @@ using zapi::lang::Arguments;
 using zapi::lang::Constant;
 using zapi::lang::Class;
 using zapi::lang::Interface;
+using zapi::lang::Namespace;
 using internal::ExtensionPrivate;
 using zapi::vm::AbstractClass;
+
 
 class ZAPI_DECL_EXPORT Extension
 {
@@ -98,7 +101,6 @@ public:
       return registerFunction(name, &zapi::vm::InvokeBridge::invoke<func>, arguments);
    }
    
-   Extension &registerFunction(const char *name, zapi::ZendCallable function, const Arguments &arguments = {});
    Extension &registerIniEntry(const IniEntry &entry);
    Extension &registerIniEntry(IniEntry &&entry);
    
@@ -110,7 +112,9 @@ public:
    Extension &registerInterface(const Interface &interface);
    Extension &registerInterface(Interface &&interface);
    
-   Extension &registerNamespace();
+   Extension &registerNamespace(const Namespace &ns);
+   Extension &registerNamespace(Namespace &&ns);
+   
    Extension &registerConstant(Constant &&constant);
    Extension &registerConstant(const Constant &constant);
    size_t getIniEntryQuantity() const;
@@ -183,7 +187,7 @@ public:
    const char *getName() const;
    const char *getVersion() const;
 protected:
-   
+   Extension &registerFunction(const char *name, zapi::ZendCallable function, const Arguments &arguments = {});
    bool isLocked() const;
 private:
    bool initialize(int moduleNumber);

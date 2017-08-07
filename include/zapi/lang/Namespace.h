@@ -20,9 +20,20 @@
 #define ZAPI_LANG_NAMESPACE_H
 
 #include "zapi/Global.h"
+#include "zapi/vm/InvokeBridge.h"
 
 namespace zapi
 {
+
+// forward declare with namespace
+namespace bridge
+{
+namespace internal
+{
+class ExtensionPrivate;
+} // internal
+} // vm
+
 namespace lang
 {
 
@@ -32,20 +43,55 @@ class NamespacePrivate;
 } // internal
 
 using internal::NamespacePrivate;
+using zapi::vm::InvokeBridge;
 
-class ZAPI_DECL_EXPORT Namespace
+class ZAPI_DECL_EXPORT Namespace final
 {
 public:
    Namespace(const std::string &name);
+   Namespace(const char *name);
+   Namespace(const Namespace &other);
+   Namespace(Namespace &&other) ZAPI_DECL_NOEXCEPT;
+   Namespace &operator=(const Namespace &other);
+   Namespace &operator=(Namespace &&other) ZAPI_DECL_NOEXCEPT;
    virtual ~Namespace();
-   
 public:
    void registerConstant();
-   void registerFunction();
+   template <void (*func)()>
+   Namespace &registerFunction(const char *name, const Arguments &arguments = {})
+   {
+      return registerFunction(name, &InvokeBridge::invoke<func>, arguments);
+   }
+   
+   template <void (*func)(Parameters &parameters)>
+   Namespace &registerFunction(const char *name, const Arguments &arguments = {})
+   {
+      return registerFunction(name, &InvokeBridge::invoke<func>, arguments);
+   }
+   
+   template <Variant (*func)()>
+   Namespace &registerFunction(const char *name, const Arguments &arguments = {})
+   {
+      return registerFunction(name, &InvokeBridge::invoke<func>, arguments);
+   }
+   
+   template <Variant (*func)(Parameters &parameters)>
+   Namespace &registerFunction(const char *name, const Arguments &arguments = {})
+   {
+      return registerFunction(name, &InvokeBridge::invoke<func>, arguments);
+   }
+   
    void registerNamespace();
+   size_t getFunctionQuantity() const;
+protected:
+   Namespace(NamespacePrivate *implPtr);
+   Namespace &registerFunction(const char *name, zapi::ZendCallable function, const Arguments &arguments = {});
+   void initialize();
+   
 private:
    ZAPI_DECLARE_PRIVATE(Namespace)
-   std::unique_ptr<NamespacePrivate> m_implPtr;
+   std::shared_ptr<NamespacePrivate> m_implPtr;
+   friend class zapi::bridge::internal::ExtensionPrivate;
 };
 
 } // lang

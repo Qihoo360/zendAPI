@@ -16,6 +16,7 @@
 #include <list>
 #include <string>
 #include "zapi/lang/Namespace.h"
+#include "zapi/lang/internal/NamespacePrivate.h"
 #include "zapi/lang/Constant.h"
 #include "zapi/lang/Function.h"
 
@@ -26,20 +27,107 @@ namespace lang
 
 using zapi::lang::Constant;
 using zapi::lang::Function;
+using zapi::lang::internal::NamespacePrivate;
 
 namespace internal
 {
 
-class NamespacePrivate
+void NamespacePrivate::initialize(const std::string &ns)
 {
-public:
-   std::string m_name;
-   std::list<std::shared_ptr<Function>> m_functions;
-   std::list<std::shared_ptr<Constant>> m_constants;
-   std::list<std::shared_ptr<Namespace>> m_namespaces;
-};
+   initializeConstants(ns);
+   initializeClasses(ns);
+   // recursive initialize
+   for (std::shared_ptr<NamespacePrivate> &subns : m_namespaces) {
+      subns->initialize(ns + "\\" + subns->m_name);
+   }
+}
+
+void NamespacePrivate::iterateFunctions(const std::function<void(const std::string &ns, Function &func)> &callback)
+{
+   for (std::shared_ptr<Function> &func : m_functions) {
+      callback(m_name, *func);
+   }
+   for (std::shared_ptr<NamespacePrivate> &subns : m_namespaces) {
+      subns->iterateFunctions([this, callback](const std::string &ns, Function &func){
+         callback(m_name + "\\" + ns, func);
+      });
+   }
+}
+
+void NamespacePrivate::initializeConstants(const std::string &ns)
+{
+   
+}
+
+void NamespacePrivate::initializeClasses(const std::string &ns)
+{
+   
+}
+
+size_t NamespacePrivate::calculateFunctionQuantity() const
+{
+   size_t ret = m_functions.size();
+   for (const std::shared_ptr<NamespacePrivate> &ns : m_namespaces) {
+      ret += ns->calculateFunctionQuantity();
+   }
+   return ret;
+}
 
 } // internal
+
+Namespace::Namespace(const std::string &name)
+   : m_implPtr(new NamespacePrivate(name))
+{}
+
+Namespace::Namespace(const char *name)
+   : m_implPtr(new NamespacePrivate(name))
+{}
+
+Namespace::Namespace(NamespacePrivate *implPtr)
+   : m_implPtr(implPtr)
+{}
+
+Namespace::Namespace(const Namespace &other)
+   : m_implPtr(other.m_implPtr)
+{}
+
+Namespace::Namespace(Namespace &&other) ZAPI_DECL_NOEXCEPT
+   : m_implPtr(std::move(other.m_implPtr))
+{}
+
+Namespace &Namespace::operator=(const Namespace &other)
+{
+   m_implPtr = other.m_implPtr;
+   return *this;
+}
+
+Namespace &Namespace::operator=(Namespace &&other) ZAPI_DECL_NOEXCEPT
+{
+   m_implPtr = std::move(other.m_implPtr);
+   return *this;
+}
+
+void Namespace::initialize()
+{
+   ZAPI_D(Namespace);
+   implPtr->initialize(implPtr->m_name);
+}
+
+Namespace &Namespace::registerFunction(const char *name, zapi::ZendCallable function, const Arguments &arguments)
+{
+   ZAPI_D(Namespace);
+   implPtr->m_functions.push_back(std::make_shared<Function>(name, function, arguments));
+   return *this;
+}
+
+size_t Namespace::getFunctionQuantity() const
+{
+   ZAPI_D(const Namespace);
+   return implPtr->calculateFunctionQuantity();
+}
+
+Namespace::~Namespace()
+{}
 
 } // zapi
 } // zapi
