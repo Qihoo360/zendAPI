@@ -35,6 +35,7 @@ namespace internal
 {
 
 class ConstantPrivate;
+class NamespacePrivate;
 
 } // internal
 
@@ -65,6 +66,7 @@ private:
    ZAPI_DECLARE_PRIVATE(Constant)
    std::shared_ptr<ConstantPrivate> m_implPtr;
    friend class zapi::bridge::internal::ExtensionPrivate;
+   friend class zapi::lang::internal::NamespacePrivate;
 };
 
 } // lang

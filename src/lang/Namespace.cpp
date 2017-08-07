@@ -32,13 +32,13 @@ using zapi::lang::internal::NamespacePrivate;
 namespace internal
 {
 
-void NamespacePrivate::initialize(const std::string &ns)
+void NamespacePrivate::initialize(const std::string &ns, int moduleNumber)
 {
-   initializeConstants(ns);
-   initializeClasses(ns);
+   initializeConstants(ns, moduleNumber);
+   initializeClasses(ns, moduleNumber);
    // recursive initialize
    for (std::shared_ptr<Namespace> &subns : m_namespaces) {
-      subns->m_implPtr->initialize(ns + "\\" + subns->m_implPtr->m_name);
+      subns->m_implPtr->initialize(ns + "\\" + subns->m_implPtr->m_name, moduleNumber);
    }
 }
 
@@ -54,12 +54,18 @@ void NamespacePrivate::iterateFunctions(const std::function<void(const std::stri
    }
 }
 
-void NamespacePrivate::initializeConstants(const std::string &ns)
+void NamespacePrivate::initializeConstants(const std::string &ns, int moduleNumber)
 {
-   
+   // register self
+   for (std::shared_ptr<Constant> &constant : m_constants) {
+      constant->initialize(ns, moduleNumber);
+   }
+   for (std::shared_ptr<Namespace> &subns : m_namespaces) {
+      subns->m_implPtr->initializeConstants(ns + "\\" + subns->m_implPtr->m_name, moduleNumber);
+   }
 }
 
-void NamespacePrivate::initializeClasses(const std::string &ns)
+void NamespacePrivate::initializeClasses(const std::string &ns, int moduleNumber)
 {
    
 }
@@ -128,10 +134,10 @@ Namespace &Namespace::operator=(Namespace &&other) ZAPI_DECL_NOEXCEPT
    return *this;
 }
 
-void Namespace::initialize()
+void Namespace::initialize(int moduleNumber)
 {
    ZAPI_D(Namespace);
-   implPtr->initialize(implPtr->m_name);
+   implPtr->initialize(implPtr->m_name, moduleNumber);
 }
 
 Namespace &Namespace::registerFunction(const char *name, zapi::ZendCallable function, const Arguments &arguments)
@@ -170,6 +176,20 @@ Namespace &Namespace::registerNamespace(Namespace &&ns)
 {
    ZAPI_D(Namespace);
    implPtr->m_namespaces.push_back(std::make_shared<Namespace>(std::move(ns)));
+   return *this;
+}
+
+Namespace &Namespace::registerConstant(const Constant &constant)
+{
+   ZAPI_D(Namespace);
+   implPtr->m_constants.push_back(std::make_shared<Constant>(constant));
+   return *this;
+}
+
+Namespace &Namespace::registerConstant(Constant &&constant)
+{
+   ZAPI_D(Namespace);
+   implPtr->m_constants.push_back(std::make_shared<Constant>(std::move(constant)));
    return *this;
 }
 

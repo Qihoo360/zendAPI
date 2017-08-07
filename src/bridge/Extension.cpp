@@ -162,7 +162,7 @@ Extension &Extension::registerConstant(const Constant &constant)
    if (implPtr->m_locked) {
       return *this;
    }
-   implPtr->m_constants.push_back(std::unique_ptr<Constant>(new Constant(constant)));
+   implPtr->m_constants.push_back(std::make_shared<Constant>(constant));
    return *this;
 }
 
@@ -172,7 +172,7 @@ Extension &Extension::registerConstant(Constant &&constant)
    if (implPtr->m_locked) {
       return *this;
    }
-   implPtr->m_constants.push_back(std::unique_ptr<Constant>(new Constant(std::move(constant))));
+   implPtr->m_constants.push_back(std::make_shared<Constant>(std::move(constant)));
    return *this;
 }
 
@@ -451,7 +451,7 @@ bool ExtensionPrivate::initialize(int moduleNumber)
    // work with register namespaces
    
    for (std::shared_ptr<Namespace> &ns : m_namepsaces) {
-      ns->initialize();
+      ns->initialize(moduleNumber);
    }
    
    // remember that we're initialized (when you use "apache reload" it is

@@ -64,9 +64,9 @@ public:
    }
    
    void iterateFunctions(const std::function<void(const std::string &ns, Function &func)> &callback);
-   void initialize(const std::string &ns);
-   void initializeConstants(const std::string &ns);
-   void initializeClasses(const std::string &ns);
+   void initialize(const std::string &ns, int moduleName);
+   void initializeConstants(const std::string &ns, int moduleName);
+   void initializeClasses(const std::string &ns, int moduleName);
    size_t calculateFunctionQuantity() const;
    size_t calculateClassQuantity() const;
    size_t calculateConstantQuantity() const;

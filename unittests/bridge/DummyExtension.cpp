@@ -48,15 +48,16 @@ ZAPI_DECL_EXPORT void *get_module()
    personClass.registerInterface(infoInterface);
    extension.registerInterface(infoInterface);
    extension.registerClass(personClass);
-   Namespace ns("zapi");
+   Namespace zapi("zapi");
    Namespace io("io");
    io.registerFunction<dummyext::print_name>("print_name", {
                                                 ValueArgument("name", zapi::lang::Type::String)
                                              });
    io.registerFunction<dummyext::show_something>("show_something");
-   ns.registerNamespace(io);
-   ns.registerFunction<dummyext::get_name>("get_name");
-   extension.registerNamespace(ns);
+   zapi.registerNamespace(io);
+   zapi.registerFunction<dummyext::get_name>("get_name");
+   zapi.registerConstant(Constant("SYS_VERSION", "0.1.1-alpha"));
+   extension.registerNamespace(zapi);
    return extension;
 }
 

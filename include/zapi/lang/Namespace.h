@@ -37,6 +37,8 @@ class ExtensionPrivate;
 namespace lang
 {
 
+class Constant;
+
 namespace internal
 {
 class NamespacePrivate;
@@ -56,7 +58,6 @@ public:
    Namespace &operator=(Namespace &&other) ZAPI_DECL_NOEXCEPT;
    virtual ~Namespace();
 public:
-   void registerConstant();
    template <void (*func)()>
    Namespace &registerFunction(const char *name, const Arguments &arguments = {})
    {
@@ -83,13 +84,15 @@ public:
    
    Namespace &registerNamespace(const Namespace &ns);
    Namespace &registerNamespace(Namespace &&ns);
+   Namespace &registerConstant(const Constant &constant);
+   Namespace &registerConstant(Constant &&constant);
    size_t getFunctionQuantity() const;
    size_t getConstantQuanlity() const;
    size_t getClassQuanlity() const;
 protected:
    Namespace(NamespacePrivate *implPtr);
    Namespace &registerFunction(const char *name, zapi::ZendCallable function, const Arguments &arguments = {});
-   void initialize();
+   void initialize(int moduleNumber);
    
 private:
    ZAPI_DECLARE_PRIVATE(Namespace)
