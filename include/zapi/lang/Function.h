@@ -26,7 +26,7 @@ namespace lang
 using zapi::bridge::internal::ExtensionPrivate;
 class FunctionPrivate;
 
-class ZAPI_DECL_EXPORT Function final : public zapi::vm::Callable
+class ZAPI_DECL_EXPORT Function : public zapi::vm::Callable
 {
 public:
    Function(const char *name, zapi::ZendCallable callable, const Arguments &arguments = {});
