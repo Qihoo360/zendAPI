@@ -13,7 +13,7 @@
 //
 // Created by zzu_softboy on 2017/08/03.
 
-#include "zapi/lang/Variant.h"
+#include "zapi/ds/Variant.h"
 
 namespace zapi
 {
@@ -30,7 +30,6 @@ namespace internal
 class AbstractIteratorPrivate;
 } // internal
 
-using zapi::lang::Variant;
 using zapi::lang::StdClass;
 using internal::AbstractIteratorPrivate;
 

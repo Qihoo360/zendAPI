@@ -13,8 +13,6 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Class.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Interface.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Constant.h
-   ${ZAPI_INCLUDE_DIR}/zapi/lang/Variant.h
-   ${ZAPI_INCLUDE_DIR}/zapi/lang/internal/VariantPrivate.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/internal/NamespacePrivate.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/StdClass.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Parameters.h
@@ -28,6 +26,8 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/ds/List.h
    ${ZAPI_INCLUDE_DIR}/zapi/ds/String.h
    ${ZAPI_INCLUDE_DIR}/zapi/ds/AbstractIterator.h
+   ${ZAPI_INCLUDE_DIR}/zapi/ds/Variant.h
+   ${ZAPI_INCLUDE_DIR}/zapi/ds/internal/VariantPrivate.h
    ${ZAPI_INCLUDE_DIR}/zapi/utils/PhpFuncs.h
    ${ZAPI_INCLUDE_DIR}/zapi/utils/LowerCase.h
    ${ZAPI_INCLUDE_DIR}/zapi/ZendApi.h

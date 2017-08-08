@@ -22,7 +22,7 @@ namespace ds
 namespace internal
 {
 
-using zapi::lang::Variant;
+using zapi::ds::Variant;
 using zapi::lang::StdClass;
 
 class AbstractIteratorPrivate 

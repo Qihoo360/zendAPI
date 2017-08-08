@@ -15,15 +15,15 @@
 //
 // Created by softboy on 2017/08/06.
 
-#ifndef ZAPI_LANG_INTERNAL_VARIANT_PRIVATE_H
-#define ZAPI_LANG_INTERNAL_VARIANT_PRIVATE_H
+#ifndef ZAPI_DS_INTERNAL_VARIANT_PRIVATE_H
+#define ZAPI_DS_INTERNAL_VARIANT_PRIVATE_H
 
 #include <type_traits>
 #include "php/Zend/zend_types.h"
 
 namespace zapi
 {
-namespace lang
+namespace ds
 {
 namespace internal
 {
@@ -39,7 +39,7 @@ public:
 };
 
 } // internal
-} // lang
+} // ds
 } // zapi
 
-#endif // ZAPI_LANG_INTERNAL_VARIANT_PRIVATE_H
+#endif // ZAPI_DS_INTERNAL_VARIANT_PRIVATE_H

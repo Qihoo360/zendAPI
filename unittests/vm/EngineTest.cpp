@@ -17,7 +17,7 @@
 #include "gtest/gtest.h"
 
 #include "zapi/vm/Engine.h"
-#include "zapi/lang/Variant.h"
+#include "zapi/ds/Variant.h"
 #include <string>
 
 using zapi::vm::Engine;

@@ -23,15 +23,20 @@
 
 namespace zapi
 {
-
+// forware declare with namespace
+namespace ds
+{
+class Variant;
+} // ds
 namespace lang
 {
 class Method;
 class Interface;
 class Property;
 class StdClass;
-class Variant;
 } // lang
+
+// end forware declare
 
 namespace vm
 {
@@ -46,7 +51,7 @@ using zapi::lang::Method;
 using zapi::lang::Property;
 using zapi::lang::Modifier;
 using zapi::lang::ClassType;
-using zapi::lang::Variant;
+using zapi::ds::Variant;
 
 class AbstractClassPrivate
 {

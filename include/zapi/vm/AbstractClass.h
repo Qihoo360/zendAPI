@@ -21,7 +21,11 @@
 
 namespace zapi
 {
-
+// forward declare with namespace
+namespace ds
+{
+class Variant;
+} // ds
 namespace bridge
 {
 namespace internal
@@ -34,13 +38,13 @@ namespace lang
 {
 class StdClass;
 class Constant;
-class Variant;
 class Interface;
 namespace internal
 {
 class NamespacePrivate;
 } // internal
 } // lang
+// end forward declare
 
 namespace vm
 {
@@ -55,8 +59,8 @@ using zapi::lang::ClassType;
 using zapi::lang::StdClass;
 using zapi::lang::Arguments;
 using zapi::lang::Constant;
-using zapi::lang::Variant;
 using zapi::lang::Interface;
+using zapi::ds::Variant;
 
 class ZAPI_DECL_EXPORT AbstractClass
 {

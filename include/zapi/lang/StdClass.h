@@ -17,15 +17,22 @@
 #define ZAPI_LANG_STDCLASS_H
 
 #include "zapi/Global.h"
-#include "zapi/lang/Variant.h"
+#include "zapi/ds/Variant.h"
 
 namespace zapi
 {
 
+// forware declare with namespace
+namespace ds
+{
+class Variant;
+} // ds
 namespace vm
 {
 class ObjectBinder;
 } // vm
+// end forware declare
+
 namespace lang
 {
 
@@ -35,6 +42,7 @@ class StdClassPrivate;
 } // internal
 
 using zapi::lang::internal::StdClassPrivate;
+using zapi::ds::Variant;
 class Parameters;
 
 class ZAPI_DECL_EXPORT StdClass

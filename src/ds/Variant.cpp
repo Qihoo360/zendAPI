@@ -12,7 +12,7 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by zzu_softboy on 06/06/2017.
+// Created by zzu_softboy on 2017/06/06.
 
 #include "php/Zend/zend_compile.h"
 #include "php/Zend/zend_closures.h"
@@ -21,8 +21,8 @@
 
 #include "zapi/kernel/FatalError.h"
 #include "zapi/kernel/OrigException.h"
-#include "zapi/lang/Variant.h"
-#include "zapi/lang/internal/VariantPrivate.h"
+#include "zapi/ds/Variant.h"
+#include "zapi/ds/internal/VariantPrivate.h"
 #include "zapi/utils/LowerCase.h"
 #include "zapi/ds/String.h"
 
@@ -31,7 +31,7 @@
 
 namespace zapi
 {
-namespace lang
+namespace ds
 {
 
 namespace internal
@@ -835,5 +835,5 @@ std::ostream &operator<<(std::ostream &stream, const Variant &value)
    return stream << value.toString();
 }
 
-} // lang
+} // ds
 } // zapi

@@ -19,11 +19,15 @@
 #include <string>
 #include "zapi/Global.h"
 #include "zapi/lang/Argument.h"
-#include "zapi/lang/Variant.h"
 
 namespace zapi
 {
 
+// forward declare with namespace
+namespace ds
+{
+class Variant;
+} // ds
 namespace bridge
 {
 namespace internal
@@ -34,33 +38,23 @@ class ExtensionPrivate;
 
 namespace lang
 {
-
-// forward declare
 class Parameters;
-
 } // lang
+// end forward declare
 
 namespace vm
 {
 
-namespace
+namespace internal
 {
+class CallablePrivate;
+} // internal
 
 using zapi::lang::Arguments;
 using zapi::lang::Argument;
 using zapi::lang::Type;
-using zapi::lang::Variant;
 using zapi::lang::Parameters;
-
-}
-
-namespace internal
-{
-
-class CallablePrivate;
-
-} // internal
-
+using zapi::ds::Variant;
 using internal::CallablePrivate;
 using zapi::bridge::internal::ExtensionPrivate;
 

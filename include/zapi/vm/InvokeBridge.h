@@ -19,31 +19,33 @@
 #include "zapi/Global.h"
 #include "zapi/kernel/Exception.h"
 #include "zapi/lang/Parameters.h"
-#include "zapi/lang/Variant.h"
 #include "zapi/lang/Argument.h"
+#include "zapi/ds/Variant.h"
 
 struct _zend_execute_data;
 struct _zval_struct;
 
 namespace zapi
 {
+
+namespace ds
+{
+class Variant;
+} // ds
 namespace lang
 {
-
-class Variant;
 class Parameters;
 class StdClass;
-
 } // lang
 
 namespace vm
 {
 
 using zapi::kernel::Exception;
-using zapi::lang::Variant;
 using zapi::lang::Parameters;
 using zapi::lang::Arguments;
 using zapi::lang::StdClass;
+using zapi::ds::Variant;
 
 class ZAPI_DECL_EXPORT InvokeBridge
 {

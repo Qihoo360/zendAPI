@@ -15,6 +15,7 @@
 
 #include "zapi/lang/Function.h"
 #include "zapi/vm/internal/CallablePrivate.h"
+#include "zapi/ds/Variant.h"
 
 namespace zapi
 {

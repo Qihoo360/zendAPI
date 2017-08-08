@@ -28,23 +28,27 @@
 
 namespace zapi
 {
+
+// forware declare with namespace
+namespace ds
+{
+class Variant;
+} // ds
 namespace lang
 {
-
-// forward declare
 class Parameters;
-class Variant;
 class Constant;
 class Namespace;
 template <typename> class Class;
 } // lang
+// end forware declare
+
 namespace bridge
 {
 
 // forward declare
 class IniEntry;
-
-using zapi::lang::Variant;
+using zapi::ds::Variant;
 using zapi::lang::Parameters;
 using zapi::lang::Arguments;
 using zapi::lang::Constant;

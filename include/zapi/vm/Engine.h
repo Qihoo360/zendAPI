@@ -22,15 +22,17 @@
 namespace zapi
 {
 
-namespace lang
+// forward declare with namespace
+namespace ds
 {
 class Variant;
 } // lang
+// end forward declare
 
 namespace vm
 {
 
-using zapi::lang::Variant;
+using zapi::ds::Variant;
 
 class ZAPI_DECL_EXPORT Engine
 {

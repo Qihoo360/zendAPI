@@ -15,7 +15,7 @@
 
 #include "zapi/Global.h"
 #include "zapi/kernel/FatalError.h"
-#include "zapi/lang/Variant.h"
+#include "zapi/ds/Variant.h"
 #include "zapi/lang/Type.h"
 
 #include "php/sapi/embed/php_embed.h"
@@ -30,7 +30,7 @@
 #include <cstring>
 
 using zapi::kernel::FatalError;
-using zapi::lang::Variant;
+using zapi::ds::Variant;
 using zapi::lang::Type;
 
 namespace

@@ -22,7 +22,11 @@
 
 namespace zapi
 {
-
+// forward declare with namespace
+namespace ds
+{
+class Variant;
+} // ds
 namespace vm
 {
 namespace internal
@@ -30,6 +34,7 @@ namespace internal
 class AbstractClassPrivate;
 } // internal
 } // vm
+// end forward declare
 
 namespace lang
 {
@@ -40,6 +45,7 @@ class PropertyPrivate;
 } // internal
 
 using internal::PropertyPrivate;
+using zapi::ds::Variant;
 
 class ZAPI_DECL_EXPORT Property final
 {

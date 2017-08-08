@@ -15,7 +15,7 @@
 
 #include "zapi/vm/Engine.h"
 #include "zapi/vm/ExecStateGuard.h"
-#include "zapi/lang/Variant.h"
+#include "zapi/ds/Variant.h"
 #include "zapi/kernel/OrigException.h"
 
 namespace zapi

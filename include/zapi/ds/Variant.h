@@ -13,8 +13,8 @@
 //
 // Created by softboy on 5/26/17.
 
-#ifndef ZAPI_LANG_VARIANT_H
-#define ZAPI_LANG_VARIANT_H
+#ifndef ZAPI_DS_VARIANT_H
+#define ZAPI_DS_VARIANT_H
 
 #include "zapi/Global.h"
 #include "zapi/lang/Type.h"
@@ -26,7 +26,14 @@
 
 namespace zapi
 {
+
+// forward declare with namespace
 namespace lang
+{
+class StdClass;
+} // lang
+
+namespace ds
 {
 
 namespace internal
@@ -34,8 +41,9 @@ namespace internal
 class VariantPrivate;
 }
 
-class StdClass;
 using internal::VariantPrivate;
+using zapi::lang::StdClass;
+using zapi::lang::Type;
 /**
  * Base class for values that are stored in the Zend engine. One instance
  * of the value class represents a variable that exists in user space in
@@ -348,7 +356,7 @@ protected:
  */
 ZAPI_DECL_EXPORT std::ostream &operator<<(std::ostream &stream, const Variant &value);
 
-} // lang
+} // ds
 } // zapi
 
-#endif //ZAPI_LANG_VARIANT_H
+#endif //ZAPI_DS_VARIANT_H

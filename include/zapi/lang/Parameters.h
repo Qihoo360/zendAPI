@@ -17,7 +17,7 @@
 #define ZAPI_LANG_PARAMETERS_H
 
 #include "zapi/Global.h"
-#include "zapi/lang/Variant.h"
+#include "zapi/ds/Variant.h"
 
 #include <vector>
 
@@ -27,7 +27,7 @@ namespace lang
 {
 
 class StdClass;
-
+using zapi::ds::Variant;
 /**
  * now this is very bad implemention of parameters class, but it works
  */

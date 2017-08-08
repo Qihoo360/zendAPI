@@ -19,13 +19,13 @@
 #include "zapi/Global.h"
 #include <limits>
 #include "zapi/ds/HashTable.h"
-#include "zapi/lang/Variant.h"
+#include "zapi/ds/Variant.h"
 #include <iostream>
 #include <vector>
 #include <string>
 
 using ZapiHashTable = zapi::ds::HashTable;
-using zapi::lang::Variant;
+using zapi::ds::Variant;
 
 namespace
 {

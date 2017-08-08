@@ -23,7 +23,11 @@
 
 namespace zapi
 {
+// forward declare with namespace
+namespace ds
+{
 
+} // ds
 namespace vm
 {
 namespace internal
@@ -31,6 +35,7 @@ namespace internal
 class AbstractClassPrivate;
 } // internal
 } // vm
+// end forward declare
 
 namespace lang
 {
@@ -41,6 +46,7 @@ class MethodPrivate;
 } // internal
 
 using internal::MethodPrivate;
+using zapi::ds::Variant;
 
 class ZAPI_DECL_EXPORT Method : public zapi::vm::Callable
 {

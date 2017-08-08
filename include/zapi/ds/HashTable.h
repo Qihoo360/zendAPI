@@ -17,7 +17,7 @@
 #define ZAPI_DS_HASHTABLE_H
 
 #include "zapi/Global.h"
-#include "zapi/lang/Variant.h"
+#include "zapi/ds/Variant.h"
 #include "zapi/ds/String.h"
 
 #include "php/Zend/zend_hash.h"
@@ -28,8 +28,6 @@ namespace zapi
 {
 namespace ds
 {
-
-using zapi::lang::Variant;
 
 extern zapi::lang::HashTableDataDeleter zValDataDeleter;
 
@@ -206,12 +204,12 @@ public:
       return zend_hash_index_find(&m_hashTable, index);
    }
    
-   Variant getValue(const std::string &key, const lang::Variant &defaultValue) const
+   Variant getValue(const std::string &key, const Variant &defaultValue) const
    {
       return getValue(String(key), defaultValue);
    }
    
-   Variant getValue(const char *key, const lang::Variant &defaultValue) const
+   Variant getValue(const char *key, const Variant &defaultValue) const
    {
       return getValue(String(key), defaultValue);
    }
