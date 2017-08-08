@@ -469,13 +469,13 @@ zend_class_entry *AbstractClass::initialize(int moduleNumber)
 void AbstractClass::registerInterface(const Interface &interface)
 {
    ZAPI_D(AbstractClass);
-   implPtr->m_interfaces.push_back(std::shared_ptr<AbstractClass>(new Interface(interface)));
+   implPtr->m_interfaces.push_back(std::make_shared<Interface>(interface));
 }
 
 void AbstractClass::registerInterface(Interface &&interface)
 {
    ZAPI_D(AbstractClass);
-   implPtr->m_interfaces.push_back(std::shared_ptr<AbstractClass>(new Interface(std::move(interface))));
+   implPtr->m_interfaces.push_back(std::make_shared<Interface>(std::move(interface)));
 }
 
 void AbstractClass::registerProperty(const char *name, std::nullptr_t, Modifier flags)

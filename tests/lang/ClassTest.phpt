@@ -24,6 +24,7 @@ var_dump(function_exists("zapi\\io\\print_name"));
 var_dump(function_exists("zapi\\io\\show_something"));
 var_dump(defined("zapi\\SYS_VERSION"));
 var_dump(class_exists("zapi\\Address"));
+\zapi\io\print_name("wangyang");
 ?>
 --EXPECT--
 zapi v0.0.1 hello world, zapi
