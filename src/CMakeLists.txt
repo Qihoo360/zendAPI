@@ -22,6 +22,13 @@ set(ZAPI_SRC
    ds/HashTable.cpp
    ds/AbstractIterator.cpp
    ds/Variant.cpp
+   ds/StringVariant.cpp
+   ds/BoolVariant.cpp
+   ds/NumericVariant.cpp
+   ds/DoubleVariant.cpp
+   ds/ObjectVariant.cpp
+   ds/FunctionVariant.cpp
+   ds/ArrayVariant.cpp
    vm/AbstractClass.cpp
    vm/AbstractMember.cpp
    vm/StringMember.cpp

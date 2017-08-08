@@ -22,16 +22,16 @@ void print_name(Parameters &params)
 
 void print_name_and_age(Parameters &params)
 {
-   std::string name = params.at(0).toString();
-   int age = params.at(1).toLong();
-   zapi::out << "name: " << name << " age: " << age << std::flush;
+//   std::string name = params.at(0).toString();
+//   int age = params.at(1).toLong();
+//   zapi::out << "name: " << name << " age: " << age << std::flush;
 }
 
 Variant add_two_number(Parameters &params)
 {
-   int number1 = params.at(0).toLong();
-   int number2 = params.at(1).toLong();
-   return number1 + number2;
+//   int number1 = params.at(0).toLong();
+//   int number2 = params.at(1).toLong();
+//   return number1 + number2;
 }
 
 } // dummyext

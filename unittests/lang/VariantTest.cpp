@@ -130,22 +130,22 @@ TEST_F(VariantTest, testConstructor)
    //   ASSERT_THROW({Variant constAstVar(Type::ConstantAST);}, FatalError);
    //   ASSERT_THROW({Variant callableVar(Type::Callable);}, FatalError);
    //   ASSERT_THROW({Variant refVar(Type::Reference);}, FatalError);
-   Variant nullTypeVar(Type::Null);
-   ASSERT_EQ(Z_TYPE(nullTypeVar.getZval()), IS_NULL);
-   Variant falseTypeVar(Type::False);
-   ASSERT_EQ(Z_TYPE(falseTypeVar.getZval()), IS_FALSE);
-   Variant trueTypeVar(Type::True);
-   ASSERT_EQ(Z_TYPE(trueTypeVar.getZval()), IS_TRUE);
-   Variant longTypeVar(Type::Long);
-   ASSERT_EQ(Z_TYPE(longTypeVar.getZval()), IS_LONG);
-   Variant doubleTypeVar(Type::Double);
-   ASSERT_EQ(Z_TYPE(doubleTypeVar.getZval()), IS_DOUBLE);
-   Variant stringTypeVar(Type::String);
-   ASSERT_EQ(Z_TYPE(stringTypeVar.getZval()), IS_STRING);
-   Variant arrayTypeVar(Type::Array);
-   ASSERT_EQ(Z_TYPE(arrayTypeVar.getZval()), IS_ARRAY);
-   Variant objectTypeVar(Type::Object);
-   ASSERT_EQ(Z_TYPE(objectTypeVar.getZval()), IS_OBJECT);
+//   Variant nullTypeVar(Type::Null);
+//   ASSERT_EQ(Z_TYPE(nullTypeVar.getZval()), IS_NULL);
+//   Variant falseTypeVar(Type::False);
+//   ASSERT_EQ(Z_TYPE(falseTypeVar.getZval()), IS_FALSE);
+//   Variant trueTypeVar(Type::True);
+//   ASSERT_EQ(Z_TYPE(trueTypeVar.getZval()), IS_TRUE);
+//   Variant longTypeVar(Type::Long);
+//   ASSERT_EQ(Z_TYPE(longTypeVar.getZval()), IS_LONG);
+//   Variant doubleTypeVar(Type::Double);
+//   ASSERT_EQ(Z_TYPE(doubleTypeVar.getZval()), IS_DOUBLE);
+//   Variant stringTypeVar(Type::String);
+//   ASSERT_EQ(Z_TYPE(stringTypeVar.getZval()), IS_STRING);
+//   Variant arrayTypeVar(Type::Array);
+//   ASSERT_EQ(Z_TYPE(arrayTypeVar.getZval()), IS_ARRAY);
+//   Variant objectTypeVar(Type::Object);
+//   ASSERT_EQ(Z_TYPE(objectTypeVar.getZval()), IS_OBJECT);
    
    // test construct from other _zval_struct *
    zval rawVar;
@@ -288,65 +288,65 @@ TEST_F(VariantTest, testGetType)
 
 TEST_F(VariantTest, testSetType)
 {
-   Variant var;
-   ASSERT_EQ(var.getType(), Type::Null);
-   var.convert(Type::True);
-   ASSERT_EQ(var.getType(), Type::True);
-   var.convert(Type::False);
-   ASSERT_EQ(var.getType(), Type::False);
-   var.convert(Type::String);
-   ASSERT_EQ(var.getType(), Type::String);
-   var.convert(Type::Long);
-   ASSERT_EQ(var.getType(), Type::Long);
-   var.convert(Type::Double);
-   ASSERT_EQ(var.getType(), Type::Double);
-   var.convert(Type::Array);
-   ASSERT_EQ(var.getType(), Type::Array);
-   var.convert(Type::Object);
-   ASSERT_EQ(var.getType(), Type::Object);
-   // unsupported types
-   ASSERT_EQ(var.convert(Type::Undefined), false);
-   ASSERT_EQ(var.convert(Type::Resource), false);
-   ASSERT_EQ(var.convert(Type::Constant), false);
-   ASSERT_EQ(var.convert(Type::ConstantAST), false);
-   ASSERT_EQ(var.convert(Type::Callable), false);
+//   Variant var;
+//   ASSERT_EQ(var.getType(), Type::Null);
+//   var.convert(Type::True);
+//   ASSERT_EQ(var.getType(), Type::True);
+//   var.convert(Type::False);
+//   ASSERT_EQ(var.getType(), Type::False);
+//   var.convert(Type::String);
+//   ASSERT_EQ(var.getType(), Type::String);
+//   var.convert(Type::Long);
+//   ASSERT_EQ(var.getType(), Type::Long);
+//   var.convert(Type::Double);
+//   ASSERT_EQ(var.getType(), Type::Double);
+//   var.convert(Type::Array);
+//   ASSERT_EQ(var.getType(), Type::Array);
+//   var.convert(Type::Object);
+//   ASSERT_EQ(var.getType(), Type::Object);
+//   // unsupported types
+//   ASSERT_EQ(var.convert(Type::Undefined), false);
+//   ASSERT_EQ(var.convert(Type::Resource), false);
+//   ASSERT_EQ(var.convert(Type::Constant), false);
+//   ASSERT_EQ(var.convert(Type::ConstantAST), false);
+//   ASSERT_EQ(var.convert(Type::Callable), false);
 }
 
-TEST_F(VariantTest, testClone)
-{
-   {
-      Variant var(2018);
-      Variant cloned = var.clone();
-      ASSERT_EQ(cloned.getType(), var.getType());
-      ASSERT_EQ(cloned.toLong(), var.toLong());
-   }
-   {
-      Variant var(true);
-      Variant cloned = var.clone();
-      ASSERT_EQ(cloned.getType(), var.getType());
-      ASSERT_EQ(cloned.toBool(), var.toBool());
-   }
-   {
-      Variant var("zapi");
-      Variant cloned = var.clone();
-      ASSERT_EQ(cloned.getType(), var.getType());
-      ASSERT_EQ(cloned.toString(), var.toString());
-   }
-   {
-      Variant var(static_cast<double>(0.32));
-      Variant cloned = var.clone();
-      ASSERT_EQ(cloned.getType(), var.getType());
-      ASSERT_EQ(cloned.toDouble(), var.toDouble());
-   }
-   // set type when clone
-   {
-      Variant var(static_cast<double>(0.32));
-      Variant cloned = var.clone(Type::Long);
-      ASSERT_EQ(cloned.getType(), Type::Long);
-      ASSERT_EQ(var.toDouble(), 0.32);
-      ASSERT_EQ(cloned.toLong(), 0);
-   }
-}
+//TEST_F(VariantTest, testClone)
+//{
+//   {
+//      Variant var(2018);
+//      Variant cloned = var.clone();
+//      ASSERT_EQ(cloned.getType(), var.getType());
+//      ASSERT_EQ(cloned.toLong(), var.toLong());
+//   }
+//   {
+//      Variant var(true);
+//      Variant cloned = var.clone();
+//      ASSERT_EQ(cloned.getType(), var.getType());
+//      ASSERT_EQ(cloned.toBool(), var.toBool());
+//   }
+//   {
+//      Variant var("zapi");
+//      Variant cloned = var.clone();
+//      ASSERT_EQ(cloned.getType(), var.getType());
+//      ASSERT_EQ(cloned.toString(), var.toString());
+//   }
+//   {
+//      Variant var(static_cast<double>(0.32));
+//      Variant cloned = var.clone();
+//      ASSERT_EQ(cloned.getType(), var.getType());
+//      ASSERT_EQ(cloned.toDouble(), var.toDouble());
+//   }
+//   // set type when clone
+//   {
+//      Variant var(static_cast<double>(0.32));
+//      Variant cloned = var.clone(Type::Long);
+//      ASSERT_EQ(cloned.getType(), Type::Long);
+//      ASSERT_EQ(var.toDouble(), 0.32);
+//      ASSERT_EQ(cloned.toLong(), 0);
+//   }
+//}
 
 int main(int argc, char **argv)
 {

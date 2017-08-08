@@ -322,9 +322,6 @@ Variant &Variant::operator=(const Variant &value)
  */
 Variant &Variant::operator=(std::nullptr_t value)
 {
-   SEPARATE_ZVAL_IF_NOT_REF(*m_implPtr);
-   zval_dtor(*m_implPtr);
-   ZVAL_NULL(*m_implPtr);
    return *this;
 }
 
@@ -336,9 +333,6 @@ Variant &Variant::operator=(std::nullptr_t value)
  */
 Variant &Variant::operator=(std::int16_t value)
 {
-   SEPARATE_ZVAL_IF_NOT_REF(*m_implPtr);
-   zval_dtor(*m_implPtr);
-   ZVAL_LONG(*m_implPtr, value);
    return *this;
 }
 
@@ -350,9 +344,6 @@ Variant &Variant::operator=(std::int16_t value)
  */
 Variant &Variant::operator=(std::int32_t value)
 {
-   SEPARATE_ZVAL_IF_NOT_REF(*m_implPtr);
-   zval_dtor(*m_implPtr);
-   ZVAL_LONG(*m_implPtr, value);
    return *this;
 }
 
@@ -364,9 +355,6 @@ Variant &Variant::operator=(std::int32_t value)
  */
 Variant &Variant::operator=(std::int64_t value)
 {
-   SEPARATE_ZVAL_IF_NOT_REF(*m_implPtr);
-   zval_dtor(*m_implPtr);
-   ZVAL_LONG(*m_implPtr, value);
    return *this;
 }
 
@@ -411,9 +399,6 @@ Variant &Variant::operator=(std::uint64_t value)
  */
 Variant &Variant::operator=(bool value)
 {
-   SEPARATE_ZVAL_IF_NOT_REF(*m_implPtr);
-   zval_dtor(*m_implPtr);
-   ZVAL_BOOL(*m_implPtr, value);
    return *this;
 }
 
@@ -425,9 +410,6 @@ Variant &Variant::operator=(bool value)
  */
 Variant &Variant::operator=(char value)
 {
-   SEPARATE_ZVAL_IF_NOT_REF(*m_implPtr);
-   zval_dtor(*m_implPtr);
-   ZVAL_STRINGL(*m_implPtr, &value, 1);
    return *this;
 }
 
@@ -439,9 +421,6 @@ Variant &Variant::operator=(char value)
  */
 Variant &Variant::operator=(const std::string &value)
 {
-   SEPARATE_ZVAL_IF_NOT_REF(*m_implPtr);
-   zval_dtor(*m_implPtr);
-   ZVAL_STRINGL(*m_implPtr, value.c_str(), value.size());
    return *this;
 }
 
@@ -453,9 +432,6 @@ Variant &Variant::operator=(const std::string &value)
  */
 Variant &Variant::operator=(const char *value)
 {
-   SEPARATE_ZVAL_IF_NOT_REF(*m_implPtr);
-   zval_dtor(*m_implPtr);
-   ZVAL_STRINGL(*m_implPtr, value, std::strlen(value));
    return *this;
 }
 
@@ -467,9 +443,6 @@ Variant &Variant::operator=(const char *value)
  */
 Variant &Variant::operator=(double value)
 {
-   SEPARATE_ZVAL_IF_NOT_REF(*m_implPtr);
-   zval_dtor(*m_implPtr);
-   ZVAL_DOUBLE(*m_implPtr, value);
    return *this;
 }
 
@@ -654,78 +627,6 @@ bool Variant::isArray() const
 }
 
 /**
- * Returns true if the variant can be converted to the type targetType, otherwise false.
- * 
- * @return bool
- */
-bool Variant::canConvert(Type targetType) const
-{
-   switch (targetType) {
-   case Type::Undefined:
-   case Type::Resource:
-   case Type::Constant:
-   case Type::ConstantAST:
-   case Type::Reference:
-   case Type::Callable:
-      return false;
-   default:
-      return true;
-   }
-}
-
-/**
- * convert current variant type to target type
- * If the cast cannot be done, the variant is cleared. Returns true if the current type of the 
- * variant was successfully cast; otherwise returns false.
- *
- * @param Type typeValue
- * @return bool
- */
-bool Variant::convert(Type targetType)
-{
-   if (this->getType() == targetType) {
-      return true;
-   } else if (!canConvert(targetType)) {
-      return false;
-   }
-   SEPARATE_ZVAL_IF_NOT_REF(*m_implPtr);
-   switch (targetType) {
-   case Type::Null:
-      convert_to_null(*m_implPtr);
-      break;
-   case Type::Long:
-      convert_to_long(*m_implPtr);
-      break;
-   case Type::Double:
-      convert_to_double(*m_implPtr);
-      break;
-   case Type::Boolean:
-      convert_to_boolean(*m_implPtr);
-      break;
-   case Type::False:
-      convert_to_boolean(*m_implPtr);
-      ZVAL_FALSE(*m_implPtr);
-      break;
-   case Type::True:
-      convert_to_boolean(*m_implPtr);
-      ZVAL_TRUE(*m_implPtr);
-      break;
-   case Type::Array:
-      convert_to_array(*m_implPtr);
-      break;
-   case Type::Object:
-      convert_to_object(*m_implPtr);
-      break;
-   case Type::String:
-      convert_to_string(*m_implPtr);
-      break;
-   default:
-      return false;
-   }
-   return true;
-}
-
-/**
  * Make a clone of the type
  * @return Variant
  */
@@ -734,29 +635,6 @@ Variant Variant::clone() const
    Variant output;
    ZVAL_DUP(*output.m_implPtr, *m_implPtr);
    return output;
-}
-
-/**
- * Clone the zval to a different type
- * @param  type
- * @return Variant
- */
-Variant Variant::clone(Type targetType) const
-{
-   Variant cloned = clone();
-   if (this->getType() != targetType) {
-      cloned.convert(targetType);
-   }
-   return cloned;
-}
-
-/**
- * Retrieve the value as integer
- * @return long
- */
-std::int64_t Variant::toLong() const
-{
-   return zval_get_long(*m_implPtr);
 }
 
 /**
@@ -775,15 +653,15 @@ bool Variant::toBool() const
    case Type::True:
       return true;
    case Type::Long:
-      return toLong();
+      return zval_get_long(*m_implPtr);
    case Type::Double:
-      return toDouble();
+      return zval_get_double(*m_implPtr);
    case Type::String:
       return Z_STRLEN_P(*m_implPtr);
    case Type::Array:
       return zend_hash_num_elements(Z_ARRVAL_P(*m_implPtr));
    default:
-      return clone(Type::Boolean).toBool();
+      return false;
    }
 }
 
@@ -799,30 +677,21 @@ std::string Variant::toString() const
    return ret;
 }
 
-/**
- * Retrieve the value as decimal
- * @return double
- */
-double Variant::toDouble() const
-{
-   return zval_get_double(*m_implPtr);
-}
+//bool Variant::operator==(const Variant &value) const
+//{
+//   return operator==(const_cast<zval *>(static_cast<const zval *>(*m_implPtr)));
+//}
 
-bool Variant::operator==(const Variant &value) const
-{
-   return operator==(const_cast<zval *>(static_cast<const zval *>(*m_implPtr)));
-}
-
-bool Variant::operator==(zval *value) const
-{
-   zval result;
-   // run the comparison
-   if (SUCCESS != compare_function(&result, const_cast<zval *>(static_cast<const zval *>(*m_implPtr)), value)) {
-      return false;
-   }
-   // convert to boolean
-   return result.value.lval == 0; 
-}
+//bool Variant::operator==(zval *value) const
+//{
+//   zval result;
+//   // run the comparison
+//   if (SUCCESS != compare_function(&result, const_cast<zval *>(static_cast<const zval *>(*m_implPtr)), value)) {
+//      return false;
+//   }
+//   // convert to boolean
+//   return result.value.lval == 0;
+//}
 
 /**
  * Custom output stream operator

@@ -25,6 +25,13 @@ var_dump(function_exists("zapi\\io\\show_something"));
 var_dump(defined("zapi\\SYS_VERSION"));
 var_dump(class_exists("zapi\\Address"));
 \zapi\io\print_name("wangyang");
+$a = 123;
+$b = "sss";
+$d = "sa";
+var_dump($b + $d);
+$c = [123];
+$c += [1, 1212,22];
+var_dump($c);
 ?>
 --EXPECT--
 zapi v0.0.1 hello world, zapi

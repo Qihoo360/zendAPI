@@ -13,8 +13,8 @@
 //
 // Created by softboy on 2017/08/08.
 
-#ifndef ZAPI_DS_INTERNAL_FUNCTION_VARIANT_PRIVATE_H
-#define ZAPI_DS_INTERNAL_FUNCTION_VARIANT_PRIVATE_H
+#ifndef ZAPI_DS_INTERNAL_ARRAY_VARIANT_PRIVATE_H
+#define ZAPI_DS_INTERNAL_ARRAY_VARIANT_PRIVATE_H
 
 #include "zapi/ds/Variant.h"
 
@@ -23,12 +23,13 @@ namespace zapi
 namespace ds
 {
 
-class ZAPI_DECL_EXPORT FunctionVariant : public Variant
+class ZAPI_DECL_EXPORT ArrayVariant : public Variant
 {
-   
+public:
+   ArrayVariant();
 };
 
 } // ds
 } // zapi
 
-#endif // ZAPI_DS_INTERNAL_FUNCTION_VARIANT_PRIVATE_H
+#endif // ZAPI_DS_INTERNAL_ARRAY_VARIANT_PRIVATE_H

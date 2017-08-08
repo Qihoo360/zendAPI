@@ -67,7 +67,6 @@ public:
     * Empty constructor (value = NULL)
     */
    Variant();
-   
    /**
     * Constructor for various types
     */
@@ -84,45 +83,6 @@ public:
    Variant(const char *value, size_t length);
    Variant(const char *value);
    Variant(double value);
-   
-   Variant(Type targetType) : Variant()
-   {
-      convert(targetType);
-   }
-   
-   template <typename T>
-   Variant(const std::vector<T> &values) : Variant(Type::Array)
-   {
-      for (auto &item : values)
-      {
-         
-      }
-   }
-   
-#ifdef ZAPI_COMPILER_INITIALIZER_LISTS
-   template <typename T>
-   Variant(const std::initializer_list<T> &values) : Variant(Type::Array)
-   {
-      for (auto &item : values)
-      {
-         
-      }
-   }
-#endif
-   
-   /**
-    * Constructor from a map (this will create an associative array)
-    * @param  value
-    */
-   template <typename T>
-   Variant(const std::map<std::string, T> &values) : Variant(Type::Array)
-   {
-      for (auto &iter : values)
-      {
-         
-      }
-   }
-   
    /**
     * Wrap object around zval
     * @param  zval Zval to wrap
@@ -175,55 +135,6 @@ public:
    Variant &operator=(zval *value);
    
    /**
-    * Comparison operators for hardcoded Variant
-    * 
-    * @param  value
-    */
-   bool operator==(const Variant &value) const;
-   bool operator!=(const Variant &value) const
-   {
-      return !operator==(value);
-   }
-   
-   /**
-    * Comparison operators for hardcoded Variant
-    * 
-    * @param  value
-    */
-   bool operator==(zval *value) const;
-   bool operator!=(zval *value) const
-   {
-      return !operator==(value);
-   }
-   
-   /**
-    * Cast to a number
-    * @return std::int32_t
-    */
-   operator std::int16_t () const
-   {
-      return static_cast<std::int16_t>(toLong());
-   }
-   
-   /**
-    * Cast to a number
-    * @return std::int32_t
-    */
-   operator std::int32_t () const
-   {
-      return static_cast<std::int32_t>(toLong());
-   }
-   
-   /**
-    * Cast to a number
-    * @return std::int64_t
-    */
-   operator std::int64_t () const
-   {
-      return static_cast<std::int64_t>(toLong());
-   }
-   
-   /**
     * Cast to a boolean
     * @return boolean
     */
@@ -241,15 +152,6 @@ public:
       return toString();
    }
    
-   /**
-    * Cast to a floating point
-    * @return double
-    */
-   operator double () const
-   {
-      return toDouble();
-   }
-   
    operator zval * () const;
    
    /**
@@ -259,36 +161,11 @@ public:
    Type getType() const;
    
    /**
-    * convert current variant type to target type
-    * If the cast cannot be done, the variant is cleared. Returns true if the current type of the 
-    * variant was successfully cast; otherwise returns false.
-    *
-    * @param Type typeValue
-    * @return bool
-    */
-   bool convert(Type targetType);
-   
-   /**
-    * Returns true if the variant can be converted to the type targetType, otherwise false.
-    * 
-    * @return bool
-    */
-   bool canConvert(Type targetType) const;
-   
-   /**
     * Make a clone of the value with the same type
     * 
     * @return Value
     */
    Variant clone() const;
-   
-   /**
-    * Make a clone of the value with a different type
-    * 
-    * @param  type
-    * @return Value
-    */
-   Variant clone(Type typeValue) const;
    
    /**
     * Check if the value is of a certain type
@@ -308,18 +185,6 @@ public:
    }
    
    /**
-    * Retrieve the value as number
-    *
-    * We force this to be a std::int64_t because we assume that most
-    * servers run 64 bits nowadays, and because we use std::int32_t, std::int64_t
-    * almost everywhere, instead of 'long' and on OSX neither of
-    * these intxx_t types is defined as 'long'...
-    *
-    * @return std::int64_t
-    */
-   std::int64_t toLong() const;
-   
-   /**
     * Retrieve the value as boolean
     * 
     * @return bool
@@ -333,12 +198,6 @@ public:
     */
    std::string toString() const;
    
-   /**
-    * Retrieve the value as decimal
-    * 
-    * @return double
-    */
-   double toDouble() const;
    zval &getZval();
    uint32_t refcount() const;
    zval detach(bool keeprefcount);
