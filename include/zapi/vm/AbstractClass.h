@@ -70,19 +70,6 @@ public:
    
 protected:
    void registerMethod(const char *name, zapi::ZendCallable callable, Modifier flags = Modifier::None, const Arguments &args = {});
-   void registerMethod(const char *name, const zapi::MethodCallable0 &method, Modifier flags = Modifier::None, const Arguments &args = {});
-   void registerMethod(const char *name, const zapi::MethodCallable1 &method, Modifier flags = Modifier::None, const Arguments &args = {});
-   void registerMethod(const char *name, const zapi::MethodCallable2 &method, Modifier flags = Modifier::None, const Arguments &args = {});
-   void registerMethod(const char *name, const zapi::MethodCallable3 &method, Modifier flags = Modifier::None, const Arguments &args = {});
-   void registerMethod(const char *name, const zapi::MethodCallable4 &method, Modifier flags = Modifier::None, const Arguments &args = {});
-   void registerMethod(const char *name, const zapi::MethodCallable5 &method, Modifier flags = Modifier::None, const Arguments &args = {});
-   void registerMethod(const char *name, const zapi::MethodCallable6 &method, Modifier flags = Modifier::None, const Arguments &args = {});
-   void registerMethod(const char *name, const zapi::MethodCallable7 &method, Modifier flags = Modifier::None, const Arguments &args = {});
-   // static
-   void registerMethod(const char *name, const zapi::MethodCallable8 &method, Modifier flags = Modifier::None, const Arguments &args = {});
-   void registerMethod(const char *name, const zapi::MethodCallable9 &method, Modifier flags = Modifier::None, const Arguments &args = {});
-   void registerMethod(const char *name, const zapi::MethodCallable10 &method, Modifier flags = Modifier::None, const Arguments &args = {});
-   void registerMethod(const char *name, const zapi::MethodCallable11 &method, Modifier flags = Modifier::None, const Arguments &args = {});
    // abstract
    void registerMethod(const char *name, Modifier flags = Modifier::None, const Arguments &args = {});
    

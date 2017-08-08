@@ -46,18 +46,6 @@ class ZAPI_DECL_EXPORT Method final : public zapi::vm::Callable
 {
 public:
    Method(const char *name, zapi::ZendCallable callback, Modifier flags, const Arguments &args);
-   Method(const char *name, zapi::MethodCallable0 callback, Modifier flags, const Arguments &args);
-   Method(const char *name, zapi::MethodCallable1 callback, Modifier flags, const Arguments &args);
-   Method(const char *name, zapi::MethodCallable2 callback, Modifier flags, const Arguments &args);
-   Method(const char *name, zapi::MethodCallable3 callback, Modifier flags, const Arguments &args);
-   Method(const char *name, zapi::MethodCallable4 callback, Modifier flags, const Arguments &args);
-   Method(const char *name, zapi::MethodCallable5 callback, Modifier flags, const Arguments &args);
-   Method(const char *name, zapi::MethodCallable6 callback, Modifier flags, const Arguments &args);
-   Method(const char *name, zapi::MethodCallable7 callback, Modifier flags, const Arguments &args);
-   Method(const char *name, zapi::MethodCallable8 callback, Modifier flags, const Arguments &args);
-   Method(const char *name, zapi::MethodCallable9 callback, Modifier flags, const Arguments &args);
-   Method(const char *name, zapi::MethodCallable10 callback, Modifier flags, const Arguments &args);
-   Method(const char *name, zapi::MethodCallable11 callback, Modifier flags, const Arguments &args);
    Method(const char *name, Modifier flags, const Arguments &args);
    Method(const Method &other);
    Method &operator=(const Method &other);

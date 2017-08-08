@@ -16,11 +16,17 @@
 #include <ostream>
 #include "zapi/vm/InvokeBridge.h"
 #include "zapi/kernel/OrigException.h"
+#include "zapi/vm/ObjectBinder.h"
 
 namespace zapi
 {
 namespace vm
 {
+
+StdClass *InvokeBridge::instance(zend_execute_data *execute_data)
+{
+   return ObjectBinder::retrieveSelfPtr(getThis())->getNativeObject();
+}
 
 bool InvokeBridge::checkInvokeArguments(_zend_execute_data *execute_data, _zval_struct *return_value)
 {

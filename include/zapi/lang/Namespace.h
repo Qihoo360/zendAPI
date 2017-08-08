@@ -56,28 +56,13 @@ public:
    virtual ~Namespace();
 public:
    template <void (*func)()>
-   Namespace &registerFunction(const char *name, const Arguments &arguments = {})
-   {
-      return registerFunction(name, &InvokeBridge::invoke<func>, arguments);
-   }
-   
+   Namespace &registerFunction(const char *name, const Arguments &args = {});
    template <void (*func)(Parameters &parameters)>
-   Namespace &registerFunction(const char *name, const Arguments &arguments = {})
-   {
-      return registerFunction(name, &InvokeBridge::invoke<func>, arguments);
-   }
-   
+   Namespace &registerFunction(const char *name, const Arguments &args = {});
    template <Variant (*func)()>
-   Namespace &registerFunction(const char *name, const Arguments &arguments = {})
-   {
-      return registerFunction(name, &InvokeBridge::invoke<func>, arguments);
-   }
-   
+   Namespace &registerFunction(const char *name, const Arguments &args = {});
    template <Variant (*func)(Parameters &parameters)>
-   Namespace &registerFunction(const char *name, const Arguments &arguments = {})
-   {
-      return registerFunction(name, &InvokeBridge::invoke<func>, arguments);
-   }
+   Namespace &registerFunction(const char *name, const Arguments &args = {});
    
    Namespace &registerNamespace(const Namespace &ns);
    Namespace &registerNamespace(Namespace &&ns);
@@ -117,6 +102,30 @@ Namespace &Namespace::registerClass(Class<T> &&nativeClass)
    ZAPI_D(Namespace);
    implPtr->m_classes.push_back(std::shared_ptr<AbstractClass>(new Class<T>(std::move(nativeClass))));
    return *this;
+}
+
+template <void (*func)()>
+Namespace &Namespace::registerFunction(const char *name, const Arguments &args)
+{
+   return registerFunction(name, &InvokeBridge::invoke<func>, args);
+}
+
+template <void (*func)(Parameters &parameters)>
+Namespace &Namespace::registerFunction(const char *name, const Arguments &args)
+{
+   return registerFunction(name, &InvokeBridge::invoke<func>, args);
+}
+
+template <Variant (*func)()>
+Namespace &Namespace::registerFunction(const char *name, const Arguments &args)
+{
+   return registerFunction(name, &InvokeBridge::invoke<func>, args);
+}
+
+template <Variant (*func)(Parameters &parameters)>
+Namespace &Namespace::registerFunction(const char *name, const Arguments &args)
+{
+   return registerFunction(name, &InvokeBridge::invoke<func>, args);
 }
 
 } // lang

@@ -40,6 +40,7 @@ ZAPI_DECL_EXPORT void *get_module()
                                                            ValueArgument("number2", zapi::lang::Type::Long)
                                                         });
    zapi::lang::Class<Person> personClass("Person");
+   personClass.registerMethod<&Person::__construct>("__construct");
    personClass.registerConstant("MY_CONST", "MY_CONST_VALUE");
    personClass.registerConstant(Constant("PI", 3.1415926));
    personClass.registerProperty("name", "zzu_softboy");

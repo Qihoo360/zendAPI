@@ -33,6 +33,13 @@ using zapi::lang::StdClass;
 class MethodPrivate : public CallablePrivate
 {
 public:
+   MethodPrivate(const char *name, ZendCallable callback, Modifier flags, const Arguments &args)
+      : CallablePrivate(name, callback, args),
+        m_type(-1),
+        m_flags(flags)
+   {
+   }
+   
    MethodPrivate(const char *name, MethodCallable0 callback, Modifier flags, const Arguments &args)
       : CallablePrivate(name, args),
         m_type(0),
@@ -209,51 +216,7 @@ Variant MethodPrivate::invoke(Parameters &parameters)
 
 using internal::MethodPrivate;
 
-Method::Method(const char *name, MethodCallable0 callback, Modifier flags, const Arguments &args)
-   : Callable(new MethodPrivate(name, callback, flags, args))
-{}
-
-Method::Method(const char *name, MethodCallable1 callback, Modifier flags, const Arguments &args)
-   : Callable(new MethodPrivate(name, callback, flags, args))
-{}
-
-Method::Method(const char *name, MethodCallable2 callback, Modifier flags, const Arguments &args)
-   : Callable(new MethodPrivate(name, callback, flags, args))
-{}
-
-Method::Method(const char *name, MethodCallable3 callback, Modifier flags, const Arguments &args)
-   : Callable(new MethodPrivate(name, callback, flags, args))
-{}
-
-Method::Method(const char *name, MethodCallable4 callback, Modifier flags, const Arguments &args)
-   : Callable(new MethodPrivate(name, callback, flags, args))
-{}
-
-Method::Method(const char *name, MethodCallable5 callback, Modifier flags, const Arguments &args)
-   : Callable(new MethodPrivate(name, callback, flags, args))
-{}
-
-Method::Method(const char *name, MethodCallable6 callback, Modifier flags, const Arguments &args)
-   : Callable(new MethodPrivate(name, callback, flags, args))
-{}
-
-Method::Method(const char *name, MethodCallable7 callback, Modifier flags, const Arguments &args)
-   : Callable(new MethodPrivate(name, callback, flags, args))
-{}
-
-Method::Method(const char *name, MethodCallable8 callback, Modifier flags, const Arguments &args)
-   : Callable(new MethodPrivate(name, callback, flags, args))
-{}
-
-Method::Method(const char *name, MethodCallable9 callback, Modifier flags, const Arguments &args)
-   : Callable(new MethodPrivate(name, callback, flags, args))
-{}
-
-Method::Method(const char *name, MethodCallable10 callback, Modifier flags, const Arguments &args)
-   : Callable(new MethodPrivate(name, callback, flags, args))
-{}
-
-Method::Method(const char *name, MethodCallable11 callback, Modifier flags, const Arguments &args)
+Method::Method(const char *name, zapi::ZendCallable callback, Modifier flags, const Arguments &args)
    : Callable(new MethodPrivate(name, callback, flags, args))
 {}
 

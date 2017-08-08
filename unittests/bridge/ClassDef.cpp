@@ -9,11 +9,15 @@ Person::Person()
    
 //}
 
+void Person::__construct()
+{
+   zapi::out << "Person construct" << std::endl;
+}
 
-//void Person::__destruct()
-//{
-   
-//}
+void Person::__destruct()
+{
+   zapi::out << "Person destruct" << std::endl;
+}
 
 
 Address::Address()

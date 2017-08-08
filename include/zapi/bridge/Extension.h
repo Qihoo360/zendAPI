@@ -78,28 +78,13 @@ public:
    virtual ~Extension();
 public:
    template <void (*func)()>
-   Extension &registerFunction(const char *name, const Arguments &arguments = {})
-   {
-      return registerFunction(name, &zapi::vm::InvokeBridge::invoke<func>, arguments);
-   }
-   
+   Extension &registerFunction(const char *name, const Arguments &args = {});
    template <void (*func)(Parameters &parameters)>
-   Extension &registerFunction(const char *name, const Arguments &arguments = {})
-   {
-      return registerFunction(name, &zapi::vm::InvokeBridge::invoke<func>, arguments);
-   }
-   
+   Extension &registerFunction(const char *name, const Arguments &args = {});
    template <Variant (*func)()>
-   Extension &registerFunction(const char *name, const Arguments &arguments = {})
-   {
-      return registerFunction(name, &zapi::vm::InvokeBridge::invoke<func>, arguments);
-   }
-   
+   Extension &registerFunction(const char *name, const Arguments &args = {});
    template <Variant (*func)(Parameters &parameters)>
-   Extension &registerFunction(const char *name, const Arguments &arguments = {})
-   {
-      return registerFunction(name, &zapi::vm::InvokeBridge::invoke<func>, arguments);
-   }
+   Extension &registerFunction(const char *name, const Arguments &args = {});
    
    Extension &registerIniEntry(const IniEntry &entry);
    Extension &registerIniEntry(IniEntry &&entry);
@@ -187,7 +172,7 @@ public:
    const char *getName() const;
    const char *getVersion() const;
 protected:
-   Extension &registerFunction(const char *name, zapi::ZendCallable function, const Arguments &arguments = {});
+   Extension &registerFunction(const char *name, zapi::ZendCallable function, const Arguments &args);
    bool isLocked() const;
 private:
    bool initialize(int moduleNumber);
@@ -222,6 +207,30 @@ Extension &Extension::registerClass(Class<T> &&nativeClass)
    }
    implPtr->m_classes.push_back(std::shared_ptr<AbstractClass>(new Class<T>(std::move(nativeClass))));
    return *this;
+}
+
+template <void (*func)()>
+Extension &Extension::registerFunction(const char *name, const Arguments &args)
+{
+   return registerFunction(name, &zapi::vm::InvokeBridge::invoke<func>, args);
+}
+
+template <void (*func)(Parameters &parameters)>
+Extension &Extension::registerFunction(const char *name, const Arguments &args)
+{
+   return registerFunction(name, &zapi::vm::InvokeBridge::invoke<func>, args);
+}
+
+template <Variant (*func)()>
+Extension &Extension::registerFunction(const char *name, const Arguments &args)
+{
+   return registerFunction(name, &zapi::vm::InvokeBridge::invoke<func>, args);
+}
+
+template <Variant (*func)(Parameters &parameters)>
+Extension &Extension::registerFunction(const char *name, const Arguments &args)
+{
+   return registerFunction(name, &zapi::vm::InvokeBridge::invoke<func>, args);
 }
 
 } // bridge

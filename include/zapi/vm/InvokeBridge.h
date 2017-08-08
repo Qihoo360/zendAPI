@@ -32,6 +32,7 @@ namespace lang
 
 class Variant;
 class Parameters;
+class StdClass;
 
 } // lang
 
@@ -42,21 +43,131 @@ using zapi::kernel::Exception;
 using zapi::lang::Variant;
 using zapi::lang::Parameters;
 using zapi::lang::Arguments;
+using zapi::lang::StdClass;
 
 class ZAPI_DECL_EXPORT InvokeBridge
 {
 public:
    virtual ~InvokeBridge() = default;
 private:
-   static bool checkInvokeArguments(_zend_execute_data *execute_data, _zval_struct *return_value);
-   static Parameters retrieveParameters(_zend_execute_data *execute_data);
+   static StdClass *instance(zend_execute_data *execute_data);
+   static bool checkInvokeArguments(zend_execute_data *execute_data, zval *return_value);
+   static Parameters retrieveParameters(zend_execute_data *execute_data);
    static void handle(Exception &exception);
    static void yield(_zval_struct *return_value, std::nullptr_t value);
    static void yield(_zval_struct *return_value, const Variant &value);
    
 public:
+   template <typename T, void(T::*method)()> 
+   static void invoke(zend_execute_data *execute_data, zval *return_value)
+   {
+      try {
+         (static_cast<T *>(instance(execute_data))->*method)();
+         yield(return_value, nullptr);
+      } catch (Exception &exception) {
+         handle(exception);
+      }
+   }
+   
+   template <typename T, void(T::*method)(Parameters &params)>
+   static void invoke(zend_execute_data *execute_data, zval *return_value)
+   {
+      try {
+         // check invoke arguments
+         if (!checkInvokeArguments(execute_data, return_value)) {
+            return;
+         }
+         Parameters params = retrieveParameters(execute_data);
+         (static_cast<T *>(instance(execute_data))->*method)(params);
+         yield(return_value, nullptr);
+      } catch (Exception &exception) {
+         handle(exception);
+      }
+   }
+   
+   template <typename T, Variant(T::*method)()>
+   static void invoke(zend_execute_data *execute_data, zval *return_value)
+   {
+      try {
+         Variant result = (static_cast<T *>(instance(execute_data))->*method)();
+         yield(return_value, result);
+      } catch (Exception &exception) {
+         handle(exception);
+      }
+   }
+   
+   template <typename T, Variant(T::*method)(Parameters &params)>
+   static void invoke(zend_execute_data *execute_data, zval *return_value)
+   {
+      try {
+         // check invoke arguments
+         if (!checkInvokeArguments(execute_data, return_value)) {
+            return;
+         }
+         Parameters params = retrieveParameters(execute_data);
+         Variant result = (static_cast<T *>(instance(execute_data))->*method)(params);
+         yield(return_value, result);
+      } catch (Exception &exception) {
+         handle(exception);
+      }
+   }
+   
+   template <typename T, void(T::*method)() const> 
+   static void invoke(zend_execute_data *execute_data, zval *return_value)
+   {
+      try {
+         (static_cast<T *>(instance(execute_data))->*method)();
+         yield(return_value, nullptr);
+      } catch (Exception &exception) {
+         handle(exception);
+      }
+   }
+   
+   template <typename T, void(T::*method)(Parameters &params) const>
+   static void invoke(zend_execute_data *execute_data, zval *return_value)
+   {
+      try {
+         // check invoke arguments
+         if (!checkInvokeArguments(execute_data, return_value)) {
+            return;
+         }
+         Parameters params = retrieveParameters(execute_data);
+         (static_cast<T *>(instance(execute_data))->*method)(params);
+         yield(return_value, nullptr);
+      } catch (Exception &exception) {
+         handle(exception);
+      }
+   }
+   
+   template <typename T, Variant(T::*method)() const>
+   static void invoke(zend_execute_data *execute_data, zval *return_value)
+   {
+      try {
+         Variant result = (static_cast<T *>(instance(execute_data))->*method)();
+         yield(return_value, result);
+      } catch (Exception &exception) {
+         handle(exception);
+      }
+   }
+   
+   template <typename T, Variant(T::*method)(Parameters &params) const>
+   static void invoke(zend_execute_data *execute_data, zval *return_value)
+   {
+      try {
+         // check invoke arguments
+         if (!checkInvokeArguments(execute_data, return_value)) {
+            return;
+         }
+         Parameters params = retrieveParameters(execute_data);
+         Variant result = (static_cast<T *>(instance(execute_data))->*method)(params);
+         yield(return_value, result);
+      } catch (Exception &exception) {
+         handle(exception);
+      }
+   }   
+   
    template <void(*callable)()>
-   static void invoke(_zend_execute_data *execute_data, _zval_struct *return_value)
+   static void invoke(zend_execute_data *execute_data, zval *return_value)
    {
       try {
          callable();
@@ -67,7 +178,7 @@ public:
    }
    
    template <Variant(*callable)()>
-   static void invoke(_zend_execute_data *execute_data, _zval_struct *return_value)
+   static void invoke(zend_execute_data *execute_data, zval *return_value)
    {
       try {
          Variant result = callable();
@@ -78,7 +189,7 @@ public:
    }
    
    template <void(*callable)(Parameters &parameters)>
-   static void invoke(_zend_execute_data *execute_data, _zval_struct *return_value)
+   static void invoke(zend_execute_data *execute_data, zval *return_value)
    {
       try {
          // check invoke arguments
@@ -94,7 +205,7 @@ public:
    }
    
    template <Variant(*callable)(Parameters &parameters)>
-   static void invoke(_zend_execute_data *execute_data, _zval_struct *return_value)
+   static void invoke(zend_execute_data *execute_data, zval *return_value)
    {
       try {
          // check invoke arguments
