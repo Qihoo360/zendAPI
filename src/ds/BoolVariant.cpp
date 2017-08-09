@@ -20,23 +20,56 @@ namespace zapi
 namespace ds
 {
 
+using zapi::ds::internal::VariantPrivate;
+
 BoolVariant::BoolVariant()
    : Variant(false)
-{
-}
+{}
 
 BoolVariant::BoolVariant(bool value)
    : Variant(value)
+{}
+
+BoolVariant::BoolVariant(const BoolVariant &other)
+   : Variant(other)
 {
+}
+
+BoolVariant &BoolVariant::operator=(const BoolVariant &other)
+{
+   Variant::operator=(other);
+   return *this;
+}
+
+BoolVariant &BoolVariant::operator=(const Variant &other)
+{
+   ZVAL_BOOL(getZvalPtr(), other.toBool());
+   return *this;
+}
+
+BoolVariant &BoolVariant::operator=(bool value)
+{
+   ZVAL_BOOL(getZvalPtr(), value);
+   return *this;
 }
 
 BoolVariant::~BoolVariant()
 {}
 
-//BoolVariant::operator bool()
-//{
-//   ZVAL_BOOL()
-//}
+BoolVariant::operator bool() const
+{
+   return Z_TYPE_INFO_P(getZvalPtr()) == IS_TRUE ? true : false;
+}
+
+bool operator ==(const BoolVariant &lhs, const BoolVariant &rhs)
+{
+   return lhs.toBool() == rhs.toBool();
+}
+
+bool operator !=(const BoolVariant &lhs, const BoolVariant &rhs)
+{
+   return lhs.toBool() != rhs.toBool();
+}
 
 } // ds
 } // zapi

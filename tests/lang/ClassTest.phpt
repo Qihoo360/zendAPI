@@ -32,6 +32,9 @@ var_dump($b + $d);
 $c = [123];
 $c += [1, 1212,22];
 var_dump($c);
+$arr = [];
+$xxx = $arr["xxx"]["xxxa"];
+
 ?>
 --EXPECT--
 zapi v0.0.1 hello world, zapi

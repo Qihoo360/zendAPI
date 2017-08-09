@@ -14,11 +14,6 @@
 //
 // Created by zzu_softboy on 2017/06/06.
 
-#include "php/Zend/zend_compile.h"
-#include "php/Zend/zend_closures.h"
-#include "php/Zend/zend_string.h"
-#include "php/Zend/zend_alloc.h"
-
 #include "zapi/kernel/FatalError.h"
 #include "zapi/kernel/OrigException.h"
 #include "zapi/ds/Variant.h"
@@ -256,19 +251,10 @@ Variant::Variant(zval *value, bool isRef)
    }
 }
 
-/**
- * Copy constructor
- * 
- * @param  value
- */
 Variant::Variant(const Variant &other)
    : m_implPtr(new VariantPrivate)
 {
-   zval *from = const_cast<zval *>(static_cast<const zval *>(*other.m_implPtr));
-   // make sure what we are copied is not a reference
-   ZVAL_DEREF(from);
-   // copy the value
-   ZVAL_COPY(*m_implPtr, from);
+   stdCopyZval(getZvalPtr(), const_cast<zval *>(other.getZvalPtr()));
 }
 
 /**
@@ -284,8 +270,14 @@ Variant::Variant(Variant &&other) ZAPI_DECL_NOEXCEPT
 Variant::~Variant()
 {
    if (m_implPtr) {
-      zval_ptr_dtor(*m_implPtr);
+      zval_ptr_dtor(getZvalPtr());
    }
+}
+
+Variant &Variant::operator=(zval *value)
+{
+   stdAssignZval(getZvalPtr(), value);
+   return *this;
 }
 
 /**
@@ -296,9 +288,7 @@ Variant::~Variant()
  */
 Variant &Variant::operator=(Variant &&value) ZAPI_DECL_NOEXCEPT
 {
-   if (this == &value) {
-      return *this;
-   }
+   assert(this != &value);
    m_implPtr = std::move(value.m_implPtr);
    return *this;
 }
@@ -311,7 +301,7 @@ Variant &Variant::operator=(Variant &&value) ZAPI_DECL_NOEXCEPT
  */
 Variant &Variant::operator=(const Variant &value)
 {
-   return operator=(const_cast<zval *>(static_cast<const zval *>(*(value.m_implPtr))));
+   return operator=(const_cast<zval *>(value.getZvalPtr()));
 }
 
 /**
@@ -322,7 +312,9 @@ Variant &Variant::operator=(const Variant &value)
  */
 Variant &Variant::operator=(std::nullptr_t value)
 {
-   return *this;
+   zval temp;
+   ZVAL_NULL(&temp);
+   return operator=(&temp);
 }
 
 /**
@@ -333,7 +325,9 @@ Variant &Variant::operator=(std::nullptr_t value)
  */
 Variant &Variant::operator=(std::int16_t value)
 {
-   return *this;
+   zval temp;
+   ZVAL_LONG(&temp, value);
+   return operator=(&temp);
 }
 
 /**
@@ -344,7 +338,9 @@ Variant &Variant::operator=(std::int16_t value)
  */
 Variant &Variant::operator=(std::int32_t value)
 {
-   return *this;
+   zval temp;
+   ZVAL_LONG(&temp, value);
+   return operator=(&temp);
 }
 
 /**
@@ -355,7 +351,9 @@ Variant &Variant::operator=(std::int32_t value)
  */
 Variant &Variant::operator=(std::int64_t value)
 {
-   return *this;
+   zval temp;
+   ZVAL_LONG(&temp, value);
+   return operator=(&temp);
 }
 
 /**
@@ -399,7 +397,9 @@ Variant &Variant::operator=(std::uint64_t value)
  */
 Variant &Variant::operator=(bool value)
 {
-   return *this;
+   zval temp;
+   ZVAL_BOOL(&temp, value);
+   return operator=(&temp);
 }
 
 /**
@@ -410,6 +410,10 @@ Variant &Variant::operator=(bool value)
  */
 Variant &Variant::operator=(char value)
 {
+   zval temp;
+   ZVAL_STRINGL(&temp, &value, 1);
+   operator=(&temp);
+   zval_dtor(&temp); // standard free, no cycle check
    return *this;
 }
 
@@ -421,6 +425,14 @@ Variant &Variant::operator=(char value)
  */
 Variant &Variant::operator=(const std::string &value)
 {
+   zval temp;
+   if (value.size() > 0) {
+      ZVAL_STRINGL(&temp, value.c_str(), value.size());
+   } else {
+      ZVAL_EMPTY_STRING(&temp);
+   }
+   operator=(&temp);
+   zval_dtor(&temp); // standard free, no cycle check
    return *this;
 }
 
@@ -432,6 +444,14 @@ Variant &Variant::operator=(const std::string &value)
  */
 Variant &Variant::operator=(const char *value)
 {
+   zval temp;
+   if (value) {
+      ZVAL_STRINGL(&temp, value, std::strlen(value));
+   } else {
+      ZVAL_EMPTY_STRING(&temp);
+   }
+   operator=(&temp);
+   zval_dtor(&temp); // standard free, no cycle check
    return *this;
 }
 
@@ -443,50 +463,58 @@ Variant &Variant::operator=(const char *value)
  */
 Variant &Variant::operator=(double value)
 {
-   return *this;
+   zval temp;
+   ZVAL_DOUBLE(&temp, value);
+   return operator=(value);
 }
 
-Variant &Variant::operator=(struct _zval_struct *value)
+void Variant::stdCopyZval(zval *dest, zval *source)
 {
-   zval *to = static_cast<zval *>(*m_implPtr);
-   if (Z_ISREF_P(value)) {
-      value = Z_REFVAL_P(value);
+   // make sure what we are copied is not a reference
+   ZVAL_DEREF(source);
+   // copy the value
+   ZVAL_COPY(dest, source);
+}
+
+void Variant::stdAssignZval(zval *dest, zval *source)
+{
+   if (Z_ISREF_P(source)) {
+      source = Z_REFVAL_P(source);
    }
-   if (Z_ISREF_P(to)) {
-      to = Z_REFVAL_P(to);
+   if (Z_ISREF_P(dest)) {
+      dest = Z_REFVAL_P(dest);
    }
-   if (Z_IMMUTABLE_P(to)) {
+   if (Z_IMMUTABLE_P(dest)) {
       // throw exception here ?
-      return *this;
+      return;
    }
-   // setup about to zval *
-   if (Z_REFCOUNTED_P(to)) {
+   // setup about dest zval *
+   if (Z_REFCOUNTED_P(dest)) {
       // objects can have their own assignment handler
-      if (Z_TYPE_P(to) == IS_OBJECT && Z_OBJ_HANDLER_P(to, set)) {
-         Z_OBJ_HANDLER_P(to, set)(to, value);
-         return *this;
+      if (Z_TYPE_P(dest) == IS_OBJECT && Z_OBJ_HANDLER_P(dest, set)) {
+         Z_OBJ_HANDLER_P(dest, set)(dest, source);
+         return;
       }
-      // If to and from are the same, there is nothing left to do
-      if (to == value) {
-         return *this;
+      // If dest and from are the same, there is nothing left dest do
+      if (dest == source) {
+         return;
       }
-      // It is possible to make IS_REF point to another IS_REF, but that's a bug
-      ZAPI_ASSERT(Z_TYPE_P(to) != IS_REFERENCE);
-      if (Z_REFCOUNT_P(to) > 1) {
-         // If reference count is greater than 1, we need to separate zval
+      // It is possible dest make IS_REF point dest another IS_REF, but that's a bug
+      ZAPI_ASSERT(Z_TYPE_P(dest) != IS_REFERENCE);
+      if (Z_REFCOUNT_P(dest) > 1) {
+         // If reference count is greater than 1, we need dest separate zval
          // This is the optimized version of SEPARATE_ZVAL_NOREF()
-         if (Z_COPYABLE_P(to)) {
+         if (Z_COPYABLE_P(dest)) {
             // this will decrement the reference count and invoke GC_ZVAL_CHECK_FOR_POSSIBLE_ROOT()
-            zval_ptr_dtor(to);
-            zval_copy_ctor_func(to);
+            zval_ptr_dtor(dest);
+            zval_copy_ctor_func(dest);
          }
       } else {
-         zval_dtor(to);
+         zval_dtor(dest);
       }
    }
-   // Copy the value of b to a and increment the reference count if necessary
-   ZVAL_COPY(to, value);
-   return *this;
+   // Copy the source of b dest a and increment the reference count if necessary
+   ZVAL_COPY(dest, source);
 }
 
 zval &Variant::getZval()
@@ -494,17 +522,27 @@ zval &Variant::getZval()
    return *static_cast<zval *>(*m_implPtr);
 }
 
+zval *Variant::getZvalPtr()
+{
+   return static_cast<zval *>(*m_implPtr);
+}
+
+const zval *Variant::getZvalPtr() const
+{
+   return static_cast<zval *>(*m_implPtr);
+}
+
 Variant::operator zval * () const
 {
    return const_cast<zval *>(static_cast<const zval *>(*m_implPtr));
 }
 
-uint32_t Variant::refcount() const
+uint32_t Variant::getRefCount() const
 {
-   if (!Z_REFCOUNTED_P(const_cast<zval *>(static_cast<const zval *>(*m_implPtr)))) {
+   if (!Z_REFCOUNTED_P(const_cast<zval *>(getZvalPtr()))) {
       return 0;
    }
-   return Z_REFCOUNT_P(const_cast<zval *>(static_cast<const zval *>(*m_implPtr)));
+   return Z_REFCOUNT_P(const_cast<zval *>(getZvalPtr()));
 }
 
 zval Variant::detach(bool keeprefcount)
@@ -528,7 +566,7 @@ zval Variant::detach(bool keeprefcount)
  */
 Type Variant::getType() const
 {
-   zval *ptr = const_cast<zval *>(static_cast<const zval *>(*m_implPtr));
+   zval *ptr = const_cast<zval *>(getZvalPtr());
    if (Z_ISREF_P(ptr)) {
       ptr = Z_REFVAL_P(ptr);
    }

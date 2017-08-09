@@ -29,6 +29,7 @@ set(ZAPI_SRC
    ds/ObjectVariant.cpp
    ds/FunctionVariant.cpp
    ds/ArrayVariant.cpp
+   ds/ArrayItemProxy.cpp
    vm/AbstractClass.cpp
    vm/AbstractMember.cpp
    vm/StringMember.cpp

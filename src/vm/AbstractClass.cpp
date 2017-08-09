@@ -137,7 +137,7 @@ void AbstractClassPrivate::unsetDimension(zval *object, zval *offset)
 zval *AbstractClassPrivate::toZval(Variant &&value, int type, zval *rv)
 {
    zval result;
-   if (type == 0 || value.refcount() <= 1) {
+   if (type == 0 || value.getRefCount() <= 1) {
       result = value.detach(true);
    } else {
       // editable zval return a reference to it

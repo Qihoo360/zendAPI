@@ -27,14 +27,17 @@ class ZAPI_DECL_EXPORT BoolVariant : public Variant
 {
 public:
    BoolVariant();
-  // BoolVariant(const Variant &baseVariant);
+   BoolVariant(const BoolVariant &other);
    BoolVariant(bool value);
-   operator bool () const;
+   operator bool () const override;
+   BoolVariant &operator=(const BoolVariant &other);
+   BoolVariant &operator=(const Variant &other);
+   BoolVariant &operator=(bool value);
    virtual ~BoolVariant();
 };
 
-ZAPI_DECL_EXPORT std::ostream &operator<<(std::ostream &stream, const BoolVariant &value);
-
+ZAPI_DECL_EXPORT bool operator ==(const BoolVariant &lhs, const BoolVariant &rhs);
+ZAPI_DECL_EXPORT bool operator !=(const BoolVariant &lhs, const BoolVariant &rhs);
 } // ds
 } // zapi
 

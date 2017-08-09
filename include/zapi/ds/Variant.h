@@ -91,9 +91,9 @@ public:
    Variant(_zval_struct *zval, bool isRef = false);
    
    /**
-     * Copy constructor
-     * @param  value
-     */
+    * Copy constructor
+    * @param  value
+    */
    Variant(const Variant &other);
    
    /**
@@ -138,7 +138,7 @@ public:
     * Cast to a boolean
     * @return boolean
     */
-   operator bool () const
+   virtual operator bool () const
    {
       return toBool();
    }
@@ -147,7 +147,7 @@ public:
     * Cast to a string
     * @return string
     */
-   operator std::string () const
+   virtual operator std::string () const
    {
       return toString();
    }
@@ -189,18 +189,23 @@ public:
     * 
     * @return bool
     */
-   bool toBool() const;
+   virtual bool toBool() const;
    
    /**
     * Retrieve the value as a string
     * 
     * @return string
     */
-   std::string toString() const;
+   virtual std::string toString() const;
    
    zval &getZval();
-   uint32_t refcount() const;
+   zval *getZvalPtr();
+   const zval *getZvalPtr() const;
+   uint32_t getRefCount() const;
    zval detach(bool keeprefcount);
+protected:
+   static void stdCopyZval(zval *dest, zval *source);
+   static void stdAssignZval(zval *dest, zval *source);
 protected: 
    ZAPI_DECLARE_PRIVATE(Variant)
    std::unique_ptr<VariantPrivate> m_implPtr;
