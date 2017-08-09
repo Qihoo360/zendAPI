@@ -73,180 +73,60 @@ bool NumericVariant::toBool() const
    return zval_get_long(const_cast<zval *>(getZvalPtr()));
 }
 
-NumericVariant &NumericVariant::operator++()
+NumericVariant &NumericVariant::operator ++()
 {
    ZVAL_LONG(getZvalPtr(), toLong() + 1);
    return *this;
 }
 
-NumericVariant NumericVariant::operator++(int)
+NumericVariant NumericVariant::operator ++(int)
 {
    NumericVariant ret(toLong());
    ZVAL_LONG(getZvalPtr(), toLong() + 1);
    return ret;
 }
 
-NumericVariant &NumericVariant::operator--()
+NumericVariant &NumericVariant::operator --()
 {
    ZVAL_LONG(getZvalPtr(), toLong() - 1);
    return *this;
 }
 
-NumericVariant NumericVariant::operator--(int)
+NumericVariant NumericVariant::operator --(int)
 {
    NumericVariant ret(toLong());
    ZVAL_LONG(getZvalPtr(), toLong() - 1);
    return ret;
 }
 
-NumericVariant &NumericVariant::operator+=(std::int8_t value)
-{
-   ZVAL_LONG(getZvalPtr(), toLong() + value);
-   return *this;
-}
-
-NumericVariant &NumericVariant::operator+=(std::int16_t value)
-{
-   ZVAL_LONG(getZvalPtr(), toLong() + value);
-   return *this;
-}
-
-NumericVariant &NumericVariant::operator+=(std::int32_t value)
-{
-   ZVAL_LONG(getZvalPtr(), toLong() + value);
-   return *this;
-}
-
-NumericVariant &NumericVariant::operator+=(std::int64_t value)
-{
-   ZVAL_LONG(getZvalPtr(), toLong() + value);
-   return *this;
-}
-
-NumericVariant &NumericVariant::operator+=(double value)
+NumericVariant &NumericVariant::operator +=(double value)
 {
    ZVAL_LONG(getZvalPtr(), toLong() + std::lround(value));
    return *this;
 }
 
-NumericVariant &NumericVariant::operator-=(std::int8_t value)
-{
-   ZVAL_LONG(getZvalPtr(), toLong() - value);
-   return *this;
-}
-
-NumericVariant &NumericVariant::operator-=(std::int16_t value)
-{
-   ZVAL_LONG(getZvalPtr(), toLong() - value);
-   return *this;
-}
-
-NumericVariant &NumericVariant::operator-=(std::int32_t value)
-{
-   ZVAL_LONG(getZvalPtr(), toLong() - value);
-   return *this;
-}
-
-NumericVariant &NumericVariant::operator-=(std::int64_t value)
-{
-   ZVAL_LONG(getZvalPtr(), toLong() - value);
-   return *this;
-}
-
-NumericVariant &NumericVariant::operator-=(double value)
+NumericVariant &NumericVariant::operator -=(double value)
 {
    ZVAL_LONG(getZvalPtr(), toLong() - std::lround(value));
    return *this;
 }
 
-NumericVariant &NumericVariant::operator*=(std::int8_t value)
-{
-   ZVAL_LONG(getZvalPtr(), toLong() * value);
-   return *this;
-}
-
-NumericVariant &NumericVariant::operator*=(std::int16_t value)
-{
-   ZVAL_LONG(getZvalPtr(), toLong() * value);
-   return *this;
-}
-
-NumericVariant &NumericVariant::operator*=(std::int32_t value)
-{
-   ZVAL_LONG(getZvalPtr(), toLong() * value);
-   return *this;
-}
-
-NumericVariant &NumericVariant::operator*=(std::int64_t value)
-{
-   ZVAL_LONG(getZvalPtr(), toLong() * value);
-   return *this;
-}
-
-NumericVariant &NumericVariant::operator*=(double value)
+NumericVariant &NumericVariant::operator *=(double value)
 {
    ZVAL_LONG(getZvalPtr(), toLong() * std::lround(value));
    return *this;
 }
 
-NumericVariant &NumericVariant::operator/=(std::int8_t value)
-{
-   ZVAL_LONG(getZvalPtr(), toLong() / value);
-   return *this;
-}
-
-NumericVariant &NumericVariant::operator/=(std::int16_t value)
-{
-   ZVAL_LONG(getZvalPtr(), toLong() / value);
-   return *this;
-}
-
-NumericVariant &NumericVariant::operator/=(std::int32_t value)
-{
-   ZVAL_LONG(getZvalPtr(), toLong() / value);
-   return *this;
-}
-
-NumericVariant &NumericVariant::operator/=(std::int64_t value)
-{
-   ZVAL_LONG(getZvalPtr(), toLong() / value);
-   return *this;
-}
-
-NumericVariant &NumericVariant::operator/=(double value)
+NumericVariant &NumericVariant::operator /=(double value)
 {
    ZVAL_LONG(getZvalPtr(), toLong() / std::lround(value));
-   return *this;
-}
-
-NumericVariant &NumericVariant::operator%=(std::int8_t value)
-{
-   ZVAL_LONG(getZvalPtr(), toLong() % value);
-   return *this;
-}
-
-NumericVariant &NumericVariant::operator%=(std::int16_t value)
-{
-   ZVAL_LONG(getZvalPtr(), toLong() % value);
-   return *this;
-}
-
-NumericVariant &NumericVariant::operator%=(std::int32_t value)
-{
-   ZVAL_LONG(getZvalPtr(), toLong() % value);
-   return *this;
-}
-
-NumericVariant &NumericVariant::operator%=(std::int64_t value)
-{
-   ZVAL_LONG(getZvalPtr(), toLong() % value);
    return *this;
 }
 
 NumericVariant::~NumericVariant()
 {}
 
-bool operator==(const NumericVariant &lhs, const NumericVariant &rhs)
+bool operator ==(const NumericVariant &lhs, const NumericVariant &rhs)
 {
    return lhs.toLong() == rhs.toLong();
 }
@@ -336,267 +216,67 @@ bool operator >=(const NumericVariant &lhs, double rhs)
    return (static_cast<double>(lhs.toLong()) - rhs) >= 0;
 }
 
-
-zapi_long operator+(std::int8_t lhs, const NumericVariant &rhs)
+double operator +(double lhs, const NumericVariant &rhs)
 {
    return lhs + rhs.toLong();
 }
 
-zapi_long operator+(std::int16_t lhs, const NumericVariant &rhs)
-{
-   return lhs + rhs.toLong();
-}
-
-zapi_long operator+(std::int32_t lhs, const NumericVariant &rhs)
-{
-   return lhs + rhs.toLong();
-}
-
-zapi_long operator+(std::int64_t lhs, const NumericVariant &rhs)
-{
-   return lhs + rhs.toLong();
-}
-
-double operator+(double lhs, const NumericVariant &rhs)
-{
-   return lhs + rhs.toLong();
-}
-
-zapi_long operator-(std::int8_t lhs, const NumericVariant &rhs)
+double operator -(double lhs, const NumericVariant &rhs)
 {
    return lhs - rhs.toLong();
 }
 
-zapi_long operator-(std::int16_t lhs, const NumericVariant &rhs)
-{
-   return lhs - rhs.toLong();
-}
-
-zapi_long operator-(std::int32_t lhs, const NumericVariant &rhs)
-{
-   return lhs - rhs.toLong();
-}
-
-zapi_long operator-(std::int64_t lhs, const NumericVariant &rhs)
-{
-   return lhs - rhs.toLong();
-}
-
-double operator-(double lhs, const NumericVariant &rhs)
-{
-   return lhs - rhs.toLong();
-}
-
-zapi_long operator*(std::int8_t lhs, const NumericVariant &rhs)
+double operator *(double lhs, const NumericVariant &rhs)
 {
    return lhs * rhs.toLong();
 }
 
-zapi_long operator*(std::int16_t lhs, const NumericVariant &rhs)
-{
-   return lhs * rhs.toLong();
-}
-
-zapi_long operator*(std::int32_t lhs, const NumericVariant &rhs)
-{
-   return lhs * rhs.toLong();
-}
-
-zapi_long operator*(std::int64_t lhs, const NumericVariant &rhs)
-{
-   return lhs * rhs.toLong();
-}
-
-double operator*(double lhs, const NumericVariant &rhs)
-{
-   return lhs * rhs.toLong();
-}
-
-zapi_long operator/(std::int8_t lhs, const NumericVariant &rhs)
-{
-   return lhs / rhs.toLong();
-}
-zapi_long operator/(std::int16_t lhs, const NumericVariant &rhs)
+double operator /(double lhs, const NumericVariant &rhs)
 {
    return lhs / rhs.toLong();
 }
 
-zapi_long operator/(std::int32_t lhs, const NumericVariant &rhs)
-{
-   return lhs / rhs.toLong();
-}
-
-zapi_long operator/(std::int64_t lhs, const NumericVariant &rhs)
-{
-   return lhs / rhs.toLong();
-}
-
-double operator/(double lhs, const NumericVariant &rhs)
-{
-   return lhs / rhs.toLong();
-}
-
-zapi_long operator%(std::int8_t lhs, const NumericVariant &rhs)
-{
-   return lhs % rhs.toLong();
-}
-
-zapi_long operator%(std::int16_t lhs, const NumericVariant &rhs)
-{
-   return lhs % rhs.toLong();
-}
-
-zapi_long operator%(std::int32_t lhs, const NumericVariant &rhs)
-{
-   return lhs % rhs.toLong();
-}
-
-zapi_long operator%(std::int64_t lhs, const NumericVariant &rhs)
-{
-   return lhs % rhs.toLong();
-}
-
-zapi_long operator+(const NumericVariant &lhs, std::int8_t rhs)
+double operator +(const NumericVariant &lhs, double rhs)
 {
    return lhs.toLong() + rhs;
 }
 
-zapi_long operator+(const NumericVariant &lhs, std::int16_t rhs)
-{
-   return lhs.toLong() + rhs;
-}
-
-zapi_long operator+(const NumericVariant &lhs, std::int32_t rhs)
-{
-   return lhs.toLong() + rhs;
-}
-
-zapi_long operator+(const NumericVariant &lhs, std::int64_t rhs)
-{
-   return lhs.toLong() + rhs;
-}
-
-double operator+(const NumericVariant &lhs, double rhs)
-{
-   return lhs.toLong() + rhs;
-}
-
-zapi_long operator-(const NumericVariant &lhs, std::int8_t rhs)
+double operator -(const NumericVariant &lhs, double rhs)
 {
    return lhs.toLong() - rhs;
 }
 
-zapi_long operator-(const NumericVariant &lhs, std::int16_t rhs)
-{
-   return lhs.toLong() - rhs;
-}
-
-zapi_long operator-(const NumericVariant &lhs, std::int32_t rhs)
-{
-   return lhs.toLong() - rhs;
-}
-
-zapi_long operator-(const NumericVariant &lhs, std::int64_t rhs)
-{
-   return lhs.toLong() - rhs;
-}
-
-double operator-(const NumericVariant &lhs, double rhs)
-{
-   return lhs.toLong() - rhs;
-}
-
-zapi_long operator*(const NumericVariant &lhs, std::int8_t rhs)
+double operator *(const NumericVariant &lhs, double rhs)
 {
    return lhs.toLong() * rhs;
 }
 
-zapi_long operator*(const NumericVariant &lhs, std::int16_t rhs)
-{
-   return lhs.toLong() * rhs;
-}
-
-zapi_long operator*(const NumericVariant &lhs, std::int32_t rhs)
-{
-   return lhs.toLong() * rhs;
-}
-
-zapi_long operator*(const NumericVariant &lhs, std::int64_t rhs)
-{
-   return lhs.toLong() * rhs;
-}
-
-double operator*(const NumericVariant &lhs, double rhs)
-{
-   return lhs.toLong() * rhs;
-}
-
-zapi_long operator/(const NumericVariant &lhs, std::int8_t rhs)
+double operator /(const NumericVariant &lhs, double rhs)
 {
    return lhs.toLong() / rhs;
 }
 
-zapi_long operator/(const NumericVariant &lhs, std::int16_t rhs)
-{
-   return lhs.toLong() / rhs;
-}
-
-zapi_long operator/(const NumericVariant &lhs, std::int32_t rhs)
-{
-   return lhs.toLong() / rhs;
-}
-
-zapi_long operator/(const NumericVariant &lhs, std::int64_t rhs)
-{
-   return lhs.toLong() / rhs;
-}
-
-double operator/(const NumericVariant &lhs, double rhs)
-{
-   return lhs.toLong() / rhs;
-}
-
-zapi_long operator%(const NumericVariant &lhs, std::int8_t rhs)
-{
-   return lhs.toLong() % rhs;   
-}
-
-zapi_long operator%(const NumericVariant &lhs, std::int16_t rhs)
-{
-   return lhs.toLong() % rhs;   
-}
-
-zapi_long operator%(const NumericVariant &lhs, std::int32_t rhs)
-{
-   return lhs.toLong() % rhs;
-}
-
-zapi_long operator%(const NumericVariant &lhs, std::int64_t rhs)
-{
-   return lhs.toLong() % rhs;
-}
-
-zapi_long operator+(const NumericVariant &lhs, NumericVariant rhs)
+zapi_long operator +(const NumericVariant &lhs, NumericVariant rhs)
 {
    return lhs.toLong() + rhs.toLong();
 }
 
-zapi_long operator-(const NumericVariant &lhs, NumericVariant rhs)
+zapi_long operator -(const NumericVariant &lhs, NumericVariant rhs)
 {
    return lhs.toLong() + rhs.toLong();
 }
 
-zapi_long operator*(const NumericVariant &lhs, NumericVariant rhs)
+zapi_long operator *(const NumericVariant &lhs, NumericVariant rhs)
 {
    return lhs.toLong() + rhs.toLong();
 }
 
-zapi_long operator/(const NumericVariant &lhs, NumericVariant rhs)
+zapi_long operator /(const NumericVariant &lhs, NumericVariant rhs)
 {
    return lhs.toLong() + rhs.toLong();
 }
 
-zapi_long operator%(const NumericVariant &lhs, NumericVariant rhs)
+zapi_long operator %(const NumericVariant &lhs, NumericVariant rhs)
 {
    return lhs.toLong() + rhs.toLong();
 }

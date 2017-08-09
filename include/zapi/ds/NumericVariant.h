@@ -39,39 +39,69 @@ public:
    NumericVariant operator++(int);
    NumericVariant &operator--();
    NumericVariant operator--(int);
-   NumericVariant &operator+=(std::int8_t value);
-   NumericVariant &operator+=(std::int16_t value);
-   NumericVariant &operator+=(std::int32_t value);
-   NumericVariant &operator+=(std::int64_t value);
-   NumericVariant &operator+=(double value);
+   template <typename T, 
+             typename Selector = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
+   NumericVariant &operator +=(T value);
+   NumericVariant &operator +=(double value);
    
-   NumericVariant &operator-=(std::int8_t value);
-   NumericVariant &operator-=(std::int16_t value);
-   NumericVariant &operator-=(std::int32_t value);
-   NumericVariant &operator-=(std::int64_t value);
-   NumericVariant &operator-=(double value);
+   template <typename T, 
+             typename Selector = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
+   NumericVariant &operator -=(T value);
+   NumericVariant &operator -=(double value);
    
-   NumericVariant &operator*=(std::int8_t value);
-   NumericVariant &operator*=(std::int16_t value);
-   NumericVariant &operator*=(std::int32_t value);
-   NumericVariant &operator*=(std::int64_t value);
-   NumericVariant &operator*=(double value);
+   template <typename T, 
+             typename Selector = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
+   NumericVariant &operator *=(T value);
+   NumericVariant &operator *=(double value);
    
-   NumericVariant &operator/=(std::int8_t value);
-   NumericVariant &operator/=(std::int16_t value);
-   NumericVariant &operator/=(std::int32_t value);
-   NumericVariant &operator/=(std::int64_t value);
-   NumericVariant &operator/=(double value);
+   template <typename T, 
+             typename Selector = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
+   NumericVariant &operator /=(T value);
+   NumericVariant &operator /=(double value);
    
-   NumericVariant &operator%=(std::int8_t value);
-   NumericVariant &operator%=(std::int16_t value);
-   NumericVariant &operator%=(std::int32_t value);
-   NumericVariant &operator%=(std::int64_t value);
+   template <typename T, 
+             typename Selector = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
+   NumericVariant &operator %=(T value);
    
    virtual bool toBool() const override;
    zapi_long toLong() const;
    virtual ~NumericVariant();
 };
+
+template <typename T, typename Selector>
+NumericVariant &NumericVariant::operator +=(T value)
+{
+   ZVAL_LONG(getZvalPtr(), toLong() + static_cast<zapi_long>(value));
+   return *this;
+}
+
+template <typename T, typename Selector>
+NumericVariant &NumericVariant::operator -=(T value)
+{
+   ZVAL_LONG(getZvalPtr(), toLong() - static_cast<zapi_long>(value));
+   return *this;
+}
+
+template <typename T, typename Selector>
+NumericVariant &NumericVariant::operator *=(T value)
+{
+   ZVAL_LONG(getZvalPtr(), toLong() * static_cast<zapi_long>(value));
+   return *this;
+}
+
+template <typename T, typename Selector>
+NumericVariant &NumericVariant::operator /=(T value)
+{
+   ZVAL_LONG(getZvalPtr(), toLong() / static_cast<zapi_long>(value));
+   return *this;
+}
+
+template <typename T, typename Selector>
+NumericVariant &NumericVariant::operator %=(T value)
+{
+   ZVAL_LONG(getZvalPtr(), toLong() % static_cast<zapi_long>(value));
+   return *this;
+}
 
 ZAPI_DECL_EXPORT bool operator ==(const NumericVariant &lhs, const NumericVariant &rhs);
 ZAPI_DECL_EXPORT bool operator !=(const NumericVariant &lhs, const NumericVariant &rhs);
@@ -80,73 +110,85 @@ ZAPI_DECL_EXPORT bool operator <=(const NumericVariant &lhs, const NumericVarian
 ZAPI_DECL_EXPORT bool operator >(const NumericVariant &lhs, const NumericVariant &rhs);
 ZAPI_DECL_EXPORT bool operator >=(const NumericVariant &lhs, const NumericVariant &rhs);
 
-template <typename T, typename = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
 ZAPI_DECL_EXPORT bool operator ==(const NumericVariant &lhs, T rhs)
 {
    return lhs.toLong() == static_cast<zapi_long>(rhs);
 }
 
-template <typename T, typename = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
 ZAPI_DECL_EXPORT bool operator !=(const NumericVariant &lhs, T rhs)
 {
    return lhs.toLong() != static_cast<zapi_long>(rhs);
 }
 
-template <typename T, typename = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
 ZAPI_DECL_EXPORT bool operator <(const NumericVariant &lhs, T rhs)
 {
    return lhs.toLong() < static_cast<zapi_long>(rhs);
 }
 
-template <typename T, typename = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
 ZAPI_DECL_EXPORT bool operator <=(const NumericVariant &lhs, T rhs)
 {
    return lhs.toLong() <= static_cast<zapi_long>(rhs);
 }
 
-template <typename T, typename = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
 ZAPI_DECL_EXPORT bool operator >(const NumericVariant &lhs, T rhs)
 {
    return lhs.toLong() > static_cast<zapi_long>(rhs);
 }
 
-template <typename T, typename = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
 ZAPI_DECL_EXPORT bool operator >=(const NumericVariant &lhs, T rhs)
 {
    return lhs.toLong() >= static_cast<zapi_long>(rhs);
 }
 
-template <typename T, typename = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
 ZAPI_DECL_EXPORT bool operator ==(T lhs, const NumericVariant &rhs)
 {
    return static_cast<zapi_long>(lhs) == rhs.toLong();
 }
 
-template <typename T, typename = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
 ZAPI_DECL_EXPORT bool operator !=(T lhs, const NumericVariant &rhs)
 {
    return static_cast<zapi_long>(lhs) != rhs.toLong();
 }
 
-template <typename T, typename = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
 ZAPI_DECL_EXPORT bool operator <(T lhs, const NumericVariant &rhs)
 {
    return static_cast<zapi_long>(lhs) < rhs.toLong();
 }
 
-template <typename T, typename = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
 ZAPI_DECL_EXPORT bool operator <=(T lhs, const NumericVariant &rhs)
 {
    return static_cast<zapi_long>(lhs) <= rhs.toLong();
 }
 
-template <typename T, typename = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
 ZAPI_DECL_EXPORT bool operator >(T lhs, const NumericVariant &rhs)
 {
    return static_cast<zapi_long>(lhs) > rhs.toLong();
 }
 
-template <typename T, typename = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
 ZAPI_DECL_EXPORT bool operator >=(T lhs, const NumericVariant &rhs)
 {
    return static_cast<zapi_long>(lhs) >= rhs.toLong();
@@ -166,63 +208,91 @@ ZAPI_DECL_EXPORT bool operator <=(const NumericVariant &lhs, double rhs);
 ZAPI_DECL_EXPORT bool operator >(const NumericVariant &lhs, double rhs);
 ZAPI_DECL_EXPORT bool operator >=(const NumericVariant &lhs, double rhs);
 
-ZAPI_DECL_EXPORT zapi_long operator+(std::int8_t lhs, const NumericVariant &rhs);
-ZAPI_DECL_EXPORT zapi_long operator+(std::int16_t lhs, const NumericVariant &rhs);
-ZAPI_DECL_EXPORT zapi_long operator+(std::int32_t lhs, const NumericVariant &rhs);
-ZAPI_DECL_EXPORT zapi_long operator+(std::int64_t lhs, const NumericVariant &rhs);
-ZAPI_DECL_EXPORT double operator+(double lhs, const NumericVariant &rhs);
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
+ZAPI_DECL_EXPORT zapi_long operator +(T lhs, const NumericVariant &rhs)
+{
+   return static_cast<zapi_long>(lhs) + rhs.toLong();
+}
 
-ZAPI_DECL_EXPORT zapi_long operator-(std::int8_t lhs, const NumericVariant &rhs);
-ZAPI_DECL_EXPORT zapi_long operator-(std::int16_t lhs, const NumericVariant &rhs);
-ZAPI_DECL_EXPORT zapi_long operator-(std::int32_t lhs, const NumericVariant &rhs);
-ZAPI_DECL_EXPORT zapi_long operator-(std::int64_t lhs, const NumericVariant &rhs);
-ZAPI_DECL_EXPORT double operator-(double lhs, const NumericVariant &rhs);
+ZAPI_DECL_EXPORT double operator +(double lhs, const NumericVariant &rhs);
 
-ZAPI_DECL_EXPORT zapi_long operator*(std::int8_t lhs, const NumericVariant &rhs);
-ZAPI_DECL_EXPORT zapi_long operator*(std::int16_t lhs, const NumericVariant &rhs);
-ZAPI_DECL_EXPORT zapi_long operator*(std::int32_t lhs, const NumericVariant &rhs);
-ZAPI_DECL_EXPORT zapi_long operator*(std::int64_t lhs, const NumericVariant &rhs);
-ZAPI_DECL_EXPORT double operator*(double lhs, const NumericVariant &rhs);
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
+ZAPI_DECL_EXPORT zapi_long operator -(T lhs, const NumericVariant &rhs)
+{
+   return static_cast<zapi_long>(lhs) - rhs.toLong();
+}
 
-ZAPI_DECL_EXPORT zapi_long operator/(std::int8_t lhs, const NumericVariant &rhs);
-ZAPI_DECL_EXPORT zapi_long operator/(std::int16_t lhs, const NumericVariant &rhs);
-ZAPI_DECL_EXPORT zapi_long operator/(std::int32_t lhs, const NumericVariant &rhs);
-ZAPI_DECL_EXPORT zapi_long operator/(std::int64_t lhs, const NumericVariant &rhs);
+ZAPI_DECL_EXPORT double operator -(double lhs, const NumericVariant &rhs);
+
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
+ZAPI_DECL_EXPORT zapi_long operator *(T lhs, const NumericVariant &rhs)
+{
+   return static_cast<zapi_long>(lhs) * rhs.toLong();
+}
+
+ZAPI_DECL_EXPORT double operator *(double lhs, const NumericVariant &rhs);
+
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
+ZAPI_DECL_EXPORT zapi_long operator /(T lhs, const NumericVariant &rhs)
+{
+   return static_cast<zapi_long>(lhs) / rhs.toLong();
+}
+
 ZAPI_DECL_EXPORT double operator/(double lhs, const NumericVariant &rhs);
 
-ZAPI_DECL_EXPORT zapi_long operator%(std::int8_t lhs, const NumericVariant &rhs);
-ZAPI_DECL_EXPORT zapi_long operator%(std::int16_t lhs, const NumericVariant &rhs);
-ZAPI_DECL_EXPORT zapi_long operator%(std::int32_t lhs, const NumericVariant &rhs);
-ZAPI_DECL_EXPORT zapi_long operator%(std::int64_t lhs, const NumericVariant &rhs);
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
+ZAPI_DECL_EXPORT zapi_long operator %(T lhs, const NumericVariant &rhs)
+{
+   return static_cast<zapi_long>(lhs) % rhs.toLong();
+}
 
-ZAPI_DECL_EXPORT zapi_long operator+(const NumericVariant &lhs, std::int8_t rhs);
-ZAPI_DECL_EXPORT zapi_long operator+(const NumericVariant &lhs, std::int16_t rhs);
-ZAPI_DECL_EXPORT zapi_long operator+(const NumericVariant &lhs, std::int32_t rhs);
-ZAPI_DECL_EXPORT zapi_long operator+(const NumericVariant &lhs, std::int64_t rhs);
-ZAPI_DECL_EXPORT double operator+(const NumericVariant &lhs, double rhs);
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
+ZAPI_DECL_EXPORT zapi_long operator +(const NumericVariant &lhs, T rhs)
+{
+   return lhs.toLong() + static_cast<zapi_long>(rhs);
+}
 
-ZAPI_DECL_EXPORT zapi_long operator-(const NumericVariant &lhs, std::int8_t rhs);
-ZAPI_DECL_EXPORT zapi_long operator-(const NumericVariant &lhs, std::int16_t rhs);
-ZAPI_DECL_EXPORT zapi_long operator-(const NumericVariant &lhs, std::int32_t rhs);
-ZAPI_DECL_EXPORT zapi_long operator-(const NumericVariant &lhs, std::int64_t rhs);
-ZAPI_DECL_EXPORT double operator-(const NumericVariant &lhs, double rhs);
+ZAPI_DECL_EXPORT double operator +(const NumericVariant &lhs, double rhs);
 
-ZAPI_DECL_EXPORT zapi_long operator*(const NumericVariant &lhs, std::int8_t rhs);
-ZAPI_DECL_EXPORT zapi_long operator*(const NumericVariant &lhs, std::int16_t rhs);
-ZAPI_DECL_EXPORT zapi_long operator*(const NumericVariant &lhs, std::int32_t rhs);
-ZAPI_DECL_EXPORT zapi_long operator*(const NumericVariant &lhs, std::int64_t rhs);
-ZAPI_DECL_EXPORT double operator*(const NumericVariant &lhs, double rhs);
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
+ZAPI_DECL_EXPORT zapi_long operator -(const NumericVariant &lhs, T rhs)
+{
+   return lhs.toLong() - static_cast<zapi_long>(rhs);
+}
 
-ZAPI_DECL_EXPORT zapi_long operator/(const NumericVariant &lhs, std::int8_t rhs);
-ZAPI_DECL_EXPORT zapi_long operator/(const NumericVariant &lhs, std::int16_t rhs);
-ZAPI_DECL_EXPORT zapi_long operator/(const NumericVariant &lhs, std::int32_t rhs);
-ZAPI_DECL_EXPORT zapi_long operator/(const NumericVariant &lhs, std::int64_t rhs);
-ZAPI_DECL_EXPORT double operator/(const NumericVariant &lhs, double rhs);
+ZAPI_DECL_EXPORT double operator -(const NumericVariant &lhs, double rhs);
 
-ZAPI_DECL_EXPORT zapi_long operator%(const NumericVariant &lhs, std::int8_t rhs);
-ZAPI_DECL_EXPORT zapi_long operator%(const NumericVariant &lhs, std::int16_t rhs);
-ZAPI_DECL_EXPORT zapi_long operator%(const NumericVariant &lhs, std::int32_t rhs);
-ZAPI_DECL_EXPORT zapi_long operator%(const NumericVariant &lhs, std::int64_t rhs);
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
+ZAPI_DECL_EXPORT zapi_long operator *(const NumericVariant &lhs, T rhs)
+{
+   return lhs.toLong() * static_cast<zapi_long>(rhs);
+}
+
+ZAPI_DECL_EXPORT double operator *(const NumericVariant &lhs, double rhs);
+
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
+ZAPI_DECL_EXPORT zapi_long operator /(const NumericVariant &lhs, T rhs)
+{
+   return lhs.toLong() / static_cast<zapi_long>(rhs);
+}
+
+ZAPI_DECL_EXPORT double operator /(const NumericVariant &lhs, double rhs);
+
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
+ZAPI_DECL_EXPORT zapi_long operator %(const NumericVariant &lhs, T rhs)
+{
+   return lhs.toLong() % static_cast<zapi_long>(rhs);
+}
 
 ZAPI_DECL_EXPORT zapi_long operator+(const NumericVariant &lhs, NumericVariant rhs);
 ZAPI_DECL_EXPORT zapi_long operator-(const NumericVariant &lhs, NumericVariant rhs);
