@@ -15,36 +15,19 @@
 
 #include "php/sapi/embed/php_embed.h"
 #include "gtest/gtest.h"
-#include "zapi/ds/BoolVariant.h"
+#include "zapi/ds/NumericVariant.h"
+#include <iostream>
+using zapi::ds::NumericVariant;
 
-using zapi::ds::BoolVariant;
-using zapi::ds::Variant;
-
-TEST(BoolVariantTest, testBoolVaraint)
+TEST(NumericVarintTest, testBaseFuncs)
 {
-   BoolVariant defaultVar;
-   BoolVariant trueVar(true);
-   BoolVariant falseVar(false);
-   ASSERT_FALSE(defaultVar);
-   ASSERT_TRUE(trueVar);
-   ASSERT_FALSE(falseVar);
-   ASSERT_EQ(falseVar, defaultVar);
-   BoolVariant copyed(trueVar);
-   ASSERT_TRUE(copyed);
-   copyed = falseVar;
-   ASSERT_FALSE(copyed);
-   copyed = true;
-   ASSERT_TRUE(copyed);
-   copyed = false;
-   ASSERT_FALSE(copyed);
-   copyed = 1;
-   ASSERT_TRUE(copyed);
-   copyed = 0;
-   ASSERT_FALSE(copyed);
-   copyed = 0.0;
-   ASSERT_FALSE(copyed);
-   copyed = 1;
-   ASSERT_TRUE(copyed);
-   Variant baseVar(true);
-   BoolVariant copyFromBaseVar(baseVar);
+   const NumericVariant num1(12);
+   const NumericVariant num2(21);
+   ASSERT_FALSE(num1 == num2);
+   ASSERT_TRUE(num1 != num2);
+   ASSERT_TRUE(num1 < num2);
+   ASSERT_TRUE(num1 <= num2);
+   ASSERT_FALSE(num1 > num2);
+   ASSERT_FALSE(num1 >= num2);
+   
 }

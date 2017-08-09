@@ -251,17 +251,17 @@ public:
    
    Variant getKey(const Variant &value, uint16_t defaultKey) const
    {
-      return getKey(value, Variant(defaultKey));
+      return getKey(value, Variant(static_cast<zapi_long>(defaultKey)));
    }
    
    Variant getKey(const Variant &value, uint32_t defaultKey) const
    {
-      return getKey(value, Variant(defaultKey));
+      return getKey(value, Variant(static_cast<zapi_long>(defaultKey)));
    }
    
    Variant getKey(const Variant &value, zapi_ulong defaultKey) const
    {
-      return getKey(value, Variant(defaultKey));
+      return getKey(value, Variant(static_cast<zapi_long>(defaultKey)));
    }
    
    Variant getKey(const Variant &value, const std::string &defaultKey) const

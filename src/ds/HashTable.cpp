@@ -88,7 +88,7 @@ Variant HashTable::iterator::getKey() const
    if (keyType == HASH_KEY_IS_STRING) {
       return Variant(key->val, key->len);
    } else {
-      return Variant(index);
+      return Variant(static_cast<zapi_long>(index));
    }
 }
 
@@ -139,7 +139,7 @@ Variant HashTable::getKey() const
    zend_ulong index;
    int keyType = zend_hash_get_current_key(const_cast<::HashTable *>(&m_hashTable), &key, &index);
    ZAPI_ASSERT_X(keyType != HASH_KEY_NON_EXISTENT, "zapi::ds::HashTable::iterator", "Current key is not exist");
-   return keyType == HASH_KEY_IS_STRING ? Variant(key->val, key->len) : Variant(index);
+   return keyType == HASH_KEY_IS_STRING ? Variant(key->val, key->len) : Variant(static_cast<zapi_long>(index));
 }
 
 Variant HashTable::getKey(const Variant &value, const Variant &defaultKey) const
@@ -152,7 +152,8 @@ Variant HashTable::getKey(const Variant &value, const Variant &defaultKey) const
       if (key != nullptr) {
          return Variant(key->val, key->len);
       } else {
-         return Variant(index);
+         // maybe overflow
+         return Variant(static_cast<zapi_long>(index));
       }
    }
    ZEND_HASH_FOREACH_END();
@@ -169,7 +170,8 @@ Variant HashTable::getKey(const Variant &value) const
       if (key != nullptr) {
          return Variant(key->val, key->len);
       } else {
-         return Variant(index);
+         // maybe overflow
+         return Variant(static_cast<zapi_long>(index));
       }
    }
    ZEND_HASH_FOREACH_END();
@@ -234,7 +236,8 @@ void HashTable::each(DefaultForeachVisitor visitor) const
    if (key != nullptr) {
       visitor(Variant(key->val, key->len), Variant(value));
    } else {
-      visitor(Variant(index), Variant(value));
+      // maybe overflow
+      visitor(Variant(static_cast<zapi_long>(index)), Variant(value));
    }
    ZEND_HASH_FOREACH_END();
 }
@@ -248,7 +251,8 @@ void HashTable::reverseEach(DefaultForeachVisitor visitor) const
    if (key != nullptr) {
       visitor(Variant(key->val, key->len), Variant(value));
    } else {
-      visitor(Variant(index), Variant(value));
+      // maybe overflow
+      visitor(Variant(static_cast<zapi_long>(index)), Variant(value));
    }
    ZEND_HASH_FOREACH_END();
 }
@@ -262,7 +266,8 @@ std::vector<Variant> HashTable::getKeys() const
    if (key != nullptr) {
       keys.push_back(Variant(key->val, key->len));
    } else {
-      keys.push_back(Variant(index));
+      // maybe overflow
+      keys.push_back(Variant(static_cast<zapi_long>(index)));
    }
    ZEND_HASH_FOREACH_END();
    return keys;
@@ -279,7 +284,8 @@ std::vector<Variant> HashTable::getKeys(const Variant &value) const
       if (key != nullptr) {
          keys.push_back(Variant(key->val, key->len));
       } else {
-         keys.push_back(Variant(index));
+         // maybe overflow
+         keys.push_back(Variant(static_cast<zapi_long>(index)));
       }
    }
    ZEND_HASH_FOREACH_END();

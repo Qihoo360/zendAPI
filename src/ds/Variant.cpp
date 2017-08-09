@@ -105,10 +105,21 @@ Variant::Variant(std::nullptr_t value) : Variant()
  * 
  * @param  value
  */
+Variant::Variant(std::int8_t value)
+   : m_implPtr(new VariantPrivate)
+{
+   ZVAL_LONG(getZvalPtr(), value);
+}
+
+/**
+ * Constructor based on integer value
+ * 
+ * @param  value
+ */
 Variant::Variant(std::int16_t value)
    : m_implPtr(new VariantPrivate)
 {
-   ZVAL_LONG(*m_implPtr, value);
+   ZVAL_LONG(getZvalPtr(), value);
 }
 
 /**
@@ -119,9 +130,10 @@ Variant::Variant(std::int16_t value)
 Variant::Variant(std::int32_t value)
    : m_implPtr(new VariantPrivate)
 {
-   ZVAL_LONG(*m_implPtr, value);
+   ZVAL_LONG(getZvalPtr(), value);
 }
 
+#if SIZEOF_ZEND_LONG == 8
 /**
  * Constructor based on integer value
  * 
@@ -130,41 +142,10 @@ Variant::Variant(std::int32_t value)
 Variant::Variant(std::int64_t value)
    : m_implPtr(new VariantPrivate)
 {
-   ZVAL_LONG(*m_implPtr, value);
+   ZVAL_LONG(getZvalPtr(), value);
 }
+#endif
 
-/**
- * Constructor based on integer value
- * 
- * @param  value
- */
-Variant::Variant(std::uint16_t value)
-   : m_implPtr(new VariantPrivate)
-{
-   ZVAL_LONG(*m_implPtr, static_cast<std::int16_t>(value));
-}
-
-/**
- * Constructor based on integer value
- * 
- * @param  value
- */
-Variant::Variant(std::uint32_t value)
-   : m_implPtr(new VariantPrivate)
-{
-   ZVAL_LONG(*m_implPtr, static_cast<std::int32_t>(value));
-}
-
-/**
- * Constructor based on integer value
- * 
- * @param  value
- */
-Variant::Variant(std::uint64_t value)
-   : m_implPtr(new VariantPrivate)
-{
-   ZVAL_LONG(*m_implPtr, static_cast<std::int64_t>(value));
-}
 
 /**
  * Constructor based on boolean value
@@ -174,7 +155,7 @@ Variant::Variant(std::uint64_t value)
 Variant::Variant(bool value)
    : m_implPtr(new VariantPrivate)
 {
-   ZVAL_BOOL(*m_implPtr, value);
+   ZVAL_BOOL(getZvalPtr(), value);
 }
 
 /**
@@ -185,7 +166,7 @@ Variant::Variant(bool value)
 Variant::Variant(char value)
    : m_implPtr(new VariantPrivate)
 {
-   ZVAL_STRINGL(*m_implPtr, &value, 1);
+   ZVAL_STRINGL(getZvalPtr(), &value, 1);
 }
 
 /**
@@ -196,7 +177,7 @@ Variant::Variant(char value)
 Variant::Variant(const std::string &value)
    : m_implPtr(new VariantPrivate)
 {
-   ZVAL_STRINGL(*m_implPtr, value.c_str(), value.size());
+   ZVAL_STRINGL(getZvalPtr(), value.c_str(), value.size());
 }
 
 /**
@@ -209,9 +190,9 @@ Variant::Variant(const char *value, size_t size)
    : m_implPtr(new VariantPrivate)
 {
    if (value != nullptr) {
-      ZVAL_STRINGL(*m_implPtr, value, size);
+      ZVAL_STRINGL(getZvalPtr(), value, size);
    } else {
-      ZVAL_NULL(*m_implPtr);
+      ZVAL_NULL(getZvalPtr());
    }
 }
 
@@ -229,7 +210,7 @@ Variant::Variant(const char *value)
 Variant::Variant(double value)
    : m_implPtr(new VariantPrivate)
 {
-   ZVAL_DOUBLE(*m_implPtr, value);
+   ZVAL_DOUBLE(getZvalPtr(), value);
 }
 
 /**
@@ -242,12 +223,12 @@ Variant::Variant(zval *value, bool isRef)
    : m_implPtr(new VariantPrivate)
 {
    if (!isRef) {
-      ZVAL_DUP(*m_implPtr, value);
+      ZVAL_DUP(getZvalPtr(), value);
    } else {
       ZVAL_MAKE_REF(value);
       zend_reference *ref = Z_REF_P(value);
       ++GC_REFCOUNT(ref);
-      ZVAL_REF(*m_implPtr, ref);
+      ZVAL_REF(getZvalPtr(), ref);
    }
 }
 
@@ -323,6 +304,19 @@ Variant &Variant::operator=(std::nullptr_t value)
  * @param  value
  * @return Variant
  */
+Variant &Variant::operator=(std::int8_t value)
+{
+   zval temp;
+   ZVAL_LONG(&temp, value);
+   return operator=(&temp);
+}
+
+/**
+ * Assignment operator
+ * 
+ * @param  value
+ * @return Variant
+ */
 Variant &Variant::operator=(std::int16_t value)
 {
    zval temp;
@@ -343,6 +337,8 @@ Variant &Variant::operator=(std::int32_t value)
    return operator=(&temp);
 }
 
+#if SIZEOF_ZEND_LONG == 8
+
 /**
  * Assignment operator
  * 
@@ -355,39 +351,7 @@ Variant &Variant::operator=(std::int64_t value)
    ZVAL_LONG(&temp, value);
    return operator=(&temp);
 }
-
-/**
- * Assignment operator
- * 
- * @param  value
- * @return Variant
- */
-Variant &Variant::operator=(std::uint16_t value)
-{
-   return operator=(static_cast<std::int16_t>(value));
-}
-
-/**
- * Assignment operator
- * 
- * @param  value
- * @return Variant
- */
-Variant &Variant::operator=(std::uint32_t value)
-{
-   return operator=(static_cast<std::int32_t>(value));
-}
-
-/**
- * Assignment operator
- * 
- * @param  value
- * @return Variant
- */
-Variant &Variant::operator=(std::uint64_t value)
-{
-   return operator=(static_cast<std::int64_t>(value));
-}
+#endif
 
 /**
  * Assignment operator
@@ -691,13 +655,13 @@ bool Variant::toBool() const
    case Type::True:
       return true;
    case Type::Long:
-      return zval_get_long(*m_implPtr);
+      return zval_get_long(const_cast<zval *>(getZvalPtr()));
    case Type::Double:
-      return zval_get_double(*m_implPtr);
+      return zval_get_double(const_cast<zval *>(getZvalPtr()));
    case Type::String:
-      return Z_STRLEN_P(*m_implPtr);
+      return Z_STRLEN_P(getZvalPtr());
    case Type::Array:
-      return zend_hash_num_elements(Z_ARRVAL_P(*m_implPtr));
+      return zend_hash_num_elements(Z_ARRVAL_P(getZvalPtr()));
    default:
       return false;
    }
@@ -714,22 +678,6 @@ std::string Variant::toString() const
    zend_string_release(s);
    return ret;
 }
-
-//bool Variant::operator==(const Variant &value) const
-//{
-//   return operator==(const_cast<zval *>(static_cast<const zval *>(*m_implPtr)));
-//}
-
-//bool Variant::operator==(zval *value) const
-//{
-//   zval result;
-//   // run the comparison
-//   if (SUCCESS != compare_function(&result, const_cast<zval *>(static_cast<const zval *>(*m_implPtr)), value)) {
-//      return false;
-//   }
-//   // convert to boolean
-//   return result.value.lval == 0;
-//}
 
 /**
  * Custom output stream operator

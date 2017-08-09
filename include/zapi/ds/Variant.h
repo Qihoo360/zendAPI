@@ -71,12 +71,12 @@ public:
     * Constructor for various types
     */
    Variant(std::nullptr_t value);
+   Variant(std::int8_t value);
    Variant(std::int16_t value);
    Variant(std::int32_t value);
+#if SIZEOF_ZEND_LONG == 8
    Variant(std::int64_t value);
-   Variant(std::uint16_t value);
-   Variant(std::uint32_t value);
-   Variant(std::uint64_t value);
+#endif
    Variant(bool value);
    Variant(char value);
    Variant(const std::string &value);
@@ -121,12 +121,12 @@ public:
     */
    Variant &operator=(std::nullptr_t value);
    Variant &operator=(const Variant &value);
+   Variant &operator=(std::int8_t value);
    Variant &operator=(std::int16_t value);
    Variant &operator=(std::int32_t value);
+#if SIZEOF_ZEND_LONG == 8
    Variant &operator=(std::int64_t value);
-   Variant &operator=(std::uint16_t value);
-   Variant &operator=(std::uint32_t value);
-   Variant &operator=(std::uint64_t value);
+#endif
    Variant &operator=(bool value);
    Variant &operator=(char value);
    Variant &operator=(const std::string &value);
