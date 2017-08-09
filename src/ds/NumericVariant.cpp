@@ -14,12 +14,17 @@
 // Created by zzu_softboy on 2017/08/09.
 
 #include "zapi/ds/NumericVariant.h"
+#include "zapi/ds/DoubleVariant.h"
 #include <cmath>
 
 namespace zapi
 {
 namespace ds
 {
+
+NumericVariant::NumericVariant()
+   : Variant(0)
+{}
 
 NumericVariant::NumericVariant(std::int8_t value)
    : Variant(value)
@@ -44,6 +49,7 @@ NumericVariant::NumericVariant(const NumericVariant &other)
 {}
 
 NumericVariant::NumericVariant(const Variant &source)
+   : NumericVariant()
 {
    Type sourceType = source.getType();
    zval *sourceZvalPtr = const_cast<zval *>(source.getZvalPtr());
@@ -71,6 +77,48 @@ zapi_long NumericVariant::toLong() const
 bool NumericVariant::toBool() const
 {
    return zval_get_long(const_cast<zval *>(getZvalPtr()));
+}
+
+NumericVariant &NumericVariant::operator =(std::int8_t other)
+{
+   ZVAL_LONG(getZvalPtr(), static_cast<zapi_long>(other));
+   return *this;
+}
+
+NumericVariant &NumericVariant::operator =(std::int16_t other)
+{
+   ZVAL_LONG(getZvalPtr(), static_cast<zapi_long>(other));
+   return *this;
+}
+
+NumericVariant &NumericVariant::operator =(std::int32_t other)
+{
+   ZVAL_LONG(getZvalPtr(), static_cast<zapi_long>(other));
+   return *this;
+}
+
+NumericVariant &NumericVariant::operator =(std::int64_t other)
+{
+   ZVAL_LONG(getZvalPtr(), static_cast<zapi_long>(other));
+   return *this;
+}
+
+NumericVariant &NumericVariant::operator =(double other)
+{
+   ZVAL_LONG(getZvalPtr(), static_cast<zapi_long>(other));
+   return *this;
+}
+
+NumericVariant &NumericVariant::operator =(const NumericVariant &other)
+{
+   ZVAL_LONG(getZvalPtr(), other.toLong());
+   return *this;
+}
+
+NumericVariant &NumericVariant::operator =(const DoubleVariant &other)
+{
+   ZVAL_LONG(getZvalPtr(), static_cast<zapi_long>(other.toDouble()));
+   return *this;
 }
 
 NumericVariant &NumericVariant::operator ++()
@@ -105,9 +153,21 @@ NumericVariant &NumericVariant::operator +=(double value)
    return *this;
 }
 
+NumericVariant &NumericVariant::operator +=(const NumericVariant &value)
+{
+   ZVAL_LONG(getZvalPtr(), toLong() + value.toLong());
+   return *this;
+}
+
 NumericVariant &NumericVariant::operator -=(double value)
 {
    ZVAL_LONG(getZvalPtr(), toLong() - std::lround(value));
+   return *this;
+}
+
+NumericVariant &NumericVariant::operator -=(const NumericVariant &value)
+{
+   ZVAL_LONG(getZvalPtr(), toLong() - value.toLong());
    return *this;
 }
 
@@ -117,9 +177,21 @@ NumericVariant &NumericVariant::operator *=(double value)
    return *this;
 }
 
+NumericVariant &NumericVariant::operator *=(const NumericVariant &value)
+{
+   ZVAL_LONG(getZvalPtr(), toLong() * value.toLong());
+   return *this;
+}
+
 NumericVariant &NumericVariant::operator /=(double value)
 {
    ZVAL_LONG(getZvalPtr(), toLong() / std::lround(value));
+   return *this;
+}
+
+NumericVariant &NumericVariant::operator /=(const NumericVariant &value)
+{
+   ZVAL_LONG(getZvalPtr(), toLong() / value.toLong());
    return *this;
 }
 

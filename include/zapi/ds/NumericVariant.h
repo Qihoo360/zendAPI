@@ -23,9 +23,12 @@ namespace zapi
 namespace ds
 {
 
+class DoubleVariant;
+
 class ZAPI_DECL_EXPORT NumericVariant : public Variant
 {
 public:
+   NumericVariant();
    NumericVariant(std::int8_t value);
    NumericVariant(std::int16_t value);
    NumericVariant(std::int32_t value);
@@ -34,6 +37,13 @@ public:
 #endif
    NumericVariant(const NumericVariant &other);
    NumericVariant(const Variant &source);
+   NumericVariant &operator =(std::int8_t other);
+   NumericVariant &operator =(std::int16_t other);
+   NumericVariant &operator =(std::int32_t other);
+   NumericVariant &operator =(std::int64_t other);
+   NumericVariant &operator =(double other);
+   NumericVariant &operator =(const NumericVariant &other);
+   NumericVariant &operator =(const DoubleVariant &other);
    operator zapi_long () const;
    NumericVariant &operator++();
    NumericVariant operator++(int);
@@ -43,25 +53,30 @@ public:
              typename Selector = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
    NumericVariant &operator +=(T value);
    NumericVariant &operator +=(double value);
+   NumericVariant &operator +=(const NumericVariant &value);
    
    template <typename T, 
              typename Selector = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
    NumericVariant &operator -=(T value);
    NumericVariant &operator -=(double value);
+   NumericVariant &operator -=(const NumericVariant &value);
    
    template <typename T, 
              typename Selector = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
    NumericVariant &operator *=(T value);
    NumericVariant &operator *=(double value);
+   NumericVariant &operator *=(const NumericVariant &value);
    
    template <typename T, 
              typename Selector = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
    NumericVariant &operator /=(T value);
    NumericVariant &operator /=(double value);
+   NumericVariant &operator /=(const NumericVariant &value);
    
    template <typename T, 
              typename Selector = typename std::enable_if<std::is_integral<T>::value && std::is_signed<T>::value>::type>
    NumericVariant &operator %=(T value);
+   NumericVariant &operator %=(const NumericVariant &value);
    
    virtual bool toBool() const override;
    zapi_long toLong() const;
@@ -294,11 +309,11 @@ ZAPI_DECL_EXPORT zapi_long operator %(const NumericVariant &lhs, T rhs)
    return lhs.toLong() % static_cast<zapi_long>(rhs);
 }
 
-ZAPI_DECL_EXPORT zapi_long operator+(const NumericVariant &lhs, NumericVariant rhs);
-ZAPI_DECL_EXPORT zapi_long operator-(const NumericVariant &lhs, NumericVariant rhs);
-ZAPI_DECL_EXPORT zapi_long operator*(const NumericVariant &lhs, NumericVariant rhs);
-ZAPI_DECL_EXPORT zapi_long operator/(const NumericVariant &lhs, NumericVariant rhs);
-ZAPI_DECL_EXPORT zapi_long operator%(const NumericVariant &lhs, NumericVariant rhs);
+ZAPI_DECL_EXPORT zapi_long operator +(const NumericVariant &lhs, NumericVariant rhs);
+ZAPI_DECL_EXPORT zapi_long operator -(const NumericVariant &lhs, NumericVariant rhs);
+ZAPI_DECL_EXPORT zapi_long operator *(const NumericVariant &lhs, NumericVariant rhs);
+ZAPI_DECL_EXPORT zapi_long operator /(const NumericVariant &lhs, NumericVariant rhs);
+ZAPI_DECL_EXPORT zapi_long operator %(const NumericVariant &lhs, NumericVariant rhs);
 
 } // ds
 } // zapi

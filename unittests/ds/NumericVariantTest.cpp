@@ -16,8 +16,12 @@
 #include "php/sapi/embed/php_embed.h"
 #include "gtest/gtest.h"
 #include "zapi/ds/NumericVariant.h"
+#include "zapi/ds/DoubleVariant.h"
 #include <iostream>
+
 using zapi::ds::NumericVariant;
+using zapi::ds::DoubleVariant;
+using zapi::ds::Variant;
 
 TEST(NumericVarintTest, testBaseFuncs)
 {
@@ -40,7 +44,9 @@ TEST(NumericVarintTest, testBaseFuncs)
    ASSERT_TRUE(12 <= num2);
    ASSERT_FALSE(12 > num2);
    ASSERT_FALSE(12 >= num2);
-   
+   Variant gvar(666);
+   NumericVariant gcopy(gvar);
+   ASSERT_EQ(gcopy, 666);
 }
 
 TEST(NumericVariantTest, testAddOps)
@@ -60,4 +66,27 @@ TEST(NumericVariantTest, testAddOps)
    ASSERT_EQ(1 + num1, 11);
    ASSERT_EQ(1.0 + num1, 11.0);
    ASSERT_EQ(num1 + 1.0, 11.0);
+   DoubleVariant dnum1(1.0);
+   ASSERT_EQ(num1 + dnum1, 11.0);
+   dnum1 += 2.3;
+   dnum1 %= 2.1;
+   DoubleVariant dnum2(1.2);
+   EXPECT_DOUBLE_EQ(dnum1, 1.2);
+}
+
+TEST(NumericVariantTest, testAssignOperators)
+{
+   NumericVariant num1(1);
+   ASSERT_EQ(num1, 1);
+   num1 = 12;
+   ASSERT_EQ(num1, 12);
+   num1 = 222;
+   ASSERT_EQ(num1, 222);
+   NumericVariant num2 = num1;
+   ASSERT_EQ(num2, 222);
+   num1 = 666;
+   num2 = num1;
+   DoubleVariant dval(2.2);
+   num2 = dval;
+   ASSERT_EQ(num2, 2);
 }

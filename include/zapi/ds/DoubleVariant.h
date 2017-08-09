@@ -24,30 +24,50 @@ namespace zapi
 namespace ds
 {
 
+// forward declare
+class NumericVariant;
+
 class ZAPI_DECL_EXPORT DoubleVariant : public Variant
 {
 public:
+   DoubleVariant();
    DoubleVariant(std::int8_t value);
    DoubleVariant(std::int16_t value);
    DoubleVariant(std::int32_t value);
    DoubleVariant(std::int64_t value);
+   DoubleVariant(double value);
    DoubleVariant(const DoubleVariant &other);
    DoubleVariant(const Variant &source);
    virtual bool toBool() const override;
    double toDouble() const;
+   operator double() const;
+   DoubleVariant &operator =(std::int8_t other);
+   DoubleVariant &operator =(std::int16_t other);
+   DoubleVariant &operator =(std::int32_t other);
+   DoubleVariant &operator =(std::int64_t other);
+   DoubleVariant &operator =(double other);
+   DoubleVariant &operator =(const DoubleVariant &other);
+   DoubleVariant &operator =(const NumericVariant &other);
    template <typename T, typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
    DoubleVariant &operator +=(T value);
+   DoubleVariant &operator +=(const DoubleVariant &value);
    template <typename T, typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
    DoubleVariant &operator -=(T value);
+   DoubleVariant &operator -=(const DoubleVariant &value);
    template <typename T, typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
    DoubleVariant &operator *=(T value);
+   DoubleVariant &operator *=(const DoubleVariant &value);
    template <typename T, typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
    DoubleVariant &operator /=(T value);
+   DoubleVariant &operator /=(const DoubleVariant &value);
    template <typename T, typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
    DoubleVariant &operator %=(T value);
+   DoubleVariant &operator %=(const DoubleVariant &value);
    
    virtual ~DoubleVariant();
 };
+
+// member template operators
 
 template <typename T, typename Selector>
 DoubleVariant &DoubleVariant::operator +=(T value)
@@ -80,8 +100,188 @@ DoubleVariant &DoubleVariant::operator /=(T value)
 template <typename T, typename Selector>
 DoubleVariant &DoubleVariant::operator %=(T value)
 {
-   ZVAL_DOUBLE(getZvalPtr(), std::fmod(toDouble(), value));
+   ZVAL_DOUBLE(getZvalPtr(), std::fmod(toDouble(), static_cast<double>(value)));
    return *this;
+}
+
+// template compare operators
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+ZAPI_DECL_EXPORT bool operator ==(T lhs, const DoubleVariant &rhs)
+{
+   return (static_cast<T>(lhs) - rhs.toDouble()) == 0;
+}
+
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+ZAPI_DECL_EXPORT bool operator !=(T lhs, const DoubleVariant &rhs)
+{
+   return (static_cast<T>(lhs) - rhs.toDouble()) != 0;
+}
+
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+ZAPI_DECL_EXPORT bool operator <(T lhs, const DoubleVariant &rhs)
+{
+   return (static_cast<T>(lhs) - rhs.toDouble()) < 0;
+}
+
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+ZAPI_DECL_EXPORT bool operator <=(T lhs, const DoubleVariant &rhs)
+{
+   return (static_cast<T>(lhs) - rhs.toDouble()) <= 0;
+}
+
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+ZAPI_DECL_EXPORT bool operator >(T lhs, const DoubleVariant &rhs)
+{
+   return (static_cast<T>(lhs) - rhs.toDouble()) > 0;
+}
+
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+ZAPI_DECL_EXPORT bool operator >=(T lhs, const DoubleVariant &rhs)
+{
+   return (static_cast<T>(lhs) - rhs.toDouble()) >= 0;
+}
+
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+ZAPI_DECL_EXPORT bool operator ==(const DoubleVariant &lhs, T rhs)
+{
+   return (lhs.toDouble() - static_cast<T>(rhs)) == 0;
+}
+
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+ZAPI_DECL_EXPORT bool operator !=(const DoubleVariant &lhs, T rhs)
+{
+   return (lhs.toDouble() - static_cast<T>(rhs)) != 0;
+}
+
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+ZAPI_DECL_EXPORT bool operator <(const DoubleVariant &lhs, T rhs)
+{
+   return (lhs.toDouble() - static_cast<T>(rhs)) < 0;
+}
+
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+ZAPI_DECL_EXPORT bool operator <=(const DoubleVariant &lhs, T rhs)
+{
+   return (lhs.toDouble() - static_cast<T>(rhs)) <= 0;
+}
+
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+ZAPI_DECL_EXPORT bool operator >(const DoubleVariant &lhs, T rhs)
+{
+   return (lhs.toDouble() - static_cast<T>(rhs)) > 0;
+}
+
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+ZAPI_DECL_EXPORT bool operator >=(const DoubleVariant &lhs, T rhs)
+{
+   return (lhs.toDouble() - static_cast<T>(rhs)) >= 0;
+}
+
+ZAPI_DECL_EXPORT bool operator ==(const DoubleVariant &lhs, const DoubleVariant &rhs);
+ZAPI_DECL_EXPORT bool operator !=(const DoubleVariant &lhs, const DoubleVariant &rhs);
+ZAPI_DECL_EXPORT bool operator <(const DoubleVariant &lhs, const DoubleVariant &rhs);
+ZAPI_DECL_EXPORT bool operator <=(const DoubleVariant &lhs, const DoubleVariant &rhs);
+ZAPI_DECL_EXPORT bool operator >(const DoubleVariant &lhs, const DoubleVariant &rhs);
+ZAPI_DECL_EXPORT bool operator >=(const DoubleVariant &lhs, const DoubleVariant &rhs);
+
+ZAPI_DECL_EXPORT double operator +(const DoubleVariant &lhs, const DoubleVariant &rhs);
+ZAPI_DECL_EXPORT double operator -(const DoubleVariant &lhs, const DoubleVariant &rhs);
+ZAPI_DECL_EXPORT double operator *(const DoubleVariant &lhs, const DoubleVariant &rhs);
+ZAPI_DECL_EXPORT double operator /(const DoubleVariant &lhs, const DoubleVariant &rhs);
+ZAPI_DECL_EXPORT double operator %(const DoubleVariant &lhs, const DoubleVariant &rhs);
+
+ZAPI_DECL_EXPORT double operator +(const DoubleVariant &lhs, const NumericVariant &rhs);
+ZAPI_DECL_EXPORT double operator -(const DoubleVariant &lhs, const NumericVariant &rhs);
+ZAPI_DECL_EXPORT double operator *(const DoubleVariant &lhs, const NumericVariant &rhs);
+ZAPI_DECL_EXPORT double operator /(const DoubleVariant &lhs, const NumericVariant &rhs);
+ZAPI_DECL_EXPORT double operator %(const DoubleVariant &lhs, const NumericVariant &rhs);
+
+ZAPI_DECL_EXPORT double operator +(const NumericVariant &lhs, const DoubleVariant &rhs);
+ZAPI_DECL_EXPORT double operator -(const NumericVariant &lhs, const DoubleVariant &rhs);
+ZAPI_DECL_EXPORT double operator *(const NumericVariant &lhs, const DoubleVariant &rhs);
+ZAPI_DECL_EXPORT double operator /(const NumericVariant &lhs, const DoubleVariant &rhs);
+ZAPI_DECL_EXPORT double operator %(const NumericVariant &lhs, const DoubleVariant &rhs);
+
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+ZAPI_DECL_EXPORT double operator +(T lhs, const DoubleVariant &rhs)
+{
+   return static_cast<double>(lhs) + rhs.toDouble();
+}
+
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+ZAPI_DECL_EXPORT double operator -(T lhs, const DoubleVariant &rhs)
+{
+   return static_cast<double>(lhs) - rhs.toDouble();
+}
+
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+ZAPI_DECL_EXPORT double operator *(T lhs, const DoubleVariant &rhs)
+{
+   return static_cast<double>(lhs) * rhs.toDouble();
+}
+
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+ZAPI_DECL_EXPORT double operator /(T lhs, const DoubleVariant &rhs)
+{
+   return static_cast<double>(lhs) / rhs.toDouble();
+}
+
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+ZAPI_DECL_EXPORT double operator %(T lhs, const DoubleVariant &rhs)
+{
+   return std::fmod(static_cast<double>(lhs), rhs.toDouble());
+}
+
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+ZAPI_DECL_EXPORT double operator +(const DoubleVariant &lhs, T rhs)
+{
+   return lhs.toDouble() + static_cast<double>(rhs);
+}
+
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+ZAPI_DECL_EXPORT double operator -(const DoubleVariant &lhs, T rhs)
+{
+   return lhs.toDouble() - static_cast<double>(rhs);
+}
+
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+ZAPI_DECL_EXPORT double operator *(const DoubleVariant &lhs, T rhs)
+{
+   return lhs.toDouble() * static_cast<double>(rhs);
+}
+
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+ZAPI_DECL_EXPORT double operator /(const DoubleVariant &lhs, T rhs)
+{
+   return lhs.toDouble() / static_cast<double>(rhs);
+}
+
+template <typename T, 
+          typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+ZAPI_DECL_EXPORT double operator %(const DoubleVariant &lhs, T rhs)
+{
+   return std::fmod(lhs.toDouble(), static_cast<double>(rhs));
 }
 
 } // ds
