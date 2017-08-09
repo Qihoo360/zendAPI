@@ -73,97 +73,30 @@ bool NumericVariant::toBool() const
    return zval_get_long(const_cast<zval *>(getZvalPtr()));
 }
 
-NumericVariant::~NumericVariant()
-{}
-
-bool operator==(const NumericVariant &lhs, const NumericVariant &rhs)
+NumericVariant &NumericVariant::operator++()
 {
-   return lhs.toLong() == rhs.toLong();
+   ZVAL_LONG(getZvalPtr(), toLong() + 1);
+   return *this;
 }
 
-bool operator !=(const NumericVariant &lhs, const NumericVariant &rhs)
+NumericVariant NumericVariant::operator++(int)
 {
-   return lhs.toLong() != rhs.toLong();
+   NumericVariant ret(toLong());
+   ZVAL_LONG(getZvalPtr(), toLong() + 1);
+   return ret;
 }
 
-bool operator <(const NumericVariant &lhs, const NumericVariant &rhs)
+NumericVariant &NumericVariant::operator--()
 {
-   return lhs.toLong() < rhs.toLong();
+   ZVAL_LONG(getZvalPtr(), toLong() - 1);
+   return *this;
 }
 
-bool operator <=(const NumericVariant &lhs, const NumericVariant &rhs)
+NumericVariant NumericVariant::operator--(int)
 {
-   return lhs.toLong() <= rhs.toLong();
-}
-
-bool operator >(const NumericVariant &lhs, const NumericVariant &rhs)
-{
-   return lhs.toLong() > rhs.toLong();
-}
-
-bool operator >=(const NumericVariant &lhs, const NumericVariant &rhs)
-{
-   return lhs.toLong() >= rhs.toLong();
-}
-
-bool operator ==(double lhs, const NumericVariant &rhs)
-{
-   return (lhs - static_cast<double>(rhs.toLong())) == 0;
-}
-
-bool operator !=(double lhs, const NumericVariant &rhs)
-{
-   return (lhs - static_cast<double>(rhs.toLong())) != 0;
-}
-
-bool operator <(double lhs, const NumericVariant &rhs)
-{
-   return (lhs - static_cast<double>(rhs.toLong())) < 0;
-}
-
-bool operator <=(double lhs, const NumericVariant &rhs)
-{
-   return (lhs - static_cast<double>(rhs.toLong())) <= 0;
-}
-
-bool operator >(double lhs, const NumericVariant &rhs)
-{
-   return (lhs - static_cast<double>(rhs.toLong())) > 0;
-}
-
-bool operator >=(double lhs, const NumericVariant &rhs)
-{
-   return (lhs - static_cast<double>(rhs.toLong())) >= 0;
-}
-
-bool operator ==(const NumericVariant &lhs, double rhs)
-{
-   return (static_cast<double>(lhs.toLong()) - rhs) == 0;
-}
-
-bool operator !=(const NumericVariant &lhs, double rhs)
-{
-   return (static_cast<double>(lhs.toLong()) - rhs) != 0;
-}
-
-bool operator <(const NumericVariant &lhs, double rhs)
-{
-   return (static_cast<double>(lhs.toLong()) - rhs) < 0;
-}
-
-bool operator <=(const NumericVariant &lhs, double rhs)
-{
-   return (static_cast<double>(lhs.toLong()) - rhs) <= 0;
-}
-
-bool operator >(const NumericVariant &lhs, double rhs)
-{
-   return (static_cast<double>(lhs.toLong()) - rhs) > 0;
-}
-
-bool operator >=(const NumericVariant &lhs, double rhs)
-{
-   return (static_cast<double>(lhs.toLong()) - rhs) >= 0;
+   NumericVariant ret(toLong());
+   ZVAL_LONG(getZvalPtr(), toLong() - 1);
+   return ret;
 }
 
 NumericVariant &NumericVariant::operator+=(std::int8_t value)
@@ -309,6 +242,100 @@ NumericVariant &NumericVariant::operator%=(std::int64_t value)
    ZVAL_LONG(getZvalPtr(), toLong() % value);
    return *this;
 }
+
+NumericVariant::~NumericVariant()
+{}
+
+bool operator==(const NumericVariant &lhs, const NumericVariant &rhs)
+{
+   return lhs.toLong() == rhs.toLong();
+}
+
+bool operator !=(const NumericVariant &lhs, const NumericVariant &rhs)
+{
+   return lhs.toLong() != rhs.toLong();
+}
+
+bool operator <(const NumericVariant &lhs, const NumericVariant &rhs)
+{
+   return lhs.toLong() < rhs.toLong();
+}
+
+bool operator <=(const NumericVariant &lhs, const NumericVariant &rhs)
+{
+   return lhs.toLong() <= rhs.toLong();
+}
+
+bool operator >(const NumericVariant &lhs, const NumericVariant &rhs)
+{
+   return lhs.toLong() > rhs.toLong();
+}
+
+bool operator >=(const NumericVariant &lhs, const NumericVariant &rhs)
+{
+   return lhs.toLong() >= rhs.toLong();
+}
+
+bool operator ==(double lhs, const NumericVariant &rhs)
+{
+   return (lhs - static_cast<double>(rhs.toLong())) == 0;
+}
+
+bool operator !=(double lhs, const NumericVariant &rhs)
+{
+   return (lhs - static_cast<double>(rhs.toLong())) != 0;
+}
+
+bool operator <(double lhs, const NumericVariant &rhs)
+{
+   return (lhs - static_cast<double>(rhs.toLong())) < 0;
+}
+
+bool operator <=(double lhs, const NumericVariant &rhs)
+{
+   return (lhs - static_cast<double>(rhs.toLong())) <= 0;
+}
+
+bool operator >(double lhs, const NumericVariant &rhs)
+{
+   return (lhs - static_cast<double>(rhs.toLong())) > 0;
+}
+
+bool operator >=(double lhs, const NumericVariant &rhs)
+{
+   return (lhs - static_cast<double>(rhs.toLong())) >= 0;
+}
+
+bool operator ==(const NumericVariant &lhs, double rhs)
+{
+   return (static_cast<double>(lhs.toLong()) - rhs) == 0;
+}
+
+bool operator !=(const NumericVariant &lhs, double rhs)
+{
+   return (static_cast<double>(lhs.toLong()) - rhs) != 0;
+}
+
+bool operator <(const NumericVariant &lhs, double rhs)
+{
+   return (static_cast<double>(lhs.toLong()) - rhs) < 0;
+}
+
+bool operator <=(const NumericVariant &lhs, double rhs)
+{
+   return (static_cast<double>(lhs.toLong()) - rhs) <= 0;
+}
+
+bool operator >(const NumericVariant &lhs, double rhs)
+{
+   return (static_cast<double>(lhs.toLong()) - rhs) > 0;
+}
+
+bool operator >=(const NumericVariant &lhs, double rhs)
+{
+   return (static_cast<double>(lhs.toLong()) - rhs) >= 0;
+}
+
 
 zapi_long operator+(std::int8_t lhs, const NumericVariant &rhs)
 {

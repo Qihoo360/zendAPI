@@ -21,13 +21,43 @@ using zapi::ds::NumericVariant;
 
 TEST(NumericVarintTest, testBaseFuncs)
 {
-   const NumericVariant num1(12);
-   const NumericVariant num2(21);
+   NumericVariant num1(12);
+   NumericVariant num2(21);
    ASSERT_FALSE(num1 == num2);
    ASSERT_TRUE(num1 != num2);
    ASSERT_TRUE(num1 < num2);
    ASSERT_TRUE(num1 <= num2);
    ASSERT_FALSE(num1 > num2);
    ASSERT_FALSE(num1 >= num2);
+   ASSERT_FALSE(num1 == 13);
+   ASSERT_TRUE(num1 != 13);
+   ASSERT_TRUE(num1 < 13);
+   ASSERT_TRUE(num1 <= 13);
+   ASSERT_FALSE(num1 > 13);
+   ASSERT_FALSE(num1 >= 13);
+   ASSERT_TRUE(12 != num2);
+   ASSERT_TRUE(12 < num2);
+   ASSERT_TRUE(12 <= num2);
+   ASSERT_FALSE(12 > num2);
+   ASSERT_FALSE(12 >= num2);
    
+}
+
+TEST(NumericVariantTest, testAddOps)
+{
+   NumericVariant num1(1);
+   num1++;
+   ASSERT_EQ(num1, 2);
+   num1 += 3;
+   ASSERT_EQ(num1, 5);
+   NumericVariant num2(3);
+   ASSERT_EQ(num1 + num2, 8);
+   num1 += 2.2; // trucate
+   ASSERT_EQ(num1, 7);
+   num1 += 2.7;
+   ASSERT_EQ(num1, 10);
+   ASSERT_EQ(num1 + 1, 11);
+   ASSERT_EQ(1 + num1, 11);
+   ASSERT_EQ(1.0 + num1, 11.0);
+   ASSERT_EQ(num1 + 1.0, 11.0);
 }

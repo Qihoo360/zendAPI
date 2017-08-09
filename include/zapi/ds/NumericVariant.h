@@ -35,6 +35,10 @@ public:
    NumericVariant(const NumericVariant &other);
    NumericVariant(const Variant &source);
    operator zapi_long () const;
+   NumericVariant &operator++();
+   NumericVariant operator++(int);
+   NumericVariant &operator--();
+   NumericVariant operator--(int);
    NumericVariant &operator+=(std::int8_t value);
    NumericVariant &operator+=(std::int16_t value);
    NumericVariant &operator+=(std::int32_t value);
