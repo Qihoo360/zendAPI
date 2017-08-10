@@ -27,7 +27,7 @@ namespace ds
 // forward declare
 class NumericVariant;
 
-class ZAPI_DECL_EXPORT DoubleVariant : public Variant
+class ZAPI_DECL_EXPORT DoubleVariant final : public Variant
 {
 public:
    DoubleVariant();
@@ -38,8 +38,8 @@ public:
    DoubleVariant(double value);
    DoubleVariant(const DoubleVariant &other);
    DoubleVariant(const Variant &source);
-   virtual bool toBool() const override;
-   double toDouble() const;
+   virtual bool toBool() const ZAPI_DECL_NOEXCEPT override;
+   double toDouble() const ZAPI_DECL_NOEXCEPT;
    operator double() const;
    DoubleVariant &operator =(std::int8_t other);
    DoubleVariant &operator =(std::int16_t other);
@@ -64,7 +64,7 @@ public:
    DoubleVariant &operator %=(T value);
    DoubleVariant &operator %=(const DoubleVariant &value);
    
-   virtual ~DoubleVariant();
+   virtual ~DoubleVariant() ZAPI_DECL_NOEXCEPT;
 };
 
 // member template operators

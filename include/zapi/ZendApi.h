@@ -19,6 +19,7 @@
 #include "zapi/Global.h"
 #include "zapi/utils/PhpFuncs.h"
 #include "zapi/ds/Variant.h"
+#include "zapi/ds/StringVariant.h"
 #include "zapi/lang/Constant.h"
 #include "zapi/lang/Parameters.h"
 #include "zapi/lang/Class.h"

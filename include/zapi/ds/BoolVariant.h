@@ -23,7 +23,7 @@ namespace zapi
 namespace ds
 {
 
-class ZAPI_DECL_EXPORT BoolVariant : public Variant
+class ZAPI_DECL_EXPORT BoolVariant final : public Variant
 {
 public:
    BoolVariant();

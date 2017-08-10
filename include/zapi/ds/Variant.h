@@ -105,7 +105,7 @@ public:
    /**
     * Destructor
     */
-   virtual ~Variant();
+   virtual ~Variant() ZAPI_DECL_NOEXCEPT;
    
    /**
     * Move assignment
@@ -158,7 +158,7 @@ public:
     * The type of object
     * @return Type
     */
-   Type getType() const;
+   Type getType() const ZAPI_DECL_NOEXCEPT;
    
    /**
     * Make a clone of the value with the same type
@@ -172,14 +172,14 @@ public:
     * 
     * @return bool
     */
-   bool isNull() const;
-   bool isLong() const;
-   bool isBool() const;
-   bool isString() const;
-   bool isDouble() const;
-   bool isObject() const;
-   bool isArray() const;
-   bool isScalar() const
+   bool isNull() const ZAPI_DECL_NOEXCEPT;
+   bool isLong() const ZAPI_DECL_NOEXCEPT;
+   bool isBool() const ZAPI_DECL_NOEXCEPT;
+   bool isString() const ZAPI_DECL_NOEXCEPT;
+   bool isDouble() const ZAPI_DECL_NOEXCEPT;
+   bool isObject() const ZAPI_DECL_NOEXCEPT;
+   bool isArray() const ZAPI_DECL_NOEXCEPT;
+   bool isScalar() const ZAPI_DECL_NOEXCEPT
    {
       return isNull() || isLong() || isBool() || isString() || isDouble();
    }
@@ -189,19 +189,19 @@ public:
     * 
     * @return bool
     */
-   virtual bool toBool() const;
+   virtual bool toBool() const ZAPI_DECL_NOEXCEPT;
    
    /**
     * Retrieve the value as a string
     * 
     * @return string
     */
-   virtual std::string toString() const;
+   virtual std::string toString() const ZAPI_DECL_NOEXCEPT;
    
-   zval &getZval();
-   zval *getZvalPtr();
-   const zval *getZvalPtr() const;
-   uint32_t getRefCount() const;
+   zval &getZval() ZAPI_DECL_NOEXCEPT;
+   zval *getZvalPtr() ZAPI_DECL_NOEXCEPT;
+   const zval *getZvalPtr() const ZAPI_DECL_NOEXCEPT;
+   uint32_t getRefCount() const ZAPI_DECL_NOEXCEPT;
    zval detach(bool keeprefcount);
 protected:
    static void stdCopyZval(zval *dest, zval *source);

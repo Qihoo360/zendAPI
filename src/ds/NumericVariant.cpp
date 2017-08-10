@@ -69,12 +69,12 @@ NumericVariant::operator zapi_long () const
    return zval_get_long(const_cast<zval *>(getZvalPtr()));
 }
 
-zapi_long NumericVariant::toLong() const
+zapi_long NumericVariant::toLong() const ZAPI_DECL_NOEXCEPT
 {
    return zval_get_long(const_cast<zval *>(getZvalPtr()));
 }
 
-bool NumericVariant::toBool() const
+bool NumericVariant::toBool() const ZAPI_DECL_NOEXCEPT
 {
    return zval_get_long(const_cast<zval *>(getZvalPtr()));
 }
@@ -147,208 +147,208 @@ NumericVariant NumericVariant::operator --(int)
    return ret;
 }
 
-NumericVariant &NumericVariant::operator +=(double value)
+NumericVariant &NumericVariant::operator +=(double value) ZAPI_DECL_NOEXCEPT
 {
    ZVAL_LONG(getZvalPtr(), toLong() + std::lround(value));
    return *this;
 }
 
-NumericVariant &NumericVariant::operator +=(const NumericVariant &value)
+NumericVariant &NumericVariant::operator +=(const NumericVariant &value) ZAPI_DECL_NOEXCEPT
 {
    ZVAL_LONG(getZvalPtr(), toLong() + value.toLong());
    return *this;
 }
 
-NumericVariant &NumericVariant::operator -=(double value)
+NumericVariant &NumericVariant::operator -=(double value) ZAPI_DECL_NOEXCEPT
 {
    ZVAL_LONG(getZvalPtr(), toLong() - std::lround(value));
    return *this;
 }
 
-NumericVariant &NumericVariant::operator -=(const NumericVariant &value)
+NumericVariant &NumericVariant::operator -=(const NumericVariant &value) ZAPI_DECL_NOEXCEPT
 {
    ZVAL_LONG(getZvalPtr(), toLong() - value.toLong());
    return *this;
 }
 
-NumericVariant &NumericVariant::operator *=(double value)
+NumericVariant &NumericVariant::operator *=(double value) ZAPI_DECL_NOEXCEPT
 {
    ZVAL_LONG(getZvalPtr(), toLong() * std::lround(value));
    return *this;
 }
 
-NumericVariant &NumericVariant::operator *=(const NumericVariant &value)
+NumericVariant &NumericVariant::operator *=(const NumericVariant &value) ZAPI_DECL_NOEXCEPT
 {
    ZVAL_LONG(getZvalPtr(), toLong() * value.toLong());
    return *this;
 }
 
-NumericVariant &NumericVariant::operator /=(double value)
+NumericVariant &NumericVariant::operator /=(double value) ZAPI_DECL_NOEXCEPT
 {
    ZVAL_LONG(getZvalPtr(), toLong() / std::lround(value));
    return *this;
 }
 
-NumericVariant &NumericVariant::operator /=(const NumericVariant &value)
+NumericVariant &NumericVariant::operator /=(const NumericVariant &value) ZAPI_DECL_NOEXCEPT
 {
    ZVAL_LONG(getZvalPtr(), toLong() / value.toLong());
    return *this;
 }
 
-NumericVariant::~NumericVariant()
+NumericVariant::~NumericVariant() ZAPI_DECL_NOEXCEPT
 {}
 
-bool operator ==(const NumericVariant &lhs, const NumericVariant &rhs)
+bool operator ==(const NumericVariant &lhs, const NumericVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return lhs.toLong() == rhs.toLong();
 }
 
-bool operator !=(const NumericVariant &lhs, const NumericVariant &rhs)
+bool operator !=(const NumericVariant &lhs, const NumericVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return lhs.toLong() != rhs.toLong();
 }
 
-bool operator <(const NumericVariant &lhs, const NumericVariant &rhs)
+bool operator <(const NumericVariant &lhs, const NumericVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return lhs.toLong() < rhs.toLong();
 }
 
-bool operator <=(const NumericVariant &lhs, const NumericVariant &rhs)
+bool operator <=(const NumericVariant &lhs, const NumericVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return lhs.toLong() <= rhs.toLong();
 }
 
-bool operator >(const NumericVariant &lhs, const NumericVariant &rhs)
+bool operator >(const NumericVariant &lhs, const NumericVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return lhs.toLong() > rhs.toLong();
 }
 
-bool operator >=(const NumericVariant &lhs, const NumericVariant &rhs)
+bool operator >=(const NumericVariant &lhs, const NumericVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return lhs.toLong() >= rhs.toLong();
 }
 
-bool operator ==(double lhs, const NumericVariant &rhs)
+bool operator ==(double lhs, const NumericVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return (lhs - static_cast<double>(rhs.toLong())) == 0;
 }
 
-bool operator !=(double lhs, const NumericVariant &rhs)
+bool operator !=(double lhs, const NumericVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return (lhs - static_cast<double>(rhs.toLong())) != 0;
 }
 
-bool operator <(double lhs, const NumericVariant &rhs)
+bool operator <(double lhs, const NumericVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return (lhs - static_cast<double>(rhs.toLong())) < 0;
 }
 
-bool operator <=(double lhs, const NumericVariant &rhs)
+bool operator <=(double lhs, const NumericVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return (lhs - static_cast<double>(rhs.toLong())) <= 0;
 }
 
-bool operator >(double lhs, const NumericVariant &rhs)
+bool operator >(double lhs, const NumericVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return (lhs - static_cast<double>(rhs.toLong())) > 0;
 }
 
-bool operator >=(double lhs, const NumericVariant &rhs)
+bool operator >=(double lhs, const NumericVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return (lhs - static_cast<double>(rhs.toLong())) >= 0;
 }
 
-bool operator ==(const NumericVariant &lhs, double rhs)
+bool operator ==(const NumericVariant &lhs, double rhs) ZAPI_DECL_NOEXCEPT
 {
    return (static_cast<double>(lhs.toLong()) - rhs) == 0;
 }
 
-bool operator !=(const NumericVariant &lhs, double rhs)
+bool operator !=(const NumericVariant &lhs, double rhs) ZAPI_DECL_NOEXCEPT
 {
    return (static_cast<double>(lhs.toLong()) - rhs) != 0;
 }
 
-bool operator <(const NumericVariant &lhs, double rhs)
+bool operator <(const NumericVariant &lhs, double rhs) ZAPI_DECL_NOEXCEPT
 {
    return (static_cast<double>(lhs.toLong()) - rhs) < 0;
 }
 
-bool operator <=(const NumericVariant &lhs, double rhs)
+bool operator <=(const NumericVariant &lhs, double rhs) ZAPI_DECL_NOEXCEPT
 {
    return (static_cast<double>(lhs.toLong()) - rhs) <= 0;
 }
 
-bool operator >(const NumericVariant &lhs, double rhs)
+bool operator >(const NumericVariant &lhs, double rhs) ZAPI_DECL_NOEXCEPT
 {
    return (static_cast<double>(lhs.toLong()) - rhs) > 0;
 }
 
-bool operator >=(const NumericVariant &lhs, double rhs)
+bool operator >=(const NumericVariant &lhs, double rhs) ZAPI_DECL_NOEXCEPT
 {
    return (static_cast<double>(lhs.toLong()) - rhs) >= 0;
 }
 
-double operator +(double lhs, const NumericVariant &rhs)
+double operator +(double lhs, const NumericVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return lhs + rhs.toLong();
 }
 
-double operator -(double lhs, const NumericVariant &rhs)
+double operator -(double lhs, const NumericVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return lhs - rhs.toLong();
 }
 
-double operator *(double lhs, const NumericVariant &rhs)
+double operator *(double lhs, const NumericVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return lhs * rhs.toLong();
 }
 
-double operator /(double lhs, const NumericVariant &rhs)
+double operator /(double lhs, const NumericVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return lhs / rhs.toLong();
 }
 
-double operator +(const NumericVariant &lhs, double rhs)
+double operator +(const NumericVariant &lhs, double rhs) ZAPI_DECL_NOEXCEPT
 {
    return lhs.toLong() + rhs;
 }
 
-double operator -(const NumericVariant &lhs, double rhs)
+double operator -(const NumericVariant &lhs, double rhs) ZAPI_DECL_NOEXCEPT
 {
    return lhs.toLong() - rhs;
 }
 
-double operator *(const NumericVariant &lhs, double rhs)
+double operator *(const NumericVariant &lhs, double rhs) ZAPI_DECL_NOEXCEPT
 {
    return lhs.toLong() * rhs;
 }
 
-double operator /(const NumericVariant &lhs, double rhs)
+double operator /(const NumericVariant &lhs, double rhs) ZAPI_DECL_NOEXCEPT
 {
    return lhs.toLong() / rhs;
 }
 
-zapi_long operator +(const NumericVariant &lhs, NumericVariant rhs)
+zapi_long operator +(const NumericVariant &lhs, NumericVariant rhs) ZAPI_DECL_NOEXCEPT
 {
    return lhs.toLong() + rhs.toLong();
 }
 
-zapi_long operator -(const NumericVariant &lhs, NumericVariant rhs)
+zapi_long operator -(const NumericVariant &lhs, NumericVariant rhs) ZAPI_DECL_NOEXCEPT
 {
    return lhs.toLong() + rhs.toLong();
 }
 
-zapi_long operator *(const NumericVariant &lhs, NumericVariant rhs)
+zapi_long operator *(const NumericVariant &lhs, NumericVariant rhs) ZAPI_DECL_NOEXCEPT
 {
    return lhs.toLong() + rhs.toLong();
 }
 
-zapi_long operator /(const NumericVariant &lhs, NumericVariant rhs)
+zapi_long operator /(const NumericVariant &lhs, NumericVariant rhs) ZAPI_DECL_NOEXCEPT
 {
    return lhs.toLong() + rhs.toLong();
 }
 
-zapi_long operator %(const NumericVariant &lhs, NumericVariant rhs)
+zapi_long operator %(const NumericVariant &lhs, NumericVariant rhs) ZAPI_DECL_NOEXCEPT
 {
    return lhs.toLong() + rhs.toLong();
 }

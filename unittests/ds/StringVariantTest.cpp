@@ -1,6 +1,4 @@
 // Copyright 2017-2018 zzu_softboy <zzu_softboy@163.com>
-// Copyright 2013, 2014 Copernica BV
-// Emiel Bruijntjes <emiel.bruijntjes@copernica.com>
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -13,34 +11,19 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by softboy on 2017/08/06.
+// Created by softboy on 2017/08/08.
 
-#ifndef ZAPI_DS_INTERNAL_VARIANT_PRIVATE_H
-#define ZAPI_DS_INTERNAL_VARIANT_PRIVATE_H
+#include "php/sapi/embed/php_embed.h"
+#include "gtest/gtest.h"
+#include "zapi/ds/StringVariant.h"
+#include <iostream>
+#include <string>
 
-#include <type_traits>
-#include "php/Zend/zend_types.h"
+using zapi::ds::StringVariant;
 
-namespace zapi
+TEST(StringVariantTest, testConstructors)
 {
-namespace ds
-{
-namespace internal
-{
+   StringVariant str("xiuxiu");
+//   std::cout << name;
+}
 
-class VariantPrivate
-{
-public:
-   operator _zval_struct *() const &;
-   operator const _zval_struct *() const &;
-   _zval_struct &operator*() const &;
-   _zval_struct *dereference() const;
-   std::aligned_storage<16>::type m_buffer;
-   size_t m_strCapacity = 0;
-};
-
-} // internal
-} // ds
-} // zapi
-
-#endif // ZAPI_DS_INTERNAL_VARIANT_PRIVATE_H

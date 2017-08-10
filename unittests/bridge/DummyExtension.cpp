@@ -10,6 +10,7 @@ using zapi::lang::ValueArgument;
 using zapi::lang::Interface;
 using zapi::lang::Modifier;
 using zapi::lang::Namespace;
+using zapi::ds::StringVariant;
 
 extern "C" {
 

@@ -481,17 +481,17 @@ void Variant::stdAssignZval(zval *dest, zval *source)
    ZVAL_COPY(dest, source);
 }
 
-zval &Variant::getZval()
+zval &Variant::getZval() ZAPI_DECL_NOEXCEPT
 {
    return *static_cast<zval *>(*m_implPtr);
 }
 
-zval *Variant::getZvalPtr()
+zval *Variant::getZvalPtr() ZAPI_DECL_NOEXCEPT
 {
    return static_cast<zval *>(*m_implPtr);
 }
 
-const zval *Variant::getZvalPtr() const
+const zval *Variant::getZvalPtr() const ZAPI_DECL_NOEXCEPT
 {
    return static_cast<zval *>(*m_implPtr);
 }
@@ -501,7 +501,7 @@ Variant::operator zval * () const
    return const_cast<zval *>(static_cast<const zval *>(*m_implPtr));
 }
 
-uint32_t Variant::getRefCount() const
+uint32_t Variant::getRefCount() const ZAPI_DECL_NOEXCEPT
 {
    if (!Z_REFCOUNTED_P(const_cast<zval *>(getZvalPtr()))) {
       return 0;
@@ -528,7 +528,7 @@ zval Variant::detach(bool keeprefcount)
  * 
  * @return Type
  */
-Type Variant::getType() const
+Type Variant::getType() const ZAPI_DECL_NOEXCEPT
 {
    zval *ptr = const_cast<zval *>(getZvalPtr());
    if (Z_ISREF_P(ptr)) {
@@ -542,7 +542,7 @@ Type Variant::getType() const
  * 
  * @return bool
  */
-bool Variant::isNull() const
+bool Variant::isNull() const ZAPI_DECL_NOEXCEPT
 {
    if (getType() == Type::Null) {
       return true;
@@ -555,7 +555,7 @@ bool Variant::isNull() const
  * 
  * @return bool
  */
-bool Variant::isLong() const
+bool Variant::isLong() const ZAPI_DECL_NOEXCEPT
 {
    if (getType() == Type::Long) {
       return true;
@@ -568,7 +568,7 @@ bool Variant::isLong() const
  * 
  * @return bool
  */
-bool Variant::isBool() const
+bool Variant::isBool() const ZAPI_DECL_NOEXCEPT
 {
    if (getType() == Type::False || getType() == Type::True) {
       return true;
@@ -582,7 +582,7 @@ bool Variant::isBool() const
  * 
  * @return bool
  */
-bool Variant::isString() const
+bool Variant::isString() const ZAPI_DECL_NOEXCEPT
 {
    if (getType() == Type::String) {
       return true;
@@ -595,7 +595,7 @@ bool Variant::isString() const
  * 
  * @return bool
  */
-bool Variant::isDouble() const
+bool Variant::isDouble() const ZAPI_DECL_NOEXCEPT
 {
    if (getType() == Type::Double) {
       return true;
@@ -608,7 +608,7 @@ bool Variant::isDouble() const
  * 
  * @return bool
  */
-bool Variant::isObject() const
+bool Variant::isObject() const ZAPI_DECL_NOEXCEPT
 {
    if (getType() == Type::Object) {
       return true;
@@ -620,7 +620,7 @@ bool Variant::isObject() const
  * Are we an array? This will also check if we're a reference to an array
  * @return bool
  */
-bool Variant::isArray() const
+bool Variant::isArray() const ZAPI_DECL_NOEXCEPT
 {
    if (getType() == Type::Array) {
       return true;
@@ -643,7 +643,7 @@ Variant Variant::clone() const
  * Retrieve the value as boolean
  * @return bool
  */
-bool Variant::toBool() const
+bool Variant::toBool() const ZAPI_DECL_NOEXCEPT
 {
    switch (getType()) {
    case Type::Undefined:
@@ -671,9 +671,9 @@ bool Variant::toBool() const
  * Retrieve the value as string
  * @return string
  */
-std::string Variant::toString() const
+std::string Variant::toString() const ZAPI_DECL_NOEXCEPT
 {
-   zend_string *s  = zval_get_string(*m_implPtr);
+   zend_string *s  = zval_get_string(const_cast<zval *>(getZvalPtr()));
    std::string ret(ZSTR_VAL(s), ZSTR_LEN(s));
    zend_string_release(s);
    return ret;

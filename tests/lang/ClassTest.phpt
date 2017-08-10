@@ -33,8 +33,13 @@ $c = [123];
 $c += [1, 1212,22];
 var_dump($c);
 $arr = [];
-$xxx = $arr["xxx"]["xxxa"];
-
+$str = "abc";
+$str1 = $str;
+var_dump($str);
+var_dump($str1);
+$str = "xxxx";
+var_dump($str);
+var_dump($str1);
 ?>
 --EXPECT--
 zapi v0.0.1 hello world, zapi

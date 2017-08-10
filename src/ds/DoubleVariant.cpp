@@ -45,7 +45,6 @@ DoubleVariant::DoubleVariant(double value)
    : Variant(value)
 {}
 
-
 DoubleVariant::DoubleVariant(const DoubleVariant &other)
    : Variant(other)
 {}
@@ -65,7 +64,7 @@ DoubleVariant::DoubleVariant(const Variant &source)
    }
 }
 
-bool DoubleVariant::toBool() const
+bool DoubleVariant::toBool() const ZAPI_DECL_NOEXCEPT
 {
    return toDouble();
 }
@@ -75,7 +74,7 @@ DoubleVariant::operator double() const
    return toDouble();
 }
 
-double DoubleVariant::toDouble() const
+double DoubleVariant::toDouble() const ZAPI_DECL_NOEXCEPT
 {
    return zval_get_double(const_cast<zval *>(getZvalPtr()));
 }
@@ -122,7 +121,7 @@ DoubleVariant &DoubleVariant::operator =(const NumericVariant &other)
    return *this;
 }
 
-DoubleVariant::~DoubleVariant()
+DoubleVariant::~DoubleVariant() ZAPI_DECL_NOEXCEPT
 {}
 
 DoubleVariant &DoubleVariant::operator +=(const DoubleVariant &value)
