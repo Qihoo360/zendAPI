@@ -124,137 +124,137 @@ DoubleVariant &DoubleVariant::operator =(const NumericVariant &other)
 DoubleVariant::~DoubleVariant() ZAPI_DECL_NOEXCEPT
 {}
 
-DoubleVariant &DoubleVariant::operator +=(const DoubleVariant &value)
+DoubleVariant &DoubleVariant::operator +=(const DoubleVariant &value) ZAPI_DECL_NOEXCEPT
 {
    ZVAL_DOUBLE(getZvalPtr(), toDouble() + value.toDouble());
    return *this;
 }
 
-DoubleVariant &DoubleVariant::operator -=(const DoubleVariant &value)
+DoubleVariant &DoubleVariant::operator -=(const DoubleVariant &value) ZAPI_DECL_NOEXCEPT
 {
    ZVAL_DOUBLE(getZvalPtr(), toDouble() + value.toDouble());
    return *this;
 }
 
-DoubleVariant &DoubleVariant::operator *=(const DoubleVariant &value)
+DoubleVariant &DoubleVariant::operator *=(const DoubleVariant &value) ZAPI_DECL_NOEXCEPT
 {
    ZVAL_DOUBLE(getZvalPtr(), toDouble() + value.toDouble());
    return *this;
 }
 
-DoubleVariant &DoubleVariant::operator /=(const DoubleVariant &value)
+DoubleVariant &DoubleVariant::operator /=(const DoubleVariant &value) ZAPI_DECL_NOEXCEPT
 {
    ZVAL_DOUBLE(getZvalPtr(), toDouble() + value.toDouble());
    return *this;
 }
 
-DoubleVariant &DoubleVariant::operator %=(const DoubleVariant &value)
+DoubleVariant &DoubleVariant::operator %=(const DoubleVariant &value) ZAPI_DECL_NOEXCEPT
 {
    ZVAL_DOUBLE(getZvalPtr(), std::fmod(toDouble(), value.toDouble()));
    return *this;
 }
 
-bool operator ==(const DoubleVariant &lhs, const DoubleVariant &rhs)
+bool operator ==(const DoubleVariant &lhs, const DoubleVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return (lhs.toDouble() - rhs.toDouble()) == 0;
 }
 
-bool operator !=(const DoubleVariant &lhs, const DoubleVariant &rhs)
+bool operator !=(const DoubleVariant &lhs, const DoubleVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return (lhs.toDouble() - rhs.toDouble()) != 0;
 }
 
-bool operator <(const DoubleVariant &lhs, const DoubleVariant &rhs)
+bool operator <(const DoubleVariant &lhs, const DoubleVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return (lhs.toDouble() - rhs.toDouble()) < 0;
 }
 
-bool operator <=(const DoubleVariant &lhs, const DoubleVariant &rhs)
+bool operator <=(const DoubleVariant &lhs, const DoubleVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return (lhs.toDouble() - rhs.toDouble()) <= 0;
 }
 
-bool operator >(const DoubleVariant &lhs, const DoubleVariant &rhs)
+bool operator >(const DoubleVariant &lhs, const DoubleVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return (lhs.toDouble() - rhs.toDouble()) > 0;
 }
 
-bool operator >=(const DoubleVariant &lhs, const DoubleVariant &rhs)
+bool operator >=(const DoubleVariant &lhs, const DoubleVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return (lhs.toDouble() - rhs.toDouble()) >= 0;
 }
 
-double operator +(const DoubleVariant &lhs, const DoubleVariant &rhs)
+double operator +(const DoubleVariant &lhs, const DoubleVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return lhs.toDouble() + rhs.toDouble();
 }
 
-double operator -(const DoubleVariant &lhs, const DoubleVariant &rhs)
+double operator -(const DoubleVariant &lhs, const DoubleVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return lhs.toDouble() - rhs.toDouble();
 }
 
-double operator *(const DoubleVariant &lhs, const DoubleVariant &rhs)
+double operator *(const DoubleVariant &lhs, const DoubleVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return lhs.toDouble() * rhs.toDouble();
 }
 
-double operator /(const DoubleVariant &lhs, const DoubleVariant &rhs)
+double operator /(const DoubleVariant &lhs, const DoubleVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return lhs.toDouble() / rhs.toDouble();
 }
 
-double operator %(const DoubleVariant &lhs, const DoubleVariant &rhs)
+double operator %(const DoubleVariant &lhs, const DoubleVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return std::fmod(lhs.toDouble(), rhs.toDouble());
 }
 
-double operator +(const DoubleVariant &lhs, const NumericVariant &rhs)
+double operator +(const DoubleVariant &lhs, const NumericVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return lhs.toDouble() + rhs.toLong();
 }
 
-double operator -(const DoubleVariant &lhs, const NumericVariant &rhs)
+double operator -(const DoubleVariant &lhs, const NumericVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return lhs.toDouble() - rhs.toLong();
 }
 
-double operator *(const DoubleVariant &lhs, const NumericVariant &rhs)
+double operator *(const DoubleVariant &lhs, const NumericVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return lhs.toDouble() * rhs.toLong();
 }
 
-double operator /(const DoubleVariant &lhs, const NumericVariant &rhs)
+double operator /(const DoubleVariant &lhs, const NumericVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return lhs.toDouble() / rhs.toLong();
 }
 
-double operator %(const DoubleVariant &lhs, const NumericVariant &rhs)
+double operator %(const DoubleVariant &lhs, const NumericVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return std::fmod(lhs.toDouble(), static_cast<double>(rhs.toLong()));
 }
 
-double operator +(const NumericVariant &lhs, const DoubleVariant &rhs)
+double operator +(const NumericVariant &lhs, const DoubleVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return lhs.toLong() + rhs.toDouble();
 }
 
-double operator -(const NumericVariant &lhs, const DoubleVariant &rhs)
+double operator -(const NumericVariant &lhs, const DoubleVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return lhs.toLong() - rhs.toDouble();
 }
 
-double operator *(const NumericVariant &lhs, const DoubleVariant &rhs)
+double operator *(const NumericVariant &lhs, const DoubleVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return lhs.toLong() * rhs.toDouble();
 }
 
-double operator /(const NumericVariant &lhs, const DoubleVariant &rhs)
+double operator /(const NumericVariant &lhs, const DoubleVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return lhs.toLong() / rhs.toDouble();
 }
 
-double operator %(const NumericVariant &lhs, const DoubleVariant &rhs)
+double operator %(const NumericVariant &lhs, const DoubleVariant &rhs) ZAPI_DECL_NOEXCEPT
 {
    return std::fmod(static_cast<double>(lhs.toLong()), rhs.toDouble());
 }
