@@ -20,6 +20,7 @@
 #include <cstring>
 #include <stdexcept>
 #include <cctype>
+#include <locale>
 
 namespace zapi
 {
@@ -145,8 +146,32 @@ std::string StringVariant::simplified() const
 {
    ConstPointer start = getRawStrPtr();
    ConstPointer end = start + getLength();
-//   std::unique_ptr<ValueType, std::function<void(Pointer ptr)>> temp(static_cast<Pointer>(emalloc(getSize())), []());
-   return std::string("");
+   GuardValuePtrType tempStr(static_cast<Pointer>(emalloc(getSize())), zapi::utils::std_php_memory_deleter);
+   // trim two side space chars
+   while (start < end && std::isspace(*start)) {
+      ++start;
+   }
+   if (start < end) {
+      while (start < end && std::isspace(*(end - 1))) {
+         end--;
+      }
+   }
+   // trim mid space chars
+   Pointer dest = tempStr.get();
+   bool seeSpace = false;
+   while (start < end) {
+      if (std::isspace(*start)) {
+         ++start;
+         if (!seeSpace) {
+            *dest++ = ' ';
+            seeSpace = true;
+         }
+      } else {
+         *dest++ = *start++;
+         seeSpace = false;
+      }
+   }
+   return std::string(tempStr.get(), dest);
 }
 
 const char *StringVariant::getCStr() const ZAPI_DECL_NOEXCEPT
