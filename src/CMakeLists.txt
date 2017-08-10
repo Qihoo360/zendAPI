@@ -42,7 +42,8 @@ set(ZAPI_SRC
    vm/Engine.cpp
    vm/IterateBridge.cpp
    vm/ObjectBinder.cpp
-   utils/PhpFuncs.cpp)
+   utils/PhpFuncs.cpp
+   utils/CommonFuncs.cpp)
 
 zapi_add_library(${ZAPI_PROJECT_NAME} SHARED ${ZAPI_SRC} ${ZAPI_PUBLIC_HEADERS})
 

@@ -30,17 +30,34 @@ public:
    using SizeType = size_t;
    using Reference = char &;
    using ConstReference = const char &;
+   using Pointer = char *;
+   using ConstPointer = const char *;
+   using ValueType = char;
 public:
    StringVariant();
    StringVariant(const std::string &value);
    StringVariant(const char *value, size_t length);
    StringVariant(const char *value);
-   StringVariant &operator=(char value);
-   StringVariant &operator=(const std::string &value);
-   StringVariant &operator=(const char *value);
+   StringVariant &operator =(char value);
+   StringVariant &operator =(const std::string &value);
+   StringVariant &operator =(const char *value);
+   StringVariant &operator +=(const char *str);
+   StringVariant &operator +=(const char c);
+   StringVariant &operator +=(const std::string &str);
+   StringVariant &operator +=(const StringVariant &str);
    virtual bool toBool() const ZAPI_DECL_NOEXCEPT override;
    virtual std::string toString() const ZAPI_DECL_NOEXCEPT override;
-   // access method
+   // modify methods
+   StringVariant &append(const char *str);
+   StringVariant &append(const char *str, size_t length);
+   StringVariant &append(const char c);
+   StringVariant &append(const std::string &str);
+   StringVariant &append(const StringVariant &str);
+   template <typename T, typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+   StringVariant &append(T value);
+   std::string trimmed() const;
+   std::string simplified() const;
+   // access methods
    Reference at(SizeType pos);
    ConstReference at(SizeType pos) const;
    const char *getCStr() const ZAPI_DECL_NOEXCEPT;
@@ -50,11 +67,19 @@ public:
    virtual ~StringVariant() ZAPI_DECL_NOEXCEPT;
 protected:
    zend_string *getZendStringPtr();
-   constexpr size_t calculateNewStrSize(size_t length);
+   char *getRawStrPtr() const ZAPI_DECL_NOEXCEPT;
+   constexpr size_t calculateNewStrSize(size_t length) ZAPI_DECL_NOEXCEPT;
    void strStdRealloc(zend_string *&str, size_t length);
    void strPersistentRealloc(zend_string *&str, size_t length);
    size_t strAlloc(zend_string *&str, size_t length, bool persistent);
 };
+
+template <typename T, typename Selector>
+StringVariant &StringVariant::append(T value)
+{
+   std::string temp = std::to_string(value);
+   return append(temp.c_str(), temp.length());
+}
 
 } // ds
 } // zapi

@@ -11,28 +11,23 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by softboy on 2017/08/08.
+// Created by zzu_softboy on 2017/08/10.
 
-#include "php/sapi/embed/php_embed.h"
-#include "gtest/gtest.h"
-#include "zapi/ds/StringVariant.h"
-#include <iostream>
-#include <string>
+#ifndef ZAPI_UTILS_COMMON_FUNCS_H
+#define ZAPI_UTILS_COMMON_FUNCS_H
 
-using zapi::ds::StringVariant;
+#include "zapi/Global.h"
 
-TEST(StringVariantTest, testConstructors)
+namespace zapi
 {
-   StringVariant str("xiuxiu");
-   const StringVariant cstr("xiuxiu");
-   str.append("-zapi");
-   str.append(123);
-   str.append(3.14);
-   str.append('-');
-   uint8_t unum = 122;
-   str.append(unum);
-   StringVariant str1("  lots\t of\nwhitespace\r\n ");
-   std::cout << str1.trimmed() << std::endl;
-   std::cout << str1.simplified() << std::endl;
-}
+namespace utils
+{
 
+ZAPI_DECL_EXPORT void std_php_memory_deleter(void *ptr);
+ZAPI_DECL_EXPORT void std_zend_string_deleter(zend_string *str);
+ZAPI_DECL_EXPORT void std_zend_string_force_deleter(zend_string *str);
+
+} // utils
+} // zapi
+
+#endif // ZAPI_UTILS_COMMON_FUNCS_H
