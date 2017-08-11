@@ -68,6 +68,23 @@ TEST(StringVariantTest, testConstructFromStringVariant)
    ASSERT_STREQ(strRef.getCStr(), "hello zapi, beijingBB");
 }
 
+TEST(StringVariantTest, testMoveConstruct)
+{
+   StringVariant strVariant(Variant("zapi"));
+   ASSERT_STREQ(strVariant.getCStr(), "zapi");
+   Variant gvar("hello zzu_softboy");
+   StringVariant str1(std::move(gvar));
+   ASSERT_STREQ(str1.getCStr(), "hello zzu_softboy");
+   StringVariant str2(std::move(str1));
+   ASSERT_STREQ(str2.getCStr(), "hello zzu_softboy");
+   StringVariant str3(str2, true);
+   StringVariant str4(std::move(str3));
+   ASSERT_STREQ(str4.getCStr(), "hello zzu_softboy");
+   str4.append("XX");
+   ASSERT_STREQ(str4.getCStr(), "hello zzu_softboyXX");
+   ASSERT_STREQ(str2.getCStr(), "hello zzu_softboyXX");
+}
+
 TEST(StringVariantTest, testIndexOf)
 {
    StringVariant str("my name is zzu_Softboy, i think php is the best programming language in the world. php is the best!");

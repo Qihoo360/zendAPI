@@ -64,10 +64,9 @@ StringVariant::StringVariant(const Variant &other)
    m_implPtr->m_strCapacity = ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(Z_STRLEN_P(self)));
 }
 
-StringVariant::StringVariant(Variant &&other) ZAPI_DECL_NOEXCEPT
-{
-   
-}
+StringVariant::StringVariant(StringVariant &&other) ZAPI_DECL_NOEXCEPT
+   : Variant(std::move(other))
+{}
 
 StringVariant::StringVariant(const StringVariant &other, bool ref)
 {
@@ -81,16 +80,20 @@ StringVariant::StringVariant(const StringVariant &other, bool ref)
    }
 }
 
-StringVariant::StringVariant(StringVariant &&other) ZAPI_DECL_NOEXCEPT
+StringVariant::StringVariant(Variant &&other) ZAPI_DECL_NOEXCEPT
+   : Variant(std::move(other))
 {
-   
+   zval *self = getZvalPtr();
+   if (getType() != Type::String) {
+      // first we need convert to string type
+      convert_to_string(self);
+   }
+   m_implPtr->m_strCapacity = ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(Z_STRLEN_P(self)));
 }
 
 StringVariant::StringVariant(const std::string &value)
    : StringVariant(value.c_str(), value.size())
-{
-   
-}
+{}
 
 StringVariant::StringVariant(const char *value, size_t length)
 {
@@ -107,9 +110,7 @@ StringVariant::StringVariant(const char *value, size_t length)
 
 StringVariant::StringVariant(const char *value)
    : StringVariant(value, std::strlen(value))
-{
-   
-}
+{}
 
 bool StringVariant::toBool() const ZAPI_DECL_NOEXCEPT
 {
@@ -426,7 +427,9 @@ StringVariant::SizeType StringVariant::getCapacity() const ZAPI_DECL_NOEXCEPT
 
 StringVariant::~StringVariant() ZAPI_DECL_NOEXCEPT
 {
-   m_implPtr->m_strCapacity = 0;
+   if (m_implPtr) {
+      m_implPtr->m_strCapacity = 0;
+   }
 }
 
 zend_string *StringVariant::getZendStringPtr()
