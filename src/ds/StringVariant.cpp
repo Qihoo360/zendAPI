@@ -71,7 +71,14 @@ StringVariant::StringVariant(Variant &&other) ZAPI_DECL_NOEXCEPT
 
 StringVariant::StringVariant(const StringVariant &other, bool ref)
 {
-   
+   if (ref) {
+      m_implPtr->m_ref = other.m_implPtr;
+   } else {
+      const zval *from = other.getZvalPtr();
+      zval *self = getZvalPtr();
+      ZVAL_COPY(self, from);
+      m_implPtr->m_strCapacity = ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(Z_STRLEN_P(self)));
+   }
 }
 
 StringVariant::StringVariant(StringVariant &&other) ZAPI_DECL_NOEXCEPT
@@ -314,6 +321,7 @@ StringVariant &StringVariant::append(const char *str)
 
 StringVariant &StringVariant::append(const char *str, size_t length)
 {
+   SEPARATE_ZVAL_NOREF(getZvalPtr());
    zend_string *destStrPtr = getZendStringPtr();
    size_t newLength = strAlloc(destStrPtr, length, 0);
    memcpy(ZSTR_VAL(destStrPtr) + getLength(), str, length);

@@ -41,6 +41,31 @@ TEST(StringVariantTest, testConstructFromVariant)
    Variant numericVariant(123);
    StringVariant str(strVariant);
    StringVariant str1(numericVariant);
+   ASSERT_EQ(str.getRefCount(), 2);
+   ASSERT_EQ(strVariant.getRefCount(), 2);
+   ASSERT_EQ(str1.getRefCount(), 1);
+   ASSERT_EQ(numericVariant.getRefCount(), 0);
+}
+
+TEST(StringVariantTest, testConstructFromStringVariant)
+{
+   StringVariant str1("hello zapi");
+   StringVariant strCopy(str1);
+   StringVariant strRef(str1, true);
+   ASSERT_FALSE(strCopy.isReference());
+   ASSERT_TRUE(strRef.isReference());
+   str1.append(", beijing");
+   ASSERT_STREQ(str1.getCStr(), "hello zapi, beijing");
+   ASSERT_STREQ(strCopy.getCStr(), "hello zapi");
+   ASSERT_STREQ(strRef.getCStr(), "hello zapi, beijing");
+   strCopy.append('X');
+   ASSERT_STREQ(strCopy.getCStr(), "hello zapiX");
+   ASSERT_STREQ(str1.getCStr(), "hello zapi, beijing");
+   ASSERT_STREQ(strRef.getCStr(), "hello zapi, beijing");
+   strRef.append("BB");
+   ASSERT_STREQ(strCopy.getCStr(), "hello zapiX");
+   ASSERT_STREQ(str1.getCStr(), "hello zapi, beijingBB");
+   ASSERT_STREQ(strRef.getCStr(), "hello zapi, beijingBB");
 }
 
 TEST(StringVariantTest, testIndexOf)

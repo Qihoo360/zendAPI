@@ -20,6 +20,7 @@
 
 #include <type_traits>
 #include "php/Zend/zend_types.h"
+#include <memory>
 
 namespace zapi
 {
@@ -37,6 +38,7 @@ public:
    _zval_struct *dereference() const;
    std::aligned_storage<16>::type m_buffer;
    size_t m_strCapacity = 0;
+   std::shared_ptr<VariantPrivate> m_ref;
 };
 
 } // internal

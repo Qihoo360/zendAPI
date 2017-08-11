@@ -60,6 +60,17 @@ _zval_struct * VariantPrivate::dereference() const
 using zapi::ds::String;
 using internal::VariantPrivate;
 
+namespace
+{
+void std_zval_deleter(VariantPrivate *ptr)
+{
+   if (ptr->m_ref) {
+      ptr->m_ref.~shared_ptr();
+   }
+   zval_ptr_dtor(*ptr);
+}
+}
+
 /**
  * Implementation for the Value class, which wraps a PHP userspace
  * value (a 'zval' in Zend's terminology) into a C++ object
@@ -85,7 +96,7 @@ using internal::VariantPrivate;
  * Constructor (value = NULL)
  */
 Variant::Variant()
-   : m_implPtr(new VariantPrivate)
+   : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
    ZVAL_NULL(getZvalPtr());
 }
@@ -104,7 +115,7 @@ Variant::Variant(std::nullptr_t value) : Variant()
  * @param  value
  */
 Variant::Variant(std::int8_t value)
-   : m_implPtr(new VariantPrivate)
+   : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
    ZVAL_LONG(getZvalPtr(), value);
 }
@@ -115,7 +126,7 @@ Variant::Variant(std::int8_t value)
  * @param  value
  */
 Variant::Variant(std::int16_t value)
-   : m_implPtr(new VariantPrivate)
+   : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
    ZVAL_LONG(getZvalPtr(), value);
 }
@@ -126,7 +137,7 @@ Variant::Variant(std::int16_t value)
  * @param  value
  */
 Variant::Variant(std::int32_t value)
-   : m_implPtr(new VariantPrivate)
+   : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
    ZVAL_LONG(getZvalPtr(), value);
 }
@@ -138,7 +149,7 @@ Variant::Variant(std::int32_t value)
  * @param  value
  */
 Variant::Variant(std::int64_t value)
-   : m_implPtr(new VariantPrivate)
+   : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
    ZVAL_LONG(getZvalPtr(), value);
 }
@@ -151,7 +162,7 @@ Variant::Variant(std::int64_t value)
  * @param  value
  */
 Variant::Variant(bool value)
-   : m_implPtr(new VariantPrivate)
+   : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
    ZVAL_BOOL(getZvalPtr(), value);
 }
@@ -162,7 +173,7 @@ Variant::Variant(bool value)
  * @param  value
  */
 Variant::Variant(char value)
-   : m_implPtr(new VariantPrivate)
+   : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
    ZVAL_STRINGL(getZvalPtr(), &value, 1);
 }
@@ -173,7 +184,7 @@ Variant::Variant(char value)
  * @param  value
  */
 Variant::Variant(const std::string &value)
-   : m_implPtr(new VariantPrivate)
+   : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
    ZVAL_STRINGL(getZvalPtr(), value.c_str(), value.size());
 }
@@ -185,7 +196,7 @@ Variant::Variant(const std::string &value)
  * @param  size
  */
 Variant::Variant(const char *value, size_t size)
-   : m_implPtr(new VariantPrivate)
+   : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
    if (value != nullptr) {
       ZVAL_STRINGL(getZvalPtr(), value, size);
@@ -206,7 +217,7 @@ Variant::Variant(const char *value)
  * @param  value
  */
 Variant::Variant(double value)
-   : m_implPtr(new VariantPrivate)
+   : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
    ZVAL_DOUBLE(getZvalPtr(), value);
 }
@@ -218,7 +229,7 @@ Variant::Variant(double value)
  * @param  ref         Force this to be a reference
  */
 Variant::Variant(zval *value, bool isRef)
-   : m_implPtr(new VariantPrivate)
+   : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
    if (!isRef) {
       ZVAL_DUP(getZvalPtr(), value);
@@ -231,7 +242,7 @@ Variant::Variant(zval *value, bool isRef)
 }
 
 Variant::Variant(const Variant &other)
-   : m_implPtr(new VariantPrivate)
+   : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
    stdCopyZval(getZvalPtr(), const_cast<zval *>(other.getZvalPtr()));
 }
@@ -248,9 +259,6 @@ Variant::Variant(Variant &&other) ZAPI_DECL_NOEXCEPT
 
 Variant::~Variant() ZAPI_DECL_NOEXCEPT
 {
-   if (m_implPtr) {
-      zval_ptr_dtor(getZvalPtr());
-   }
 }
 
 Variant &Variant::operator=(zval *value)
@@ -481,16 +489,25 @@ void Variant::stdAssignZval(zval *dest, zval *source)
 
 zval &Variant::getZval() ZAPI_DECL_NOEXCEPT
 {
+   if (m_implPtr->m_ref) {
+      return *static_cast<zval *>(*m_implPtr->m_ref);
+   }
    return *static_cast<zval *>(*m_implPtr);
 }
 
 zval *Variant::getZvalPtr() ZAPI_DECL_NOEXCEPT
 {
+   if (m_implPtr->m_ref) {
+      return static_cast<zval *>(*m_implPtr->m_ref);
+   }
    return static_cast<zval *>(*m_implPtr);
 }
 
 const zval *Variant::getZvalPtr() const ZAPI_DECL_NOEXCEPT
 {
+   if (m_implPtr->m_ref) {
+      return static_cast<zval *>(*m_implPtr->m_ref);
+   }
    return static_cast<zval *>(*m_implPtr);
 }
 
@@ -636,6 +653,11 @@ bool Variant::isArray() const ZAPI_DECL_NOEXCEPT
       return true;
    }
    return static_cast<Type>(Z_TYPE_P(const_cast<zval *>(getZvalPtr()))) == Type::Array;
+}
+
+bool Variant::isReference() const ZAPI_DECL_NOEXCEPT
+{
+   return !!m_implPtr->m_ref;
 }
 
 /**
