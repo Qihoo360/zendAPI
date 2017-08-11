@@ -261,7 +261,7 @@ Variant::~Variant() ZAPI_DECL_NOEXCEPT
 {
 }
 
-Variant &Variant::operator=(zval *value)
+Variant &Variant::operator =(zval *value)
 {
    stdAssignZval(getZvalPtr(), value);
    return *this;
@@ -273,7 +273,7 @@ Variant &Variant::operator=(zval *value)
  * @param  value
  * @return Variant
  */
-Variant &Variant::operator=(Variant &&value) ZAPI_DECL_NOEXCEPT
+Variant &Variant::operator =(Variant &&value) ZAPI_DECL_NOEXCEPT
 {
    assert(this != &value);
    m_implPtr = std::move(value.m_implPtr);
@@ -286,9 +286,12 @@ Variant &Variant::operator=(Variant &&value) ZAPI_DECL_NOEXCEPT
  * @param  value
  * @return Variant
  */
-Variant &Variant::operator=(const Variant &value)
+Variant &Variant::operator =(const Variant &value)
 {
-   return operator=(const_cast<zval *>(value.getZvalPtr()));
+   if (this != &value) {
+      return operator =(const_cast<zval *>(value.getZvalPtr()));
+   }
+   return *this;
 }
 
 /**
@@ -297,11 +300,11 @@ Variant &Variant::operator=(const Variant &value)
  * @param  value
  * @return Variant
  */
-Variant &Variant::operator=(std::nullptr_t value)
+Variant &Variant::operator =(std::nullptr_t value)
 {
    zval temp;
    ZVAL_NULL(&temp);
-   return operator=(&temp);
+   return operator =(&temp);
 }
 
 /**
@@ -310,11 +313,11 @@ Variant &Variant::operator=(std::nullptr_t value)
  * @param  value
  * @return Variant
  */
-Variant &Variant::operator=(std::int8_t value)
+Variant &Variant::operator =(std::int8_t value)
 {
    zval temp;
    ZVAL_LONG(&temp, value);
-   return operator=(&temp);
+   return operator =(&temp);
 }
 
 /**
@@ -323,11 +326,11 @@ Variant &Variant::operator=(std::int8_t value)
  * @param  value
  * @return Variant
  */
-Variant &Variant::operator=(std::int16_t value)
+Variant &Variant::operator =(std::int16_t value)
 {
    zval temp;
    ZVAL_LONG(&temp, value);
-   return operator=(&temp);
+   return operator =(&temp);
 }
 
 /**
@@ -336,11 +339,11 @@ Variant &Variant::operator=(std::int16_t value)
  * @param  value
  * @return Variant
  */
-Variant &Variant::operator=(std::int32_t value)
+Variant &Variant::operator =(std::int32_t value)
 {
    zval temp;
    ZVAL_LONG(&temp, value);
-   return operator=(&temp);
+   return operator =(&temp);
 }
 
 #if SIZEOF_ZEND_LONG == 8
@@ -351,11 +354,11 @@ Variant &Variant::operator=(std::int32_t value)
  * @param  value
  * @return Variant
  */
-Variant &Variant::operator=(std::int64_t value)
+Variant &Variant::operator =(std::int64_t value)
 {
    zval temp;
    ZVAL_LONG(&temp, value);
-   return operator=(&temp);
+   return operator =(&temp);
 }
 #endif
 
@@ -365,11 +368,11 @@ Variant &Variant::operator=(std::int64_t value)
  * @param  value
  * @return Variant
  */
-Variant &Variant::operator=(bool value)
+Variant &Variant::operator =(bool value)
 {
    zval temp;
    ZVAL_BOOL(&temp, value);
-   return operator=(&temp);
+   return operator =(&temp);
 }
 
 /**
@@ -378,11 +381,11 @@ Variant &Variant::operator=(bool value)
  * @param  value
  * @return Variant
  */
-Variant &Variant::operator=(char value)
+Variant &Variant::operator =(char value)
 {
    zval temp;
    ZVAL_STRINGL(&temp, &value, 1);
-   operator=(&temp);
+   operator =(&temp);
    zval_dtor(&temp); // standard free, no cycle check
    return *this;
 }
@@ -393,7 +396,7 @@ Variant &Variant::operator=(char value)
  * @param  value
  * @return Variant
  */
-Variant &Variant::operator=(const std::string &value)
+Variant &Variant::operator =(const std::string &value)
 {
    zval temp;
    if (value.size() > 0) {
@@ -401,7 +404,7 @@ Variant &Variant::operator=(const std::string &value)
    } else {
       ZVAL_EMPTY_STRING(&temp);
    }
-   operator=(&temp);
+   operator =(&temp);
    zval_dtor(&temp); // standard free, no cycle check
    return *this;
 }
@@ -412,7 +415,7 @@ Variant &Variant::operator=(const std::string &value)
  * @param  value
  * @return Variant
  */
-Variant &Variant::operator=(const char *value)
+Variant &Variant::operator =(const char *value)
 {
    zval temp;
    if (value) {
@@ -420,7 +423,7 @@ Variant &Variant::operator=(const char *value)
    } else {
       ZVAL_EMPTY_STRING(&temp);
    }
-   operator=(&temp);
+   operator =(&temp);
    zval_dtor(&temp); // standard free, no cycle check
    return *this;
 }
@@ -431,11 +434,11 @@ Variant &Variant::operator=(const char *value)
  * @param  value
  * @return Variant
  */
-Variant &Variant::operator=(double value)
+Variant &Variant::operator =(double value)
 {
    zval temp;
    ZVAL_DOUBLE(&temp, value);
-   return operator=(value);
+   return operator =(value);
 }
 
 void Variant::stdCopyZval(zval *dest, zval *source)

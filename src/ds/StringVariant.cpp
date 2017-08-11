@@ -112,6 +112,61 @@ StringVariant::StringVariant(const char *value)
    : StringVariant(value, std::strlen(value))
 {}
 
+StringVariant &StringVariant::operator =(const StringVariant &other)
+{
+   if (this != &other) {
+      zval *self = const_cast<zval *>(getZvalPtr());
+      zval *from = const_cast<zval *>(other.getZvalPtr());
+      SEPARATE_ZVAL_NOREF(self);
+      // need update gc info
+      Variant::operator =(from);
+      m_implPtr->m_strCapacity = other.m_implPtr->m_strCapacity;
+   }
+   return *this;
+}
+
+StringVariant &StringVariant::operator =(StringVariant &&other) ZAPI_DECL_NOEXCEPT
+{
+   assert(this != &other);
+   // here object been slice, but no problem
+   m_implPtr = std::move(other.m_implPtr);
+   return *this;
+}
+
+StringVariant &StringVariant::operator =(const Variant &other)
+{
+   zval *self = getZvalPtr();
+   SEPARATE_ZVAL_NOREF(self);
+   // need set gc info
+   zval *from = const_cast<zval *>(other.getZvalPtr());
+   if (other.getType() == Type::String) {
+      // standard copy
+      Variant::operator =(from);
+   } else {
+      zval temp;
+      // will increase 1 to gc refcount
+      ZVAL_DUP(&temp, from);
+      // will decrease 1 to gc refcount
+      convert_to_string(&temp);
+      // we need free original zend_string memory
+      zend_string_free(Z_STR_P(self));
+      ZVAL_COPY_VALUE(self, &temp);
+   }
+   m_implPtr->m_strCapacity = other.m_implPtr->m_strCapacity;
+   return *this;
+}
+
+StringVariant &StringVariant::operator =(Variant &&other) ZAPI_DECL_NOEXCEPT
+{
+   m_implPtr = std::move(other.m_implPtr);
+   zval *self = getZvalPtr();
+   if (getType() != Type::String) {
+      convert_to_string(self);
+   }
+   m_implPtr->m_strCapacity = ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(Z_STRLEN_P(self)));
+   return *this;
+}
+
 bool StringVariant::toBool() const ZAPI_DECL_NOEXCEPT
 {
    return getType() != Type::Null && 0 != Z_STRLEN_P(const_cast<zval *>(getZvalPtr()));

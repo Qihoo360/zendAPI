@@ -42,6 +42,8 @@ namespace internal
 class VariantPrivate;
 }
 
+class StringVariant;
+
 using internal::VariantPrivate;
 using zapi::lang::StdClass;
 using zapi::lang::Type;
@@ -98,27 +100,27 @@ public:
     * @param  value
     * @return Value
     */
-   Variant &operator=(Variant &&value) ZAPI_DECL_NOEXCEPT;
+   Variant &operator =(Variant &&value) ZAPI_DECL_NOEXCEPT;
    
    /**
     * Assignment operator for various types
     * @param  value
     * @return Value
     */
-   Variant &operator=(std::nullptr_t value);
-   Variant &operator=(const Variant &value);
-   Variant &operator=(std::int8_t value);
-   Variant &operator=(std::int16_t value);
-   Variant &operator=(std::int32_t value);
+   Variant &operator =(std::nullptr_t value);
+   Variant &operator =(const Variant &value);
+   Variant &operator =(std::int8_t value);
+   Variant &operator =(std::int16_t value);
+   Variant &operator =(std::int32_t value);
 #if SIZEOF_ZEND_LONG == 8
-   Variant &operator=(std::int64_t value);
+   Variant &operator =(std::int64_t value);
 #endif
-   Variant &operator=(bool value);
-   Variant &operator=(char value);
-   Variant &operator=(const std::string &value);
-   Variant &operator=(const char *value);
-   Variant &operator=(double value);
-   Variant &operator=(zval *value);
+   Variant &operator =(bool value);
+   Variant &operator =(char value);
+   Variant &operator =(const std::string &value);
+   Variant &operator =(const char *value);
+   Variant &operator =(double value);
+   Variant &operator =(zval *value);
    
    /**
     * Cast to a boolean
@@ -195,6 +197,7 @@ protected:
    static void stdCopyZval(zval *dest, zval *source);
    static void stdAssignZval(zval *dest, zval *source);
 protected: 
+   friend class StringVariant;
    ZAPI_DECLARE_PRIVATE(Variant)
    std::shared_ptr<VariantPrivate> m_implPtr;
 };

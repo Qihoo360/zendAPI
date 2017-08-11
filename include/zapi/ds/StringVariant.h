@@ -54,6 +54,8 @@ public:
    StringVariant(const char *value);
    StringVariant &operator =(const StringVariant &other);
    StringVariant &operator =(StringVariant &&other) ZAPI_DECL_NOEXCEPT;
+   StringVariant &operator =(const Variant &other);
+   StringVariant &operator =(Variant &&other) ZAPI_DECL_NOEXCEPT;
    StringVariant &operator =(char value);
    StringVariant &operator =(const std::string &value);
    StringVariant &operator =(const char *value);

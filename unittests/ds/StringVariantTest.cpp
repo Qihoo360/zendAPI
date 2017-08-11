@@ -116,6 +116,64 @@ TEST(StringVariantTest, testIndexOf)
    ASSERT_EQ(pos, 11);
 }
 
+TEST(StringVariantTest, testAssignOperators)
+{
+   StringVariant str1("zapi");
+   // test same type
+   ASSERT_EQ(str1.getRefCount(), 1);
+   StringVariant str2 = str1;
+   ASSERT_EQ(str1.getRefCount(), 2);
+   ASSERT_EQ(str2.getRefCount(), 2);
+   ASSERT_STREQ(str2.getCStr(), "zapi");
+   str1.append('X');
+   ASSERT_EQ(str1.getRefCount(), 1);
+   ASSERT_EQ(str2.getRefCount(), 1);
+   ASSERT_STREQ(str1.getCStr(), "zapiX");
+   ASSERT_STREQ(str2.getCStr(), "zapi");
+   str2 = str1;
+   ASSERT_EQ(str1.getRefCount(), 2);
+   ASSERT_EQ(str2.getRefCount(), 2);
+   ASSERT_STREQ(str2.getCStr(), "zapiX");
+   StringVariant str3("xxx"); 
+   ASSERT_EQ(str3.getRefCount(), 1);
+   str3 = str2;
+   ASSERT_EQ(str1.getRefCount(), 3);
+   ASSERT_EQ(str2.getRefCount(), 3);
+   ASSERT_EQ(str3.getRefCount(), 3);
+   str1.append("C");
+   ASSERT_EQ(str1.getRefCount(), 1);
+   ASSERT_EQ(str2.getRefCount(), 2);
+   ASSERT_EQ(str3.getRefCount(), 2);
+   str3 = str1;
+   ASSERT_EQ(str1.getRefCount(), 2);
+   ASSERT_EQ(str2.getRefCount(), 1);
+   ASSERT_EQ(str3.getRefCount(), 2);
+   // test Variant type
+   Variant gvar("zzu_softboy");
+   str1 = gvar;
+   ASSERT_EQ(str1.getRefCount(), 2);
+   ASSERT_EQ(gvar.getRefCount(), 2);
+   ASSERT_EQ(str2.getRefCount(), 1);
+   ASSERT_EQ(str3.getRefCount(), 1);
+   ASSERT_STREQ(str1.getCStr(), "zzu_softboy");
+   str1.append("XX");
+   ASSERT_EQ(gvar.getRefCount(), 1);
+   ASSERT_EQ(str1.getRefCount(), 1);
+   Variant numVar(123);
+   str1 = numVar;
+   ASSERT_EQ(str1.getRefCount(), 1);
+   ASSERT_EQ(numVar.getRefCount(), 0);
+   str1 = Variant("312");
+   ASSERT_EQ(str1.getRefCount(), 1);
+   ASSERT_STREQ(str1.getCStr(), "312");
+   str1 = std::move(numVar);
+   ASSERT_EQ(str1.getRefCount(), 1);
+   ASSERT_STREQ(str1.getCStr(), "123");
+   str1 = StringVariant("zzu_softboy");
+   ASSERT_STREQ(str1.getCStr(), "zzu_softboy");
+   ASSERT_EQ(str1.getRefCount(), 1);
+}
+
 TEST(StringVariantTest, testLastIndexOf)
 {
    // from php online manual
