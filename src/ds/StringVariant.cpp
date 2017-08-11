@@ -43,9 +43,47 @@ StringVariant::StringVariant()
    : StringVariant("")
 {}
 
+StringVariant::StringVariant(const Variant &other)
+{
+   // chech the type, if the type is not the string, we just try to convert
+   // if the type is string we deploy copy on write idiom
+   const zval *from = other.getZvalPtr();
+   zval *self = getZvalPtr();
+   if (other.getType() == Type::String) {
+      ZVAL_COPY(self, from);
+   } else {
+      zval temp;
+      // will increase 1 to gc refcount
+      ZVAL_DUP(&temp, from);
+      // will decrease 1 to gc refcount
+      convert_to_string(&temp);
+      ZVAL_COPY_VALUE(self, &temp);
+   }
+   // we just set the capacity equal to default allocator algorithm
+   // ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(len))
+   m_implPtr->m_strCapacity = ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(Z_STRLEN_P(self)));
+}
+
+StringVariant::StringVariant(Variant &&other) ZAPI_DECL_NOEXCEPT
+{
+   
+}
+
+StringVariant::StringVariant(const StringVariant &other, bool ref)
+{
+   
+}
+
+StringVariant::StringVariant(StringVariant &&other) ZAPI_DECL_NOEXCEPT
+{
+   
+}
+
 StringVariant::StringVariant(const std::string &value)
    : StringVariant(value.c_str(), value.size())
-{}
+{
+   
+}
 
 StringVariant::StringVariant(const char *value, size_t length)
 {
@@ -62,7 +100,9 @@ StringVariant::StringVariant(const char *value, size_t length)
 
 StringVariant::StringVariant(const char *value)
    : StringVariant(value, std::strlen(value))
-{}
+{
+   
+}
 
 bool StringVariant::toBool() const ZAPI_DECL_NOEXCEPT
 {

@@ -20,6 +20,7 @@
 #include <string>
 
 using zapi::ds::StringVariant;
+using zapi::ds::Variant;
 
 TEST(StringVariantTest, testConstructors)
 {
@@ -32,6 +33,14 @@ TEST(StringVariantTest, testConstructors)
    ASSERT_EQ(emptyStr.getSize(), 1);
    ASSERT_EQ(emptyStr.getCapacity(), 199);
    ASSERT_EQ(emptyStr.at(0), 'C');
+}
+
+TEST(StringVariantTest, testConstructFromVariant)
+{
+   Variant strVariant("zapi is the best!");
+   Variant numericVariant(123);
+   StringVariant str(strVariant);
+   StringVariant str1(numericVariant);
 }
 
 TEST(StringVariantTest, testIndexOf)

@@ -39,14 +39,21 @@ public:
    using ConstrIterator = const char *;
    using ReverseIterator = std::reverse_iterator<Iterator>;
    using ConstReverseIterator = std::reverse_iterator<ConstrIterator>;
+   using DifferenceType = zapi_ptrdiff;
 protected:
    // define some usefull type alias
    using GuardValuePtrType = std::unique_ptr<StringVariant::ValueType, std::function<void(StringVariant::Pointer ptr)>>;
 public:
    StringVariant();
+   StringVariant(const Variant &other);
+   StringVariant(Variant &&other) ZAPI_DECL_NOEXCEPT;
+   StringVariant(const StringVariant &other, bool ref = false);
+   StringVariant(StringVariant &&other) ZAPI_DECL_NOEXCEPT;
    StringVariant(const std::string &value);
    StringVariant(const char *value, size_t length);
    StringVariant(const char *value);
+   StringVariant &operator =(const StringVariant &other);
+   StringVariant &operator =(StringVariant &&other) ZAPI_DECL_NOEXCEPT;
    StringVariant &operator =(char value);
    StringVariant &operator =(const std::string &value);
    StringVariant &operator =(const char *value);
@@ -72,6 +79,8 @@ public:
    // conversion method
    std::string toLowerCase() const;
    std::string toUpperCase() const;
+   std::string trimmed() const;
+   std::string simplified() const;
    // modify methods
    StringVariant &append(const char *str);
    StringVariant &append(const char *str, size_t length);
@@ -80,8 +89,9 @@ public:
    StringVariant &append(const StringVariant &str);
    template <typename T, typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
    StringVariant &append(T value);
-   std::string trimmed() const;
-   std::string simplified() const;
+   StringVariant &clear();
+   void resize(SizeType size);
+   void resize(SizeType size, char fillChar);
    // access methods
    template<size_t arrayLength>
    zapi_long indexOf(char (&needle)[arrayLength], int length, zapi_long offset = 0, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;

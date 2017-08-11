@@ -214,7 +214,7 @@ Variant::Variant(double value)
 /**
  * Wrap object around zval
  * 
- * @param  zval        Value to wrap
+ * @param  zval        Variant to wrap
  * @param  ref         Force this to be a reference
  */
 Variant::Variant(zval *value, bool isRef)
@@ -519,6 +519,18 @@ zval Variant::detach(bool keeprefcount)
    ZVAL_UNDEF(*(m_implPtr.get()));
    // done
    return result;
+}
+
+Variant Variant::makeReference()
+{
+   Variant ret;
+   zval *from = getZvalPtr();
+   zval *to = ret.getZvalPtr();
+   ZVAL_MAKE_REF(from);
+   zend_reference *ref = Z_REF_P(from);
+   GC_REFCOUNT(ref)++;
+   ZVAL_REF(to, ref);
+   return ret;
 }
 
 /**

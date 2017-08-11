@@ -1,4 +1,5 @@
 // Copyright 2017-2018 zzu_softboy <zzu_softboy@163.com>
+// Emiel Bruijntjes <emiel.bruijntjes@copernica.com>
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -44,22 +45,7 @@ class VariantPrivate;
 using internal::VariantPrivate;
 using zapi::lang::StdClass;
 using zapi::lang::Type;
-/**
- * Base class for values that are stored in the Zend engine. One instance
- * of the value class represents a variable that exists in user space in
- * the PHP environment, for example as global variable, local variable
- * inside a function or as a member of an object or an array.
- *
- * A value can be a scalar or a more complicated structure like an object
- * or an array.
- *
- * Internally, the Zend engine works with "zval" objects for this. These "zval"
- * object hold a reference counter and a reference setting. The PHP-CPP Value
- * class takes care of doing this, so all you need to do is use objects of
- * this class.
- *
- * @author Emiel Bruijntjes <emiel.bruijntjes@copernica.com>
- */
+
 class ZAPI_DECL_EXPORT Variant
 {
 public:
@@ -203,12 +189,13 @@ public:
    const zval *getZvalPtr() const ZAPI_DECL_NOEXCEPT;
    uint32_t getRefCount() const ZAPI_DECL_NOEXCEPT;
    zval detach(bool keeprefcount);
+   Variant makeReference();
 protected:
    static void stdCopyZval(zval *dest, zval *source);
    static void stdAssignZval(zval *dest, zval *source);
 protected: 
    ZAPI_DECLARE_PRIVATE(Variant)
-   std::unique_ptr<VariantPrivate> m_implPtr;
+   std::shared_ptr<VariantPrivate> m_implPtr;
 };
 
 /**
