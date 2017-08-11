@@ -15,12 +15,11 @@
 
 #include "zapi/ds/StringVariant.h"
 #include "zapi/ds/internal/VariantPrivate.h"
-#include "zapi/utils/CommonFuncs.h"
 
 #include <cstring>
 #include <stdexcept>
 #include <cctype>
-#include <locale>
+#include <algorithm>
 
 namespace zapi
 {
@@ -41,9 +40,6 @@ constexpr size_t STR_VARIANT_START_SIZE SMART_STR_START_SIZE;
 #else
 constexpr size_t STR_VARIANT_START_SIZE (256 - STR_VARIANT_OVERHEAD - 1);
 #endif
-
-// define some usefull type alias
-using GuardValuePtrType = std::unique_ptr<StringVariant::ValueType, std::function<void(StringVariant::Pointer ptr)>>;
 
 StringVariant::StringVariant()
    : StringVariant("")
@@ -72,13 +68,31 @@ StringVariant::StringVariant(const char *value)
 
 bool StringVariant::toBool() const ZAPI_DECL_NOEXCEPT
 {
-   return 0 != Z_STRLEN_P(const_cast<zval *>(getZvalPtr()));
+   return getType() != Type::Null && 0 != Z_STRLEN_P(const_cast<zval *>(getZvalPtr()));
 }
 
 std::string StringVariant::toString() const ZAPI_DECL_NOEXCEPT
 {
    zval *self = const_cast<zval *>(getZvalPtr());
    return std::string(Z_STRVAL_P(self), Z_STRLEN_P(self));
+}
+
+std::string StringVariant::toLowerCase() const
+{
+   std::string ret(cbegin(), cend());
+   std::transform(ret.begin(), ret.end(), ret.begin(), [](ValueType c) -> ValueType { 
+      return std::tolower(c); 
+   });
+   return ret;
+}
+
+std::string StringVariant::toUpperCase() const
+{
+   std::string ret(cbegin(), cend());
+   std::transform(ret.begin(), ret.end(), ret.begin(), [](ValueType c) -> ValueType { 
+      return std::toupper(c); 
+   });
+   return ret;
 }
 
 StringVariant::Reference StringVariant::at(SizeType pos)
@@ -93,6 +107,117 @@ StringVariant::ConstReference StringVariant::at(SizeType pos) const
    }
    char *str = getRawStrPtr();
    return str[pos];
+}
+
+StringVariant::Iterator StringVariant::begin() ZAPI_DECL_NOEXCEPT
+{
+   return getRawStrPtr();
+}
+
+StringVariant::ConstrIterator StringVariant::begin() const ZAPI_DECL_NOEXCEPT
+{
+   return getCStr();
+}
+
+StringVariant::ConstrIterator StringVariant::cbegin() const ZAPI_DECL_NOEXCEPT
+{
+   return getCStr();
+}
+
+StringVariant::ReverseIterator StringVariant::rbegin() ZAPI_DECL_NOEXCEPT
+{
+   return ReverseIterator(getRawStrPtr() + getLength());
+}
+
+StringVariant::ConstReverseIterator StringVariant::rbegin() const ZAPI_DECL_NOEXCEPT
+{
+   return ConstReverseIterator(getCStr() + getLength());
+}
+
+StringVariant::ConstReverseIterator StringVariant::crbegin() const ZAPI_DECL_NOEXCEPT
+{
+   return ConstReverseIterator(getCStr() + getLength());
+}
+
+StringVariant::Iterator StringVariant::end() ZAPI_DECL_NOEXCEPT
+{
+   return getRawStrPtr() + getLength();
+}
+
+StringVariant::ConstrIterator StringVariant::end() const ZAPI_DECL_NOEXCEPT
+{
+   return getCStr() + getLength();
+}
+
+StringVariant::ConstrIterator StringVariant::cend() const ZAPI_DECL_NOEXCEPT
+{
+   return getCStr() + getLength();
+}
+
+StringVariant::ReverseIterator StringVariant::rend() ZAPI_DECL_NOEXCEPT
+{
+   return ReverseIterator(getRawStrPtr());
+}
+
+StringVariant::ConstReverseIterator StringVariant::rend() const ZAPI_DECL_NOEXCEPT
+{
+   return ConstReverseIterator(getCStr());
+}
+
+StringVariant::ConstReverseIterator StringVariant::crend() const ZAPI_DECL_NOEXCEPT
+{
+   return ConstReverseIterator(getCStr());
+}
+
+zapi_long StringVariant::indexOf(const char *needle, zapi_long offset, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+{
+   Pointer haystack = getRawStrPtr();
+   size_t haystackLength = getSize();
+   size_t needleLength = std::strlen(needle);
+   ConstPointer found = nullptr;
+   if (offset < 0) {
+      offset += haystackLength;
+   }
+   if (offset < 0 || static_cast<size_t>(offset) > haystackLength) {
+      // TODO need throw exception here or return -1 ?
+      return -1;
+   }
+   if (0 == needleLength) {
+      return -1;
+   }
+   found = zend_memnstr(haystack + offset, needle, needleLength, 
+                        haystack + haystackLength);
+   if (nullptr != found) {
+      return found - haystack;
+   }
+   return -1;
+}
+
+zapi_long StringVariant::indexOf(const std::string &needle, zapi_long offset, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+{
+   return indexOf(needle.c_str(), offset, caseSensitive);
+}
+
+zapi_long StringVariant::indexOf(const char needle, zapi_long offset, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+{
+   ValueType buffer[2] = {needle, '\0'};
+   return indexOf(reinterpret_cast<Pointer>(buffer), offset, caseSensitive);
+}
+
+zapi_long StringVariant::lastIndexOf(const char *needle, zapi_long offset, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+{
+   
+}
+
+zapi_long StringVariant::lastIndexOf(const std::string &needle, zapi_long offset, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+{
+   return lastIndexOf(needle.c_str(), offset, caseSensitive);
+}
+
+zapi_long StringVariant::lastIndexOf(const char needle, zapi_long offset, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+{
+   ValueType buffer[2] = {needle, '\0'};
+   return lastIndexOf(reinterpret_cast<Pointer>(buffer), offset, caseSensitive);
 }
 
 StringVariant &StringVariant::append(const char *str)
@@ -187,6 +312,11 @@ char *StringVariant::getRawStrPtr() const ZAPI_DECL_NOEXCEPT
 StringVariant::SizeType StringVariant::getSize() const ZAPI_DECL_NOEXCEPT
 {
    return Z_STRLEN_P(const_cast<zval *>(getZvalPtr()));
+}
+
+bool StringVariant::isEmpty() const ZAPI_DECL_NOEXCEPT
+{
+   return 0 == getSize();
 }
 
 StringVariant::SizeType StringVariant::getLength() const ZAPI_DECL_NOEXCEPT

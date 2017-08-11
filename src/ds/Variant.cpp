@@ -89,7 +89,7 @@ using internal::VariantPrivate;
 Variant::Variant()
    : m_implPtr(new VariantPrivate)
 {
-   ZVAL_NULL(*m_implPtr);
+   ZVAL_NULL(getZvalPtr());
 }
 
 /**
@@ -547,7 +547,7 @@ bool Variant::isNull() const ZAPI_DECL_NOEXCEPT
    if (getType() == Type::Null) {
       return true;
    }
-   return static_cast<Type>(Z_TYPE_P(*m_implPtr)) == Type::Null;
+   return static_cast<Type>(Z_TYPE_P(const_cast<zval *>(getZvalPtr()))) == Type::Null;
 }
 
 /**
@@ -560,7 +560,7 @@ bool Variant::isLong() const ZAPI_DECL_NOEXCEPT
    if (getType() == Type::Long) {
       return true;
    }
-   return static_cast<Type>(Z_TYPE_P(*m_implPtr)) == Type::Long;
+   return static_cast<Type>(Z_TYPE_P(const_cast<zval *>(getZvalPtr()))) == Type::Long;
 }
 
 /**
@@ -573,7 +573,7 @@ bool Variant::isBool() const ZAPI_DECL_NOEXCEPT
    if (getType() == Type::False || getType() == Type::True) {
       return true;
    }
-   Type type = static_cast<Type>(Z_TYPE_P(*m_implPtr));
+   Type type = static_cast<Type>(Z_TYPE_P(const_cast<zval *>(getZvalPtr())));
    return getType() == Type::False || getType() == Type::True;
 }
 
@@ -587,7 +587,7 @@ bool Variant::isString() const ZAPI_DECL_NOEXCEPT
    if (getType() == Type::String) {
       return true;
    }
-   return static_cast<Type>(Z_TYPE_P(*m_implPtr)) == Type::String;
+   return static_cast<Type>(Z_TYPE_P(const_cast<zval *>(getZvalPtr()))) == Type::String;
 }
 
 /**
@@ -600,7 +600,7 @@ bool Variant::isDouble() const ZAPI_DECL_NOEXCEPT
    if (getType() == Type::Double) {
       return true;
    }
-   return static_cast<Type>(Z_TYPE_P(*m_implPtr)) == Type::Double;
+   return static_cast<Type>(Z_TYPE_P(const_cast<zval *>(getZvalPtr()))) == Type::Double;
 }
 
 /**
@@ -613,7 +613,7 @@ bool Variant::isObject() const ZAPI_DECL_NOEXCEPT
    if (getType() == Type::Object) {
       return true;
    }
-   return static_cast<Type>(Z_TYPE_P(*m_implPtr)) == Type::Object;
+   return static_cast<Type>(Z_TYPE_P(const_cast<zval *>(getZvalPtr()))) == Type::Object;
 }
 
 /**
@@ -625,7 +625,7 @@ bool Variant::isArray() const ZAPI_DECL_NOEXCEPT
    if (getType() == Type::Array) {
       return true;
    }
-   return static_cast<Type>(Z_TYPE_P(*m_implPtr)) == Type::Array;
+   return static_cast<Type>(Z_TYPE_P(const_cast<zval *>(getZvalPtr()))) == Type::Array;
 }
 
 /**
@@ -635,7 +635,7 @@ bool Variant::isArray() const ZAPI_DECL_NOEXCEPT
 Variant Variant::clone() const
 {
    Variant output;
-   ZVAL_DUP(*output.m_implPtr, *m_implPtr);
+   ZVAL_DUP(output.getZvalPtr(), const_cast<zval *>(getZvalPtr()));
    return output;
 }
 

@@ -146,7 +146,8 @@ Constant& Constant::operator=(Constant &&other) ZAPI_DECL_NOEXCEPT
 }
 
 Constant::~Constant()
-{}
+{
+}
 
 void Constant::initialize(const std::string &prefix, int moduleNumber)
 {

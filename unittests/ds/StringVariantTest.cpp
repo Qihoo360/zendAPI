@@ -24,15 +24,26 @@ using zapi::ds::StringVariant;
 TEST(StringVariantTest, testConstructors)
 {
    StringVariant str("xiuxiu");
-   const StringVariant cstr("xiuxiu");
-   str.append("-zapi");
-   str.append(123);
-   str.append(3.14);
-   str.append('-');
-   uint8_t unum = 122;
-   str.append(unum);
-   StringVariant str1("  lots\t of\nwhitespace\r\n ");
-   std::cout << str1.trimmed() << std::endl;
-   std::cout << str1.simplified() << std::endl;
+   StringVariant emptyStr;
+   ASSERT_TRUE(emptyStr.isEmpty());
+   ASSERT_EQ(emptyStr.getCapacity(), 199);
+   ASSERT_EQ(emptyStr.getSize(), 0);
+   emptyStr.append('C');
+   ASSERT_EQ(emptyStr.getSize(), 1);
+   ASSERT_EQ(emptyStr.getCapacity(), 199);
+   ASSERT_EQ(emptyStr.at(0), 'C');
 }
 
+TEST(StringVariantTest, testIndexOf)
+{
+   StringVariant str("my name is zzu_softboy, i think php is the best programming language in the world.");
+   char subStr[] = {'p','h', 'p', 'i', 's', 't', 'h', 'e'};
+   int pos = str.indexOf(subStr, 4);
+}
+
+TEST(StringVariantTest, testToLowerCaseAndToUpperCase)
+{
+   StringVariant str("ZZU_softboy");
+   ASSERT_STREQ(str.toLowerCase().c_str(), "zzu_softboy");
+   ASSERT_STREQ(str.toUpperCase().c_str(), "ZZU_SOFTBOY");
+}
