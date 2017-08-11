@@ -36,9 +36,52 @@ TEST(StringVariantTest, testConstructors)
 
 TEST(StringVariantTest, testIndexOf)
 {
-   StringVariant str("my name is zzu_softboy, i think php is the best programming language in the world.");
+   StringVariant str("my name is zzu_Softboy, i think php is the best programming language in the world. php is the best!");
    char subStr[] = {'p','h', 'p', 'i', 's', 't', 'h', 'e'};
-   int pos = str.indexOf(subStr, 4);
+   int pos = str.indexOf(subStr, 3);
+   ASSERT_EQ(pos, 32);
+   pos = str.indexOf(subStr, 4);
+   ASSERT_EQ(pos, -1);
+   pos = str.indexOf("php");
+   ASSERT_EQ(pos, 32);
+   pos = str.indexOf("PhP");
+   ASSERT_EQ(pos, -1);
+   pos = str.indexOf(std::string("php"));
+   ASSERT_EQ(pos, 32);
+   pos = str.indexOf('n');
+   ASSERT_EQ(pos, 3);
+   pos = str.indexOf("php", 33);
+   ASSERT_EQ(pos, 83);
+   pos = str.indexOf("PhP", 0, false);
+   ASSERT_EQ(pos, 32);
+   pos = str.indexOf("pHP", 0, false);
+   ASSERT_EQ(pos, 32);
+   pos = str.indexOf("ZZU_SOFTBOY", 0, false);
+   ASSERT_EQ(pos, 11);
+}
+
+TEST(StringVariantTest, testLastIndexOf)
+{
+   // from php online manual
+   StringVariant str("0123456789a123456789b1234A56789c");
+   int pos = str.lastIndexOf('7', -5);
+   ASSERT_EQ(pos, 17);
+   pos = str.lastIndexOf('7', 20);
+   ASSERT_EQ(pos, 28);
+   pos = str.lastIndexOf('7', 29);
+   ASSERT_EQ(pos, -1);
+   pos = str.lastIndexOf('a', 0, false);
+   ASSERT_EQ(pos, 25);
+   pos = str.lastIndexOf('a', -7, false);
+   ASSERT_EQ(pos, 25);
+   pos = str.lastIndexOf('A', 0, false);
+   ASSERT_EQ(pos, 25);
+   pos = str.lastIndexOf('A', -7, false);
+   ASSERT_EQ(pos, 25);
+   pos = str.lastIndexOf('A', -8, false);
+   ASSERT_EQ(pos, 10);
+   pos = str.lastIndexOf('a', -8, false);
+   ASSERT_EQ(pos, 10);
 }
 
 TEST(StringVariantTest, testToLowerCaseAndToUpperCase)

@@ -174,6 +174,8 @@ zapi_long StringVariant::indexOf(const char *needle, zapi_long offset, bool case
    Pointer haystack = getRawStrPtr();
    size_t haystackLength = getSize();
    size_t needleLength = std::strlen(needle);
+   GuardValuePtrType haystackDup(nullptr, zapi::utils::std_php_memory_deleter);
+   GuardValuePtrType needleDup(nullptr, zapi::utils::std_php_memory_deleter);
    ConstPointer found = nullptr;
    if (offset < 0) {
       offset += haystackLength;
@@ -184,6 +186,22 @@ zapi_long StringVariant::indexOf(const char *needle, zapi_long offset, bool case
    }
    if (0 == needleLength) {
       return -1;
+   }
+   if (!caseSensitive) {
+      haystackDup.reset(static_cast<Pointer>(emalloc(haystackLength)));
+      needleDup.reset(static_cast<Pointer>(emalloc(needleLength)));
+      std::memcpy(haystackDup.get(), haystack, haystackLength);
+      std::memcpy(needleDup.get(), needle, needleLength);
+      haystack = haystackDup.get();
+      needle = needleDup.get();
+      std::transform(haystackDup.get(), haystackDup.get() + haystackLength, haystackDup.get(), 
+                     [](ValueType c) -> ValueType{
+         return std::tolower(c);
+      });
+      std::transform(needleDup.get(), needleDup.get() + needleLength, needleDup.get(), 
+                     [](ValueType c) -> ValueType{
+         return std::tolower(c);
+      });
    }
    found = zend_memnstr(haystack + offset, needle, needleLength, 
                         haystack + haystackLength);
@@ -206,7 +224,56 @@ zapi_long StringVariant::indexOf(const char needle, zapi_long offset, bool caseS
 
 zapi_long StringVariant::lastIndexOf(const char *needle, zapi_long offset, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
 {
-   
+   Pointer haystack = getRawStrPtr();
+   size_t haystackLength = getSize();
+   size_t needleLength = std::strlen(needle);
+   GuardValuePtrType haystackDup(nullptr, zapi::utils::std_php_memory_deleter);
+   GuardValuePtrType needleDup(nullptr, zapi::utils::std_php_memory_deleter);
+   Pointer p = nullptr;
+   Pointer e = nullptr;
+   ConstPointer found = nullptr;
+   if (!caseSensitive) {
+      haystackDup.reset(static_cast<Pointer>(emalloc(haystackLength)));
+      needleDup.reset(static_cast<Pointer>(emalloc(needleLength)));
+      std::memcpy(haystackDup.get(), haystack, haystackLength);
+      std::memcpy(needleDup.get(), needle, needleLength);
+      haystack = haystackDup.get();
+      needle = needleDup.get();
+      std::transform(haystackDup.get(), haystackDup.get() + haystackLength, haystackDup.get(), 
+                     [](ValueType c) -> ValueType{
+         return std::tolower(c);
+      });
+      std::transform(needleDup.get(), needleDup.get() + needleLength, needleDup.get(), 
+                     [](ValueType c) -> ValueType{
+         return std::tolower(c);
+      });
+   }
+   if (offset >= 0) {
+      if (static_cast<size_t>(offset) > haystackLength) {
+         // here we do like php
+         php_error_docref(NULL, E_WARNING, "Offset is greater than the length of haystack string");
+         return -1;
+      }
+      p = haystack + static_cast<size_t>(offset);
+      e = haystack + haystackLength;
+   } else {
+      if (offset < -INT_MAX || static_cast<size_t>(-offset) > haystackLength) {
+         php_error_docref(NULL, E_WARNING, "Offset is greater than the length of haystack string");
+         return -1;
+      }
+      p = haystack;
+      // find the best end pos
+      if (static_cast<size_t>(-offset) < needleLength) {
+         e = haystack + haystackLength;
+      } else {
+         e = haystack + haystackLength + offset + needleLength;
+      }
+   }
+   found = zend_memnrstr(p, needle, needleLength, e);
+   if (nullptr != found) {
+      return found - haystack;
+   }
+   return -1;
 }
 
 zapi_long StringVariant::lastIndexOf(const std::string &needle, zapi_long offset, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
