@@ -83,6 +83,11 @@ TEST(StringVariantTest, testMoveConstruct)
    str4.append("XX");
    ASSERT_STREQ(str4.getCStr(), "hello zzu_softboyXX");
    ASSERT_STREQ(str2.getCStr(), "hello zzu_softboyXX");
+   StringVariant str5 = str2.makeReference();
+   ASSERT_STREQ(str5.getCStr(), "hello zzu_softboyXX");
+   str5.append("CC");
+   ASSERT_STREQ(str5.getCStr(), "hello zzu_softboyXXCC");
+   ASSERT_STREQ(str2.getCStr(), "hello zzu_softboyXXCC");
 }
 
 TEST(StringVariantTest, testIndexOf)

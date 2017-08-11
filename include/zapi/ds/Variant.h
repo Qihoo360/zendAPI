@@ -189,7 +189,7 @@ public:
    const zval *getZvalPtr() const ZAPI_DECL_NOEXCEPT;
    uint32_t getRefCount() const ZAPI_DECL_NOEXCEPT;
    zval detach(bool keeprefcount);
-   Variant makeReference();
+   Variant makeReferenceByZval();
    bool isReference() const ZAPI_DECL_NOEXCEPT;
 protected:
    static void stdCopyZval(zval *dest, zval *source);

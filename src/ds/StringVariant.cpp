@@ -256,6 +256,11 @@ zapi_long StringVariant::indexOf(const char needle, zapi_long offset, bool caseS
    return indexOf(reinterpret_cast<Pointer>(buffer), offset, caseSensitive);
 }
 
+StringVariant StringVariant::makeReference() const
+{
+   return StringVariant(*this, true);
+}
+
 zapi_long StringVariant::lastIndexOf(const char *needle, zapi_long offset, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
 {
    Pointer haystack = getRawStrPtr();

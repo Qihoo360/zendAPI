@@ -103,6 +103,7 @@ public:
    zapi_long lastIndexOf(const char *needle, zapi_long offset = 0, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    zapi_long lastIndexOf(const std::string &needle, zapi_long offset = 0, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    zapi_long lastIndexOf(const char needle, zapi_long offset = 0, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
+   StringVariant makeReference() const;
    Reference at(SizeType pos);
    ConstReference at(SizeType pos) const;
    const char *getCStr() const ZAPI_DECL_NOEXCEPT;

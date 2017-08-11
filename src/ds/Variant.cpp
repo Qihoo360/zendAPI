@@ -538,7 +538,7 @@ zval Variant::detach(bool keeprefcount)
    return result;
 }
 
-Variant Variant::makeReference()
+Variant Variant::makeReferenceByZval()
 {
    Variant ret;
    zval *from = getZvalPtr();
@@ -657,7 +657,7 @@ bool Variant::isArray() const ZAPI_DECL_NOEXCEPT
 
 bool Variant::isReference() const ZAPI_DECL_NOEXCEPT
 {
-   return !!m_implPtr->m_ref;
+   return !!m_implPtr->m_ref || Z_TYPE_P(static_cast<zval *>(*m_implPtr)) == IS_REFERENCE;
 }
 
 /**
