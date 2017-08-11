@@ -14,6 +14,9 @@
 // Created by zzu_softboy on 2017/08/10.
 
 #include "zapi/utils/CommonFuncs.h"
+#include <string>
+#include <cstring>
+#include <cctype>
 
 namespace zapi
 {
@@ -35,6 +38,47 @@ void std_zend_string_force_deleter(zend_string *str)
    zend_string_free(str);  
 }
 
+char *str_toupper(char *str) ZAPI_DECL_NOEXCEPT
+{
+   return str_tolower(str, std::strlen(str));
+}
+
+char *str_toupper(char *str, size_t length) ZAPI_DECL_NOEXCEPT
+{
+   char *ptr = str;
+   while (length--) {
+      *ptr = std::toupper(*ptr);
+      ptr++;
+   }
+   return str;
+}
+
+std::string &str_toupper(std::string &str) ZAPI_DECL_NOEXCEPT
+{
+   str_toupper(const_cast<char *>(str.data()), str.length());
+   return str;
+}
+
+char *str_tolower(char *str) ZAPI_DECL_NOEXCEPT
+{
+   return str_tolower(str, std::strlen(str));
+}
+
+char *str_tolower(char *str, size_t length) ZAPI_DECL_NOEXCEPT
+{
+   char *ptr = str;
+   while (length--) {
+      *ptr = std::tolower(*ptr);
+      ptr++;
+   }
+   return str;
+}
+
+std::string &str_tolower(std::string &str) ZAPI_DECL_NOEXCEPT
+{
+   str_tolower(const_cast<char *>(str.data()), str.length());
+   return str;
+}
 
 } // utils
 } // zapi

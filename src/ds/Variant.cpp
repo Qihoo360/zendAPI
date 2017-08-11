@@ -18,7 +18,6 @@
 #include "zapi/kernel/OrigException.h"
 #include "zapi/ds/Variant.h"
 #include "zapi/ds/internal/VariantPrivate.h"
-#include "zapi/utils/LowerCase.h"
 #include "zapi/ds/String.h"
 
 #include <cstring>
@@ -58,7 +57,6 @@ _zval_struct * VariantPrivate::dereference() const
 
 } // internal
 
-using zapi::utils::LowerCase;
 using zapi::ds::String;
 using internal::VariantPrivate;
 
@@ -248,7 +246,7 @@ Variant::Variant(Variant &&other) ZAPI_DECL_NOEXCEPT
    m_implPtr = std::move(other.m_implPtr);
 }
 
-Variant::~Variant()
+Variant::~Variant() ZAPI_DECL_NOEXCEPT
 {
    if (m_implPtr) {
       zval_ptr_dtor(getZvalPtr());

@@ -38,7 +38,6 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/ds/internal/ArrayItemProxy.h
    ${ZAPI_INCLUDE_DIR}/zapi/utils/PhpFuncs.h
    ${ZAPI_INCLUDE_DIR}/zapi/utils/CommonFuncs.h
-   ${ZAPI_INCLUDE_DIR}/zapi/utils/LowerCase.h
    ${ZAPI_INCLUDE_DIR}/zapi/ZendApi.h
    ${ZAPI_INCLUDE_DIR}/zapi/CompilerDetection.h
    ${ZAPI_INCLUDE_DIR}/zapi/Global.h

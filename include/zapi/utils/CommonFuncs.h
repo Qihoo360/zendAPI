@@ -26,6 +26,12 @@ namespace utils
 ZAPI_DECL_EXPORT void std_php_memory_deleter(void *ptr);
 ZAPI_DECL_EXPORT void std_zend_string_deleter(zend_string *str);
 ZAPI_DECL_EXPORT void std_zend_string_force_deleter(zend_string *str);
+ZAPI_DECL_EXPORT char *str_toupper(char *str) ZAPI_DECL_NOEXCEPT;
+ZAPI_DECL_EXPORT char *str_toupper(char *str, size_t length) ZAPI_DECL_NOEXCEPT;
+ZAPI_DECL_EXPORT std::string &str_toupper(std::string &str) ZAPI_DECL_NOEXCEPT;
+ZAPI_DECL_EXPORT char *str_tolower(char *str) ZAPI_DECL_NOEXCEPT;
+ZAPI_DECL_EXPORT char *str_tolower(char *str, size_t length) ZAPI_DECL_NOEXCEPT;
+ZAPI_DECL_EXPORT std::string &str_tolower(std::string &str) ZAPI_DECL_NOEXCEPT;
 
 } // utils
 } // zapi

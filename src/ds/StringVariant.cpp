@@ -18,8 +18,6 @@
 
 #include <cstring>
 #include <stdexcept>
-#include <cctype>
-#include <algorithm>
 
 namespace zapi
 {
@@ -80,19 +78,13 @@ std::string StringVariant::toString() const ZAPI_DECL_NOEXCEPT
 std::string StringVariant::toLowerCase() const
 {
    std::string ret(cbegin(), cend());
-   std::transform(ret.begin(), ret.end(), ret.begin(), [](ValueType c) -> ValueType { 
-      return std::tolower(c); 
-   });
-   return ret;
+   return zapi::utils::str_tolower(ret);
 }
 
 std::string StringVariant::toUpperCase() const
 {
    std::string ret(cbegin(), cend());
-   std::transform(ret.begin(), ret.end(), ret.begin(), [](ValueType c) -> ValueType { 
-      return std::toupper(c); 
-   });
-   return ret;
+   return zapi::utils::str_toupper(ret);
 }
 
 StringVariant::Reference StringVariant::at(SizeType pos)
@@ -194,14 +186,8 @@ zapi_long StringVariant::indexOf(const char *needle, zapi_long offset, bool case
       std::memcpy(needleDup.get(), needle, needleLength);
       haystack = haystackDup.get();
       needle = needleDup.get();
-      std::transform(haystackDup.get(), haystackDup.get() + haystackLength, haystackDup.get(), 
-                     [](ValueType c) -> ValueType{
-         return std::tolower(c);
-      });
-      std::transform(needleDup.get(), needleDup.get() + needleLength, needleDup.get(), 
-                     [](ValueType c) -> ValueType{
-         return std::tolower(c);
-      });
+      zapi::utils::str_tolower(haystackDup.get(), haystackLength);
+      zapi::utils::str_tolower(needleDup.get(), needleLength);
    }
    found = zend_memnstr(haystack + offset, needle, needleLength, 
                         haystack + haystackLength);
@@ -239,14 +225,8 @@ zapi_long StringVariant::lastIndexOf(const char *needle, zapi_long offset, bool 
       std::memcpy(needleDup.get(), needle, needleLength);
       haystack = haystackDup.get();
       needle = needleDup.get();
-      std::transform(haystackDup.get(), haystackDup.get() + haystackLength, haystackDup.get(), 
-                     [](ValueType c) -> ValueType{
-         return std::tolower(c);
-      });
-      std::transform(needleDup.get(), needleDup.get() + needleLength, needleDup.get(), 
-                     [](ValueType c) -> ValueType{
-         return std::tolower(c);
-      });
+      zapi::utils::str_tolower(haystackDup.get(), haystackLength);
+      zapi::utils::str_tolower(needleDup.get(), needleLength);
    }
    if (offset >= 0) {
       if (static_cast<size_t>(offset) > haystackLength) {
