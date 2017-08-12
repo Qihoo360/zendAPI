@@ -222,6 +222,39 @@ TEST(StringVariantTest, testClear)
    ASSERT_EQ(str.getCapacity(), 199);
 }
 
+TEST(StringVariantTest, testResize)
+{
+   StringVariant str("my name is zzu_Softboy, i think php is the best programming language in the world. php is the best!");
+   ASSERT_EQ(str.getCapacity(), 199);
+   ASSERT_EQ(str.getSize(), 99);
+   str.resize(32);
+   ASSERT_EQ(str.getCapacity(), 64);
+   ASSERT_EQ(str.getSize(), 32);
+   StringVariant str1 = "zapi";
+   ASSERT_EQ(str1.getRefCount(), 1);
+   str = str1;
+   ASSERT_EQ(str.getRefCount(), 2);
+   ASSERT_EQ(str1.getRefCount(), 2);
+   str.resize(32);
+   ASSERT_EQ(str.getRefCount(), 1);
+   ASSERT_EQ(str1.getRefCount(), 1);
+   str = "my name is zzu_Softboy, i think php is the best programming language in the world. php is the best!";
+   str.resize(12);
+   ASSERT_STREQ(str.getCStr(), "my name is z");
+   str.clear();
+   ASSERT_EQ(str.getCapacity(), 0);
+   ASSERT_EQ(str.getSize(), 0);
+   str.resize(12);
+   ASSERT_EQ(str.getCapacity(), 40);
+   ASSERT_EQ(str.getSize(), 12);
+   str = "zapi";
+   ASSERT_EQ(str.getCapacity(), 40);
+   ASSERT_EQ(str.getSize(), 4);
+   str.resize(12, '-');
+   ASSERT_STREQ(str.getCStr(), "zapi--------");
+   //std::cout << str << std::endl;
+}
+
 TEST(StringVariantTest, testLastIndexOf)
 {
    // from php online manual

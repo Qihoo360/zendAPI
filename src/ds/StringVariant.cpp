@@ -116,7 +116,7 @@ StringVariant &StringVariant::operator =(const StringVariant &other)
    if (this != &other) {
       zval *self = getZvalPtr();
       zval *from = const_cast<zval *>(other.getZvalPtr());
-      if (Z_TYPE_INFO_P(self) == IS_NULL) {
+      if (Type::Null == getType()) {
          Z_STR_P(self) = nullptr;
          Z_TYPE_INFO_P(self) = IS_STRING_EX;
       } else {
@@ -140,7 +140,7 @@ StringVariant &StringVariant::operator =(StringVariant &&other) ZAPI_DECL_NOEXCE
 StringVariant &StringVariant::operator =(const Variant &other)
 {
    zval *self = getZvalPtr();
-   if (Z_TYPE_INFO_P(self) == IS_NULL) {
+   if (Type::Null == getType()) {
       Z_STR_P(self) = nullptr;
       Z_TYPE_INFO_P(self) = IS_STRING_EX;
    } else {
@@ -190,7 +190,7 @@ StringVariant &StringVariant::operator =(const std::string &value)
 StringVariant &StringVariant::operator =(const char *value)
 {
    zval *self = getZvalPtr();
-   if (Z_TYPE_INFO_P(self) == IS_NULL) {
+   if (Type::Null == getType()) {
       Z_STR_P(self) = nullptr;
       Z_TYPE_INFO_P(self) = IS_STRING_EX;	
    } else {
@@ -430,7 +430,7 @@ StringVariant &StringVariant::append(const char *str)
 StringVariant &StringVariant::append(const char *str, size_t length)
 {
    zval *self = getZvalPtr();
-   if (Z_TYPE_INFO_P(self) == IS_NULL) {
+   if (Type::Null == getType()) {
       Z_STR_P(self) = nullptr;
       Z_TYPE_INFO_P(self) = IS_STRING_EX;	
    } else {
@@ -465,13 +465,56 @@ StringVariant &StringVariant::clear()
 {
    // here we release zend_string memory
    // and set capacity to zero
+   if (getType() == Type::Null) {
+      return *this;
+   }
    zval *self = getZvalPtr();
    SEPARATE_ZVAL_NOREF(self);
    zend_string *strPtr = getZendStringPtr();
    zend_string_free(strPtr);
+   Z_STR_P(self) = nullptr;
    ZVAL_NULL(self);
    m_implPtr->m_strCapacity = 0;
    return *this;
+}
+
+void StringVariant::resize(SizeType size)
+{
+   if (size == m_implPtr->m_strCapacity) {
+      return;
+   }
+   zval *self = getZvalPtr();
+   if (Type::Null == getType()) {
+      Z_STR_P(self) = nullptr;
+      Z_TYPE_INFO_P(self) = IS_STRING_EX;	
+   } else {
+      SEPARATE_ZVAL_NOREF(self);
+   }
+   // here we use std string alloc 
+   zend_string *newStr = zend_string_alloc(size, 0);
+   zend_string *oldStr = getZendStringPtr();
+   if (oldStr) {
+      // we need copy the org content
+      size_t needCopyLength = std::min(size, getSize());
+      std::memcpy(ZSTR_VAL(newStr), ZSTR_VAL(oldStr), needCopyLength);
+      // release old resource
+      zend_string_free(oldStr);
+   } else {
+      std::memset(ZSTR_VAL(newStr), '\0', size);
+   }
+   ZSTR_VAL(newStr)[size] = '\0';
+   Z_STR_P(self) = newStr;
+   m_implPtr->m_strCapacity = ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(Z_STRLEN_P(self)));
+}
+
+void StringVariant::resize(SizeType size, char fillChar)
+{
+   size_t oldSize = getSize();
+   resize(size);
+   if (size > oldSize) {
+      Pointer strPtr = getRawStrPtr();
+      std::memset(strPtr + oldSize, fillChar, size - oldSize);
+   }
 }
 
 std::string StringVariant::trimmed() const
@@ -534,7 +577,7 @@ char *StringVariant::getRawStrPtr() const ZAPI_DECL_NOEXCEPT
 StringVariant::SizeType StringVariant::getSize() const ZAPI_DECL_NOEXCEPT
 {
    zval *self = const_cast<zval *>(getZvalPtr());
-   return Z_TYPE_INFO_P(self) == IS_NULL || !Z_STR_P(self) ? 0 : Z_STRLEN_P(self);
+   return Type::Null == getType() || !Z_STR_P(self) ? 0 : Z_STRLEN_P(self);
 }
 
 bool StringVariant::isEmpty() const ZAPI_DECL_NOEXCEPT
