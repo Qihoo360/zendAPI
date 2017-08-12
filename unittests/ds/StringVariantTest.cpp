@@ -289,6 +289,32 @@ TEST(StringVariantTest, testLastIndexOf)
    ASSERT_EQ(pos, 10);
 }
 
+TEST(StringVariantTest, testStartWiths)
+{
+   StringVariant str = "my name is zzu_Softboy, i think php is the best programming language in the world. php is the best!";
+   ASSERT_TRUE(str.startsWith("my name is zzu"));
+   ASSERT_FALSE(str.startsWith("my name is zzu_softboy"));
+   ASSERT_TRUE(str.startsWith("my name is zzu_softboy", false));
+   ASSERT_TRUE(str.endsWith("php is the best!"));
+   ASSERT_FALSE(str.endsWith("php Is The best!"));
+   ASSERT_TRUE(str.endsWith("php Is The best!", false));
+   char search[7] = {'m', 'y', ' ', 'n', 'a', 'm', 'e'};
+   ASSERT_TRUE(str.startsWith(search, 7));
+   char search1[7] = {'m', 'y', ' ', 'N', 'a', 'm', 'e'};
+   ASSERT_FALSE(str.startsWith(search1, 7));
+   ASSERT_TRUE(str.startsWith(search1, 7, false));
+   char endSearch[5] = {'b', 'e', 's', 't', '!'};
+   ASSERT_TRUE(str.endsWith(endSearch, 5));
+   char endSearch1[5] = {'b', 'e', 's', 'T', '!'};
+   ASSERT_FALSE(str.endsWith(endSearch1, 5));
+   ASSERT_TRUE(str.endsWith(endSearch1, 5, false));
+}
+
+TEST(StringVariantTest, testEndWiths)
+{
+   StringVariant str = "my name is zzu_Softboy, i think php is the best programming language in the world. php is the best!";
+}
+
 TEST(StringVariantTest, testToLowerCaseAndToUpperCase)
 {
    StringVariant str("ZZU_softboy");

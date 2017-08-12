@@ -342,6 +342,12 @@ zapi_long StringVariant::indexOf(const char *needle, zapi_long offset,
    return -1;
 }
 
+zapi_long StringVariant::indexOf(const StringVariant &needle, zapi_long offset, 
+                                 bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+{
+   return indexOf(needle.getCStr(), offset, caseSensitive);
+}
+
 zapi_long StringVariant::indexOf(const std::string &needle, zapi_long offset, 
                                  bool caseSensitive) const ZAPI_DECL_NOEXCEPT
 {
@@ -409,6 +415,12 @@ zapi_long StringVariant::lastIndexOf(const char *needle, zapi_long offset,
    return -1;
 }
 
+zapi_long StringVariant::lastIndexOf(const StringVariant &needle, zapi_long offset, 
+                                 bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+{
+   return lastIndexOf(needle.getCStr(), offset, caseSensitive);
+}
+
 zapi_long StringVariant::lastIndexOf(const std::string &needle, zapi_long offset, 
                                      bool caseSensitive) const ZAPI_DECL_NOEXCEPT
 {
@@ -420,6 +432,11 @@ zapi_long StringVariant::lastIndexOf(const char needle, zapi_long offset,
 {
    ValueType buffer[2] = {needle, '\0'};
    return lastIndexOf(reinterpret_cast<Pointer>(buffer), offset, caseSensitive);
+}
+
+bool StringVariant::contains(const StringVariant &needle, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+{
+   return -1 != indexOf(needle.getCStr(), 0, caseSensitive);
 }
 
 bool StringVariant::contains(const char *needle, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
@@ -440,6 +457,86 @@ bool StringVariant::contains(const char needle, bool caseSensitive) const ZAPI_D
 StringVariant &StringVariant::append(const char *str)
 {
    return append(str, std::strlen(str));
+}
+
+bool StringVariant::startsWith(const StringVariant &str, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+{
+   return startsWith(str.getCStr(), caseSensitive);
+}
+
+bool StringVariant::startsWith(const char *str, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+{
+   Pointer selfStr = getRawStrPtr();
+   Pointer otherStrPtr = const_cast<Pointer>(str);
+   GuardValuePtrType selfStrLowerCase(nullptr, zapi::utils::std_php_memory_deleter);
+   GuardValuePtrType otherStrLowerCase(nullptr, zapi::utils::std_php_memory_deleter);
+   size_t selfStrLength = getSize();
+   size_t otherStrLength = std::strlen(str);
+   if (selfStrLength < otherStrLength) {
+      return false;
+   }
+   if (!caseSensitive) {
+      selfStrLowerCase.reset(static_cast<Pointer>(emalloc(selfStrLength)));
+      otherStrLowerCase.reset(static_cast<Pointer>(emalloc(otherStrLength)));
+      std::memcpy(selfStrLowerCase.get(), selfStr, selfStrLength);
+      std::memcpy(otherStrLowerCase.get(), otherStrPtr, otherStrLength);
+      selfStr = selfStrLowerCase.get();
+      otherStrPtr = otherStrLowerCase.get();
+      zapi::utils::str_tolower(selfStr);
+      zapi::utils::str_tolower(otherStrPtr);
+   }
+   return 0 == std::memcmp(selfStr, otherStrPtr, otherStrLength);
+}
+
+bool StringVariant::startsWith(const std::string &str, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+{
+   return startsWith(str.c_str(), caseSensitive);
+}
+
+bool StringVariant::startsWith(char c, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+{
+   ValueType buffer[2] = {c, '\0'};
+   return startsWith(reinterpret_cast<Pointer>(buffer), caseSensitive);
+}
+
+bool StringVariant::endsWith(const StringVariant &str, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+{
+   return endsWith(str.getCStr(), caseSensitive);
+}
+
+bool StringVariant::endsWith(const char *str, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+{
+   Pointer selfStr = getRawStrPtr();
+   Pointer otherStrPtr = const_cast<Pointer>(str);
+   GuardValuePtrType selfStrLowerCase(nullptr, zapi::utils::std_php_memory_deleter);
+   GuardValuePtrType otherStrLowerCase(nullptr, zapi::utils::std_php_memory_deleter);
+   size_t selfStrLength = getSize();
+   size_t otherStrLength = std::strlen(str);
+   if (selfStrLength < otherStrLength) {
+      return false;
+   }
+   if (!caseSensitive) {
+      selfStrLowerCase.reset(static_cast<Pointer>(emalloc(selfStrLength)));
+      otherStrLowerCase.reset(static_cast<Pointer>(emalloc(otherStrLength)));
+      std::memcpy(selfStrLowerCase.get(), selfStr, selfStrLength);
+      std::memcpy(otherStrLowerCase.get(), otherStrPtr, otherStrLength);
+      selfStr = selfStrLowerCase.get();
+      otherStrPtr = otherStrLowerCase.get();
+      zapi::utils::str_tolower(selfStr);
+      zapi::utils::str_tolower(otherStrPtr);
+   }
+   return 0 == std::memcmp(selfStr + selfStrLength - otherStrLength, otherStrPtr, otherStrLength);
+}
+
+bool StringVariant::endsWith(const std::string &str, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+{
+   return endsWith(str.c_str(), caseSensitive);
+}
+
+bool StringVariant::endsWith(char c, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+{
+   ValueType buffer[2] = {c, '\0'};
+   return endsWith(reinterpret_cast<Pointer>(buffer), caseSensitive);
 }
 
 StringVariant &StringVariant::append(const char *str, size_t length)

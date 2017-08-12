@@ -86,6 +86,7 @@ public:
    std::string trimmed() const;
    std::string simplified() const;
    // modify methods
+  
    StringVariant &append(const char *str);
    StringVariant &append(const char *str, size_t length);
    StringVariant &append(const char c);
@@ -93,25 +94,49 @@ public:
    StringVariant &append(const StringVariant &str);
    template <typename T, typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
    StringVariant &append(T value);
+  
    StringVariant &clear();
+  
    void resize(SizeType size);
    void resize(SizeType size, char fillChar);
    // access methods
-   template<size_t arrayLength>
-   zapi_long indexOf(char (&needle)[arrayLength], int length, zapi_long offset = 0, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
+   zapi_long indexOf(const StringVariant &needle, zapi_long offset = 0, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    zapi_long indexOf(const char *needle, zapi_long offset = 0, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    zapi_long indexOf(const std::string &needle, zapi_long offset = 0, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    zapi_long indexOf(const char needle, zapi_long offset = 0, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    template<size_t arrayLength>
-   zapi_long lastIndexOf(char (&needle)[arrayLength], int length, zapi_long offset = 0, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
+   zapi_long indexOf(char (&needle)[arrayLength], int length, zapi_long offset = 0,
+                     bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
+   
+   zapi_long lastIndexOf(const StringVariant &needle, zapi_long offset = 0, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    zapi_long lastIndexOf(const char *needle, zapi_long offset = 0, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    zapi_long lastIndexOf(const std::string &needle, zapi_long offset = 0, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    zapi_long lastIndexOf(const char needle, zapi_long offset = 0, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    template<size_t arrayLength>
-   bool contains(char (&needle)[arrayLength], int length, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
+   zapi_long lastIndexOf(char (&needle)[arrayLength], int length, zapi_long offset = 0,
+                         bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
+   
+   bool contains(const StringVariant &needle, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    bool contains(const char *needle, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    bool contains(const std::string &needle, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    bool contains(const char needle, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
+   template<size_t arrayLength>
+   bool contains(char (&needle)[arrayLength], int length, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
+   
+   bool startsWith(const StringVariant &str, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
+   bool startsWith(const char *str, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
+   bool startsWith(const std::string &str, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
+   bool startsWith(char c, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
+   template<size_t arrayLength>
+   bool startsWith(char (&str)[arrayLength], int length, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
+ 
+   bool endsWith(const StringVariant &str, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
+   bool endsWith(const char *str, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
+   bool endsWith(const std::string &str, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
+   bool endsWith(char c, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
+   template<size_t arrayLength>
+   bool endsWith(char (&str)[arrayLength], int length, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
+   
    StringVariant makeReference() const;
    Reference at(SizeType pos);
    ConstReference at(SizeType pos) const;
@@ -173,6 +198,28 @@ template<size_t arrayLength>
 bool StringVariant::contains(char (&needle)[arrayLength], int length, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
 {
    return -1 != indexOf(needle, length, 0, caseSensitive);
+}
+
+template<size_t arrayLength>
+bool StringVariant::startsWith(char (&str)[arrayLength], int length, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+{
+   length = std::min(arrayLength, static_cast<size_t>(length));
+   // here maybe not c str, we make a local buffer for it
+   GuardValuePtrType buffer(static_cast<Pointer>(emalloc(length)), zapi::utils::std_php_memory_deleter);
+   std::memcpy(buffer.get(), str, length);
+   buffer.get()[length] = '\0';
+   return startsWith(buffer.get(), caseSensitive);
+}
+
+template<size_t arrayLength>
+bool StringVariant::endsWith(char (&str)[arrayLength], int length, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+{
+   length = std::min(arrayLength, static_cast<size_t>(length));
+   // here maybe not c str, we make a local buffer for it
+   GuardValuePtrType buffer(static_cast<Pointer>(emalloc(length)), zapi::utils::std_php_memory_deleter);
+   std::memcpy(buffer.get(), str, length);
+   buffer.get()[length] = '\0';
+   return endsWith(buffer.get(), caseSensitive);
 }
 
 } // ds
