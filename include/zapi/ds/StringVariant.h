@@ -59,6 +59,8 @@ public:
    StringVariant &operator =(char value);
    StringVariant &operator =(const std::string &value);
    StringVariant &operator =(const char *value);
+   template <typename T, typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+   StringVariant &operator =(T value);
    StringVariant &operator +=(const char *str);
    StringVariant &operator +=(const char c);
    StringVariant &operator +=(const std::string &str);
@@ -121,6 +123,7 @@ protected:
    void strStdRealloc(zend_string *&str, size_t length);
    void strPersistentRealloc(zend_string *&str, size_t length);
    size_t strAlloc(zend_string *&str, size_t length, bool persistent);
+   size_t strReAlloc(zend_string *&str, size_t length, bool persistent);
 };
 
 template <typename T, typename Selector>
@@ -128,6 +131,13 @@ StringVariant &StringVariant::append(T value)
 {
    std::string temp = std::to_string(value);
    return append(temp.c_str(), temp.length());
+}
+
+template <typename T, typename Selector>
+StringVariant &StringVariant::operator =(T value)
+{
+   std::string temp = std::to_string(value);
+   return operator =(temp.c_str());
 }
 
 template<size_t arrayLength>

@@ -474,16 +474,18 @@ void Variant::stdAssignZval(zval *dest, zval *source)
       }
       // It is possible dest make IS_REF point dest another IS_REF, but that's a bug
       ZAPI_ASSERT(Z_TYPE_P(dest) != IS_REFERENCE);
-      if (Z_REFCOUNT_P(dest) > 1) {
-         // If reference count is greater than 1, we need dest separate zval
-         // This is the optimized version of SEPARATE_ZVAL_NOREF()
-         if (Z_COPYABLE_P(dest)) {
-            // this will decrement the reference count and invoke GC_ZVAL_CHECK_FOR_POSSIBLE_ROOT()
-            zval_ptr_dtor(dest);
-            zval_copy_ctor_func(dest);
+      if (Z_COUNTED_P(dest)) {
+         if (Z_REFCOUNT_P(dest) > 1) {
+            // If reference count is greater than 1, we need dest separate zval
+            // This is the optimized version of SEPARATE_ZVAL_NOREF()
+            if (Z_COPYABLE_P(dest)) {
+               // this will decrement the reference count and invoke GC_ZVAL_CHECK_FOR_POSSIBLE_ROOT()
+               zval_ptr_dtor(dest);
+               zval_copy_ctor_func(dest);
+            }
+         } else {
+            zval_dtor(dest);
          }
-      } else {
-         zval_dtor(dest);
       }
    }
    // Copy the source of b dest a and increment the reference count if necessary

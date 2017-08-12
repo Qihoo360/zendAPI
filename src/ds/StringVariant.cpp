@@ -40,7 +40,6 @@ constexpr size_t STR_VARIANT_START_SIZE (256 - STR_VARIANT_OVERHEAD - 1);
 #endif
 
 StringVariant::StringVariant()
-   : StringVariant("")
 {}
 
 StringVariant::StringVariant(const Variant &other)
@@ -115,9 +114,14 @@ StringVariant::StringVariant(const char *value)
 StringVariant &StringVariant::operator =(const StringVariant &other)
 {
    if (this != &other) {
-      zval *self = const_cast<zval *>(getZvalPtr());
+      zval *self = getZvalPtr();
       zval *from = const_cast<zval *>(other.getZvalPtr());
-      SEPARATE_ZVAL_NOREF(self);
+      if (Z_TYPE_INFO_P(self) == IS_NULL) {
+         Z_STR_P(self) = nullptr;
+         Z_TYPE_INFO_P(self) = IS_STRING_EX;
+      } else {
+         SEPARATE_ZVAL_NOREF(self);
+      }
       // need update gc info
       Variant::operator =(from);
       m_implPtr->m_strCapacity = other.m_implPtr->m_strCapacity;
@@ -136,9 +140,14 @@ StringVariant &StringVariant::operator =(StringVariant &&other) ZAPI_DECL_NOEXCE
 StringVariant &StringVariant::operator =(const Variant &other)
 {
    zval *self = getZvalPtr();
-   SEPARATE_ZVAL_NOREF(self);
-   // need set gc info
+   if (Z_TYPE_INFO_P(self) == IS_NULL) {
+      Z_STR_P(self) = nullptr;
+      Z_TYPE_INFO_P(self) = IS_STRING_EX;
+   } else {
+      SEPARATE_ZVAL_NOREF(self);
+   }
    zval *from = const_cast<zval *>(other.getZvalPtr());
+   // need set gc info
    if (other.getType() == Type::String) {
       // standard copy
       Variant::operator =(from);
@@ -152,7 +161,7 @@ StringVariant &StringVariant::operator =(const Variant &other)
       zend_string_free(Z_STR_P(self));
       ZVAL_COPY_VALUE(self, &temp);
    }
-   m_implPtr->m_strCapacity = other.m_implPtr->m_strCapacity;
+   m_implPtr->m_strCapacity = ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(Z_STRLEN_P(self)));
    return *this;
 }
 
@@ -164,6 +173,38 @@ StringVariant &StringVariant::operator =(Variant &&other) ZAPI_DECL_NOEXCEPT
       convert_to_string(self);
    }
    m_implPtr->m_strCapacity = ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(Z_STRLEN_P(self)));
+   return *this;
+}
+
+StringVariant &StringVariant::operator =(char value)
+{
+   ValueType buffer[2] = {value, '\0'};
+   return operator =(buffer);
+}
+
+StringVariant &StringVariant::operator =(const std::string &value)
+{
+   return operator =(value.c_str());
+}
+
+StringVariant &StringVariant::operator =(const char *value)
+{
+   zval *self = getZvalPtr();
+   if (Z_TYPE_INFO_P(self) == IS_NULL) {
+      Z_STR_P(self) = nullptr;
+      Z_TYPE_INFO_P(self) = IS_STRING_EX;	
+   } else {
+      SEPARATE_ZVAL_NOREF(self);
+   }
+   zend_string *strPtr = getZendStringPtr();
+   size_t length = std::strlen(value);
+   strReAlloc(strPtr, length, 0);
+   ConstPointer sourcePtr = value;
+   Pointer destPtr = ZSTR_VAL(strPtr);
+   std::memcpy(destPtr, sourcePtr, length);
+   destPtr[length] = '\0';
+   ZSTR_LEN(strPtr) = length;
+   Z_STR_P(self) = strPtr;
    return *this;
 }
 
@@ -264,7 +305,8 @@ StringVariant::ConstReverseIterator StringVariant::crend() const ZAPI_DECL_NOEXC
    return ConstReverseIterator(getCStr());
 }
 
-zapi_long StringVariant::indexOf(const char *needle, zapi_long offset, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+zapi_long StringVariant::indexOf(const char *needle, zapi_long offset, 
+                                 bool caseSensitive) const ZAPI_DECL_NOEXCEPT
 {
    Pointer haystack = getRawStrPtr();
    size_t haystackLength = getSize();
@@ -300,12 +342,14 @@ zapi_long StringVariant::indexOf(const char *needle, zapi_long offset, bool case
    return -1;
 }
 
-zapi_long StringVariant::indexOf(const std::string &needle, zapi_long offset, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+zapi_long StringVariant::indexOf(const std::string &needle, zapi_long offset, 
+                                 bool caseSensitive) const ZAPI_DECL_NOEXCEPT
 {
    return indexOf(needle.c_str(), offset, caseSensitive);
 }
 
-zapi_long StringVariant::indexOf(const char needle, zapi_long offset, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+zapi_long StringVariant::indexOf(const char needle, zapi_long offset, 
+                                 bool caseSensitive) const ZAPI_DECL_NOEXCEPT
 {
    ValueType buffer[2] = {needle, '\0'};
    return indexOf(reinterpret_cast<Pointer>(buffer), offset, caseSensitive);
@@ -316,7 +360,8 @@ StringVariant StringVariant::makeReference() const
    return StringVariant(*this, true);
 }
 
-zapi_long StringVariant::lastIndexOf(const char *needle, zapi_long offset, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+zapi_long StringVariant::lastIndexOf(const char *needle, zapi_long offset, 
+                                     bool caseSensitive) const ZAPI_DECL_NOEXCEPT
 {
    Pointer haystack = getRawStrPtr();
    size_t haystackLength = getSize();
@@ -364,12 +409,14 @@ zapi_long StringVariant::lastIndexOf(const char *needle, zapi_long offset, bool 
    return -1;
 }
 
-zapi_long StringVariant::lastIndexOf(const std::string &needle, zapi_long offset, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+zapi_long StringVariant::lastIndexOf(const std::string &needle, zapi_long offset, 
+                                     bool caseSensitive) const ZAPI_DECL_NOEXCEPT
 {
    return lastIndexOf(needle.c_str(), offset, caseSensitive);
 }
 
-zapi_long StringVariant::lastIndexOf(const char needle, zapi_long offset, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+zapi_long StringVariant::lastIndexOf(const char needle, zapi_long offset, 
+                                     bool caseSensitive) const ZAPI_DECL_NOEXCEPT
 {
    ValueType buffer[2] = {needle, '\0'};
    return lastIndexOf(reinterpret_cast<Pointer>(buffer), offset, caseSensitive);
@@ -382,14 +429,20 @@ StringVariant &StringVariant::append(const char *str)
 
 StringVariant &StringVariant::append(const char *str, size_t length)
 {
-   SEPARATE_ZVAL_NOREF(getZvalPtr());
+   zval *self = getZvalPtr();
+   if (Z_TYPE_INFO_P(self) == IS_NULL) {
+      Z_STR_P(self) = nullptr;
+      Z_TYPE_INFO_P(self) = IS_STRING_EX;	
+   } else {
+      SEPARATE_ZVAL_NOREF(self);
+   }
    zend_string *destStrPtr = getZendStringPtr();
    size_t newLength = strAlloc(destStrPtr, length, 0);
    memcpy(ZSTR_VAL(destStrPtr) + getLength(), str, length);
    // set self state
    ZSTR_VAL(destStrPtr)[newLength] = '\0';
    ZSTR_LEN(destStrPtr) = newLength;
-   Z_STR_P(getZvalPtr()) = destStrPtr;
+   Z_STR_P(self) = destStrPtr;
    return *this;
 }
 
@@ -406,6 +459,19 @@ StringVariant &StringVariant::append(const std::string &str)
 StringVariant &StringVariant::append(const StringVariant &str)
 {
    return append(str.getCStr(), str.getLength());
+}
+
+StringVariant &StringVariant::clear()
+{
+   // here we release zend_string memory
+   // and set capacity to zero
+   zval *self = getZvalPtr();
+   SEPARATE_ZVAL_NOREF(self);
+   zend_string *strPtr = getZendStringPtr();
+   zend_string_free(strPtr);
+   ZVAL_NULL(self);
+   m_implPtr->m_strCapacity = 0;
+   return *this;
 }
 
 std::string StringVariant::trimmed() const
@@ -467,7 +533,8 @@ char *StringVariant::getRawStrPtr() const ZAPI_DECL_NOEXCEPT
 
 StringVariant::SizeType StringVariant::getSize() const ZAPI_DECL_NOEXCEPT
 {
-   return Z_STRLEN_P(const_cast<zval *>(getZvalPtr()));
+   zval *self = const_cast<zval *>(getZvalPtr());
+   return Z_TYPE_INFO_P(self) == IS_NULL || !Z_STR_P(self) ? 0 : Z_STRLEN_P(self);
 }
 
 bool StringVariant::isEmpty() const ZAPI_DECL_NOEXCEPT
@@ -537,6 +604,23 @@ size_t StringVariant::strAlloc(zend_string *&str, size_t length, bool persistent
       goto do_smart_str_realloc;
    } else {
       length += ZSTR_LEN(str);
+      if (UNEXPECTED(length >= m_implPtr->m_strCapacity)) {
+do_smart_str_realloc:
+         if (persistent) {
+            strPersistentRealloc(str, length);
+         } else {
+            strStdRealloc(str, length);
+         }
+      }
+   }
+   return length;
+}
+
+size_t StringVariant::strReAlloc(zend_string *&str, size_t length, bool persistent)
+{
+   if (UNEXPECTED(!str)) {
+      goto do_smart_str_realloc;
+   } else {
       if (UNEXPECTED(length >= m_implPtr->m_strCapacity)) {
 do_smart_str_realloc:
          if (persistent) {

@@ -27,12 +27,35 @@ TEST(StringVariantTest, testConstructors)
    StringVariant str("xiuxiu");
    StringVariant emptyStr;
    ASSERT_TRUE(emptyStr.isEmpty());
-   ASSERT_EQ(emptyStr.getCapacity(), 199);
+   ASSERT_EQ(emptyStr.getCapacity(), 0);
    ASSERT_EQ(emptyStr.getSize(), 0);
+   emptyStr = 1;
+   std::cout << emptyStr << std::endl;
    emptyStr.append('C');
-   ASSERT_EQ(emptyStr.getSize(), 1);
+   ASSERT_EQ(emptyStr.getSize(), 2);
    ASSERT_EQ(emptyStr.getCapacity(), 199);
-   ASSERT_EQ(emptyStr.at(0), 'C');
+   ASSERT_EQ(emptyStr.at(0), '1');
+   emptyStr.clear();
+   ASSERT_EQ(emptyStr.getSize(), 0);
+   ASSERT_EQ(emptyStr.getCapacity(), 0);
+   emptyStr = str;
+   ASSERT_EQ(emptyStr.getSize(), 6);
+   ASSERT_EQ(emptyStr.getCapacity(), 199);
+   ASSERT_EQ(emptyStr.getRefCount(), 2);
+   ASSERT_EQ(str.getRefCount(), 2);
+   emptyStr.clear();
+   ASSERT_EQ(emptyStr.getSize(), 0);
+   ASSERT_EQ(emptyStr.getCapacity(), 0);
+   emptyStr = Variant("zapi");
+   ASSERT_EQ(emptyStr.getSize(), 4);
+   ASSERT_EQ(emptyStr.getCapacity(), 32);
+   ASSERT_EQ(emptyStr.getRefCount(), 1);
+   emptyStr.clear();
+   Variant gvar("zapi");
+   emptyStr = gvar;
+   ASSERT_EQ(emptyStr.getSize(), 4);
+   ASSERT_EQ(emptyStr.getCapacity(), 32);
+   ASSERT_EQ(emptyStr.getRefCount(), 2);
 }
 
 TEST(StringVariantTest, testConstructFromVariant)
@@ -172,6 +195,31 @@ TEST(StringVariantTest, testAssignOperators)
    str1 = StringVariant("zzu_softboy");
    ASSERT_STREQ(str1.getCStr(), "zzu_softboy");
    ASSERT_EQ(str1.getRefCount(), 1);
+   str1 = 123456778;
+   ASSERT_STREQ(str1.getCStr(), "123456778");
+   ASSERT_EQ(str1.getRefCount(), 1);
+   ASSERT_EQ(str1.getLength(), 9);
+   str1 = std::string("zzu_softboy");
+   ASSERT_STREQ(str1.getCStr(), "zzu_softboy");
+   ASSERT_EQ(str1.getRefCount(), 1);
+   ASSERT_EQ(str1.getLength(), 11);
+   str1 = 'c';
+   ASSERT_STREQ(str1.getCStr(), "c");
+   ASSERT_EQ(str1.getRefCount(), 1);
+   ASSERT_EQ(str1.getLength(), 1);
+}
+
+TEST(StringVariantTest, testClear)
+{
+   StringVariant str("0123456789a123456789b1234A56789c");
+   ASSERT_STREQ(str.getCStr(), "0123456789a123456789b1234A56789c");
+   str.clear();
+   ASSERT_EQ(str.getLength(), 0);
+   ASSERT_EQ(str.getCapacity(), 0);
+   str.append('c');
+   ASSERT_STREQ(str.getCStr(), "c");
+   ASSERT_EQ(str.getLength(), 1);
+   ASSERT_EQ(str.getCapacity(), 199);
 }
 
 TEST(StringVariantTest, testLastIndexOf)
