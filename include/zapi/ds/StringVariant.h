@@ -107,6 +107,11 @@ public:
    zapi_long lastIndexOf(const char *needle, zapi_long offset = 0, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    zapi_long lastIndexOf(const std::string &needle, zapi_long offset = 0, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    zapi_long lastIndexOf(const char needle, zapi_long offset = 0, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
+   template<size_t arrayLength>
+   bool contains(char (&needle)[arrayLength], int length, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
+   bool contains(const char *needle, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
+   bool contains(const std::string &needle, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
+   bool contains(const char needle, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    StringVariant makeReference() const;
    Reference at(SizeType pos);
    ConstReference at(SizeType pos) const;
@@ -162,6 +167,12 @@ zapi_long StringVariant::lastIndexOf(char (&needle)[arrayLength], int length,
    std::memcpy(buffer.get(), needle, length);
    buffer.get()[length] = '\0';
    return lastIndexOf(buffer.get(), offset, caseSensitive);
+}
+
+template<size_t arrayLength>
+bool StringVariant::contains(char (&needle)[arrayLength], int length, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+{
+   return -1 != indexOf(needle, length, 0, caseSensitive);
 }
 
 } // ds

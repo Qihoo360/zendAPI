@@ -4,7 +4,7 @@
 
 该项目是对 Zend Engine 的 C 接口使用 C++11 进行而面向对象的封装，从而屏蔽了底层 Zend Engine API 的接口复杂性，加快开发 PHP 扩展的效率。
 
-项目官网地址：www.zendapi.com
+项目官网地址：www.zendapi.org
 
 ### 设计目标
 
@@ -23,8 +23,8 @@
 
 ### 文档相关
 
-用户手册: www.zendapi.com/documents</br>
-API手册: www.zendapi.com/api
+用户手册: www.zendapi.org/manual</br>
+API手册: www.zendapi.org/api
 
 ### 说明
 

@@ -422,6 +422,21 @@ zapi_long StringVariant::lastIndexOf(const char needle, zapi_long offset,
    return lastIndexOf(reinterpret_cast<Pointer>(buffer), offset, caseSensitive);
 }
 
+bool StringVariant::contains(const char *needle, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+{
+   return -1 != indexOf(needle, 0, caseSensitive);
+}
+
+bool StringVariant::contains(const std::string &needle, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+{
+   return -1 != indexOf(needle, 0, caseSensitive);
+}
+
+bool StringVariant::contains(const char needle, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+{
+   return -1 != indexOf(needle, 0, caseSensitive);
+}
+
 StringVariant &StringVariant::append(const char *str)
 {
    return append(str, std::strlen(str));

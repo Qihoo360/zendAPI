@@ -255,6 +255,16 @@ TEST(StringVariantTest, testResize)
    //std::cout << str << std::endl;
 }
 
+TEST(StringVariantTest, testContains)
+{
+   StringVariant str = "my name is zzu_Softboy, i think php is the best programming language in the world. php is the best!";
+   ASSERT_TRUE(str.contains("name"));
+   char searchArray[4] = {'b', 'e', 's', 't'};
+   ASSERT_TRUE(str.contains(searchArray, 4));
+   ASSERT_FALSE(str.contains("PHP"));
+   ASSERT_TRUE(str.contains("PHP", false));
+}
+
 TEST(StringVariantTest, testLastIndexOf)
 {
    // from php online manual
