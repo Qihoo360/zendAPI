@@ -92,15 +92,25 @@ public:
    std::string substring(size_t pos, size_t length) const;
    std::string substring(size_t pos) const;
    // modify methods
+   
+   StringVariant &prepend(const char *str);
+   StringVariant &prepend(const char c);
+   StringVariant &prepend(const std::string &str);
+   StringVariant &prepend(const StringVariant &str);
+   template <typename T, typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+   StringVariant &prepend(T value);
+   template<size_t arrayLength>
+   StringVariant &prepend(char (&str)[arrayLength], int length);
   
    StringVariant &append(const char *str);
-   StringVariant &append(const char *str, size_t length);
    StringVariant &append(const char c);
    StringVariant &append(const std::string &str);
    StringVariant &append(const StringVariant &str);
    template <typename T, typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
    StringVariant &append(T value);
-  
+   template<size_t arrayLength>
+   StringVariant &append(char (&str)[arrayLength], int length);
+   
    StringVariant &clear();
   
    void resize(SizeType size);
@@ -163,10 +173,37 @@ protected:
 };
 
 template <typename T, typename Selector>
+StringVariant &StringVariant::prepend(T value)
+{
+   std::string temp = std::to_string(value);
+   return prepend(temp.c_str());
+}
+
+template<size_t arrayLength>
+StringVariant &StringVariant::prepend(char (&str)[arrayLength], int length)
+{
+   length = std::min(arrayLength, static_cast<size_t>(length));
+   GuardValuePtrType buffer(static_cast<Pointer>(emalloc(length)), zapi::utils::std_php_memory_deleter);
+   std::memcpy(buffer.get(), str, length);
+   buffer.get()[length] = '\0';
+   return prepend(buffer.get());
+}
+
+template <typename T, typename Selector>
 StringVariant &StringVariant::append(T value)
 {
    std::string temp = std::to_string(value);
-   return append(temp.c_str(), temp.length());
+   return append(temp.c_str());
+}
+
+template<size_t arrayLength>
+StringVariant &StringVariant::append(char (&str)[arrayLength], int length)
+{
+   length = std::min(arrayLength, static_cast<size_t>(length));
+   GuardValuePtrType buffer(static_cast<Pointer>(emalloc(length)), zapi::utils::std_php_memory_deleter);
+   std::memcpy(buffer.get(), str, length);
+   buffer.get()[length] = '\0';
+   return append(buffer.get());
 }
 
 template <typename T, typename Selector>

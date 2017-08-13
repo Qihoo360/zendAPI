@@ -454,11 +454,6 @@ bool StringVariant::contains(const char needle, bool caseSensitive) const ZAPI_D
    return -1 != indexOf(needle, 0, caseSensitive);
 }
 
-StringVariant &StringVariant::append(const char *str)
-{
-   return append(str, std::strlen(str));
-}
-
 bool StringVariant::startsWith(const StringVariant &str, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
 {
    return startsWith(str.getCStr(), caseSensitive);
@@ -539,7 +534,7 @@ bool StringVariant::endsWith(char c, bool caseSensitive) const ZAPI_DECL_NOEXCEP
    return endsWith(reinterpret_cast<Pointer>(buffer), caseSensitive);
 }
 
-StringVariant &StringVariant::append(const char *str, size_t length)
+StringVariant &StringVariant::prepend(const char *str)
 {
    zval *self = getZvalPtr();
    if (Type::Null == getType()) {
@@ -549,6 +544,51 @@ StringVariant &StringVariant::append(const char *str, size_t length)
       SEPARATE_ZVAL_NOREF(self);
    }
    zend_string *destStrPtr = getZendStringPtr();
+   size_t length = std::strlen(str);
+   size_t selfLength = getSize();
+   size_t newLength = strAlloc(destStrPtr, length, 0);
+   Pointer newRawStr = ZSTR_VAL(destStrPtr);
+   // copy backward
+   size_t iterator = selfLength;
+   while (iterator--) {
+      *(newRawStr + iterator + length) = *(newRawStr + iterator);
+   }
+   // copy prepend
+   std::memcpy(newRawStr, str, length);
+   // set self state
+   ZSTR_VAL(destStrPtr)[newLength] = '\0';
+   ZSTR_LEN(destStrPtr) = newLength;
+   Z_STR_P(self) = destStrPtr;
+   return *this;
+}
+
+StringVariant &StringVariant::prepend(const char c)
+{
+   ValueType buffer[2] = {c, '\0'};
+   return prepend(reinterpret_cast<Pointer>(buffer));
+}
+
+StringVariant &StringVariant::prepend(const std::string &str)
+{
+   return prepend(str.c_str());
+}
+
+StringVariant &StringVariant::prepend(const StringVariant &str)
+{
+   return prepend(str.getCStr());
+}
+
+StringVariant &StringVariant::append(const char *str)
+{
+   zval *self = getZvalPtr();
+   if (Type::Null == getType()) {
+      Z_STR_P(self) = nullptr;
+      Z_TYPE_INFO_P(self) = IS_STRING_EX;	
+   } else {
+      SEPARATE_ZVAL_NOREF(self);
+   }
+   zend_string *destStrPtr = getZendStringPtr();
+   size_t length = std::strlen(str);
    size_t newLength = strAlloc(destStrPtr, length, 0);
    memcpy(ZSTR_VAL(destStrPtr) + getLength(), str, length);
    // set self state
@@ -560,17 +600,18 @@ StringVariant &StringVariant::append(const char *str, size_t length)
 
 StringVariant &StringVariant::append(const char c)
 {
-   return append(&c, 1);
+   ValueType buffer[2] = {c, '\0'};
+   return append(reinterpret_cast<Pointer>(buffer));
 }
 
 StringVariant &StringVariant::append(const std::string &str)
 {
-   return append(str.c_str(), str.length());
+   return append(str.c_str());
 }
 
 StringVariant &StringVariant::append(const StringVariant &str)
 {
-   return append(str.getCStr(), str.getLength());
+   return append(str.getCStr());
 }
 
 StringVariant &StringVariant::clear()

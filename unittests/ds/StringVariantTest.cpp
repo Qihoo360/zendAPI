@@ -358,3 +358,35 @@ TEST(StringVariantTest, testToLowerCaseAndToUpperCase)
    ASSERT_STREQ(str.toLowerCase().c_str(), "zzu_softboy");
    ASSERT_STREQ(str.toUpperCase().c_str(), "ZZU_SOFTBOY");
 }
+
+TEST(StringVariantTest, testAppendAndPrepend)
+{
+   {
+      StringVariant str("zapi");
+      ASSERT_STREQ(str.getCStr(), "zapi");
+      str.append(1);
+      ASSERT_STREQ(str.getCStr(), "zapi1");
+      char needAppend[] = {'p', 'h', 'p'};
+      str.append(needAppend, 3);
+      ASSERT_STREQ(str.getCStr(), "zapi1php");
+      str.append("cpp");
+      ASSERT_STREQ(str.getCStr(), "zapi1phpcpp");
+      StringVariant str1 = "hello";
+      str.append(str1);
+      ASSERT_STREQ(str.getCStr(), "zapi1phpcpphello");
+   }
+   {
+      StringVariant str("zapi");
+      ASSERT_STREQ(str.getCStr(), "zapi");
+      str.prepend(1);
+      ASSERT_STREQ(str.getCStr(), "1zapi");
+      char needPrepend[] = {'p', 'h', 'p'};
+      str.prepend(needPrepend, 3);
+      ASSERT_STREQ(str.getCStr(), "php1zapi");
+      str.prepend("cpp");
+      ASSERT_STREQ(str.getCStr(), "cppphp1zapi");
+      StringVariant str1 = "hello";
+      str.prepend(str1);
+      ASSERT_STREQ(str.getCStr(), "hellocppphp1zapi");
+   }
+}
