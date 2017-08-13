@@ -101,7 +101,7 @@ public:
    StringVariant &prepend(T value);
    template<size_t arrayLength>
    StringVariant &prepend(char (&str)[arrayLength], int length);
-  
+   
    StringVariant &append(const char *str);
    StringVariant &append(const char c);
    StringVariant &append(const std::string &str);
@@ -111,8 +111,10 @@ public:
    template<size_t arrayLength>
    StringVariant &append(char (&str)[arrayLength], int length);
    
+   StringVariant &remove(size_t pos, size_t length);
+   
    StringVariant &clear();
-  
+   
    void resize(SizeType size);
    void resize(SizeType size, char fillChar);
    // access methods
@@ -145,7 +147,7 @@ public:
    bool startsWith(char c, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    template<size_t arrayLength>
    bool startsWith(char (&str)[arrayLength], int length, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
- 
+   
    bool endsWith(const StringVariant &str, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    bool endsWith(const char *str, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    bool endsWith(const std::string &str, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
@@ -215,7 +217,7 @@ StringVariant &StringVariant::operator =(T value)
 
 template<size_t arrayLength>
 zapi_long StringVariant::indexOf(char (&needle)[arrayLength], int length, 
-                           zapi_long offset, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+                                 zapi_long offset, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
 {
    length = std::min(arrayLength, static_cast<size_t>(length));
    // here maybe not c str, we make a local buffer for it
@@ -227,7 +229,7 @@ zapi_long StringVariant::indexOf(char (&needle)[arrayLength], int length,
 
 template<size_t arrayLength>
 zapi_long StringVariant::lastIndexOf(char (&needle)[arrayLength], int length, 
-                           zapi_long offset, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+                                     zapi_long offset, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
 {
    length = std::min(arrayLength, static_cast<size_t>(length));
    // here maybe not c str, we make a local buffer for it

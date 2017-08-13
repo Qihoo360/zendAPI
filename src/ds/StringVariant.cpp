@@ -614,6 +614,23 @@ StringVariant &StringVariant::append(const StringVariant &str)
    return append(str.getCStr());
 }
 
+StringVariant &StringVariant::remove(size_t pos, size_t length)
+{
+   size_t selfLength = getLength();
+   if (pos > selfLength) {
+      throw std::out_of_range("string pos out of range");
+   }
+   Pointer strPtr = getRawStrPtr();
+   if (pos + length < selfLength) {
+      size_t needCopy = selfLength - pos - length;
+      std::memmove(strPtr + pos, strPtr + pos + length, needCopy);
+   }
+   size_t newLength = selfLength - std::min(length, selfLength - pos);
+   *(strPtr + newLength) = '\0';
+   ZSTR_LEN(getZendStringPtr()) = newLength;
+   return *this;
+}
+
 StringVariant &StringVariant::clear()
 {
    // here we release zend_string memory

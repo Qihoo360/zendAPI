@@ -364,29 +364,49 @@ TEST(StringVariantTest, testAppendAndPrepend)
    {
       StringVariant str("zapi");
       ASSERT_STREQ(str.getCStr(), "zapi");
+      ASSERT_EQ(str.getLength(), 4);
       str.append(1);
+      ASSERT_EQ(str.getLength(), 5);
       ASSERT_STREQ(str.getCStr(), "zapi1");
       char needAppend[] = {'p', 'h', 'p'};
       str.append(needAppend, 3);
+      ASSERT_EQ(str.getLength(), 8);
       ASSERT_STREQ(str.getCStr(), "zapi1php");
       str.append("cpp");
+      ASSERT_EQ(str.getLength(), 11);
       ASSERT_STREQ(str.getCStr(), "zapi1phpcpp");
       StringVariant str1 = "hello";
       str.append(str1);
+      ASSERT_EQ(str.getLength(), 16);
       ASSERT_STREQ(str.getCStr(), "zapi1phpcpphello");
    }
    {
       StringVariant str("zapi");
       ASSERT_STREQ(str.getCStr(), "zapi");
+      ASSERT_EQ(str.getLength(), 4);
       str.prepend(1);
+      ASSERT_EQ(str.getLength(), 5);
       ASSERT_STREQ(str.getCStr(), "1zapi");
       char needPrepend[] = {'p', 'h', 'p'};
       str.prepend(needPrepend, 3);
+      ASSERT_EQ(str.getLength(), 8);
       ASSERT_STREQ(str.getCStr(), "php1zapi");
       str.prepend("cpp");
+      ASSERT_EQ(str.getLength(), 11);
       ASSERT_STREQ(str.getCStr(), "cppphp1zapi");
       StringVariant str1 = "hello";
       str.prepend(str1);
+      ASSERT_EQ(str.getLength(), 16);
       ASSERT_STREQ(str.getCStr(), "hellocppphp1zapi");
    }
+}
+
+TEST(StringVariantTest, testRemove)
+{
+   StringVariant str = "my name is zzu_Softboy, i think php is the best programming language in the world. php is the best!";
+   size_t oldLength = str.getLength();
+   str.remove(2, 4);
+   ASSERT_EQ(str.getLength(), oldLength - 4);
+   ASSERT_STREQ(str.getCStr(), "mye is zzu_Softboy, i think php is the best programming language in the world. php is the best!");
+   ASSERT_THROW(str.remove(111, 4), std::out_of_range);
 }
