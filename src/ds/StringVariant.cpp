@@ -676,19 +676,53 @@ std::string StringVariant::simplified() const
    return std::string(tempStr.get(), dest);
 }
 
-std::string StringVariant::left(size_t size) const ZAPI_DECL_NOEXCEPT
+std::string StringVariant::left(size_t size) const
 {
    size_t needCopyLength = std::min(size, getSize());
    Pointer strPtr = getRawStrPtr();
    return std::string(strPtr, strPtr + needCopyLength);
 }
 
-std::string StringVariant::right(size_t size) const ZAPI_DECL_NOEXCEPT
+std::string StringVariant::right(size_t size) const
 {
    size_t selfLength = getSize();
    size_t needCopyLength = std::min(size, selfLength);
    Pointer strPtr = getRawStrPtr();
    return std::string(strPtr + selfLength - needCopyLength, strPtr + selfLength);
+}
+
+std::string StringVariant::leftJustified(size_t size, char fill) const
+{
+   Pointer strPtr = getRawStrPtr();
+   size_t selfLength = getSize();
+   size_t needCopyLength = std::min(size, selfLength);
+   std::string ret(strPtr, strPtr + needCopyLength);
+   if (size > selfLength) {
+      // need fill
+      size_t fillLength = size - selfLength;
+      while(fillLength--) {
+         ret.push_back(fill);
+      }
+   }
+   return ret;
+}
+
+std::string StringVariant::rightJustified(size_t size, char fill) const
+{
+   Pointer strPtr = getRawStrPtr();
+   size_t selfLength = getSize();
+   size_t needCopyLength = std::min(size, selfLength);
+   std::string ret;
+   ret.reserve(std::max(size, selfLength));
+   if (size > selfLength) {
+      // need fill
+      size_t fillLength = size - selfLength;
+      while(fillLength--) {
+         ret.push_back(fill);
+      }
+   }
+   ret.append(strPtr, needCopyLength);
+   return ret;
 }
 
 const char *StringVariant::getCStr() const ZAPI_DECL_NOEXCEPT

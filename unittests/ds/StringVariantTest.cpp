@@ -331,6 +331,17 @@ TEST(StringVariantTest, testRight)
    ASSERT_STREQ(str.right(111).c_str(), "my name is zzu_Softboy, i think php is the best programming language in the world. php is the best!");
 }
 
+TEST(StringVariantTest, testJustify)
+{
+   StringVariant str("zapi");
+   ASSERT_STREQ(str.leftJustified(2, '.').c_str(), "za");
+   ASSERT_STREQ(str.leftJustified(8, '.').c_str(), "zapi....");
+   //std::cout << str.leftJustified(8, '.').c_str() << std::endl;
+   ASSERT_STREQ(str.rightJustified(2, '.').c_str(), "za");
+   ASSERT_STREQ(str.rightJustified(8, '.').c_str(), "....zapi");
+   //std::cout << str.rightJustified(8, '.').c_str() << std::endl;
+}
+
 TEST(StringVariantTest, testToLowerCaseAndToUpperCase)
 {
    StringVariant str("ZZU_softboy");
