@@ -409,4 +409,25 @@ TEST(StringVariantTest, testRemove)
    ASSERT_EQ(str.getLength(), oldLength - 4);
    ASSERT_STREQ(str.getCStr(), "mye is zzu_Softboy, i think php is the best programming language in the world. php is the best!");
    ASSERT_THROW(str.remove(111, 4), std::out_of_range);
+   oldLength = str.getLength();
+   str.remove(0);
+   ASSERT_STREQ(str.getCStr(), "ye is zzu_Softboy, i think php is the best programming language in the world. php is the best!");
+   ASSERT_EQ(str.getLength(), oldLength - 1);
+   // test negative pos
+   oldLength = str.getLength();
+   str.remove(-1);
+   ASSERT_STREQ(str.getCStr(), "ye is zzu_Softboy, i think php is the best programming language in the world. php is the best");
+   ASSERT_EQ(str.getLength(), oldLength - 1);
+   oldLength = str.getLength();
+   str.remove(-4, 4);
+   ASSERT_STREQ(str.getCStr(), "ye is zzu_Softboy, i think php is the best programming language in the world. php is the ");
+   ASSERT_EQ(str.getLength(), oldLength - 4);
+   ASSERT_THROW(str.remove(-100, 4), std::out_of_range);
+   str = "my name is zzu_Softboy, i think php is the best programming language in the world. php is the best! But PHP a little slow";
+   str.remove("php");
+   ASSERT_STREQ(str.getCStr(), "my name is zzu_Softboy, i think  is the best programming language in the world.  is the best! But PHP a little slow");
+   str.remove("php", false);
+   ASSERT_STREQ(str.getCStr(), "my name is zzu_Softboy, i think  is the best programming language in the world.  is the best! But  a little slow");
+   str.remove('z');
+   ASSERT_STREQ(str.getCStr(), "my name is u_Softboy, i think  is the best programming language in the world.  is the best! But  a little slow");
 }

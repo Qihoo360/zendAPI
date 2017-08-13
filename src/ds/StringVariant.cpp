@@ -631,6 +631,32 @@ StringVariant &StringVariant::remove(size_t pos, size_t length)
    return *this;
 }
 
+StringVariant &StringVariant::remove(const char *str, bool caseSensitive)
+{
+   size_t length = std::strlen(str);
+   zapi_long pos = -1;
+   while (-1 != (pos = indexOf(str, 0, caseSensitive))) {
+      remove(static_cast<size_t>(pos), length);
+   }
+   return *this;
+}
+
+StringVariant &StringVariant::remove(char c, bool caseSensitive)
+{
+   ValueType buffer[2] = {c, '\0'};
+   return remove(reinterpret_cast<Pointer>(buffer), caseSensitive);
+}
+
+StringVariant &StringVariant::remove(const std::string &str, bool caseSensitive)
+{
+   return remove(str.c_str(), caseSensitive);
+}
+
+StringVariant &StringVariant::remove(const StringVariant &str, bool caseSensitive)
+{
+   return remove(str.getCStr(), caseSensitive);
+}
+
 StringVariant &StringVariant::clear()
 {
    // here we release zend_string memory

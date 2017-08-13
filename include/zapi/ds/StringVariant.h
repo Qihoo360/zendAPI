@@ -20,6 +20,7 @@
 #include "zapi/utils/CommonFuncs.h"
 #include "php/Zend/zend_smart_str.h"
 #include <iterator>
+#include <cstdlib>
 
 namespace zapi
 {
@@ -112,6 +113,14 @@ public:
    StringVariant &append(char (&str)[arrayLength], int length);
    
    StringVariant &remove(size_t pos, size_t length);
+   template <typename T, typename Selector = typename std::enable_if<std::is_integral<T>::value>::type>
+   StringVariant &remove(T pos, size_t length);
+   template <typename T, typename Selector = typename std::enable_if<std::is_integral<T>::value>::type>
+   StringVariant &remove(T pos);
+   StringVariant &remove(char c, bool caseSensitive = true);
+   StringVariant &remove(const char *str, bool caseSensitive = true);
+   StringVariant &remove(const std::string &str, bool caseSensitive = true);
+   StringVariant &remove(const StringVariant &str, bool caseSensitive = true);
    
    StringVariant &clear();
    
@@ -206,6 +215,30 @@ StringVariant &StringVariant::append(char (&str)[arrayLength], int length)
    std::memcpy(buffer.get(), str, length);
    buffer.get()[length] = '\0';
    return append(buffer.get());
+}
+
+template <typename T, typename Selector>
+StringVariant &StringVariant::remove(T pos, size_t length)
+{
+   size_t targetPos = 0;
+   size_t selfLength = getLength();
+   size_t positivePos = static_cast<size_t>(std::abs(pos));
+   if (pos < 0) {
+      // out of range
+      if (selfLength < positivePos) {
+         throw std::out_of_range("string pos out of range");
+      }
+      targetPos = selfLength - positivePos;
+   } else {
+      targetPos = static_cast<size_t>(pos);
+   }
+   return remove(targetPos, length);
+}
+
+template <typename T, typename Selector>
+StringVariant &StringVariant::remove(T pos)
+{
+   return remove(pos, 1);
 }
 
 template <typename T, typename Selector>
