@@ -430,4 +430,13 @@ TEST(StringVariantTest, testRemove)
    ASSERT_STREQ(str.getCStr(), "my name is zzu_Softboy, i think  is the best programming language in the world.  is the best! But  a little slow");
    str.remove('z');
    ASSERT_STREQ(str.getCStr(), "my name is u_Softboy, i think  is the best programming language in the world.  is the best! But  a little slow");
+   StringVariant emptyStr;
+   ASSERT_THROW(emptyStr.remove(1, 1), std::out_of_range);
+   emptyStr = str;
+   ASSERT_EQ(emptyStr.getRefCount(), 2);
+   ASSERT_EQ(str.getRefCount(), 2);
+   emptyStr.remove(1);
+   ASSERT_STREQ(emptyStr.getCStr(), "m name is u_Softboy, i think  is the best programming language in the world.  is the best! But  a little slow");
+   ASSERT_EQ(emptyStr.getRefCount(), 1);
+   ASSERT_EQ(str.getRefCount(), 1);
 }

@@ -122,6 +122,8 @@ public:
    StringVariant &remove(const std::string &str, bool caseSensitive = true);
    StringVariant &remove(const StringVariant &str, bool caseSensitive = true);
    
+   StringVariant &insert(size_t pos, const char *str);
+   
    StringVariant &clear();
    
    void resize(SizeType size);

@@ -620,6 +620,9 @@ StringVariant &StringVariant::remove(size_t pos, size_t length)
    if (pos > selfLength) {
       throw std::out_of_range("string pos out of range");
    }
+   zval *self = getZvalPtr();
+   // implement php copy on write idiom
+   SEPARATE_ZVAL_NOREF(self);
    Pointer strPtr = getRawStrPtr();
    if (pos + length < selfLength) {
       size_t needCopy = selfLength - pos - length;
@@ -655,6 +658,11 @@ StringVariant &StringVariant::remove(const std::string &str, bool caseSensitive)
 StringVariant &StringVariant::remove(const StringVariant &str, bool caseSensitive)
 {
    return remove(str.getCStr(), caseSensitive);
+}
+
+StringVariant &StringVariant::insert(size_t pos, const char *str)
+{
+   
 }
 
 StringVariant &StringVariant::clear()
