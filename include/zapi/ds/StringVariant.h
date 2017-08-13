@@ -85,6 +85,8 @@ public:
    std::string toUpperCase() const;
    std::string trimmed() const;
    std::string simplified() const;
+   std::string left(size_t size) const ZAPI_DECL_NOEXCEPT;
+   std::string right(size_t size) const ZAPI_DECL_NOEXCEPT;
    // modify methods
   
    StringVariant &append(const char *str);

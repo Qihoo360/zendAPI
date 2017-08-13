@@ -295,14 +295,20 @@ TEST(StringVariantTest, testStartWiths)
    ASSERT_TRUE(str.startsWith("my name is zzu"));
    ASSERT_FALSE(str.startsWith("my name is zzu_softboy"));
    ASSERT_TRUE(str.startsWith("my name is zzu_softboy", false));
-   ASSERT_TRUE(str.endsWith("php is the best!"));
-   ASSERT_FALSE(str.endsWith("php Is The best!"));
-   ASSERT_TRUE(str.endsWith("php Is The best!", false));
    char search[7] = {'m', 'y', ' ', 'n', 'a', 'm', 'e'};
    ASSERT_TRUE(str.startsWith(search, 7));
    char search1[7] = {'m', 'y', ' ', 'N', 'a', 'm', 'e'};
    ASSERT_FALSE(str.startsWith(search1, 7));
    ASSERT_TRUE(str.startsWith(search1, 7, false));
+   
+}
+
+TEST(StringVariantTest, testEndWiths)
+{
+   StringVariant str = "my name is zzu_Softboy, i think php is the best programming language in the world. php is the best!";
+   ASSERT_TRUE(str.endsWith("php is the best!"));
+   ASSERT_FALSE(str.endsWith("php Is The best!"));
+   ASSERT_TRUE(str.endsWith("php Is The best!", false));
    char endSearch[5] = {'b', 'e', 's', 't', '!'};
    ASSERT_TRUE(str.endsWith(endSearch, 5));
    char endSearch1[5] = {'b', 'e', 's', 'T', '!'};
@@ -310,9 +316,19 @@ TEST(StringVariantTest, testStartWiths)
    ASSERT_TRUE(str.endsWith(endSearch1, 5, false));
 }
 
-TEST(StringVariantTest, testEndWiths)
+TEST(StringVariantTest, testLeft)
 {
    StringVariant str = "my name is zzu_Softboy, i think php is the best programming language in the world. php is the best!";
+   ASSERT_STREQ(str.left(2).c_str(), "my");
+   ASSERT_STREQ(str.left(111).c_str(), "my name is zzu_Softboy, i think php is the best programming language in the world. php is the best!");
+}
+
+TEST(StringVariantTest, testRight)
+{
+   StringVariant str = "my name is zzu_Softboy, i think php is the best programming language in the world. php is the best!";
+   ASSERT_STREQ(str.right(2).c_str(), "t!");
+   ASSERT_STREQ(str.right(12).c_str(), "is the best!");
+   ASSERT_STREQ(str.right(111).c_str(), "my name is zzu_Softboy, i think php is the best programming language in the world. php is the best!");
 }
 
 TEST(StringVariantTest, testToLowerCaseAndToUpperCase)

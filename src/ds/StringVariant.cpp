@@ -676,6 +676,21 @@ std::string StringVariant::simplified() const
    return std::string(tempStr.get(), dest);
 }
 
+std::string StringVariant::left(size_t size) const ZAPI_DECL_NOEXCEPT
+{
+   size_t needCopyLength = std::min(size, getSize());
+   Pointer strPtr = getRawStrPtr();
+   return std::string(strPtr, strPtr + needCopyLength);
+}
+
+std::string StringVariant::right(size_t size) const ZAPI_DECL_NOEXCEPT
+{
+   size_t selfLength = getSize();
+   size_t needCopyLength = std::min(size, selfLength);
+   Pointer strPtr = getRawStrPtr();
+   return std::string(strPtr + selfLength - needCopyLength, strPtr + selfLength);
+}
+
 const char *StringVariant::getCStr() const ZAPI_DECL_NOEXCEPT
 {
    return Z_STRVAL_P(const_cast<zval *>(getZvalPtr()));
