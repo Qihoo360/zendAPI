@@ -89,6 +89,8 @@ public:
    std::string right(size_t size) const;
    std::string leftJustified(size_t size, char fill = ' ') const;
    std::string rightJustified(size_t size, char fill = ' ') const;
+   std::string substring(size_t pos, size_t length) const;
+   std::string substring(size_t pos) const;
    // modify methods
   
    StringVariant &append(const char *str);

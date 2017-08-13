@@ -342,6 +342,16 @@ TEST(StringVariantTest, testJustify)
    //std::cout << str.rightJustified(8, '.').c_str() << std::endl;
 }
 
+TEST(StringVariantTest, testSubString)
+{
+   StringVariant str = "my name is zzu_Softboy, i think php is the best programming language in the world. php is the best!";
+   ASSERT_STREQ(str.substring(0, 6).c_str(), "my nam");
+   ASSERT_STREQ(str.substring(3, 6).c_str(), "name i");
+   ASSERT_STREQ(str.substring(20).c_str(), "oy, i think php is the best programming language in the world. php is the best!");
+   ASSERT_THROW(str.substring(222), std::out_of_range);
+   //std::cout << str.substring(3, 6).c_str() << std::endl;
+}
+
 TEST(StringVariantTest, testToLowerCaseAndToUpperCase)
 {
    StringVariant str("ZZU_softboy");

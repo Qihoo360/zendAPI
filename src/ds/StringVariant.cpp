@@ -694,7 +694,7 @@ std::string StringVariant::right(size_t size) const
 std::string StringVariant::leftJustified(size_t size, char fill) const
 {
    Pointer strPtr = getRawStrPtr();
-   size_t selfLength = getSize();
+   size_t selfLength = getLength();
    size_t needCopyLength = std::min(size, selfLength);
    std::string ret(strPtr, strPtr + needCopyLength);
    if (size > selfLength) {
@@ -710,7 +710,7 @@ std::string StringVariant::leftJustified(size_t size, char fill) const
 std::string StringVariant::rightJustified(size_t size, char fill) const
 {
    Pointer strPtr = getRawStrPtr();
-   size_t selfLength = getSize();
+   size_t selfLength = getLength();
    size_t needCopyLength = std::min(size, selfLength);
    std::string ret;
    ret.reserve(std::max(size, selfLength));
@@ -723,6 +723,21 @@ std::string StringVariant::rightJustified(size_t size, char fill) const
    }
    ret.append(strPtr, needCopyLength);
    return ret;
+}
+
+std::string StringVariant::substring(size_t pos, size_t length) const
+{
+   size_t selfLength = getLength();
+   if (pos > selfLength) {
+      throw std::out_of_range("string pos out of range");
+   }
+   Pointer strPtr = getRawStrPtr();
+   return std::string(strPtr + pos, strPtr + std::min(selfLength, pos + length));
+}
+
+std::string StringVariant::substring(size_t pos) const
+{
+   return substring(pos, getSize());
 }
 
 const char *StringVariant::getCStr() const ZAPI_DECL_NOEXCEPT
