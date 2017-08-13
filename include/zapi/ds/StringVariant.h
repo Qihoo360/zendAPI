@@ -21,6 +21,7 @@
 #include "php/Zend/zend_smart_str.h"
 #include <iterator>
 #include <cstdlib>
+#include <string>
 
 namespace zapi
 {
@@ -123,6 +124,30 @@ public:
    StringVariant &remove(const StringVariant &str, bool caseSensitive = true);
    
    StringVariant &insert(size_t pos, const char *str);
+   StringVariant &insert(size_t pos, const char c);
+   StringVariant &insert(size_t pos, const std::string &str);
+   StringVariant &insert(size_t pos, const StringVariant &str);
+   template <typename T, typename Selector = typename std::enable_if<std::is_integral<T>::value &&
+                                                                     std::is_signed<T>::value>::type>
+   StringVariant &insert(T pos, const char *str);
+   template <typename T, typename Selector = typename std::enable_if<std::is_integral<T>::value &&
+                                                                     std::is_signed<T>::value>::type>
+   StringVariant &insert(T pos, const char c);
+   template <typename T, typename Selector = typename std::enable_if<std::is_integral<T>::value &&
+                                                                     std::is_signed<T>::value>::type>
+   StringVariant &insert(T pos, const std::string &str);
+   template <typename T, typename Selector = typename std::enable_if<std::is_integral<T>::value &&
+                                                                     std::is_signed<T>::value>::type>
+   StringVariant &insert(T pos, const StringVariant &str);
+   template <typename T, 
+             typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+   StringVariant &insert(size_t pos, T value);
+   template <typename T,
+             typename V,
+             typename SelectorT = typename std::enable_if<std::is_integral<T>::value &&
+                                                          std::is_signed<T>::value>::type,
+             typename Selector = typename std::enable_if<std::is_arithmetic<V>::value>::type>
+   StringVariant &insert(T pos, V value);
    
    StringVariant &clear();
    
@@ -241,6 +266,79 @@ template <typename T, typename Selector>
 StringVariant &StringVariant::remove(T pos)
 {
    return remove(pos, 1);
+}
+
+template <typename T, typename Selector>
+StringVariant &StringVariant::insert(T pos, const char *str)
+{
+   pos = static_cast<zapi_long>(pos);
+   if (pos < 0) {
+      pos += getLength();
+   }
+   if (pos < 0) {
+      throw std::out_of_range("string pos out of range");
+   }
+   return insert(static_cast<size_t>(pos), str);
+}
+
+template <typename T, typename Selector>
+StringVariant &StringVariant::insert(T pos, const char c)
+{
+   pos = static_cast<zapi_long>(pos);
+   if (pos < 0) {
+      pos += getLength();
+   }
+   if (pos < 0) {
+      throw std::out_of_range("string pos out of range");
+   }
+   return insert(static_cast<size_t>(pos), c);
+}
+
+template <typename T, typename Selector>
+StringVariant &StringVariant::insert(T pos, const std::string &str)
+{
+   pos = static_cast<zapi_long>(pos);
+   if (pos < 0) {
+      pos += getLength();
+   }
+   if (pos < 0) {
+      throw std::out_of_range("string pos out of range");
+   }
+   return insert(static_cast<size_t>(pos), str.c_str());
+}
+
+template <typename T, typename Selector>
+StringVariant &StringVariant::insert(T pos, const StringVariant &str)
+{
+   pos = static_cast<zapi_long>(pos);
+   if (pos < 0) {
+      pos += getLength();
+   }
+   if (pos < 0) {
+      throw std::out_of_range("string pos out of range");
+   }
+   return insert(static_cast<size_t>(pos), str.getCStr());
+}
+
+template <typename T, typename Selector>
+StringVariant &StringVariant::insert(size_t pos, T value)
+{
+   std::string buffer = std::to_string(value);
+   return insert(pos, buffer.c_str());
+}
+
+template <typename T, typename V, typename SelectorT, typename Selector>
+StringVariant &StringVariant::insert(T pos, V value)
+{
+   pos = static_cast<zapi_long>(pos);
+   if (pos < 0) {
+      pos += getLength();
+   }
+   if (pos < 0) {
+      throw std::out_of_range("string pos out of range");
+   }
+   std::string buffer = std::to_string(value);
+   return insert(static_cast<size_t>(pos), buffer.c_str());
 }
 
 template <typename T, typename Selector>

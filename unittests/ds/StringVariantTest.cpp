@@ -440,3 +440,38 @@ TEST(StringVariantTest, testRemove)
    ASSERT_EQ(emptyStr.getRefCount(), 1);
    ASSERT_EQ(str.getRefCount(), 1);
 }
+
+TEST(StringVariantTest, testStrInsert)
+{
+   StringVariant str("zapi");
+   ASSERT_STREQ(str.getCStr(), "zapi");
+   ASSERT_EQ(str.getLength(), 4);
+   str.insert(1, "x");
+   ASSERT_EQ(str.getLength(), 5);
+   ASSERT_STREQ(str.getCStr(), "zxapi");
+   str.insert(0, "x");
+   ASSERT_EQ(str.getLength(), 6);
+   ASSERT_STREQ(str.getCStr(), "xzxapi");
+   str.insert(6, "ab");
+   ASSERT_EQ(str.getLength(), 8);
+   ASSERT_STREQ(str.getCStr(), "xzxapiab");
+   ASSERT_THROW(str.insert(9, "ab"), std::out_of_range);
+   str.clear();
+   ASSERT_EQ(str.getLength(), 0);
+   ASSERT_EQ(str.getCapacity(), 0);
+   str.insert(0, "abc");
+   ASSERT_EQ(str.getLength(), 3);
+   ASSERT_STREQ(str.getCStr(), "abc");
+   // negative pos
+   str.insert(-1, 'x');
+   str.insert(-1, 123);
+   ASSERT_EQ(str.getLength(), 7);
+   ASSERT_STREQ(str.getCStr(), "abx123c");
+   ASSERT_THROW(str.insert(-8, "xx"), std::out_of_range);
+   str.insert(-7, std::string("x"));
+   ASSERT_EQ(str.getLength(), 8);
+   int8_t pos1 = -2;
+   str.insert(pos1, StringVariant("vv"));
+   ASSERT_STREQ(str.getCStr(), "xabx12vv3c");
+//   std::cout << str << std::endl;
+}

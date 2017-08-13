@@ -590,7 +590,7 @@ StringVariant &StringVariant::append(const char *str)
    zend_string *destStrPtr = getZendStringPtr();
    size_t length = std::strlen(str);
    size_t newLength = strAlloc(destStrPtr, length, 0);
-   memcpy(ZSTR_VAL(destStrPtr) + getLength(), str, length);
+   std::memcpy(ZSTR_VAL(destStrPtr) + getLength(), str, length);
    // set self state
    ZSTR_VAL(destStrPtr)[newLength] = '\0';
    ZSTR_LEN(destStrPtr) = newLength;
@@ -662,7 +662,48 @@ StringVariant &StringVariant::remove(const StringVariant &str, bool caseSensitiv
 
 StringVariant &StringVariant::insert(size_t pos, const char *str)
 {
-   
+   zval *self = getZvalPtr();
+   if (Type::Null == getType()) {
+      Z_STR_P(self) = nullptr;
+      Z_TYPE_INFO_P(self) = IS_STRING_EX;	
+   } else {
+      SEPARATE_ZVAL_NOREF(self);
+   }
+   size_t selfLength = getLength();
+   if (pos > selfLength) {
+      throw std::out_of_range("string pos out of range");
+   }
+   zend_string *destStrPtr = getZendStringPtr();
+   size_t length = std::strlen(str);
+   size_t newLength = strAlloc(destStrPtr, length, 0);
+   Pointer dataPtr = ZSTR_VAL(destStrPtr);
+   size_t iterator = selfLength - pos;
+   Pointer newDataEnd = dataPtr + newLength;
+   while (iterator--) {
+      *(--newDataEnd) = *(dataPtr + pos + iterator);
+   }
+   std::memcpy(dataPtr + pos, str, length);
+   // set self state
+   *(dataPtr + newLength) = '\0';
+   ZSTR_LEN(destStrPtr) = newLength;
+   Z_STR_P(self) = destStrPtr;
+   return *this;
+}
+
+StringVariant &StringVariant::insert(size_t pos, const char c)
+{
+   ValueType buffer[2] = {c, '\0'};
+   return insert(pos, reinterpret_cast<Pointer>(buffer));
+}
+
+StringVariant &StringVariant::insert(size_t pos, const std::string &str)
+{
+   return insert(pos, str.c_str());
+}
+
+StringVariant &StringVariant::insert(size_t pos, const StringVariant &str)
+{
+   return insert(pos, str.getCStr());
 }
 
 StringVariant &StringVariant::clear()
