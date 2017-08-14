@@ -168,6 +168,8 @@ public:
              typename Selector = typename std::enable_if<std::is_arithmetic<V>::value>::type>
    StringVariant &insert(T pos, V value);
    
+   StringVariant &replace(size_t pos, size_t length, const char *replace);
+   
    StringVariant &clear();
    
    void resize(SizeType size);

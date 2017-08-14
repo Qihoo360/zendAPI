@@ -706,6 +706,13 @@ StringVariant &StringVariant::insert(size_t pos, const StringVariant &str)
    return insert(pos, str.getCStr());
 }
 
+StringVariant &StringVariant::replace(size_t pos, size_t length, const char *replace)
+{
+   remove(pos, length);
+   insert(pos, replace);
+   return *this;
+}
+
 StringVariant &StringVariant::clear()
 {
    // here we release zend_string memory

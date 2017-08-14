@@ -512,3 +512,14 @@ TEST(StringVariantTest, testRepeated)
    ASSERT_STREQ(repeatedStr.c_str(), "zapizapizapi");
    
 }
+
+TEST(StringVariantTest, testReplace)
+{
+   StringVariant str("my name is zzu_softboy, i love php");
+   str.replace(0, 2, "MY");
+   ASSERT_STREQ(str.getCStr(), "MY name is zzu_softboy, i love php");
+   str.replace(3, 4, "NAME");
+   ASSERT_STREQ(str.getCStr(), "MY NAME is zzu_softboy, i love php");
+   str.replace(str.getLength() - 3, 4, "PHP");
+   ASSERT_STREQ(str.getCStr(), "MY NAME is zzu_softboy, i love PHP");
+}
