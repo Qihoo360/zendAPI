@@ -61,12 +61,16 @@ public:
    StringVariant &operator =(char value);
    StringVariant &operator =(const std::string &value);
    StringVariant &operator =(const char *value);
-   template <typename T, typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+   template <typename T, 
+             typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
    StringVariant &operator =(T value);
    StringVariant &operator +=(const char *str);
    StringVariant &operator +=(const char c);
    StringVariant &operator +=(const std::string &str);
    StringVariant &operator +=(const StringVariant &str);
+   template <size_t arrayLength>
+   StringVariant &operator +=(char (&str)[arrayLength]);
+   
    virtual bool toBool() const ZAPI_DECL_NOEXCEPT override;
    virtual std::string toString() const ZAPI_DECL_NOEXCEPT override;
    // iterator
@@ -100,14 +104,12 @@ public:
    StringVariant &prepend(const char c);
    StringVariant &prepend(const std::string &str);
    StringVariant &prepend(const StringVariant &str);
-   template <typename T, typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+   template <typename T, 
+             typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
    StringVariant &prepend(T value);
-   template<size_t arrayLength>
-   StringVariant &prepend(char (&str)[arrayLength], size_t length);
    template<typename T, 
             size_t arrayLength,
-            typename Selector = typename std::enable_if<std::is_integral<T>::value &&
-                                                        std::is_signed<T>::value>::type>
+            typename Selector = typename std::enable_if<std::is_integral<T>::value>::type>
    StringVariant &prepend(char (&str)[arrayLength], T length);
    template<size_t arrayLength>
    StringVariant &prepend(char (&str)[arrayLength]);
@@ -118,12 +120,9 @@ public:
    StringVariant &append(const StringVariant &str);
    template <typename T, typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
    StringVariant &append(T value);
-   template<size_t arrayLength>
-   StringVariant &append(char (&str)[arrayLength], size_t length);
    template<typename T, 
             size_t arrayLength,
-            typename Selector = typename std::enable_if<std::is_integral<T>::value &&
-                                                        std::is_signed<T>::value>::type>
+            typename Selector = typename std::enable_if<std::is_integral<T>::value>::type>
    StringVariant &append(char (&str)[arrayLength], T length);
    template<size_t arrayLength>
    StringVariant &append(char (&str)[arrayLength]);
@@ -326,21 +325,17 @@ protected:
    size_t strReAlloc(zend_string *&str, size_t length, bool persistent);
 };
 
+template <size_t arrayLength>
+StringVariant &StringVariant::operator +=(char (&str)[arrayLength])
+{
+   return append(str, arrayLength);
+}
+
 template <typename T, typename Selector>
 StringVariant &StringVariant::prepend(T value)
 {
    std::string temp = std::to_string(value);
    return prepend(temp.c_str());
-}
-
-template<size_t arrayLength>
-StringVariant &StringVariant::prepend(char (&str)[arrayLength], size_t length)
-{
-   length = std::min(arrayLength, length);
-   GuardValuePtrType buffer(static_cast<Pointer>(emalloc(length)), zapi::utils::std_php_memory_deleter);
-   std::memcpy(buffer.get(), str, length);
-   buffer.get()[length] = '\0';
-   return prepend(buffer.get());
 }
 
 template<typename T, size_t arrayLength, typename Selector>
@@ -352,7 +347,11 @@ StringVariant &StringVariant::prepend(char (&str)[arrayLength], T length)
    } else {
       len = static_cast<size_t>(length);
    }
-   return prepend(str, len);
+   len = std::min(arrayLength, len);
+   GuardValuePtrType buffer(static_cast<Pointer>(emalloc(len)), zapi::utils::std_php_memory_deleter);
+   std::memcpy(buffer.get(), str, len);
+   buffer.get()[length] = '\0';
+   return prepend(buffer.get());
 }
 
 template<size_t arrayLength>
@@ -368,16 +367,6 @@ StringVariant &StringVariant::append(T value)
    return append(temp.c_str());
 }
 
-template<size_t arrayLength>
-StringVariant &StringVariant::append(char (&str)[arrayLength], size_t length)
-{
-   length = std::min(arrayLength, length);
-   GuardValuePtrType buffer(static_cast<Pointer>(emalloc(length)), zapi::utils::std_php_memory_deleter);
-   std::memcpy(buffer.get(), str, length);
-   buffer.get()[length] = '\0';
-   return append(buffer.get());
-}
-
 template<typename T, size_t arrayLength, typename Selector>
 StringVariant &StringVariant::append(char (&str)[arrayLength], T length)
 {
@@ -387,7 +376,11 @@ StringVariant &StringVariant::append(char (&str)[arrayLength], T length)
    } else {
       len = static_cast<size_t>(length);
    }
-   return append(str, len);
+   len = std::min(arrayLength, len);
+   GuardValuePtrType buffer(static_cast<Pointer>(emalloc(len)), zapi::utils::std_php_memory_deleter);
+   std::memcpy(buffer.get(), str, len);
+   buffer.get()[len] = '\0';
+   return append(buffer.get());
 }
 
 

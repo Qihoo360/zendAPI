@@ -183,6 +183,22 @@ TEST(StringVariantTest, testAssignOperators)
    ASSERT_EQ(str1.getLength(), 1);
 }
 
+TEST(StringVariantTest, testplusAssignOperators)
+{
+   StringVariant str;
+   ASSERT_EQ(str.getSize(), 0);
+   str += "zapi";
+   ASSERT_STREQ(str.getCStr(), "zapi");
+   str += std::string("--");
+   ASSERT_STREQ(str.getCStr(), "zapi--");
+   str += StringVariant("php");
+   ASSERT_STREQ(str.getCStr(), "zapi--php");
+   char append[] = {'z', 'z', 'u'};
+   str += append;
+   ASSERT_STREQ(str.getCStr(), "zapi--phpzzu");
+   std::cout << str << std::endl;
+}
+
 TEST(StringVariantTest, testClear)
 {
    StringVariant str("0123456789a123456789b1234A56789c");
@@ -551,5 +567,5 @@ TEST(StringVariantTest, testReplace)
    str = "my name is zzu_Softboy, i think php is the best programming language in the world. php is the best! pHp is very fast!";
    str.replace('p', '_');
    ASSERT_STREQ(str.getCStr(), "my name is zzu_Softboy, i think _h_ is the best _rogramming language in the world. _h_ is the best! _H_ is very fast!");
-   std::cout << str << std::endl;
+   //std::cout << str << std::endl;
 }

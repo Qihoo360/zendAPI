@@ -208,6 +208,26 @@ StringVariant &StringVariant::operator =(const char *value)
    return *this;
 }
 
+StringVariant &StringVariant::operator +=(const char *str)
+{
+   return append(str);
+}
+
+StringVariant &StringVariant::operator +=(const char c)
+{
+   return append(c);
+}
+
+StringVariant &StringVariant::operator +=(const std::string &str)
+{
+   return append(str);
+}
+
+StringVariant &StringVariant::operator +=(const StringVariant &str)
+{
+   return append(str);
+}
+
 bool StringVariant::toBool() const ZAPI_DECL_NOEXCEPT
 {
    return getType() != Type::Null && 0 != Z_STRLEN_P(const_cast<zval *>(getZvalPtr()));
