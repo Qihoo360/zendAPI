@@ -713,6 +713,27 @@ StringVariant &StringVariant::replace(size_t pos, size_t length, const char *rep
    return *this;
 }
 
+StringVariant &StringVariant::replace(size_t pos, size_t length, const char replace)
+{
+   remove(pos, length);
+   insert(pos, replace);
+   return *this;
+}
+
+StringVariant &StringVariant::replace(size_t pos, size_t length, const std::string &replace)
+{
+   remove(pos, length);
+   insert(pos, replace);
+   return *this;
+}
+
+StringVariant &StringVariant::replace(size_t pos, size_t length, const StringVariant &replace)
+{
+   remove(pos, length);
+   insert(pos, replace);
+   return *this;
+}
+
 StringVariant &StringVariant::clear()
 {
    // here we release zend_string memory

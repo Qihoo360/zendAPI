@@ -160,9 +160,9 @@ public:
             typename V,
             size_t arrayLength,
             typename SelectorT = typename std::enable_if<std::is_integral<T>::value &&
-                                                        std::is_signed<T>::value>::type,
+                                                         std::is_signed<T>::value>::type,
             typename SelectorV = typename std::enable_if<std::is_integral<V>::value &&
-                                                        std::is_signed<V>::value>::type>
+                                                         std::is_signed<V>::value>::type>
    StringVariant &insert(T pos, char (&str)[arrayLength], V length);
    template<typename T, 
             size_t arrayLength,
@@ -192,6 +192,18 @@ public:
    StringVariant &insert(T pos, V value);
    
    StringVariant &replace(size_t pos, size_t length, const char *replace);
+   StringVariant &replace(size_t pos, size_t length, const char replace);
+   StringVariant &replace(size_t pos, size_t length, const std::string &replace);
+   StringVariant &replace(size_t pos, size_t length, const StringVariant &replace);
+   template<size_t arrayLength>
+   StringVariant &replace(size_t pos, size_t length, char (&str)[arrayLength], size_t replaceLength);
+   template<typename T, 
+            size_t arrayLength,
+            typename Selector = typename std::enable_if<std::is_integral<T>::value &&
+                                                        std::is_signed<T>::value>::type>
+   StringVariant &replace(size_t pos, size_t length, char (&str)[arrayLength], T replaceLength);
+   template<size_t arrayLength>
+   StringVariant &replace(size_t pos, size_t length, char (&str)[arrayLength]);
    
    StringVariant &clear();
    
@@ -208,7 +220,7 @@ public:
    template<typename T,
             size_t arrayLength,
             typename Selector = typename std::enable_if<std::is_integral<T>::value &&
-                                                         std::is_signed<T>::value>::type>
+                                                        std::is_signed<T>::value>::type>
    zapi_long indexOf(char (&needle)[arrayLength], T length, zapi_long offset = 0,
                      bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    template<size_t arrayLength>
@@ -225,9 +237,9 @@ public:
    template<typename T,
             size_t arrayLength,
             typename Selector = typename std::enable_if<std::is_integral<T>::value &&
-                                                         std::is_signed<T>::value>::type>
+                                                        std::is_signed<T>::value>::type>
    zapi_long lastIndexOf(char (&needle)[arrayLength], T length, zapi_long offset = 0,
-                     bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
+                         bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    template<size_t arrayLength>
    zapi_long lastIndexOf(char (&needle)[arrayLength], zapi_long offset = 0,
                          bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
@@ -303,7 +315,7 @@ StringVariant &StringVariant::prepend(T value)
 template<size_t arrayLength>
 StringVariant &StringVariant::prepend(char (&str)[arrayLength], size_t length)
 {
-   length = std::min(arrayLength, static_cast<size_t>(length));
+   length = std::min(arrayLength, length);
    GuardValuePtrType buffer(static_cast<Pointer>(emalloc(length)), zapi::utils::std_php_memory_deleter);
    std::memcpy(buffer.get(), str, length);
    buffer.get()[length] = '\0';
@@ -338,7 +350,7 @@ StringVariant &StringVariant::append(T value)
 template<size_t arrayLength>
 StringVariant &StringVariant::append(char (&str)[arrayLength], size_t length)
 {
-   length = std::min(arrayLength, static_cast<size_t>(length));
+   length = std::min(arrayLength, length);
    GuardValuePtrType buffer(static_cast<Pointer>(emalloc(length)), zapi::utils::std_php_memory_deleter);
    std::memcpy(buffer.get(), str, length);
    buffer.get()[length] = '\0';
@@ -464,7 +476,7 @@ StringVariant &StringVariant::insert(T pos, V value)
 template<size_t arrayLength>
 StringVariant &StringVariant::insert(size_t pos, char (&str)[arrayLength], size_t length)
 {
-   length = std::min(arrayLength, static_cast<size_t>(length));
+   length = std::min(arrayLength, length);
    GuardValuePtrType buffer(static_cast<Pointer>(emalloc(length)), zapi::utils::std_php_memory_deleter);
    std::memcpy(buffer.get(), str, length);
    buffer.get()[length] = '\0';
@@ -530,6 +542,34 @@ StringVariant &StringVariant::insert(T pos, char (&str)[arrayLength])
    return insert(static_cast<size_t>(pos), str, arrayLength);
 }
 
+template<size_t arrayLength>
+StringVariant &StringVariant::replace(size_t pos, size_t length, char (&str)[arrayLength], size_t replaceLength)
+{
+   replaceLength = std::min(arrayLength, replaceLength);
+   GuardValuePtrType buffer(static_cast<Pointer>(emalloc(replaceLength)), zapi::utils::std_php_memory_deleter);
+   std::memcpy(buffer.get(), str, replaceLength);
+   buffer.get()[replaceLength] = '\0';
+   return replace(pos, length, buffer.get());
+}
+
+template<typename T, size_t arrayLength, typename Selector>
+StringVariant &StringVariant::replace(size_t pos, size_t length, char (&str)[arrayLength], T replaceLength)
+{
+   size_t len;
+   if (replaceLength < 0) {
+      len = arrayLength;
+   } else {
+      len = static_cast<size_t>(replaceLength);
+   }
+   return replace(pos, length, str, len);
+}
+
+template<size_t arrayLength>
+StringVariant &StringVariant::replace(size_t pos, size_t length, char (&str)[arrayLength])
+{
+   return replace(pos, length, str, arrayLength);
+}
+
 template <typename T, typename Selector>
 StringVariant &StringVariant::operator =(T value)
 {
@@ -573,7 +613,7 @@ template<size_t arrayLength>
 zapi_long StringVariant::lastIndexOf(char (&needle)[arrayLength], size_t length, 
                                      zapi_long offset, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
 {
-   length = std::min(arrayLength, static_cast<size_t>(length));
+   length = std::min(arrayLength, length);
    // here maybe not c str, we make a local buffer for it
    GuardValuePtrType buffer(static_cast<Pointer>(emalloc(length)), zapi::utils::std_php_memory_deleter);
    std::memcpy(buffer.get(), needle, length);
@@ -583,7 +623,7 @@ zapi_long StringVariant::lastIndexOf(char (&needle)[arrayLength], size_t length,
 
 template<typename T, size_t arrayLength, typename Selector>
 zapi_long StringVariant::lastIndexOf(char (&needle)[arrayLength], T length, 
-                                 zapi_long offset, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+                                     zapi_long offset, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
 {
    size_t len;
    if (length < 0) {
@@ -628,7 +668,7 @@ bool StringVariant::contains(char (&needle)[arrayLength], bool caseSensitive) co
 template<size_t arrayLength>
 bool StringVariant::startsWith(char (&str)[arrayLength], size_t length, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
 {
-   length = std::min(arrayLength, static_cast<size_t>(length));
+   length = std::min(arrayLength, length);
    // here maybe not c str, we make a local buffer for it
    GuardValuePtrType buffer(static_cast<Pointer>(emalloc(length)), zapi::utils::std_php_memory_deleter);
    std::memcpy(buffer.get(), str, length);

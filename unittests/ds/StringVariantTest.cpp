@@ -497,6 +497,8 @@ TEST(StringVariantTest, testStrInsert)
    int8_t pos2 = -2;
    str.insert(pos2, arr);
    ASSERT_STREQ(str.getCStr(), "xphpphpabx12vv3phphppc");
+   str.insert(0, arr, -1);
+   ASSERT_STREQ(str.getCStr(), "phpxphpphpabx12vv3phphppc");
 //   std::cout << str << std::endl;
 }
 
@@ -522,4 +524,14 @@ TEST(StringVariantTest, testReplace)
    ASSERT_STREQ(str.getCStr(), "MY NAME is zzu_softboy, i love php");
    str.replace(str.getLength() - 3, 4, "PHP");
    ASSERT_STREQ(str.getCStr(), "MY NAME is zzu_softboy, i love PHP");
+   char replaceArr[] = {'z', 'a', 'p', 'i'};
+   str.replace(0, 2, replaceArr);
+   ASSERT_STREQ(str.getCStr(), "zapi NAME is zzu_softboy, i love PHP");
+   str = "MY NAME is zzu_softboy, i love PHP";
+   str.replace(0, 2, replaceArr, -1);
+   ASSERT_STREQ(str.getCStr(), "zapi NAME is zzu_softboy, i love PHP");
+   str = "MY NAME is zzu_softboy, i love PHP";
+   str.replace(0, 2, replaceArr, 2);
+   ASSERT_STREQ(str.getCStr(), "za NAME is zzu_softboy, i love PHP");
+   std::cout << str << std::endl;
 }
