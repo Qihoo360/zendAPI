@@ -1219,5 +1219,55 @@ do_smart_str_realloc:
    return length;
 }
 
+std::string operator +(const StringVariant& lhs, const StringVariant &rhs)
+{
+   std::string ret(lhs.getCStr());
+   ret += rhs.getCStr();
+   return ret;
+}
+
+std::string operator +(const StringVariant& lhs, const char *rhs)
+{
+   std::string ret(lhs.getCStr());
+   ret += rhs;
+   return ret;
+}
+
+std::string operator +(const StringVariant& lhs, const std::string &rhs)
+{
+   std::string ret(lhs.getCStr());
+   ret += rhs;
+   return ret;
+}
+
+std::string operator +(const StringVariant& lhs, char rhs)
+{
+   std::string ret(lhs.getCStr());
+   ret += rhs;
+   return ret;
+}
+
+std::string operator +(const char *lhs, const StringVariant &rhs)
+{
+   std::string ret(lhs);
+   ret += rhs.getCStr();
+   return ret;
+}
+
+std::string operator +(const std::string &lhs, const StringVariant &rhs)
+{
+   std::string ret(lhs);
+   ret += rhs.getCStr();
+   return ret;
+}
+
+std::string operator +(char lhs, const StringVariant &rhs)
+{
+   std::string ret;
+   ret += lhs;
+   ret += rhs.getCStr();
+   return ret;
+}
+
 } // ds
 } // zapi

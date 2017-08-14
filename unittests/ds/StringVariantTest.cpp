@@ -629,3 +629,34 @@ TEST(StringVariantTest, testReplace)
    ASSERT_STREQ(str.getCStr(), "my name is zzu_Softboy, i think _h_ is the best _rogramming language in the world. _h_ is the best! _H_ is very fast!");
    //std::cout << str << std::endl;
 }
+
+TEST(StringVariantTest, testPlusOperator)
+{
+   StringVariant str("zapi");
+   std::string ret = str + "-php";
+   ASSERT_STREQ(ret.c_str(), "zapi-php");
+   ret = "php-" + str;
+   ASSERT_STREQ(ret.c_str(), "php-zapi");
+   ret = str + std::string("-php");
+   ASSERT_STREQ(ret.c_str(), "zapi-php");
+   ret = std::string("php-") + str;
+   ASSERT_STREQ(ret.c_str(), "php-zapi");
+   ret = str + StringVariant("-php");
+   ASSERT_STREQ(ret.c_str(), "zapi-php");
+   ret = StringVariant("php-") + str;
+   ASSERT_STREQ(ret.c_str(), "php-zapi");
+   char buffer[] = "-php";
+   ret = str + buffer;
+   ASSERT_STREQ(ret.c_str(), "zapi-php");
+   ret = buffer + str;
+   ASSERT_STREQ(ret.c_str(), "-phpzapi");
+   char buffer1[] = {'-', 'p', 'h', 'p'};
+   ret = str + buffer1;
+   ASSERT_STREQ(ret.c_str(), "zapi-php");
+   ret = buffer1 + str;
+   ASSERT_STREQ(ret.c_str(), "-phpzapi");
+   ret = str + 'c';
+   ASSERT_STREQ(ret.c_str(), "zapic");
+   ret = 'c' + str;
+   ASSERT_STREQ(ret.c_str(), "czapi");
+}

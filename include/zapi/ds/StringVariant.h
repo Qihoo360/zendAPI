@@ -357,6 +357,48 @@ protected:
    size_t strReAlloc(zend_string *&str, size_t length, bool persistent);
 };
 
+std::string operator +(const StringVariant& lhs, const StringVariant &rhs);
+std::string operator +(const StringVariant& lhs, const char *rhs);
+std::string operator +(const StringVariant& lhs, const std::string &rhs);
+std::string operator +(const StringVariant& lhs, char rhs);
+
+template<size_t arrayLength>
+std::string operator +(const StringVariant& lhs, char (&rhs)[arrayLength])
+{
+   std::string ret(lhs.getCStr());
+   if (*(rhs + arrayLength - 1) == '\0') {
+      ret += rhs;
+   } else {
+      constexpr size_t arraySize = arrayLength + 1;
+      StringVariant::ValueType buffer[arraySize];
+      std::memcpy(buffer, rhs, arrayLength);
+      *(buffer + arrayLength) = '\0';
+      ret += buffer;
+   }
+   return ret;
+}
+
+std::string operator +(const char *lhs, const StringVariant &rhs);
+std::string operator +(const std::string &lhs, const StringVariant &rhs);
+std::string operator +(char lhs, const StringVariant &rhs);
+
+template<size_t arrayLength>
+std::string operator +(char (&lhs)[arrayLength], const StringVariant& rhs)
+{
+   std::string ret;
+   if (*(lhs + arrayLength - 1) == '\0') {
+      ret += lhs;
+   } else {
+      constexpr size_t arraySize = arrayLength + 1;
+      StringVariant::ValueType buffer[arraySize];
+      std::memcpy(buffer, lhs, arrayLength);
+      *(buffer + arrayLength) = '\0';
+      ret += buffer;
+   }
+   ret += rhs.getCStr();
+   return ret;
+}
+
 template <size_t arrayLength>
 StringVariant &StringVariant::operator +=(char (&str)[arrayLength])
 {
