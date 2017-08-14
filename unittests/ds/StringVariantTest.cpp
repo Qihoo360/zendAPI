@@ -475,3 +475,15 @@ TEST(StringVariantTest, testStrInsert)
    ASSERT_STREQ(str.getCStr(), "xabx12vv3c");
 //   std::cout << str << std::endl;
 }
+
+TEST(StringVariantTest, testRepeated)
+{
+   StringVariant str;
+   std::string repeatedStr = str.repeated(1);
+   ASSERT_STREQ(repeatedStr.c_str(), "");
+   str = "zapi";
+   repeatedStr = str.repeated(1);
+   ASSERT_STREQ(repeatedStr.c_str(), "zapi");
+   repeatedStr = str.repeated(3);
+   ASSERT_STREQ(repeatedStr.c_str(), "zapizapizapi");
+}

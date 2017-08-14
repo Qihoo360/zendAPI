@@ -873,6 +873,17 @@ std::string StringVariant::substring(size_t pos) const
    return substring(pos, getSize());
 }
 
+std::string StringVariant::repeated(size_t times) const
+{
+   std::string ret;
+   Pointer dataPtr = getRawStrPtr();
+   Pointer endDataPtr = dataPtr + getLength();
+   while (times--) {
+      ret.append(dataPtr, endDataPtr);
+   }
+   return ret;
+}
+
 const char *StringVariant::getCStr() const ZAPI_DECL_NOEXCEPT
 {
    return Z_STRVAL_P(const_cast<zval *>(getZvalPtr()));

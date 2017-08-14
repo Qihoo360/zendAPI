@@ -93,6 +93,7 @@ public:
    std::string rightJustified(size_t size, char fill = ' ') const;
    std::string substring(size_t pos, size_t length) const;
    std::string substring(size_t pos) const;
+   std::string repeated(size_t times) const;
    // modify methods
    
    StringVariant &prepend(const char *str);
