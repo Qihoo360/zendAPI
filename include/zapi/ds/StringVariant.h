@@ -103,7 +103,12 @@ public:
    template <typename T, typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
    StringVariant &prepend(T value);
    template<size_t arrayLength>
-   StringVariant &prepend(char (&str)[arrayLength], int length);
+   StringVariant &prepend(char (&str)[arrayLength], size_t length);
+   template<typename T, 
+            size_t arrayLength,
+            typename Selector = typename std::enable_if<std::is_integral<T>::value &&
+                                                        std::is_signed<T>::value>::type>
+   StringVariant &prepend(char (&str)[arrayLength], T length);
    template<size_t arrayLength>
    StringVariant &prepend(char (&str)[arrayLength]);
    
@@ -114,7 +119,12 @@ public:
    template <typename T, typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
    StringVariant &append(T value);
    template<size_t arrayLength>
-   StringVariant &append(char (&str)[arrayLength], int length);
+   StringVariant &append(char (&str)[arrayLength], size_t length);
+   template<typename T, 
+            size_t arrayLength,
+            typename Selector = typename std::enable_if<std::is_integral<T>::value &&
+                                                        std::is_signed<T>::value>::type>
+   StringVariant &append(char (&str)[arrayLength], T length);
    template<size_t arrayLength>
    StringVariant &append(char (&str)[arrayLength]);
    
@@ -133,14 +143,27 @@ public:
    StringVariant &insert(size_t pos, const std::string &str);
    StringVariant &insert(size_t pos, const StringVariant &str);
    template<size_t arrayLength>
-   StringVariant &insert(size_t pos, char (&str)[arrayLength], int length);
+   StringVariant &insert(size_t pos, char (&str)[arrayLength], size_t length);
+   template<typename T, 
+            size_t arrayLength,
+            typename Selector = typename std::enable_if<std::is_integral<T>::value &&
+                                                        std::is_signed<T>::value>::type>
+   StringVariant &insert(size_t pos, char (&str)[arrayLength], T length);
    template<size_t arrayLength>
    StringVariant &insert(size_t pos, char (&str)[arrayLength]);
    template<typename T, 
             size_t arrayLength,
             typename Selector = typename std::enable_if<std::is_integral<T>::value &&
                                                         std::is_signed<T>::value>::type>
-   StringVariant &insert(T pos, char (&str)[arrayLength], int length);
+   StringVariant &insert(T pos, char (&str)[arrayLength], size_t length);
+   template<typename T,
+            typename V,
+            size_t arrayLength,
+            typename SelectorT = typename std::enable_if<std::is_integral<T>::value &&
+                                                        std::is_signed<T>::value>::type,
+            typename SelectorV = typename std::enable_if<std::is_integral<V>::value &&
+                                                        std::is_signed<V>::value>::type>
+   StringVariant &insert(T pos, char (&str)[arrayLength], V length);
    template<typename T, 
             size_t arrayLength,
             typename Selector = typename std::enable_if<std::is_integral<T>::value &&
@@ -180,7 +203,13 @@ public:
    zapi_long indexOf(const std::string &needle, zapi_long offset = 0, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    zapi_long indexOf(const char needle, zapi_long offset = 0, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    template<size_t arrayLength>
-   zapi_long indexOf(char (&needle)[arrayLength], int length, zapi_long offset = 0,
+   zapi_long indexOf(char (&needle)[arrayLength], size_t length, zapi_long offset = 0,
+                     bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
+   template<typename T,
+            size_t arrayLength,
+            typename Selector = typename std::enable_if<std::is_integral<T>::value &&
+                                                         std::is_signed<T>::value>::type>
+   zapi_long indexOf(char (&needle)[arrayLength], T length, zapi_long offset = 0,
                      bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    template<size_t arrayLength>
    zapi_long indexOf(char (&needle)[arrayLength], zapi_long offset = 0,
@@ -191,8 +220,14 @@ public:
    zapi_long lastIndexOf(const std::string &needle, zapi_long offset = 0, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    zapi_long lastIndexOf(const char needle, zapi_long offset = 0, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    template<size_t arrayLength>
-   zapi_long lastIndexOf(char (&needle)[arrayLength], int length, zapi_long offset = 0,
+   zapi_long lastIndexOf(char (&needle)[arrayLength], size_t length, zapi_long offset = 0,
                          bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
+   template<typename T,
+            size_t arrayLength,
+            typename Selector = typename std::enable_if<std::is_integral<T>::value &&
+                                                         std::is_signed<T>::value>::type>
+   zapi_long lastIndexOf(char (&needle)[arrayLength], T length, zapi_long offset = 0,
+                     bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    template<size_t arrayLength>
    zapi_long lastIndexOf(char (&needle)[arrayLength], zapi_long offset = 0,
                          bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
@@ -202,7 +237,12 @@ public:
    bool contains(const std::string &needle, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    bool contains(const char needle, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    template<size_t arrayLength>
-   bool contains(char (&needle)[arrayLength], int length, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
+   bool contains(char (&needle)[arrayLength], size_t length, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
+   template<typename T, 
+            size_t arrayLength,
+            typename Selector = typename std::enable_if<std::is_integral<T>::value &&
+                                                        std::is_signed<T>::value>::type>
+   bool contains(char (&needle)[arrayLength], T length, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    template<size_t arrayLength>
    bool contains(char (&needle)[arrayLength], bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    
@@ -211,7 +251,12 @@ public:
    bool startsWith(const std::string &str, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    bool startsWith(char c, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    template<size_t arrayLength>
-   bool startsWith(char (&str)[arrayLength], int length, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
+   bool startsWith(char (&str)[arrayLength], size_t length, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
+   template<typename T, 
+            size_t arrayLength,
+            typename Selector = typename std::enable_if<std::is_integral<T>::value &&
+                                                        std::is_signed<T>::value>::type>
+   bool startsWith(char (&str)[arrayLength], T length, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    template<size_t arrayLength>
    bool startsWith(char (&str)[arrayLength], bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    
@@ -220,7 +265,12 @@ public:
    bool endsWith(const std::string &str, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    bool endsWith(char c, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    template<size_t arrayLength>
-   bool endsWith(char (&str)[arrayLength], int length, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
+   bool endsWith(char (&str)[arrayLength], size_t length, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
+   template<typename T, 
+            size_t arrayLength,
+            typename Selector = typename std::enable_if<std::is_integral<T>::value &&
+                                                        std::is_signed<T>::value>::type>
+   bool endsWith(char (&str)[arrayLength], T length, bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    template<size_t arrayLength>
    bool endsWith(char (&str)[arrayLength], bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    
@@ -251,13 +301,25 @@ StringVariant &StringVariant::prepend(T value)
 }
 
 template<size_t arrayLength>
-StringVariant &StringVariant::prepend(char (&str)[arrayLength], int length)
+StringVariant &StringVariant::prepend(char (&str)[arrayLength], size_t length)
 {
    length = std::min(arrayLength, static_cast<size_t>(length));
    GuardValuePtrType buffer(static_cast<Pointer>(emalloc(length)), zapi::utils::std_php_memory_deleter);
    std::memcpy(buffer.get(), str, length);
    buffer.get()[length] = '\0';
    return prepend(buffer.get());
+}
+
+template<typename T, size_t arrayLength, typename Selector>
+StringVariant &StringVariant::prepend(char (&str)[arrayLength], T length)
+{
+   size_t len;
+   if (length < 0) {
+      len = arrayLength;
+   } else {
+      len = static_cast<size_t>(length);
+   }
+   return prepend(str, len);
 }
 
 template<size_t arrayLength>
@@ -274,7 +336,7 @@ StringVariant &StringVariant::append(T value)
 }
 
 template<size_t arrayLength>
-StringVariant &StringVariant::append(char (&str)[arrayLength], int length)
+StringVariant &StringVariant::append(char (&str)[arrayLength], size_t length)
 {
    length = std::min(arrayLength, static_cast<size_t>(length));
    GuardValuePtrType buffer(static_cast<Pointer>(emalloc(length)), zapi::utils::std_php_memory_deleter);
@@ -282,6 +344,19 @@ StringVariant &StringVariant::append(char (&str)[arrayLength], int length)
    buffer.get()[length] = '\0';
    return append(buffer.get());
 }
+
+template<typename T, size_t arrayLength, typename Selector>
+StringVariant &StringVariant::append(char (&str)[arrayLength], T length)
+{
+   size_t len;
+   if (length < 0) {
+      len = arrayLength;
+   } else {
+      len = static_cast<size_t>(length);
+   }
+   return append(str, len);
+}
+
 
 template<size_t arrayLength>
 StringVariant &StringVariant::append(char (&str)[arrayLength])
@@ -387,7 +462,7 @@ StringVariant &StringVariant::insert(T pos, V value)
 }
 
 template<size_t arrayLength>
-StringVariant &StringVariant::insert(size_t pos, char (&str)[arrayLength], int length)
+StringVariant &StringVariant::insert(size_t pos, char (&str)[arrayLength], size_t length)
 {
    length = std::min(arrayLength, static_cast<size_t>(length));
    GuardValuePtrType buffer(static_cast<Pointer>(emalloc(length)), zapi::utils::std_php_memory_deleter);
@@ -396,16 +471,26 @@ StringVariant &StringVariant::insert(size_t pos, char (&str)[arrayLength], int l
    return insert(pos, buffer.get());
 }
 
+template<typename T, size_t arrayLength, typename Selector>
+StringVariant &insert(size_t pos, char (&str)[arrayLength], T length)
+{
+   size_t len;
+   if (length < 0) {
+      len = arrayLength;
+   } else {
+      len = static_cast<size_t>(length);
+   }
+   return insert(pos, str, len);
+}
+
 template<size_t arrayLength>
 StringVariant &StringVariant::insert(size_t pos, char (&str)[arrayLength])
 {
    return insert(pos, str, arrayLength);
 }
 
-template<typename T, 
-         size_t arrayLength,
-         typename Selector>
-StringVariant &StringVariant::insert(T pos, char (&str)[arrayLength], int length)
+template<typename T, size_t arrayLength, typename Selector>
+StringVariant &StringVariant::insert(T pos, char (&str)[arrayLength], size_t length)
 {
    pos = static_cast<zapi_long>(pos);
    if (pos < 0) {
@@ -415,6 +500,19 @@ StringVariant &StringVariant::insert(T pos, char (&str)[arrayLength], int length
       throw std::out_of_range("string pos out of range");
    }
    return insert(static_cast<size_t>(pos), str, length);
+}
+
+template<typename T, typename V, size_t arrayLength, 
+         typename SelectorT, typename SelectorV>
+StringVariant &StringVariant::insert(T pos, char (&str)[arrayLength], V length)
+{
+   size_t len;
+   if (length < 0) {
+      len = arrayLength;
+   } else {
+      len = static_cast<size_t>(length);
+   }
+   return insert(pos, str, len);
 }
 
 template<typename T, 
@@ -440,7 +538,7 @@ StringVariant &StringVariant::operator =(T value)
 }
 
 template<size_t arrayLength>
-zapi_long StringVariant::indexOf(char (&needle)[arrayLength], int length, 
+zapi_long StringVariant::indexOf(char (&needle)[arrayLength], size_t length, 
                                  zapi_long offset, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
 {
    length = std::min(arrayLength, static_cast<size_t>(length));
@@ -451,6 +549,19 @@ zapi_long StringVariant::indexOf(char (&needle)[arrayLength], int length,
    return indexOf(buffer.get(), offset, caseSensitive);
 }
 
+template<typename T, size_t arrayLength, typename Selector>
+zapi_long StringVariant::indexOf(char (&needle)[arrayLength], T length, 
+                                 zapi_long offset, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+{
+   size_t len;
+   if (length < 0) {
+      len = arrayLength;
+   } else {
+      len = static_cast<size_t>(length);
+   }
+   return indexOf(needle, len, offset, caseSensitive);
+}
+
 template<size_t arrayLength>
 zapi_long StringVariant::indexOf(char (&needle)[arrayLength], 
                                  zapi_long offset, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
@@ -459,7 +570,7 @@ zapi_long StringVariant::indexOf(char (&needle)[arrayLength],
 }
 
 template<size_t arrayLength>
-zapi_long StringVariant::lastIndexOf(char (&needle)[arrayLength], int length, 
+zapi_long StringVariant::lastIndexOf(char (&needle)[arrayLength], size_t length, 
                                      zapi_long offset, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
 {
    length = std::min(arrayLength, static_cast<size_t>(length));
@@ -470,6 +581,19 @@ zapi_long StringVariant::lastIndexOf(char (&needle)[arrayLength], int length,
    return lastIndexOf(buffer.get(), offset, caseSensitive);
 }
 
+template<typename T, size_t arrayLength, typename Selector>
+zapi_long StringVariant::lastIndexOf(char (&needle)[arrayLength], T length, 
+                                 zapi_long offset, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+{
+   size_t len;
+   if (length < 0) {
+      len = arrayLength;
+   } else {
+      len = static_cast<size_t>(length);
+   }
+   return lastIndexOf(needle, len, offset, caseSensitive);
+}
+
 template<size_t arrayLength>
 zapi_long StringVariant::lastIndexOf(char (&needle)[arrayLength], 
                                      zapi_long offset, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
@@ -478,9 +602,21 @@ zapi_long StringVariant::lastIndexOf(char (&needle)[arrayLength],
 }
 
 template<size_t arrayLength>
-bool StringVariant::contains(char (&needle)[arrayLength], int length, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+bool StringVariant::contains(char (&needle)[arrayLength], size_t length, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
 {
    return -1 != indexOf(needle, length, 0, caseSensitive);
+}
+
+template<typename T, size_t arrayLength, typename Selector>
+bool StringVariant::contains(char (&needle)[arrayLength], T length, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+{
+   size_t len;
+   if (length < 0) {
+      len = arrayLength;
+   } else {
+      len = static_cast<size_t>(length);
+   }
+   return contains(needle, len, caseSensitive);
 }
 
 template<size_t arrayLength>
@@ -490,7 +626,7 @@ bool StringVariant::contains(char (&needle)[arrayLength], bool caseSensitive) co
 }
 
 template<size_t arrayLength>
-bool StringVariant::startsWith(char (&str)[arrayLength], int length, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+bool StringVariant::startsWith(char (&str)[arrayLength], size_t length, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
 {
    length = std::min(arrayLength, static_cast<size_t>(length));
    // here maybe not c str, we make a local buffer for it
@@ -500,6 +636,18 @@ bool StringVariant::startsWith(char (&str)[arrayLength], int length, bool caseSe
    return startsWith(buffer.get(), caseSensitive);
 }
 
+template<typename T, size_t arrayLength, typename Selector>
+bool StringVariant::startsWith(char (&str)[arrayLength], T length, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+{
+   size_t len;
+   if (length < 0) {
+      len = arrayLength;
+   } else {
+      len = static_cast<size_t>(length);
+   }
+   return startsWith(str, len, caseSensitive);
+}
+
 template<size_t arrayLength>
 bool StringVariant::startsWith(char (&str)[arrayLength], bool caseSensitive) const ZAPI_DECL_NOEXCEPT
 {
@@ -507,7 +655,7 @@ bool StringVariant::startsWith(char (&str)[arrayLength], bool caseSensitive) con
 }
 
 template<size_t arrayLength>
-bool StringVariant::endsWith(char (&str)[arrayLength], int length, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+bool StringVariant::endsWith(char (&str)[arrayLength], size_t length, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
 {
    length = std::min(arrayLength, static_cast<size_t>(length));
    // here maybe not c str, we make a local buffer for it
@@ -515,6 +663,18 @@ bool StringVariant::endsWith(char (&str)[arrayLength], int length, bool caseSens
    std::memcpy(buffer.get(), str, length);
    buffer.get()[length] = '\0';
    return endsWith(buffer.get(), caseSensitive);
+}
+
+template<typename T, size_t arrayLength, typename Selector>
+bool StringVariant::endsWith(char (&str)[arrayLength], T length, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+{
+   size_t len;
+   if (length < 0) {
+      len = arrayLength;
+   } else {
+      len = static_cast<size_t>(length);
+   }
+   return endsWith(str, len, caseSensitive);
 }
 
 template<size_t arrayLength>
