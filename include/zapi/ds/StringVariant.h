@@ -77,6 +77,31 @@ public:
    bool operator !=(const StringVariant &other) const ZAPI_DECL_NOEXCEPT;
    template <size_t arrayLength>
    bool operator !=(char (&other)[arrayLength]) const ZAPI_DECL_NOEXCEPT;
+   bool operator ==(const char *other) const ZAPI_DECL_NOEXCEPT;
+   bool operator ==(const std::string &other) const ZAPI_DECL_NOEXCEPT;
+   bool operator ==(const StringVariant &other) const ZAPI_DECL_NOEXCEPT;
+   template <size_t arrayLength>
+   bool operator ==(char (&other)[arrayLength]) const ZAPI_DECL_NOEXCEPT;
+   bool operator <(const char *other) const ZAPI_DECL_NOEXCEPT;
+   bool operator <(const std::string &other) const ZAPI_DECL_NOEXCEPT;
+   bool operator <(const StringVariant &other) const ZAPI_DECL_NOEXCEPT;
+   template <size_t arrayLength>
+   bool operator <(char (&other)[arrayLength]) const ZAPI_DECL_NOEXCEPT;
+   bool operator <=(const char *other) const ZAPI_DECL_NOEXCEPT;
+   bool operator <=(const std::string &other) const ZAPI_DECL_NOEXCEPT;
+   bool operator <=(const StringVariant &other) const ZAPI_DECL_NOEXCEPT;
+   template <size_t arrayLength>
+   bool operator <=(char (&other)[arrayLength]) const ZAPI_DECL_NOEXCEPT;
+   bool operator >(const char *other) const ZAPI_DECL_NOEXCEPT;
+   bool operator >(const std::string &other) const ZAPI_DECL_NOEXCEPT;
+   bool operator >(const StringVariant &other) const ZAPI_DECL_NOEXCEPT;
+   template <size_t arrayLength>
+   bool operator >(char (&other)[arrayLength]) const ZAPI_DECL_NOEXCEPT;
+   bool operator >=(const char *other) const ZAPI_DECL_NOEXCEPT;
+   bool operator >=(const std::string &other) const ZAPI_DECL_NOEXCEPT;
+   bool operator >=(const StringVariant &other) const ZAPI_DECL_NOEXCEPT;
+   template <size_t arrayLength>
+   bool operator >=(char (&other)[arrayLength]) const ZAPI_DECL_NOEXCEPT;
    
    virtual bool toBool() const ZAPI_DECL_NOEXCEPT override;
    virtual std::string toString() const ZAPI_DECL_NOEXCEPT override;
@@ -339,6 +364,20 @@ StringVariant &StringVariant::operator +=(char (&str)[arrayLength])
 }
 
 template <size_t arrayLength>
+bool StringVariant::operator ==(char (&other)[arrayLength]) const ZAPI_DECL_NOEXCEPT
+{
+   if (*(other + arrayLength - 1) == '\0') {
+      return 0 == std::memcmp(getCStr(), reinterpret_cast<Pointer>(other), arrayLength);
+   } else {
+      constexpr size_t arraySize = arrayLength + 1;
+      ValueType buffer[arraySize];
+      std::memcpy(buffer, other, arrayLength);
+      *(buffer + arrayLength) = '\0';
+      return 0 == std::memcmp(getCStr(), reinterpret_cast<Pointer>(buffer), arraySize);
+   }
+}
+
+template <size_t arrayLength>
 bool StringVariant::operator !=(char (&other)[arrayLength]) const ZAPI_DECL_NOEXCEPT
 {
    if (*(other + arrayLength - 1) == '\0') {
@@ -349,6 +388,66 @@ bool StringVariant::operator !=(char (&other)[arrayLength]) const ZAPI_DECL_NOEX
       std::memcpy(buffer, other, arrayLength);
       *(buffer + arrayLength) = '\0';
       return 0 != std::memcmp(getCStr(), reinterpret_cast<Pointer>(buffer), arraySize);
+   }
+}
+
+template <size_t arrayLength>
+bool StringVariant::operator <(char (&other)[arrayLength]) const ZAPI_DECL_NOEXCEPT
+{
+   if (*(other + arrayLength - 1) == '\0') {
+      return std::memcmp(getCStr(), reinterpret_cast<Pointer>(other), arrayLength) < 0;
+   } else {
+      constexpr size_t arraySize = arrayLength + 1;
+      ValueType buffer[arraySize];
+      std::memcpy(buffer, other, arrayLength);
+      *(buffer + arrayLength) = '\0';
+      return std::memcmp(getCStr(), reinterpret_cast<Pointer>(buffer), arraySize) < 0;
+   }
+}
+
+template <size_t arrayLength>
+bool StringVariant::operator <=(char (&other)[arrayLength]) const ZAPI_DECL_NOEXCEPT
+{
+   if (*(other + arrayLength - 1) == '\0') {
+      return std::memcmp(getCStr(), reinterpret_cast<Pointer>(other), arrayLength) < 0 ||
+            0 == std::memcmp(getCStr(), reinterpret_cast<Pointer>(other), arrayLength);
+   } else {
+      constexpr size_t arraySize = arrayLength + 1;
+      ValueType buffer[arraySize];
+      std::memcpy(buffer, other, arrayLength);
+      *(buffer + arrayLength) = '\0';
+      return std::memcmp(getCStr(), reinterpret_cast<Pointer>(buffer), arraySize) < 0||
+            0 == std::memcmp(getCStr(), reinterpret_cast<Pointer>(buffer), arrayLength);
+   }
+}
+
+template <size_t arrayLength>
+bool StringVariant::operator >(char (&other)[arrayLength]) const ZAPI_DECL_NOEXCEPT
+{
+   if (*(other + arrayLength - 1) == '\0') {
+      return std::memcmp(getCStr(), reinterpret_cast<Pointer>(other), arrayLength) > 0;
+   } else {
+      constexpr size_t arraySize = arrayLength + 1;
+      ValueType buffer[arraySize];
+      std::memcpy(buffer, other, arrayLength);
+      *(buffer + arrayLength) = '\0';
+      return std::memcmp(getCStr(), reinterpret_cast<Pointer>(buffer), arraySize) > 0;
+   }
+}
+
+template <size_t arrayLength>
+bool StringVariant::operator >=(char (&other)[arrayLength]) const ZAPI_DECL_NOEXCEPT
+{
+   if (*(other + arrayLength - 1) == '\0') {
+      return std::memcmp(getCStr(), reinterpret_cast<Pointer>(other), arrayLength) > 0 ||
+            0 == std::memcmp(getCStr(), reinterpret_cast<Pointer>(other), arrayLength);
+   } else {
+      constexpr size_t arraySize = arrayLength + 1;
+      ValueType buffer[arraySize];
+      std::memcpy(buffer, other, arrayLength);
+      *(buffer + arrayLength) = '\0';
+      return std::memcmp(getCStr(), reinterpret_cast<Pointer>(buffer), arraySize) > 0||
+            0 == std::memcmp(getCStr(), reinterpret_cast<Pointer>(buffer), arrayLength);
    }
 }
 

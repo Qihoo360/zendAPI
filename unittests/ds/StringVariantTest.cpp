@@ -212,6 +212,53 @@ TEST(StringVariantTest, testNotEqOperators)
    ASSERT_TRUE(str != buffer1);
 }
 
+TEST(StringVariantTest, testLtOperator)
+{
+   StringVariant str("zapi");
+   ASSERT_TRUE(str < "zbpi");
+   ASSERT_FALSE(str < "abc");
+   ASSERT_TRUE(str < std::string("zbpi"));
+   ASSERT_TRUE(str < StringVariant("zbpi"));
+   char buffer[] = "zbpi";
+   ASSERT_TRUE(str < buffer);
+   char buffer1[] = {'z', 'b', 'p', 'i'};
+   ASSERT_TRUE(str < buffer1);
+}
+
+TEST(StringVariantTest, testLtEqOperator)
+{
+   StringVariant str("zapi");
+   ASSERT_TRUE(str <= "zbpi");
+   ASSERT_TRUE(str <= "zapi");
+   ASSERT_TRUE(str <= std::string("zbpi"));
+   ASSERT_TRUE(str <= std::string("zapi"));
+   ASSERT_TRUE(str <= StringVariant("zbpi"));
+   ASSERT_TRUE(str <= StringVariant("zapi"));
+   ASSERT_FALSE(str <= "abc");
+}
+
+TEST(StringVariantTest, testGtOperator)
+{
+   StringVariant str("zapi");
+   ASSERT_TRUE(str > "abc");
+   ASSERT_TRUE(str > std::string("abc"));
+   ASSERT_TRUE(str > StringVariant("abc"));
+   ASSERT_FALSE(str > "zbpi");
+   char buffer[] = "abc";
+   ASSERT_TRUE(str > buffer);
+}
+
+TEST(StringVariantTest, testGtEqOperator)
+{
+   StringVariant str("zapi");
+   ASSERT_TRUE(str >= "abc");
+   ASSERT_TRUE(str >= std::string("abc"));
+   ASSERT_TRUE(str >= StringVariant("abc"));
+   ASSERT_FALSE(str >= "zbpi");
+   char buffer[] = "abc";
+   ASSERT_TRUE(str >= buffer);
+}
+
 TEST(StringVariantTest, testClear)
 {
    StringVariant str("0123456789a123456789b1234A56789c");

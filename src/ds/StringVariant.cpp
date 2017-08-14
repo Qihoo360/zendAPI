@@ -243,6 +243,87 @@ bool StringVariant::operator !=(const StringVariant &other) const ZAPI_DECL_NOEX
    return 0 != std::memcmp(getCStr(), other.getCStr(), getLength());
 }
 
+bool StringVariant::operator ==(const char *other) const ZAPI_DECL_NOEXCEPT
+{
+   return 0 == std::memcmp(getCStr(), other, getLength());
+}
+
+bool StringVariant::operator ==(const std::string &other) const ZAPI_DECL_NOEXCEPT
+{
+   return 0 == std::memcmp(getCStr(), other.c_str(), getLength());
+}
+
+bool StringVariant::operator ==(const StringVariant &other) const ZAPI_DECL_NOEXCEPT
+{
+   return 0 == std::memcmp(getCStr(), other.getCStr(), getLength());
+}
+
+bool StringVariant::operator <(const char *other) const ZAPI_DECL_NOEXCEPT
+{
+   return std::memcmp(getCStr(), other, getLength()) < 0;
+}
+
+bool StringVariant::operator <(const std::string &other) const ZAPI_DECL_NOEXCEPT
+{
+   return std::memcmp(getCStr(), other.c_str(), getLength()) < 0;
+}
+
+bool StringVariant::operator <(const StringVariant &other) const ZAPI_DECL_NOEXCEPT
+{
+   return std::memcmp(getCStr(), other.getCStr(), getLength()) < 0;
+}
+
+bool StringVariant::operator <=(const char *other) const ZAPI_DECL_NOEXCEPT
+{
+   return std::memcmp(getCStr(), other, getLength()) < 0||
+         0 == std::memcmp(getCStr(),  other, getLength());
+}
+
+bool StringVariant::operator <=(const std::string &other) const ZAPI_DECL_NOEXCEPT
+{
+   return std::memcmp(getCStr(), other.c_str(), getLength()) < 0||
+         0 == std::memcmp(getCStr(),  other.c_str(), getLength());
+}
+
+bool StringVariant::operator <=(const StringVariant &other) const ZAPI_DECL_NOEXCEPT
+{
+   return std::memcmp(getCStr(), other.getCStr(), getLength()) < 0 ||
+         0 == std::memcmp(getCStr(),  other.getCStr(), getLength());
+}
+
+bool StringVariant::operator >(const char *other) const ZAPI_DECL_NOEXCEPT
+{
+   return std::memcmp(getCStr(), other, getLength()) > 0;
+}
+
+bool StringVariant::operator >(const std::string &other) const ZAPI_DECL_NOEXCEPT
+{
+   return std::memcmp(getCStr(), other.c_str(), getLength()) > 0;
+}
+
+bool StringVariant::operator >(const StringVariant &other) const ZAPI_DECL_NOEXCEPT
+{
+   return std::memcmp(getCStr(), other.getCStr(), getLength()) > 0;
+}
+
+bool StringVariant::operator >=(const char *other) const ZAPI_DECL_NOEXCEPT
+{
+   return std::memcmp(getCStr(), other, getLength()) > 0||
+         0 == std::memcmp(getCStr(),  other, getLength());
+}
+
+bool StringVariant::operator >=(const std::string &other) const ZAPI_DECL_NOEXCEPT
+{
+   return std::memcmp(getCStr(), other.c_str(), getLength()) > 0||
+         0 == std::memcmp(getCStr(),  other.c_str(), getLength());
+}
+
+bool StringVariant::operator >=(const StringVariant &other) const ZAPI_DECL_NOEXCEPT
+{
+   return std::memcmp(getCStr(), other.getCStr(), getLength()) > 0 ||
+         0 == std::memcmp(getCStr(),  other.getCStr(), getLength());
+}
+
 bool StringVariant::toBool() const ZAPI_DECL_NOEXCEPT
 {
    return getType() != Type::Null && 0 != Z_STRLEN_P(const_cast<zval *>(getZvalPtr()));
@@ -451,7 +532,7 @@ zapi_long StringVariant::lastIndexOf(const char *needle, zapi_long offset,
 }
 
 zapi_long StringVariant::lastIndexOf(const StringVariant &needle, zapi_long offset, 
-                                 bool caseSensitive) const ZAPI_DECL_NOEXCEPT
+                                     bool caseSensitive) const ZAPI_DECL_NOEXCEPT
 {
    return lastIndexOf(needle.getCStr(), offset, caseSensitive);
 }
