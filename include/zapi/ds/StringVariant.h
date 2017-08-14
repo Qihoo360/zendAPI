@@ -357,6 +357,118 @@ protected:
    size_t strReAlloc(zend_string *&str, size_t length, bool persistent);
 };
 
+bool operator ==(const char *lhs, const StringVariant &rhs);
+bool operator ==(const std::string &lhs, const StringVariant &rhs);
+template<size_t arrayLength>
+bool operator ==(char (&lhs)[arrayLength], const StringVariant &rhs)
+{
+   if (*(lhs + arrayLength - 1) == '\0') {
+      return 0 == std::memcmp(reinterpret_cast<StringVariant::Pointer>(lhs), 
+                              rhs.getCStr(), std::max(arrayLength, rhs.getLength()));
+   } else {
+      constexpr size_t arraySize = arrayLength + 1;
+      StringVariant::ValueType buffer[arraySize];
+      std::memcpy(buffer, lhs, arrayLength);
+      *(buffer + arrayLength) = '\0';
+      return 0 == std::memcmp(reinterpret_cast<StringVariant::Pointer>(buffer), rhs.getCStr(),
+                              std::max(arraySize, rhs.getLength()));
+   }
+}
+
+bool operator !=(const char *lhs, const StringVariant &rhs);
+bool operator !=(const std::string &lhs, const StringVariant &rhs);
+template<size_t arrayLength>
+bool operator !=(char (&lhs)[arrayLength], const StringVariant &rhs)
+{
+   if (*(lhs + arrayLength - 1) == '\0') {
+      return 0 != std::memcmp(reinterpret_cast<StringVariant::Pointer>(lhs), rhs.getCStr(),
+                              std::max(arrayLength, rhs.getLength()));
+   } else {
+      constexpr size_t arraySize = arrayLength + 1;
+      StringVariant::ValueType buffer[arraySize];
+      std::memcpy(buffer, lhs, arrayLength);
+      *(buffer + arrayLength) = '\0';
+      return 0 != std::memcmp(reinterpret_cast<StringVariant::Pointer>(buffer), rhs.getCStr(),
+                              std::max(arraySize, rhs.getLength()));
+   }
+}
+
+bool operator <(const char *lhs, const StringVariant &rhs);
+bool operator <(const std::string &lhs, const StringVariant &rhs);
+template<size_t arrayLength>
+bool operator <(char (&lhs)[arrayLength], const StringVariant &rhs)
+{
+   if (*(lhs + arrayLength - 1) == '\0') {
+      return std::memcmp(reinterpret_cast<StringVariant::Pointer>(lhs), rhs.getCStr(),
+                         std::max(arrayLength, rhs.getLength())) < 0;
+   } else {
+      constexpr size_t arraySize = arrayLength + 1;
+      StringVariant::ValueType buffer[arraySize];
+      std::memcpy(buffer, lhs, arrayLength);
+      *(buffer + arrayLength) = '\0';
+      return std::memcmp(reinterpret_cast<StringVariant::Pointer>(buffer), rhs.getCStr(),
+                         std::max(arraySize, rhs.getLength())) < 0;
+   }
+}
+
+bool operator <=(const char *lhs, const StringVariant &rhs);
+bool operator <=(const std::string &lhs, const StringVariant &rhs);
+template<size_t arrayLength>
+bool operator <=(char (&lhs)[arrayLength], const StringVariant &rhs)
+{
+   if (*(lhs + arrayLength - 1) == '\0') {
+      size_t len = std::max(arrayLength, rhs.getLength());;
+      return std::memcmp(reinterpret_cast<StringVariant::Pointer>(lhs), rhs.getCStr(), len) < 0 ||
+            0 == std::memcmp(reinterpret_cast<StringVariant::Pointer>(lhs), rhs.getCStr(), len);
+   } else {
+      constexpr size_t arraySize = arrayLength + 1;
+      StringVariant::ValueType buffer[arraySize];
+      size_t len = std::max(arraySize, rhs.getLength());;
+      std::memcpy(buffer, lhs, arrayLength);
+      *(buffer + arrayLength) = '\0';
+      return std::memcmp(reinterpret_cast<StringVariant::Pointer>(buffer), rhs.getCStr(), len) < 0 ||
+            0 == std::memcmp(reinterpret_cast<StringVariant::Pointer>(lhs), rhs.getCStr(), len);
+   }
+}
+
+bool operator >(const char *lhs, const StringVariant &rhs);
+bool operator >(const std::string &lhs, const StringVariant &rhs);
+template<size_t arrayLength>
+bool operator >(char (&lhs)[arrayLength], const StringVariant &rhs)
+{
+   if (*(lhs + arrayLength - 1) == '\0') {
+      return std::memcmp(reinterpret_cast<StringVariant::Pointer>(lhs), rhs.getCStr(), 
+                         std::max(arrayLength, rhs.getLength())) > 0;
+   } else {
+      constexpr size_t arraySize = arrayLength + 1;
+      StringVariant::ValueType buffer[arraySize];
+      std::memcpy(buffer, lhs, arrayLength);
+      *(buffer + arrayLength) = '\0';
+      return std::memcmp(reinterpret_cast<StringVariant::Pointer>(buffer), rhs.getCStr(),
+                         std::max(arraySize, rhs.getLength())) > 0;
+   }
+}
+
+bool operator >=(const char *lhs, const StringVariant &rhs);
+bool operator >=(const std::string &lhs, const StringVariant &rhs);
+template<size_t arrayLength>
+bool operator >=(char (&lhs)[arrayLength], const StringVariant &rhs)
+{
+   if (*(lhs + arrayLength - 1) == '\0') {
+      size_t len = std::max(arrayLength, rhs.getLength());
+      return std::memcmp(reinterpret_cast<StringVariant::Pointer>(lhs), rhs.getCStr(), len) > 0 ||
+            0 == std::memcmp(reinterpret_cast<StringVariant::Pointer>(lhs), rhs.getCStr(), len);
+   } else {
+      constexpr size_t arraySize = arrayLength + 1;
+      StringVariant::ValueType buffer[arraySize];
+      size_t len = std::max(arraySize, rhs.getLength());
+      std::memcpy(buffer, lhs, arrayLength);
+      *(buffer + arrayLength) = '\0';
+      return std::memcmp(reinterpret_cast<StringVariant::Pointer>(buffer), rhs.getCStr(), len) > 0 ||
+            0 == std::memcmp(reinterpret_cast<StringVariant::Pointer>(lhs), rhs.getCStr(), len);
+   }
+}
+
 std::string operator +(const StringVariant& lhs, const StringVariant &rhs);
 std::string operator +(const StringVariant& lhs, const char *rhs);
 std::string operator +(const StringVariant& lhs, const std::string &rhs);
@@ -409,13 +521,15 @@ template <size_t arrayLength>
 bool StringVariant::operator ==(char (&other)[arrayLength]) const ZAPI_DECL_NOEXCEPT
 {
    if (*(other + arrayLength - 1) == '\0') {
-      return 0 == std::memcmp(getCStr(), reinterpret_cast<Pointer>(other), arrayLength);
+      return 0 == std::memcmp(getCStr(), reinterpret_cast<Pointer>(other), 
+                              std::max(arrayLength, getLength()));
    } else {
       constexpr size_t arraySize = arrayLength + 1;
       ValueType buffer[arraySize];
       std::memcpy(buffer, other, arrayLength);
       *(buffer + arrayLength) = '\0';
-      return 0 == std::memcmp(getCStr(), reinterpret_cast<Pointer>(buffer), arraySize);
+      return 0 == std::memcmp(getCStr(), reinterpret_cast<Pointer>(buffer),
+                              std::max(arraySize, getLength()));
    }
 }
 
@@ -423,13 +537,15 @@ template <size_t arrayLength>
 bool StringVariant::operator !=(char (&other)[arrayLength]) const ZAPI_DECL_NOEXCEPT
 {
    if (*(other + arrayLength - 1) == '\0') {
-      return 0 != std::memcmp(getCStr(), reinterpret_cast<Pointer>(other), arrayLength);
+      return 0 != std::memcmp(getCStr(), reinterpret_cast<Pointer>(other),
+                              std::max(arrayLength, getLength()));
    } else {
       constexpr size_t arraySize = arrayLength + 1;
       ValueType buffer[arraySize];
       std::memcpy(buffer, other, arrayLength);
       *(buffer + arrayLength) = '\0';
-      return 0 != std::memcmp(getCStr(), reinterpret_cast<Pointer>(buffer), arraySize);
+      return 0 != std::memcmp(getCStr(), reinterpret_cast<Pointer>(buffer),
+                              std::max(arraySize, getLength()));
    }
 }
 
@@ -437,13 +553,15 @@ template <size_t arrayLength>
 bool StringVariant::operator <(char (&other)[arrayLength]) const ZAPI_DECL_NOEXCEPT
 {
    if (*(other + arrayLength - 1) == '\0') {
-      return std::memcmp(getCStr(), reinterpret_cast<Pointer>(other), arrayLength) < 0;
+      return std::memcmp(getCStr(), reinterpret_cast<Pointer>(other), 
+                         std::max(arrayLength, getLength())) < 0;
    } else {
       constexpr size_t arraySize = arrayLength + 1;
       ValueType buffer[arraySize];
       std::memcpy(buffer, other, arrayLength);
       *(buffer + arrayLength) = '\0';
-      return std::memcmp(getCStr(), reinterpret_cast<Pointer>(buffer), arraySize) < 0;
+      return std::memcmp(getCStr(), reinterpret_cast<Pointer>(buffer),
+                         std::max(arraySize, getLength())) < 0;
    }
 }
 
@@ -451,15 +569,17 @@ template <size_t arrayLength>
 bool StringVariant::operator <=(char (&other)[arrayLength]) const ZAPI_DECL_NOEXCEPT
 {
    if (*(other + arrayLength - 1) == '\0') {
-      return std::memcmp(getCStr(), reinterpret_cast<Pointer>(other), arrayLength) < 0 ||
-            0 == std::memcmp(getCStr(), reinterpret_cast<Pointer>(other), arrayLength);
+      size_t len = std::max(arrayLength, getLength());
+      return std::memcmp(getCStr(), reinterpret_cast<Pointer>(other), len) < 0 ||
+            0 == std::memcmp(getCStr(), reinterpret_cast<Pointer>(other), len);
    } else {
       constexpr size_t arraySize = arrayLength + 1;
       ValueType buffer[arraySize];
+      size_t len = std::max(arraySize, getLength());
       std::memcpy(buffer, other, arrayLength);
       *(buffer + arrayLength) = '\0';
-      return std::memcmp(getCStr(), reinterpret_cast<Pointer>(buffer), arraySize) < 0||
-            0 == std::memcmp(getCStr(), reinterpret_cast<Pointer>(buffer), arrayLength);
+      return std::memcmp(getCStr(), reinterpret_cast<Pointer>(buffer), len) < 0||
+            0 == std::memcmp(getCStr(), reinterpret_cast<Pointer>(buffer), len);
    }
 }
 
@@ -467,13 +587,15 @@ template <size_t arrayLength>
 bool StringVariant::operator >(char (&other)[arrayLength]) const ZAPI_DECL_NOEXCEPT
 {
    if (*(other + arrayLength - 1) == '\0') {
-      return std::memcmp(getCStr(), reinterpret_cast<Pointer>(other), arrayLength) > 0;
+      return std::memcmp(getCStr(), reinterpret_cast<Pointer>(other), 
+                         std::max(arrayLength, getLength())) > 0;
    } else {
       constexpr size_t arraySize = arrayLength + 1;
       ValueType buffer[arraySize];
       std::memcpy(buffer, other, arrayLength);
       *(buffer + arrayLength) = '\0';
-      return std::memcmp(getCStr(), reinterpret_cast<Pointer>(buffer), arraySize) > 0;
+      return std::memcmp(getCStr(), reinterpret_cast<Pointer>(buffer), 
+                         std::max(arraySize, getLength())) > 0;
    }
 }
 
@@ -481,15 +603,17 @@ template <size_t arrayLength>
 bool StringVariant::operator >=(char (&other)[arrayLength]) const ZAPI_DECL_NOEXCEPT
 {
    if (*(other + arrayLength - 1) == '\0') {
-      return std::memcmp(getCStr(), reinterpret_cast<Pointer>(other), arrayLength) > 0 ||
-            0 == std::memcmp(getCStr(), reinterpret_cast<Pointer>(other), arrayLength);
+      size_t len = std::max(arrayLength, getLength());
+      return std::memcmp(getCStr(), reinterpret_cast<Pointer>(other), len) > 0 ||
+            0 == std::memcmp(getCStr(), reinterpret_cast<Pointer>(other), len);
    } else {
       constexpr size_t arraySize = arrayLength + 1;
       ValueType buffer[arraySize];
+      size_t len = std::max(arraySize, getLength());
       std::memcpy(buffer, other, arrayLength);
       *(buffer + arrayLength) = '\0';
-      return std::memcmp(getCStr(), reinterpret_cast<Pointer>(buffer), arraySize) > 0||
-            0 == std::memcmp(getCStr(), reinterpret_cast<Pointer>(buffer), arrayLength);
+      return std::memcmp(getCStr(), reinterpret_cast<Pointer>(buffer), len) > 0||
+            0 == std::memcmp(getCStr(), reinterpret_cast<Pointer>(buffer), len);
    }
 }
 

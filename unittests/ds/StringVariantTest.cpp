@@ -199,6 +199,28 @@ TEST(StringVariantTest, testplusAssignOperators)
    std::cout << str << std::endl;
 }
 
+TEST(StringVariantTest, testEqOperators)
+{
+   StringVariant str("zapi");
+   ASSERT_TRUE(str == "zapi");
+   ASSERT_FALSE(str == "zapi1");
+   ASSERT_TRUE(str == std::string("zapi"));
+   ASSERT_TRUE(str == StringVariant("zapi"));
+   char buffer[] = "zapi";
+   ASSERT_TRUE(str == buffer);
+   char buffer1[] = {'z', 'a', 'p', 'i'};
+   ASSERT_TRUE(str == buffer1);
+   
+   ASSERT_TRUE("zapi" == str);
+   ASSERT_FALSE("zapi1" == str);
+   ASSERT_TRUE(std::string("zapi") == str);
+   ASSERT_TRUE(StringVariant("zapi") == str);
+   char buffer2[] = "zapi";
+   ASSERT_TRUE(buffer2 == str);
+   char buffer3[] = {'z', 'a', 'p', 'i'};
+   ASSERT_TRUE(buffer3 == str);
+}
+
 TEST(StringVariantTest, testNotEqOperators)
 {
    StringVariant str("zapi");
@@ -210,6 +232,13 @@ TEST(StringVariantTest, testNotEqOperators)
    ASSERT_TRUE(str != buffer);
    char buffer1[] = {'p', 'h', 'p'};
    ASSERT_TRUE(str != buffer1);
+   
+   ASSERT_TRUE("zapiphp" != str);
+   ASSERT_FALSE("zapi" != str);
+   ASSERT_TRUE(std::string("php") != str);
+   ASSERT_TRUE(StringVariant("zapiphp") != str);
+   ASSERT_TRUE(buffer != str);
+   ASSERT_TRUE(buffer1 != str);
 }
 
 TEST(StringVariantTest, testLtOperator)
@@ -223,6 +252,14 @@ TEST(StringVariantTest, testLtOperator)
    ASSERT_TRUE(str < buffer);
    char buffer1[] = {'z', 'b', 'p', 'i'};
    ASSERT_TRUE(str < buffer1);
+   
+   ASSERT_TRUE("zbpi" > str);
+   ASSERT_TRUE("zapix" > str);
+   ASSERT_FALSE("abc" > str);
+   ASSERT_TRUE(std::string("zbpi") > str);
+   ASSERT_TRUE(StringVariant("zbpi") > str);
+   ASSERT_TRUE(buffer > str);
+   ASSERT_TRUE(buffer1 > str);
 }
 
 TEST(StringVariantTest, testLtEqOperator)
@@ -234,7 +271,16 @@ TEST(StringVariantTest, testLtEqOperator)
    ASSERT_TRUE(str <= std::string("zapi"));
    ASSERT_TRUE(str <= StringVariant("zbpi"));
    ASSERT_TRUE(str <= StringVariant("zapi"));
+   char buffer[] = "zapi";
    ASSERT_FALSE(str <= "abc");
+   ASSERT_TRUE(str <= buffer);
+   ASSERT_TRUE("zapix" >= str);
+   ASSERT_TRUE("zbpi" >= str);
+   ASSERT_FALSE("abc" >= str);
+   ASSERT_TRUE(std::string("zbpi") >= str);
+   ASSERT_TRUE(StringVariant("zbpi") >= str);
+   ASSERT_TRUE(StringVariant("zapi") >= str);
+   ASSERT_TRUE(buffer >= str);
 }
 
 TEST(StringVariantTest, testGtOperator)
@@ -246,6 +292,11 @@ TEST(StringVariantTest, testGtOperator)
    ASSERT_FALSE(str > "zbpi");
    char buffer[] = "abc";
    ASSERT_TRUE(str > buffer);
+   
+   ASSERT_TRUE("abcbdf" < str);
+   ASSERT_TRUE(std::string("abc") < str);
+   ASSERT_TRUE(StringVariant("abc") < str);
+   ASSERT_TRUE(buffer < str);
 }
 
 TEST(StringVariantTest, testGtEqOperator)
@@ -257,6 +308,11 @@ TEST(StringVariantTest, testGtEqOperator)
    ASSERT_FALSE(str >= "zbpi");
    char buffer[] = "abc";
    ASSERT_TRUE(str >= buffer);
+   
+   ASSERT_TRUE("abc" <= str);
+   ASSERT_TRUE(std::string("abc") <= str);
+   ASSERT_TRUE(StringVariant("abc") <= str);
+   ASSERT_TRUE(buffer <= str);
 }
 
 TEST(StringVariantTest, testClear)

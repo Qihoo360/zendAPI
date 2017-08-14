@@ -230,98 +230,104 @@ StringVariant &StringVariant::operator +=(const StringVariant &str)
 
 bool StringVariant::operator !=(const char *other) const ZAPI_DECL_NOEXCEPT
 {
-   return 0 != std::memcmp(getCStr(), other, getLength());
+   return 0 != std::memcmp(getCStr(), other, std::max(getLength(), std::strlen(other)));
 }
 
 bool StringVariant::operator !=(const std::string &other) const ZAPI_DECL_NOEXCEPT
 {
-   return 0 != std::memcmp(getCStr(), other.c_str(), getLength());
+   return 0 != std::memcmp(getCStr(), other.c_str(), std::max(getLength(), other.length()));
 }
 
 bool StringVariant::operator !=(const StringVariant &other) const ZAPI_DECL_NOEXCEPT
 {
-   return 0 != std::memcmp(getCStr(), other.getCStr(), getLength());
+   return 0 != std::memcmp(getCStr(), other.getCStr(), std::max(getLength(), other.getLength()));
 }
 
 bool StringVariant::operator ==(const char *other) const ZAPI_DECL_NOEXCEPT
 {
-   return 0 == std::memcmp(getCStr(), other, getLength());
+   return 0 == std::memcmp(getCStr(), other, std::max(getLength(), std::strlen(other)));
 }
 
 bool StringVariant::operator ==(const std::string &other) const ZAPI_DECL_NOEXCEPT
 {
-   return 0 == std::memcmp(getCStr(), other.c_str(), getLength());
+   return 0 == std::memcmp(getCStr(), other.c_str(), std::max(getLength(), other.length()));
 }
 
 bool StringVariant::operator ==(const StringVariant &other) const ZAPI_DECL_NOEXCEPT
 {
-   return 0 == std::memcmp(getCStr(), other.getCStr(), getLength());
+   return 0 == std::memcmp(getCStr(), other.getCStr(), std::max(getLength(), other.getLength()));
 }
 
 bool StringVariant::operator <(const char *other) const ZAPI_DECL_NOEXCEPT
 {
-   return std::memcmp(getCStr(), other, getLength()) < 0;
+   return std::memcmp(getCStr(), other, std::max(getLength(), std::strlen(other))) < 0;
 }
 
 bool StringVariant::operator <(const std::string &other) const ZAPI_DECL_NOEXCEPT
 {
-   return std::memcmp(getCStr(), other.c_str(), getLength()) < 0;
+   return std::memcmp(getCStr(), other.c_str(), std::max(getLength(), other.length())) < 0;
 }
 
 bool StringVariant::operator <(const StringVariant &other) const ZAPI_DECL_NOEXCEPT
 {
-   return std::memcmp(getCStr(), other.getCStr(), getLength()) < 0;
+   return std::memcmp(getCStr(), other.getCStr(), std::max(getLength(), other.getLength())) < 0;
 }
 
 bool StringVariant::operator <=(const char *other) const ZAPI_DECL_NOEXCEPT
 {
-   return std::memcmp(getCStr(), other, getLength()) < 0||
-         0 == std::memcmp(getCStr(),  other, getLength());
+   size_t len = std::max(getLength(), std::strlen(other));
+   return std::memcmp(getCStr(), other, len) < 0||
+         0 == std::memcmp(getCStr(),  other, len);
 }
 
 bool StringVariant::operator <=(const std::string &other) const ZAPI_DECL_NOEXCEPT
 {
-   return std::memcmp(getCStr(), other.c_str(), getLength()) < 0||
-         0 == std::memcmp(getCStr(),  other.c_str(), getLength());
+   size_t len = std::max(getLength(), other.length());
+   return std::memcmp(getCStr(), other.c_str(), len) < 0||
+         0 == std::memcmp(getCStr(),  other.c_str(), len);
 }
 
 bool StringVariant::operator <=(const StringVariant &other) const ZAPI_DECL_NOEXCEPT
 {
-   return std::memcmp(getCStr(), other.getCStr(), getLength()) < 0 ||
-         0 == std::memcmp(getCStr(),  other.getCStr(), getLength());
+   size_t len = std::max(getLength(), other.getLength());
+   return std::memcmp(getCStr(), other.getCStr(), len) < 0 ||
+         0 == std::memcmp(getCStr(),  other.getCStr(), len);
 }
 
 bool StringVariant::operator >(const char *other) const ZAPI_DECL_NOEXCEPT
 {
-   return std::memcmp(getCStr(), other, getLength()) > 0;
+   return std::memcmp(getCStr(), other, std::max(getLength(), std::strlen(other))) > 0;
 }
 
 bool StringVariant::operator >(const std::string &other) const ZAPI_DECL_NOEXCEPT
 {
-   return std::memcmp(getCStr(), other.c_str(), getLength()) > 0;
+   return std::memcmp(getCStr(), other.c_str(), std::max(getLength(), other.length())) > 0;
 }
 
 bool StringVariant::operator >(const StringVariant &other) const ZAPI_DECL_NOEXCEPT
 {
-   return std::memcmp(getCStr(), other.getCStr(), getLength()) > 0;
+   return std::memcmp(getCStr(), other.getCStr(), std::max(getLength(), other.getLength())) > 0;
 }
 
 bool StringVariant::operator >=(const char *other) const ZAPI_DECL_NOEXCEPT
 {
-   return std::memcmp(getCStr(), other, getLength()) > 0||
-         0 == std::memcmp(getCStr(),  other, getLength());
+   size_t len = std::max(getLength(), std::strlen(other));
+   return std::memcmp(getCStr(), other, len) > 0||
+         0 == std::memcmp(getCStr(),  other, len);
 }
 
 bool StringVariant::operator >=(const std::string &other) const ZAPI_DECL_NOEXCEPT
 {
-   return std::memcmp(getCStr(), other.c_str(), getLength()) > 0||
-         0 == std::memcmp(getCStr(),  other.c_str(), getLength());
+   size_t len = std::max(getLength(), other.length());
+   return std::memcmp(getCStr(), other.c_str(), len) > 0||
+         0 == std::memcmp(getCStr(),  other.c_str(), len);
 }
 
 bool StringVariant::operator >=(const StringVariant &other) const ZAPI_DECL_NOEXCEPT
 {
-   return std::memcmp(getCStr(), other.getCStr(), getLength()) > 0 ||
-         0 == std::memcmp(getCStr(),  other.getCStr(), getLength());
+   size_t len = std::max(getLength(), other.getLength());
+   return std::memcmp(getCStr(), other.getCStr(), len) > 0 ||
+         0 == std::memcmp(getCStr(),  other.getCStr(), len);
 }
 
 bool StringVariant::toBool() const ZAPI_DECL_NOEXCEPT
@@ -1217,6 +1223,75 @@ do_smart_str_realloc:
       }
    }
    return length;
+}
+
+bool operator ==(const char *lhs, const StringVariant &rhs)
+{
+   return 0 == std::memcmp(lhs, rhs.getCStr(), std::max(std::strlen(lhs), rhs.getLength()));
+}
+
+bool operator ==(const std::string &lhs, const StringVariant &rhs)
+{
+   return 0 == std::memcmp(lhs.c_str(), rhs.getCStr(), std::max(lhs.length(), rhs.getLength()));
+}
+
+bool operator !=(const char *lhs, const StringVariant &rhs)
+{
+   return 0 != std::memcmp(lhs, rhs.getCStr(), std::max(std::strlen(lhs), rhs.getLength()));
+}
+
+bool operator !=(const std::string &lhs, const StringVariant &rhs)
+{
+   return 0 != std::memcmp(lhs.c_str(), rhs.getCStr(), std::max(lhs.length(), rhs.getLength()));
+}
+
+bool operator <(const char *lhs, const StringVariant &rhs)
+{
+   return std::memcmp(lhs, rhs.getCStr(), std::max(std::strlen(lhs), rhs.getLength())) < 0;
+}
+
+bool operator <(const std::string &lhs, const StringVariant &rhs)
+{
+   return std::memcmp(lhs.c_str(), rhs.getCStr(), std::max(lhs.length(), rhs.getLength())) < 0;
+}
+
+bool operator <=(const char *lhs, const StringVariant &rhs)
+{
+   size_t len = std::max(std::strlen(lhs), rhs.getLength());
+   return std::memcmp(lhs, rhs.getCStr(), rhs.getLength()) < 0 ||
+         0 == std::memcmp(lhs, rhs.getCStr(), rhs.getLength());
+}
+
+bool operator <=(const std::string &lhs, const StringVariant &rhs)
+{
+   size_t len = std::max(lhs.length(), rhs.getLength());
+   return std::memcmp(lhs.c_str(), rhs.getCStr(), len) < 0 ||
+         0 == std::memcmp(lhs.c_str(), rhs.getCStr(), len);
+}
+
+bool operator >(const char *lhs, const StringVariant &rhs)
+{
+   return std::memcmp(lhs, rhs.getCStr(), std::max(std::strlen(lhs), rhs.getLength())) > 0;
+}
+
+bool operator >(const std::string &lhs, const StringVariant &rhs)
+{
+   return std::memcmp(lhs.c_str(), rhs.getCStr(), std::max(lhs.length(), rhs.getLength())) > 0;
+}
+
+
+bool operator >=(const char *lhs, const StringVariant &rhs)
+{
+   size_t len = std::max(std::strlen(lhs), rhs.getLength());
+   return std::memcmp(lhs, rhs.getCStr(), len) > 0 ||
+         0 == std::memcmp(lhs, rhs.getCStr(), len);
+}
+
+bool operator >=(const std::string &lhs, const StringVariant &rhs)
+{
+   size_t len = std::max(lhs.length(), rhs.getLength());
+   return std::memcmp(lhs.c_str(), rhs.getCStr(), len) > 0 ||
+         0 == std::memcmp(lhs.c_str(), rhs.getCStr(), len);
 }
 
 std::string operator +(const StringVariant& lhs, const StringVariant &rhs)
