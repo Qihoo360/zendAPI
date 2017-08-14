@@ -186,7 +186,7 @@ public:
     */
    virtual std::string toString() const ZAPI_DECL_NOEXCEPT;
    
-   zval &getZval() ZAPI_DECL_NOEXCEPT;
+   zval &getZval() const ZAPI_DECL_NOEXCEPT;
    zval *getZvalPtr() ZAPI_DECL_NOEXCEPT;
    const zval *getZvalPtr() const ZAPI_DECL_NOEXCEPT;
    uint32_t getRefCount() const ZAPI_DECL_NOEXCEPT;

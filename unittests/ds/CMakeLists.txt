@@ -4,5 +4,6 @@ set(DS_TEST_SRCS
     HashTableTest.cpp
     BoolVariantTest.cpp
     NumericVariantTest.cpp
-    StringVariantTest.cpp)
+    StringVariantTest.cpp
+    ArrayVariantTest.cpp)
 zapi_add_unittest(UnitTests DsTest ${DS_TEST_SRCS})

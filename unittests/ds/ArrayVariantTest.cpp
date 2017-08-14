@@ -13,52 +13,16 @@
 //
 // Created by softboy on 2017/08/14.
 
+#include "php/sapi/embed/php_embed.h"
+#include "gtest/gtest.h"
 #include "zapi/ds/ArrayVariant.h"
 
-namespace zapi
-{
-namespace ds
-{
+using zapi::ds::ArrayVariant;
 
-ArrayVariant::ArrayVariant()
+TEST(ArrayVariantTest, testConstructor)
 {
-   // constructor null array
-   zval *self = getZvalPtr();
-   Z_ARRVAL_P(self) = nullptr;
-   Z_TYPE_INFO_P(self) = IS_ARRAY_EX;
+   ArrayVariant array;
+   ASSERT_TRUE(array.isNull());
+   ASSERT_TRUE(array.isEmpty());
+   ASSERT_TRUE(array.isArray());
 }
-
-bool ArrayVariant::isEmpty() const ZAPI_DECL_NOEXCEPT
-{
-   return 0 == getSize();
-}
-
-bool ArrayVariant::isNull() const ZAPI_DECL_NOEXCEPT
-{
-   return nullptr == getZendArrayPtr();
-}
-
-ArrayVariant::SizeType ArrayVariant::getSize() const ZAPI_DECL_NOEXCEPT
-{
-   return isNull() ? 0 : zend_hash_num_elements(getZendArrayPtr());
-}
-ArrayVariant::SizeType ArrayVariant::count() const ZAPI_DECL_NOEXCEPT
-{
-   return getSize();
-}
-
-ArrayVariant::~ArrayVariant()
-{}
-
-_zend_array *ArrayVariant::getZendArrayPtr() const ZAPI_DECL_NOEXCEPT
-{
-   return Z_ARR(getZval());
-}
-
-_zend_array &ArrayVariant::getZendArray() const ZAPI_DECL_NOEXCEPT
-{
-   return *Z_ARR(getZval());
-}
-
-} // ds
-} // zapi

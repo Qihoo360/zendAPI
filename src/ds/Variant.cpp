@@ -67,7 +67,10 @@ void std_zval_deleter(VariantPrivate *ptr)
    if (ptr->m_ref) {
       ptr->m_ref.~shared_ptr();
    }
-   zval_ptr_dtor(*ptr);
+   zval *v = *ptr;
+   if (Z_COUNTED_P(v)) {
+      zval_ptr_dtor(v);
+   }
 }
 }
 
@@ -492,7 +495,7 @@ void Variant::stdAssignZval(zval *dest, zval *source)
    ZVAL_COPY(dest, source);
 }
 
-zval &Variant::getZval() ZAPI_DECL_NOEXCEPT
+zval &Variant::getZval() const ZAPI_DECL_NOEXCEPT
 {
    if (m_implPtr->m_ref) {
       return *static_cast<zval *>(*m_implPtr->m_ref);
