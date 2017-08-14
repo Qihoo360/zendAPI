@@ -30,7 +30,7 @@ TEST(StringVariantTest, testConstructors)
    ASSERT_EQ(emptyStr.getCapacity(), 0);
    ASSERT_EQ(emptyStr.getSize(), 0);
    emptyStr = 1;
-   std::cout << emptyStr << std::endl;
+   //std::cout << emptyStr << std::endl;
    emptyStr.append('C');
    ASSERT_EQ(emptyStr.getSize(), 2);
    ASSERT_EQ(emptyStr.getCapacity(), 199);
@@ -533,7 +533,7 @@ TEST(StringVariantTest, testReplace)
    str = "MY NAME is zzu_softboy, i love PHP";
    str.replace(0, 2, replaceArr, 2);
    ASSERT_STREQ(str.getCStr(), "za NAME is zzu_softboy, i love PHP");
-   std::cout << str << std::endl;
+   //std::cout << str << std::endl;
    str.replace(-3, 4, "php");
    ASSERT_STREQ(str.getCStr(), "za NAME is zzu_softboy, i love php");
    str = "MY NAME is zzu_softboy, i love PHP";
@@ -541,4 +541,15 @@ TEST(StringVariantTest, testReplace)
    ASSERT_STREQ(str.getCStr(), "MY NAME is zzu_softboy, i love php");
    str.replace(-3, 3, replaceArr);
    ASSERT_STREQ(str.getCStr(), "MY NAME is zzu_softboy, i love zapi");
+   str = "my name is zzu_Softboy, i think php is the best programming language in the world. php is the best! pHp is very fast!";
+   str.replace("php", "PHP");
+   ASSERT_STREQ(str.getCStr(), "my name is zzu_Softboy, i think PHP is the best programming language in the world. PHP is the best! pHp is very fast!");
+   //std::cout << str << std::endl;
+   str = "my name is zzu_Softboy, i think php is the best programming language in the world. php is the best! pHp is very fast!";
+   str.replace("php", "PHP", false);
+   ASSERT_STREQ(str.getCStr(), "my name is zzu_Softboy, i think PHP is the best programming language in the world. PHP is the best! PHP is very fast!");
+   str = "my name is zzu_Softboy, i think php is the best programming language in the world. php is the best! pHp is very fast!";
+   str.replace('p', '_');
+   ASSERT_STREQ(str.getCStr(), "my name is zzu_Softboy, i think _h_ is the best _rogramming language in the world. _h_ is the best! _H_ is very fast!");
+   std::cout << str << std::endl;
 }

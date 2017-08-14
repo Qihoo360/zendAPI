@@ -181,6 +181,19 @@ public:
    StringVariant &replace(size_t pos, size_t length, const char replace);
    StringVariant &replace(size_t pos, size_t length, const std::string &replace);
    StringVariant &replace(size_t pos, size_t length, const StringVariant &replace);
+   StringVariant &replace(char search, char replaceStr, bool caseSensitive = true);
+   StringVariant &replace(char search, const char *replaceStr, bool caseSensitive = true);
+   StringVariant &replace(char search, const std::string &replaceStr, bool caseSensitive = true);
+   StringVariant &replace(char search, const StringVariant &replaceStr, bool caseSensitive = true);
+   StringVariant &replace(const char *search, const char *replaceStr, bool caseSensitive = true);
+   StringVariant &replace(const char *search, const std::string &replaceStr, bool caseSensitive = true);
+   StringVariant &replace(const char *search, const StringVariant &replaceStr, bool caseSensitive = true);
+   StringVariant &replace(const std::string &search, const char *replaceStr, bool caseSensitive = true);
+   StringVariant &replace(const std::string &search, const std::string &replaceStr, bool caseSensitive = true);
+   StringVariant &replace(const std::string &search, const StringVariant &replaceStr, bool caseSensitive = true);
+   StringVariant &replace(const StringVariant &search, const char *replaceStr, bool caseSensitive = true);
+   StringVariant &replace(const StringVariant &search, const std::string &replaceStr, bool caseSensitive = true);
+   StringVariant &replace(const StringVariant &search, const StringVariant &replaceStr, bool caseSensitive = true);
    template<size_t arrayLength>
    StringVariant &replace(size_t pos, size_t length, char (&replaceArr)[arrayLength], size_t replaceLength);
    template<typename T, 

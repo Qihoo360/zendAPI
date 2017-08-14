@@ -734,6 +734,85 @@ StringVariant &StringVariant::replace(size_t pos, size_t length, const StringVar
    return *this;
 }
 
+StringVariant &StringVariant::replace(const char *search, const char *replaceStr, bool caseSensitive)
+{
+   size_t length = std::strlen(search);
+   zapi_long pos = -1;
+   size_t startPos = 0;
+   while (-1 != (pos = indexOf(search, startPos, caseSensitive))) {
+      replace(static_cast<size_t>(pos), length, replaceStr);
+      startPos += length;
+   }
+   return *this;
+}
+
+StringVariant &StringVariant::replace(char search, char replaceStr, bool caseSensitive)
+{
+   zapi_long pos = -1;
+   size_t startPos = 0;
+   while (-1 != (pos = indexOf(search, startPos, caseSensitive))) {
+      replace(static_cast<size_t>(pos), 1, replaceStr);
+      startPos += 1;
+   }
+   return *this;
+}
+
+StringVariant &StringVariant::replace(char search, const char *replaceStr, bool caseSensitive)
+{
+   ValueType buffer[2] = {search, '\0'};
+   return replace(reinterpret_cast<Pointer>(buffer), replaceStr, caseSensitive);
+}
+
+StringVariant &StringVariant::replace(char search, const std::string &replaceStr, bool caseSensitive)
+{
+   return replace(search, replaceStr.c_str(), caseSensitive);
+}
+
+StringVariant &StringVariant::replace(char search, const StringVariant &replaceStr, bool caseSensitive)
+{
+   return replace(search, replaceStr.getCStr(), caseSensitive);
+}
+
+StringVariant &StringVariant::replace(const char *search, const std::string &replaceStr, bool caseSensitive)
+{
+   return replace(search, replaceStr.c_str(), caseSensitive);
+}
+
+StringVariant &StringVariant::replace(const char *search, const StringVariant &replaceStr, bool caseSensitive)
+{
+   return replace(search, replaceStr.getCStr(), caseSensitive);
+}
+
+StringVariant &StringVariant::replace(const std::string &search, const char *replaceStr, bool caseSensitive)
+{
+   return replace(search.c_str(), replaceStr, caseSensitive);
+}
+
+StringVariant &StringVariant::replace(const std::string &search, const std::string &replaceStr, bool caseSensitive)
+{
+   return replace(search.c_str(), replaceStr.c_str(), caseSensitive);
+}
+
+StringVariant &StringVariant::replace(const std::string &search, const StringVariant &replaceStr, bool caseSensitive)
+{
+   return replace(search.c_str(), replaceStr.getCStr(), caseSensitive);
+}
+
+StringVariant &StringVariant::replace(const StringVariant &search, const char *replaceStr, bool caseSensitive)
+{
+   return replace(search.getCStr(), replaceStr, caseSensitive);
+}
+
+StringVariant &StringVariant::replace(const StringVariant &search, const std::string &replaceStr, bool caseSensitive)
+{
+   return replace(search.getCStr(), replaceStr.c_str(), caseSensitive);
+}
+
+StringVariant &StringVariant::replace(const StringVariant &search, const StringVariant &replaceStr, bool caseSensitive)
+{
+   return replace(search.getCStr(), replaceStr.getCStr(), caseSensitive);
+}
+
 StringVariant &StringVariant::clear()
 {
    // here we release zend_string memory
