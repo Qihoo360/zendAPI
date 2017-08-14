@@ -199,6 +199,19 @@ TEST(StringVariantTest, testplusAssignOperators)
    std::cout << str << std::endl;
 }
 
+TEST(StringVariantTest, testNotEqOperators)
+{
+   StringVariant str("zapi");
+   ASSERT_TRUE(str != "php");
+   ASSERT_FALSE(str != "zapi");
+   ASSERT_TRUE(str != std::string("php"));
+   ASSERT_TRUE(str != StringVariant("php"));
+   char buffer[] = "php";
+   ASSERT_TRUE(str != buffer);
+   char buffer1[] = {'p', 'h', 'p'};
+   ASSERT_TRUE(str != buffer1);
+}
+
 TEST(StringVariantTest, testClear)
 {
    StringVariant str("0123456789a123456789b1234A56789c");

@@ -228,6 +228,21 @@ StringVariant &StringVariant::operator +=(const StringVariant &str)
    return append(str);
 }
 
+bool StringVariant::operator !=(const char *other) const ZAPI_DECL_NOEXCEPT
+{
+   return 0 != std::memcmp(getCStr(), other, getLength());
+}
+
+bool StringVariant::operator !=(const std::string &other) const ZAPI_DECL_NOEXCEPT
+{
+   return 0 != std::memcmp(getCStr(), other.c_str(), getLength());
+}
+
+bool StringVariant::operator !=(const StringVariant &other) const ZAPI_DECL_NOEXCEPT
+{
+   return 0 != std::memcmp(getCStr(), other.getCStr(), getLength());
+}
+
 bool StringVariant::toBool() const ZAPI_DECL_NOEXCEPT
 {
    return getType() != Type::Null && 0 != Z_STRLEN_P(const_cast<zval *>(getZvalPtr()));
