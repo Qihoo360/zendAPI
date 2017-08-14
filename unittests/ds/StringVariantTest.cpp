@@ -379,6 +379,8 @@ TEST(StringVariantTest, testAppendAndPrepend)
       str.append(str1);
       ASSERT_EQ(str.getLength(), 16);
       ASSERT_STREQ(str.getCStr(), "zapi1phpcpphello");
+      str.append(needAppend);
+      ASSERT_STREQ(str.getCStr(), "zapi1phpcpphellophp");
    }
    {
       StringVariant str("zapi");
@@ -398,6 +400,8 @@ TEST(StringVariantTest, testAppendAndPrepend)
       str.prepend(str1);
       ASSERT_EQ(str.getLength(), 16);
       ASSERT_STREQ(str.getCStr(), "hellocppphp1zapi");
+      str.prepend(needPrepend);
+      ASSERT_STREQ(str.getCStr(), "phphellocppphp1zapi");
    }
 }
 

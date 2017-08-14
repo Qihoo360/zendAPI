@@ -104,6 +104,8 @@ public:
    StringVariant &prepend(T value);
    template<size_t arrayLength>
    StringVariant &prepend(char (&str)[arrayLength], int length);
+   template<size_t arrayLength>
+   StringVariant &prepend(char (&str)[arrayLength]);
    
    StringVariant &append(const char *str);
    StringVariant &append(const char c);
@@ -113,6 +115,8 @@ public:
    StringVariant &append(T value);
    template<size_t arrayLength>
    StringVariant &append(char (&str)[arrayLength], int length);
+   template<size_t arrayLength>
+   StringVariant &append(char (&str)[arrayLength]);
    
    StringVariant &remove(size_t pos, size_t length);
    template <typename T, typename Selector = typename std::enable_if<std::is_integral<T>::value>::type>
@@ -242,6 +246,12 @@ StringVariant &StringVariant::prepend(char (&str)[arrayLength], int length)
    return prepend(buffer.get());
 }
 
+template<size_t arrayLength>
+StringVariant &StringVariant::prepend(char (&str)[arrayLength])
+{
+   return prepend(str, arrayLength);
+}
+
 template <typename T, typename Selector>
 StringVariant &StringVariant::append(T value)
 {
@@ -257,6 +267,12 @@ StringVariant &StringVariant::append(char (&str)[arrayLength], int length)
    std::memcpy(buffer.get(), str, length);
    buffer.get()[length] = '\0';
    return append(buffer.get());
+}
+
+template<size_t arrayLength>
+StringVariant &StringVariant::append(char (&str)[arrayLength])
+{
+   return append(str, arrayLength);
 }
 
 template <typename T, typename Selector>
