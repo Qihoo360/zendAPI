@@ -113,32 +113,6 @@ TEST(StringVariantTest, testMoveConstruct)
    ASSERT_STREQ(str2.getCStr(), "hello zzu_softboyXXCC");
 }
 
-TEST(StringVariantTest, testIndexOf)
-{
-   StringVariant str("my name is zzu_Softboy, i think php is the best programming language in the world. php is the best!");
-   char subStr[] = {'p','h', 'p', 'i', 's', 't', 'h', 'e'};
-   int pos = str.indexOf(subStr, 3);
-   ASSERT_EQ(pos, 32);
-   pos = str.indexOf(subStr, 4);
-   ASSERT_EQ(pos, -1);
-   pos = str.indexOf("php");
-   ASSERT_EQ(pos, 32);
-   pos = str.indexOf("PhP");
-   ASSERT_EQ(pos, -1);
-   pos = str.indexOf(std::string("php"));
-   ASSERT_EQ(pos, 32);
-   pos = str.indexOf('n');
-   ASSERT_EQ(pos, 3);
-   pos = str.indexOf("php", 33);
-   ASSERT_EQ(pos, 83);
-   pos = str.indexOf("PhP", 0, false);
-   ASSERT_EQ(pos, 32);
-   pos = str.indexOf("pHP", 0, false);
-   ASSERT_EQ(pos, 32);
-   pos = str.indexOf("ZZU_SOFTBOY", 0, false);
-   ASSERT_EQ(pos, 11);
-}
-
 TEST(StringVariantTest, testAssignOperators)
 {
    StringVariant str1("zapi");
@@ -261,8 +235,38 @@ TEST(StringVariantTest, testContains)
    ASSERT_TRUE(str.contains("name"));
    char searchArray[4] = {'b', 'e', 's', 't'};
    ASSERT_TRUE(str.contains(searchArray, 4));
+    ASSERT_TRUE(str.contains(searchArray));
    ASSERT_FALSE(str.contains("PHP"));
    ASSERT_TRUE(str.contains("PHP", false));
+}
+
+TEST(StringVariantTest, testIndexOf)
+{
+   StringVariant str("my name is zzu_Softboy, i think php is the best programming language in the world. php is the best!");
+   char subStr[] = {'p','h', 'p', 'i', 's', 't', 'h', 'e'};
+   int pos = str.indexOf(subStr, 3);
+   ASSERT_EQ(pos, 32);
+   pos = str.indexOf(subStr, 4);
+   ASSERT_EQ(pos, -1);
+   pos = str.indexOf("php");
+   ASSERT_EQ(pos, 32);
+   pos = str.indexOf("PhP");
+   ASSERT_EQ(pos, -1);
+   pos = str.indexOf(std::string("php"));
+   ASSERT_EQ(pos, 32);
+   pos = str.indexOf('n');
+   ASSERT_EQ(pos, 3);
+   pos = str.indexOf("php", 33);
+   ASSERT_EQ(pos, 83);
+   pos = str.indexOf("PhP", 0, false);
+   ASSERT_EQ(pos, 32);
+   pos = str.indexOf("pHP", 0, false);
+   ASSERT_EQ(pos, 32);
+   pos = str.indexOf("ZZU_SOFTBOY", 0, false);
+   ASSERT_EQ(pos, 11);
+   char phpArr[] = {'p', 'h', 'p'};
+   pos = str.indexOf(phpArr);
+   ASSERT_EQ(pos, 32);
 }
 
 TEST(StringVariantTest, testLastIndexOf)
@@ -287,6 +291,9 @@ TEST(StringVariantTest, testLastIndexOf)
    ASSERT_EQ(pos, 10);
    pos = str.lastIndexOf('a', -8, false);
    ASSERT_EQ(pos, 10);
+   char arr[] = {'4', '5', '6'};
+   pos = str.lastIndexOf(arr);
+   ASSERT_EQ(pos, 14);
 }
 
 TEST(StringVariantTest, testStartWiths)
