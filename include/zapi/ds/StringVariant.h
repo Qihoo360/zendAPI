@@ -71,6 +71,9 @@ public:
    template <size_t arrayLength>
    StringVariant &operator +=(char (&str)[arrayLength]);
    
+   Reference operator [](size_t pos);
+   ConstReference operator [](size_t pos) const;
+   
    // compare operators
    bool operator !=(const char *other) const ZAPI_DECL_NOEXCEPT;
    bool operator !=(const std::string &other) const ZAPI_DECL_NOEXCEPT;

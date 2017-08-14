@@ -228,6 +228,17 @@ StringVariant &StringVariant::operator +=(const StringVariant &str)
    return append(str);
 }
 
+StringVariant::Reference StringVariant::operator [](size_t pos)
+{
+   return const_cast<Reference>(static_cast<const StringVariant &>(*this).operator [](pos));
+}
+
+StringVariant::ConstReference StringVariant::operator [](size_t pos) const
+{
+   Pointer dataPtr = getRawStrPtr();
+   return dataPtr[pos];
+}
+
 bool StringVariant::operator !=(const char *other) const ZAPI_DECL_NOEXCEPT
 {
    return 0 != std::memcmp(getCStr(), other, std::max(getLength(), std::strlen(other)));

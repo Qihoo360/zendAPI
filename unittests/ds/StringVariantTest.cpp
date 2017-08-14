@@ -315,6 +315,18 @@ TEST(StringVariantTest, testGtEqOperator)
    ASSERT_TRUE(buffer <= str);
 }
 
+TEST(StringVariantTest, testAccessOperators)
+{
+   StringVariant str("zapi");
+   char &ch1 = str[0];
+   ASSERT_EQ(ch1, 'z');
+   ch1 = 'x';
+   ASSERT_STREQ(str.getCStr(), "xapi");
+   const StringVariant str1("zapi");
+   const char &ch2 = str1[0];
+   ASSERT_EQ(ch2, 'z');
+}
+
 TEST(StringVariantTest, testClear)
 {
    StringVariant str("0123456789a123456789b1234A56789c");
