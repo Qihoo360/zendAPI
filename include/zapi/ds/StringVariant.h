@@ -22,6 +22,7 @@
 #include <iterator>
 #include <cstdlib>
 #include <string>
+#include <vector>
 
 namespace zapi
 {
@@ -133,6 +134,7 @@ public:
    std::string substring(size_t pos, size_t length) const;
    std::string substring(size_t pos) const;
    std::string repeated(size_t times) const;
+   std::vector<std::string> split(const char *sep, bool keepEmptyParts = true, bool caseSensitive = true);
    // modify methods
    
    StringVariant &prepend(const char *str);
@@ -345,6 +347,8 @@ public:
    Reference at(SizeType pos);
    ConstReference at(SizeType pos) const;
    const char *getCStr() const ZAPI_DECL_NOEXCEPT;
+   char *getData() ZAPI_DECL_NOEXCEPT;
+   const char *getData() const ZAPI_DECL_NOEXCEPT;
    SizeType getSize() const ZAPI_DECL_NOEXCEPT;
    SizeType getLength() const ZAPI_DECL_NOEXCEPT;
    bool isEmpty() const ZAPI_DECL_NOEXCEPT;

@@ -18,6 +18,7 @@
 
 #include <cstring>
 #include <stdexcept>
+#include <list>
 
 namespace zapi
 {
@@ -874,7 +875,7 @@ StringVariant &StringVariant::replace(const char *search, const char *replaceStr
    size_t startPos = 0;
    while (-1 != (pos = indexOf(search, startPos, caseSensitive))) {
       replace(static_cast<size_t>(pos), length, replaceStr);
-      startPos += length;
+      startPos = pos + length;
    }
    return *this;
 }
@@ -885,7 +886,7 @@ StringVariant &StringVariant::replace(char search, char replaceStr, bool caseSen
    size_t startPos = 0;
    while (-1 != (pos = indexOf(search, startPos, caseSensitive))) {
       replace(static_cast<size_t>(pos), 1, replaceStr);
-      startPos += 1;
+      startPos = pos + 1;
    }
    return *this;
 }
@@ -1124,7 +1125,47 @@ std::string StringVariant::repeated(size_t times) const
    return ret;
 }
 
+std::vector<std::string> StringVariant::split(const char *sep, bool keepEmptyParts, bool caseSensitive)
+{
+   std::list<size_t> points;
+   std::vector<std::string> list;
+   zapi_long pos = -1;
+   size_t startPos = 0;
+   size_t sepLength = std::strlen(sep);
+   while (-1 != (pos = indexOf(sep, startPos, caseSensitive))) { 
+      points.push_back(pos);
+      startPos = pos + sepLength;
+   }
+   if (points.size() == 0) {
+      list.emplace_back(getCStr(), getLength());
+      return list;
+   }
+   // push end point
+   points.push_back(getLength());
+   startPos = 0;
+   ConstPointer dataPtr = getCStr();
+   while (!points.empty()) {
+      size_t splitPoint = points.front();
+      if ((splitPoint - startPos) > 0 || (keepEmptyParts && (splitPoint - startPos) == 0)) {
+         list.emplace_back(dataPtr + startPos, dataPtr + splitPoint);
+      } 
+      startPos = splitPoint + sepLength;
+      points.pop_front();
+   }
+   return list;
+}
+
 const char *StringVariant::getCStr() const ZAPI_DECL_NOEXCEPT
+{
+   return Z_STRVAL_P(const_cast<zval *>(getZvalPtr()));
+}
+
+char *StringVariant::getData() ZAPI_DECL_NOEXCEPT
+{
+   return Z_STRVAL_P(const_cast<zval *>(getZvalPtr()));
+}
+
+const char *StringVariant::getData() const ZAPI_DECL_NOEXCEPT
 {
    return Z_STRVAL_P(const_cast<zval *>(getZvalPtr()));
 }

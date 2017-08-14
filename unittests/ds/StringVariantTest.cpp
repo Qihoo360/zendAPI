@@ -18,6 +18,7 @@
 #include "zapi/ds/StringVariant.h"
 #include <iostream>
 #include <string>
+#include <vector>
 
 using zapi::ds::StringVariant;
 using zapi::ds::Variant;
@@ -656,7 +657,45 @@ TEST(StringVariantTest, testRepeated)
    ASSERT_STREQ(repeatedStr.c_str(), "zapi");
    repeatedStr = str.repeated(3);
    ASSERT_STREQ(repeatedStr.c_str(), "zapizapizapi");
+}
+
+TEST(StringVariantTest, testSplits)
+{
+   std::vector<std::string> expected;
+   StringVariant text("aaa||bbb||ccc||ddd||eee");
+   std::vector<std::string> parts = text.split("||");
+   expected = {"aaa", "bbb", "ccc", "ddd", "eee"};
+   ASSERT_EQ(parts, expected);
+   text = "||aaa||bbb||||ccc||ddd||";
+   expected = {"", "aaa", "bbb", "", "ccc", "ddd", ""};
+   parts = text.split("||");
+   ASSERT_EQ(parts, expected);
+   expected = {"", "", "", "", "", ""};
+   text = "||||||||||";
+   parts = text.split("||");
+   ASSERT_EQ(parts, expected);
+   text = "ashgdahsd";
+   expected = {"ashgdahsd"};
+   parts = text.split("||");
+   ASSERT_EQ(parts, expected);
    
+   text = "||aaa||bbb||||ccc||ddd||";
+   expected = {"aaa", "bbb", "ccc", "ddd"};
+   parts = text.split("||", false);
+   ASSERT_EQ(parts, expected);
+   text = "||||||||||";
+   expected = {};
+   parts = text.split("||", false);
+   ASSERT_EQ(parts, expected);
+   
+   text = "aaaXXbbbxxcccXXdddXXeee";
+   expected = {"aaa", "bbbxxccc", "ddd", "eee"};
+   parts = text.split("XX", false, true);
+   ASSERT_EQ(parts, expected);
+   text = "aaaXXbbbxxcccXXdddXXeee";
+   expected = {"aaa", "bbb", "ccc", "ddd", "eee"};
+   parts = text.split("Xx", false, false);
+   ASSERT_EQ(parts, expected);
 }
 
 TEST(StringVariantTest, testReplace)
