@@ -539,4 +539,6 @@ TEST(StringVariantTest, testReplace)
    str = "MY NAME is zzu_softboy, i love PHP";
    str.replace(-3, -4, "php");
    ASSERT_STREQ(str.getCStr(), "MY NAME is zzu_softboy, i love php");
+   str.replace(-3, 3, replaceArr);
+   ASSERT_STREQ(str.getCStr(), "MY NAME is zzu_softboy, i love zapi");
 }

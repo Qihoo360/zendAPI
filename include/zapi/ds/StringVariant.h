@@ -150,10 +150,6 @@ public:
    StringVariant &insert(size_t pos, char (&str)[arrayLength], T length);
    template<size_t arrayLength>
    StringVariant &insert(size_t pos, char (&str)[arrayLength]);
-   template<typename T, 
-            size_t arrayLength,
-            typename Selector = typename std::enable_if<std::is_integral<T>::value>::type>
-   StringVariant &insert(T pos, char (&str)[arrayLength], size_t length);
    template<typename T,
             size_t arrayLength,
             typename V,
@@ -186,14 +182,14 @@ public:
    StringVariant &replace(size_t pos, size_t length, const std::string &replace);
    StringVariant &replace(size_t pos, size_t length, const StringVariant &replace);
    template<size_t arrayLength>
-   StringVariant &replace(size_t pos, size_t length, char (&str)[arrayLength], size_t replaceLength);
+   StringVariant &replace(size_t pos, size_t length, char (&replaceArr)[arrayLength], size_t replaceLength);
    template<typename T, 
             size_t arrayLength,
             typename Selector = typename std::enable_if<std::is_integral<T>::value &&
                                                         std::is_signed<T>::value>::type>
-   StringVariant &replace(size_t pos, size_t length, char (&str)[arrayLength], T replaceLength);
+   StringVariant &replace(size_t pos, size_t length, char (&replaceArr)[arrayLength], T replaceLength);
    template<size_t arrayLength>
-   StringVariant &replace(size_t pos, size_t length, char (&str)[arrayLength]);
+   StringVariant &replace(size_t pos, size_t length, char (&replaceArr)[arrayLength]);
    
    template <typename PosType,
              typename LengthType,
@@ -394,14 +390,15 @@ StringVariant &StringVariant::remove(T pos, size_t length)
    size_t targetPos = 0;
    size_t selfLength = getLength();
    size_t positivePos = static_cast<size_t>(std::abs(pos));
-   if (pos < 0) {
+   zapi_long lpos = static_cast<zapi_long>(pos);
+   if (lpos < 0) {
       // out of range
       if (selfLength < positivePos) {
          throw std::out_of_range("string pos out of range");
       }
       targetPos = selfLength - positivePos;
    } else {
-      targetPos = static_cast<size_t>(pos);
+      targetPos = static_cast<size_t>(lpos);
    }
    return remove(targetPos, length);
 }
@@ -415,53 +412,53 @@ StringVariant &StringVariant::remove(T pos)
 template <typename T, typename Selector>
 StringVariant &StringVariant::insert(T pos, const char *str)
 {
-   pos = static_cast<zapi_long>(pos);
-   if (pos < 0) {
-      pos += getLength();
+   zapi_long lpos = static_cast<zapi_long>(pos);
+   if (lpos < 0) {
+      lpos += getLength();
    }
-   if (pos < 0) {
+   if (lpos < 0) {
       throw std::out_of_range("string pos out of range");
    }
-   return insert(static_cast<size_t>(pos), str);
+   return insert(static_cast<size_t>(lpos), str);
 }
 
 template <typename T, typename Selector>
 StringVariant &StringVariant::insert(T pos, const char c)
 {
-   pos = static_cast<zapi_long>(pos);
-   if (pos < 0) {
-      pos += getLength();
+   zapi_long lpos = static_cast<zapi_long>(pos);
+   if (lpos < 0) {
+      lpos += getLength();
    }
-   if (pos < 0) {
+   if (lpos < 0) {
       throw std::out_of_range("string pos out of range");
    }
-   return insert(static_cast<size_t>(pos), c);
+   return insert(static_cast<size_t>(lpos), c);
 }
 
 template <typename T, typename Selector>
 StringVariant &StringVariant::insert(T pos, const std::string &str)
 {
-   pos = static_cast<zapi_long>(pos);
-   if (pos < 0) {
-      pos += getLength();
+   zapi_long lpos = static_cast<zapi_long>(pos);
+   if (lpos < 0) {
+      lpos += getLength();
    }
-   if (pos < 0) {
+   if (lpos < 0) {
       throw std::out_of_range("string pos out of range");
    }
-   return insert(static_cast<size_t>(pos), str.c_str());
+   return insert(static_cast<size_t>(lpos), str.c_str());
 }
 
 template <typename T, typename Selector>
 StringVariant &StringVariant::insert(T pos, const StringVariant &str)
 {
-   pos = static_cast<zapi_long>(pos);
-   if (pos < 0) {
-      pos += getLength();
+   zapi_long lpos = static_cast<zapi_long>(pos);
+   if (lpos < 0) {
+      lpos += getLength();
    }
-   if (pos < 0) {
+   if (lpos < 0) {
       throw std::out_of_range("string pos out of range");
    }
-   return insert(static_cast<size_t>(pos), str.getCStr());
+   return insert(static_cast<size_t>(lpos), str.getCStr());
 }
 
 template <typename T, typename Selector>
@@ -474,15 +471,15 @@ StringVariant &StringVariant::insert(size_t pos, T value)
 template <typename T, typename V, typename SelectorT, typename Selector>
 StringVariant &StringVariant::insert(T pos, V value)
 {
-   pos = static_cast<zapi_long>(pos);
-   if (pos < 0) {
-      pos += getLength();
+   zapi_long lpos = static_cast<zapi_long>(pos);
+   if (lpos < 0) {
+      lpos += getLength();
    }
-   if (pos < 0) {
+   if (lpos < 0) {
       throw std::out_of_range("string pos out of range");
    }
    std::string buffer = std::to_string(value);
-   return insert(static_cast<size_t>(pos), buffer.c_str());
+   return insert(static_cast<size_t>(lpos), buffer.c_str());
 }
 
 template<size_t arrayLength>
@@ -513,19 +510,6 @@ StringVariant &StringVariant::insert(size_t pos, char (&str)[arrayLength])
    return insert(pos, str, arrayLength);
 }
 
-template<typename T, size_t arrayLength, typename Selector>
-StringVariant &StringVariant::insert(T pos, char (&str)[arrayLength], size_t length)
-{
-   pos = static_cast<zapi_long>(pos);
-   if (pos < 0) {
-      pos += getLength();
-   }
-   if (pos < 0) {
-      throw std::out_of_range("string pos out of range");
-   }
-   return insert(static_cast<size_t>(pos), str, length);
-}
-
 template<typename T, 
          size_t arrayLength, 
          typename V,  
@@ -533,13 +517,20 @@ template<typename T,
          typename SelectorV>
 StringVariant &StringVariant::insert(T pos, char (&str)[arrayLength], V length)
 {
-   size_t len;
+   size_t rlen;
    if (length < 0) {
-      len = arrayLength;
+      rlen = arrayLength;
    } else {
-      len = static_cast<size_t>(length);
+      rlen = static_cast<size_t>(length);
    }
-   return insert(pos, str, len);
+   zapi_long lpos = static_cast<zapi_long>(pos);
+   if (lpos < 0) {
+      lpos += getLength();
+   }
+   if (lpos < 0) {
+      throw std::out_of_range("string pos out of range");
+   }
+   return insert(static_cast<size_t>(lpos), str, rlen);
 }
 
 template<typename T, 
@@ -547,28 +538,21 @@ template<typename T,
          typename Selector>
 StringVariant &StringVariant::insert(T pos, char (&str)[arrayLength])
 {
-   pos = static_cast<zapi_long>(pos);
-   if (pos < 0) {
-      pos += getLength();
-   }
-   if (pos < 0) {
-      throw std::out_of_range("string pos out of range");
-   }
-   return insert(static_cast<size_t>(pos), str, arrayLength);
+   return insert(pos, str, arrayLength);
 }
 
 template<size_t arrayLength>
-StringVariant &StringVariant::replace(size_t pos, size_t length, char (&str)[arrayLength], size_t replaceLength)
+StringVariant &StringVariant::replace(size_t pos, size_t length, char (&replaceArr)[arrayLength], size_t replaceLength)
 {
    replaceLength = std::min(arrayLength, replaceLength);
    GuardValuePtrType buffer(static_cast<Pointer>(emalloc(replaceLength)), zapi::utils::std_php_memory_deleter);
-   std::memcpy(buffer.get(), str, replaceLength);
+   std::memcpy(buffer.get(), replaceArr, replaceLength);
    buffer.get()[replaceLength] = '\0';
    return replace(pos, length, buffer.get());
 }
 
 template<typename T, size_t arrayLength, typename Selector>
-StringVariant &StringVariant::replace(size_t pos, size_t length, char (&str)[arrayLength], T replaceLength)
+StringVariant &StringVariant::replace(size_t pos, size_t length, char (&replaceArr)[arrayLength], T replaceLength)
 {
    size_t len;
    if (replaceLength < 0) {
@@ -576,13 +560,13 @@ StringVariant &StringVariant::replace(size_t pos, size_t length, char (&str)[arr
    } else {
       len = static_cast<size_t>(replaceLength);
    }
-   return replace(pos, length, str, len);
+   return replace(pos, length, replaceArr, len);
 }
 
 template<size_t arrayLength>
-StringVariant &StringVariant::replace(size_t pos, size_t length, char (&str)[arrayLength])
+StringVariant &StringVariant::replace(size_t pos, size_t length, char (&replaceArr)[arrayLength])
 {
-   return replace(pos, length, str, arrayLength);
+   return replace(pos, length, replaceArr, arrayLength);
 }
 
 template <typename PosType,
@@ -595,6 +579,7 @@ StringVariant &StringVariant::replace(PosType pos, LengthType length, const char
    size_t rpos;
    size_t rlength;
    size_t selfLength = getLength();
+   
    if (pos < 0) {
       pos += selfLength;
       if (pos < 0) {
@@ -619,7 +604,7 @@ template <typename PosType,
           typename SelectorPosType,
           typename SelectorLengthType,
           typename SelectorReplaceLengthType>
-StringVariant &StringVariant::replace(PosType pos, LengthType length, char (&replace)[arrayLength], ReplaceLengthType replaceLength)
+StringVariant &StringVariant::replace(PosType pos, LengthType length, char (&replaceArr)[arrayLength], ReplaceLengthType replaceLength)
 {
    // calculate pos
    size_t rpos;
@@ -639,7 +624,7 @@ StringVariant &StringVariant::replace(PosType pos, LengthType length, char (&rep
    }
    remove(rpos, rlength);
    // call StringVariant::insert(size_t pos, char (&str)[arrayLength], T length)
-   insert(rpos, replace, replaceLength);
+   insert(rpos, replaceArr, replaceLength);
    return *this;
 }
 
@@ -648,27 +633,9 @@ template <typename PosType,
           size_t arrayLength,
           typename SelectorPosType,
           typename SelectorLengthType>
-StringVariant &StringVariant::replace(PosType pos, LengthType length, char (&str)[arrayLength])
+StringVariant &StringVariant::replace(PosType pos, LengthType length, char (&replaceArr)[arrayLength])
 {
-   // calculate pos
-   size_t rpos;
-   size_t rlength;
-   size_t selfLength = getLength();
-   if (pos < 0) {
-      pos += selfLength;
-      if (pos < 0) {
-         throw std::out_of_range("string pos out of range");
-      }
-   }
-   rpos = static_cast<size_t>(pos);
-   if (length < 0) {
-      rlength = selfLength - rpos;
-   } else {
-      rlength = static_cast<size_t>(length);
-   }
-   remove(rpos, rlength);
-   insert(rpos, str);
-   return *this;
+   return replace(pos, length, replaceArr, arrayLength);
 }
 
 template <typename T, typename Selector>
