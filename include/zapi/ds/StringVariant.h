@@ -128,6 +128,20 @@ public:
    StringVariant &insert(size_t pos, const char c);
    StringVariant &insert(size_t pos, const std::string &str);
    StringVariant &insert(size_t pos, const StringVariant &str);
+   template<size_t arrayLength>
+   StringVariant &insert(size_t pos, char (&str)[arrayLength], int length);
+   template<size_t arrayLength>
+   StringVariant &insert(size_t pos, char (&str)[arrayLength]);
+   template<typename T, 
+            size_t arrayLength,
+            typename Selector = typename std::enable_if<std::is_integral<T>::value &&
+                                                        std::is_signed<T>::value>::type>
+   StringVariant &insert(T pos, char (&str)[arrayLength], int length);
+   template<typename T, 
+            size_t arrayLength,
+            typename Selector = typename std::enable_if<std::is_integral<T>::value &&
+                                                        std::is_signed<T>::value>::type>
+   StringVariant &insert(T pos, char (&str)[arrayLength]);
    template <typename T, typename Selector = typename std::enable_if<std::is_integral<T>::value &&
                                                                      std::is_signed<T>::value>::type>
    StringVariant &insert(T pos, const char *str);
@@ -340,6 +354,52 @@ StringVariant &StringVariant::insert(T pos, V value)
    }
    std::string buffer = std::to_string(value);
    return insert(static_cast<size_t>(pos), buffer.c_str());
+}
+
+template<size_t arrayLength>
+StringVariant &StringVariant::insert(size_t pos, char (&str)[arrayLength], int length)
+{
+   length = std::min(arrayLength, static_cast<size_t>(length));
+   GuardValuePtrType buffer(static_cast<Pointer>(emalloc(length)), zapi::utils::std_php_memory_deleter);
+   std::memcpy(buffer.get(), str, length);
+   buffer.get()[length] = '\0';
+   return insert(pos, buffer.get());
+}
+
+template<size_t arrayLength>
+StringVariant &StringVariant::insert(size_t pos, char (&str)[arrayLength])
+{
+   return insert(pos, str, arrayLength);
+}
+
+template<typename T, 
+         size_t arrayLength,
+         typename Selector>
+StringVariant &StringVariant::insert(T pos, char (&str)[arrayLength], int length)
+{
+   pos = static_cast<zapi_long>(pos);
+   if (pos < 0) {
+      pos += getLength();
+   }
+   if (pos < 0) {
+      throw std::out_of_range("string pos out of range");
+   }
+   return insert(static_cast<size_t>(pos), str, length);
+}
+
+template<typename T, 
+         size_t arrayLength,
+         typename Selector>
+StringVariant &StringVariant::insert(T pos, char (&str)[arrayLength])
+{
+   pos = static_cast<zapi_long>(pos);
+   if (pos < 0) {
+      pos += getLength();
+   }
+   if (pos < 0) {
+      throw std::out_of_range("string pos out of range");
+   }
+   return insert(static_cast<size_t>(pos), str, arrayLength);
 }
 
 template <typename T, typename Selector>

@@ -456,6 +456,8 @@ TEST(StringVariantTest, testStrInsert)
    ASSERT_EQ(str.getLength(), 8);
    ASSERT_STREQ(str.getCStr(), "xzxapiab");
    ASSERT_THROW(str.insert(9, "ab"), std::out_of_range);
+   str.insert(8, 123);
+   ASSERT_STREQ(str.getCStr(), "xzxapiab123");
    str.clear();
    ASSERT_EQ(str.getLength(), 0);
    ASSERT_EQ(str.getCapacity(), 0);
@@ -473,6 +475,17 @@ TEST(StringVariantTest, testStrInsert)
    int8_t pos1 = -2;
    str.insert(pos1, StringVariant("vv"));
    ASSERT_STREQ(str.getCStr(), "xabx12vv3c");
+   // insert array
+   char arr[] = {'p', 'h', 'p'};
+   str.insert(1, arr, 3);
+   ASSERT_STREQ(str.getCStr(), "xphpabx12vv3c");
+   str.insert(1, arr);
+   ASSERT_STREQ(str.getCStr(), "xphpphpabx12vv3c");
+   str.insert(-1, arr);
+   ASSERT_STREQ(str.getCStr(), "xphpphpabx12vv3phpc");
+   int8_t pos2 = -2;
+   str.insert(pos2, arr);
+   ASSERT_STREQ(str.getCStr(), "xphpphpabx12vv3phphppc");
 //   std::cout << str << std::endl;
 }
 
@@ -486,4 +499,5 @@ TEST(StringVariantTest, testRepeated)
    ASSERT_STREQ(repeatedStr.c_str(), "zapi");
    repeatedStr = str.repeated(3);
    ASSERT_STREQ(repeatedStr.c_str(), "zapizapizapi");
+   
 }
