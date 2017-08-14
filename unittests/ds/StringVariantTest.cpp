@@ -235,7 +235,7 @@ TEST(StringVariantTest, testContains)
    ASSERT_TRUE(str.contains("name"));
    char searchArray[4] = {'b', 'e', 's', 't'};
    ASSERT_TRUE(str.contains(searchArray, 4));
-    ASSERT_TRUE(str.contains(searchArray));
+   ASSERT_TRUE(str.contains(searchArray));
    ASSERT_FALSE(str.contains("PHP"));
    ASSERT_TRUE(str.contains("PHP", false));
 }
@@ -499,7 +499,7 @@ TEST(StringVariantTest, testStrInsert)
    ASSERT_STREQ(str.getCStr(), "xphpphpabx12vv3phphppc");
    str.insert(0, arr, -1);
    ASSERT_STREQ(str.getCStr(), "phpxphpphpabx12vv3phphppc");
-//   std::cout << str << std::endl;
+   //   std::cout << str << std::endl;
 }
 
 TEST(StringVariantTest, testRepeated)
@@ -534,4 +534,9 @@ TEST(StringVariantTest, testReplace)
    str.replace(0, 2, replaceArr, 2);
    ASSERT_STREQ(str.getCStr(), "za NAME is zzu_softboy, i love PHP");
    std::cout << str << std::endl;
+   str.replace(-3, 4, "php");
+   ASSERT_STREQ(str.getCStr(), "za NAME is zzu_softboy, i love php");
+   str = "MY NAME is zzu_softboy, i love PHP";
+   str.replace(-3, -4, "php");
+   ASSERT_STREQ(str.getCStr(), "MY NAME is zzu_softboy, i love php");
 }

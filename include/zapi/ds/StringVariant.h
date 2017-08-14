@@ -146,48 +146,38 @@ public:
    StringVariant &insert(size_t pos, char (&str)[arrayLength], size_t length);
    template<typename T, 
             size_t arrayLength,
-            typename Selector = typename std::enable_if<std::is_integral<T>::value &&
-                                                        std::is_signed<T>::value>::type>
+            typename Selector = typename std::enable_if<std::is_integral<T>::value>::type>
    StringVariant &insert(size_t pos, char (&str)[arrayLength], T length);
    template<size_t arrayLength>
    StringVariant &insert(size_t pos, char (&str)[arrayLength]);
    template<typename T, 
             size_t arrayLength,
-            typename Selector = typename std::enable_if<std::is_integral<T>::value &&
-                                                        std::is_signed<T>::value>::type>
+            typename Selector = typename std::enable_if<std::is_integral<T>::value>::type>
    StringVariant &insert(T pos, char (&str)[arrayLength], size_t length);
    template<typename T,
-            typename V,
             size_t arrayLength,
-            typename SelectorT = typename std::enable_if<std::is_integral<T>::value &&
-                                                         std::is_signed<T>::value>::type,
-            typename SelectorV = typename std::enable_if<std::is_integral<V>::value &&
-                                                         std::is_signed<V>::value>::type>
+            typename V,
+            typename SelectorT = typename std::enable_if<std::is_integral<T>::value>::type,
+            typename SelectorV = typename std::enable_if<std::is_integral<V>::value>::type>
    StringVariant &insert(T pos, char (&str)[arrayLength], V length);
    template<typename T, 
             size_t arrayLength,
-            typename Selector = typename std::enable_if<std::is_integral<T>::value &&
-                                                        std::is_signed<T>::value>::type>
+            typename Selector = typename std::enable_if<std::is_integral<T>::value>::type>
    StringVariant &insert(T pos, char (&str)[arrayLength]);
-   template <typename T, typename Selector = typename std::enable_if<std::is_integral<T>::value &&
-                                                                     std::is_signed<T>::value>::type>
+   template <typename T, typename Selector = typename std::enable_if<std::is_integral<T>::value>::type>
    StringVariant &insert(T pos, const char *str);
-   template <typename T, typename Selector = typename std::enable_if<std::is_integral<T>::value &&
-                                                                     std::is_signed<T>::value>::type>
+   template <typename T, typename Selector = typename std::enable_if<std::is_integral<T>::value>::type>
    StringVariant &insert(T pos, const char c);
-   template <typename T, typename Selector = typename std::enable_if<std::is_integral<T>::value &&
-                                                                     std::is_signed<T>::value>::type>
+   template <typename T, typename Selector = typename std::enable_if<std::is_integral<T>::value>::type>
    StringVariant &insert(T pos, const std::string &str);
-   template <typename T, typename Selector = typename std::enable_if<std::is_integral<T>::value &&
-                                                                     std::is_signed<T>::value>::type>
+   template <typename T, typename Selector = typename std::enable_if<std::is_integral<T>::value>::type>
    StringVariant &insert(T pos, const StringVariant &str);
    template <typename T, 
              typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
    StringVariant &insert(size_t pos, T value);
    template <typename T,
              typename V,
-             typename SelectorT = typename std::enable_if<std::is_integral<T>::value &&
-                                                          std::is_signed<T>::value>::type,
+             typename SelectorT = typename std::enable_if<std::is_integral<T>::value>::type,
              typename Selector = typename std::enable_if<std::is_arithmetic<V>::value>::type>
    StringVariant &insert(T pos, V value);
    
@@ -204,6 +194,28 @@ public:
    StringVariant &replace(size_t pos, size_t length, char (&str)[arrayLength], T replaceLength);
    template<size_t arrayLength>
    StringVariant &replace(size_t pos, size_t length, char (&str)[arrayLength]);
+   
+   template <typename PosType,
+             typename LengthType,
+             typename SelectorPosType = typename std::enable_if<std::is_integral<PosType>::value>::type,
+             typename SelectorLengthType = typename std::enable_if<std::is_integral<LengthType>::value>::type>
+   StringVariant &replace(PosType pos, LengthType length, const char *replace);
+   
+   template <typename PosType,
+             typename LengthType,
+             size_t arrayLength,
+             typename ReplaceLengthType,
+             typename SelectorPosType = typename std::enable_if<std::is_integral<PosType>::value>::type,
+             typename SelectorLengthType = typename std::enable_if<std::is_integral<LengthType>::value>::type,
+             typename SelectorReplaceLengthType = typename std::enable_if<std::is_integral<ReplaceLengthType>::value>::type>
+   StringVariant &replace(PosType pos, LengthType length, char (&replace)[arrayLength], ReplaceLengthType replaceLength);
+   
+   template <typename PosType,
+             typename LengthType,
+             size_t arrayLength,
+             typename SelectorPosType = typename std::enable_if<std::is_integral<PosType>::value>::type,
+             typename SelectorLengthType = typename std::enable_if<std::is_integral<LengthType>::value>::type>
+   StringVariant &replace(PosType pos, LengthType length, char (&replace)[arrayLength]);
    
    StringVariant &clear();
    
@@ -484,7 +496,7 @@ StringVariant &StringVariant::insert(size_t pos, char (&str)[arrayLength], size_
 }
 
 template<typename T, size_t arrayLength, typename Selector>
-StringVariant &insert(size_t pos, char (&str)[arrayLength], T length)
+StringVariant &StringVariant::insert(size_t pos, char (&str)[arrayLength], T length)
 {
    size_t len;
    if (length < 0) {
@@ -514,8 +526,11 @@ StringVariant &StringVariant::insert(T pos, char (&str)[arrayLength], size_t len
    return insert(static_cast<size_t>(pos), str, length);
 }
 
-template<typename T, typename V, size_t arrayLength, 
-         typename SelectorT, typename SelectorV>
+template<typename T, 
+         size_t arrayLength, 
+         typename V,  
+         typename SelectorT, 
+         typename SelectorV>
 StringVariant &StringVariant::insert(T pos, char (&str)[arrayLength], V length)
 {
    size_t len;
@@ -568,6 +583,92 @@ template<size_t arrayLength>
 StringVariant &StringVariant::replace(size_t pos, size_t length, char (&str)[arrayLength])
 {
    return replace(pos, length, str, arrayLength);
+}
+
+template <typename PosType,
+          typename LengthType,
+          typename SelectorPosType,
+          typename SelectorLengthType>
+StringVariant &StringVariant::replace(PosType pos, LengthType length, const char *replace)
+{
+   // calculate pos
+   size_t rpos;
+   size_t rlength;
+   size_t selfLength = getLength();
+   if (pos < 0) {
+      pos += selfLength;
+      if (pos < 0) {
+         throw std::out_of_range("string pos out of range");
+      }
+   }
+   rpos = static_cast<size_t>(pos);
+   if (length < 0) {
+      rlength = selfLength - rpos;
+   } else {
+      rlength = static_cast<size_t>(length);
+   }
+   remove(rpos, rlength);
+   insert(rpos, replace);
+   return *this;
+}
+
+template <typename PosType,
+          typename LengthType,
+          size_t arrayLength,
+          typename ReplaceLengthType,
+          typename SelectorPosType,
+          typename SelectorLengthType,
+          typename SelectorReplaceLengthType>
+StringVariant &StringVariant::replace(PosType pos, LengthType length, char (&replace)[arrayLength], ReplaceLengthType replaceLength)
+{
+   // calculate pos
+   size_t rpos;
+   size_t rlength;
+   size_t selfLength = getLength();
+   if (pos < 0) {
+      pos += selfLength;
+      if (pos < 0) {
+         throw std::out_of_range("string pos out of range");
+      }
+   }
+   rpos = static_cast<size_t>(pos);
+   if (length < 0) {
+      rlength = selfLength - rpos;
+   } else {
+      rlength = static_cast<size_t>(length);
+   }
+   remove(rpos, rlength);
+   // call StringVariant::insert(size_t pos, char (&str)[arrayLength], T length)
+   insert(rpos, replace, replaceLength);
+   return *this;
+}
+
+template <typename PosType,
+          typename LengthType,
+          size_t arrayLength,
+          typename SelectorPosType,
+          typename SelectorLengthType>
+StringVariant &StringVariant::replace(PosType pos, LengthType length, char (&str)[arrayLength])
+{
+   // calculate pos
+   size_t rpos;
+   size_t rlength;
+   size_t selfLength = getLength();
+   if (pos < 0) {
+      pos += selfLength;
+      if (pos < 0) {
+         throw std::out_of_range("string pos out of range");
+      }
+   }
+   rpos = static_cast<size_t>(pos);
+   if (length < 0) {
+      rlength = selfLength - rpos;
+   } else {
+      rlength = static_cast<size_t>(length);
+   }
+   remove(rpos, rlength);
+   insert(rpos, str);
+   return *this;
 }
 
 template <typename T, typename Selector>
