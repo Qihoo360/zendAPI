@@ -134,6 +134,7 @@ public:
    std::string substring(size_t pos, size_t length) const;
    std::string substring(size_t pos) const;
    std::string repeated(size_t times) const;
+   std::vector<std::string> split(char sep, bool keepEmptyParts = true, bool caseSensitive = true);
    std::vector<std::string> split(const char *sep, bool keepEmptyParts = true, bool caseSensitive = true);
    // modify methods
    

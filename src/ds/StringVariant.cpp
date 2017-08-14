@@ -1125,6 +1125,12 @@ std::string StringVariant::repeated(size_t times) const
    return ret;
 }
 
+std::vector<std::string> StringVariant::split(char sep, bool keepEmptyParts, bool caseSensitive)
+{
+   ValueType buffer[2] = {sep, '\0'};
+   return split(reinterpret_cast<Pointer>(buffer), keepEmptyParts, caseSensitive);
+}
+
 std::vector<std::string> StringVariant::split(const char *sep, bool keepEmptyParts, bool caseSensitive)
 {
    std::list<size_t> points;
