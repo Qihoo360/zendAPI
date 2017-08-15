@@ -28,13 +28,17 @@ var_dump(class_exists("zapi\\Address"));
 \zapi\io\print_name("wangyang");
 
 $arr = array(
-   array(1)
+   "xiuxiu" => "xxxxx",
+   "aa" => 0,
+   "i" => array(1, 2, 3)
 );
-var_dump($arr[0][1]);
-$arr[0][1] = 123;
-$arr[4][1] = 123;
-var_dump($arr[0][1]);
-var_dump($arr[4][1]);
+var_dump($arr["xiuxiu"]);
+$d = $arr['i'];
+var_dump($arr);
+var_dump($d);
+$d["xxx"] = "xxx";
+var_dump($arr);
+var_dump($d);
 ?>
 --EXPECT--
 zapi v0.0.1 hello world, zapi

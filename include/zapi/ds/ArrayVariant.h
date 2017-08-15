@@ -70,18 +70,20 @@ public:
    void clear();
    Variant pop();
    ArrayVariant &push(const Variant &value);
-   ArrayVariant &push(const StringVariant &value);
-   ArrayVariant &push(const NumericVariant &value);
-   ArrayVariant &push(const BoolVarint &value);
-   ArrayVariant &push(const DoubleVarint &value);
-   ArrayVariant &push(const ArrayVariant &value);
-   Iterator insert(zapi_ulong index);
-   Iterator insert(const std::string &key);
+   Iterator insert(zapi_ulong index, const Variant &value);
+   Iterator insert(zapi_ulong index, Variant &&value);
+   Iterator insert(const std::string &key, const Variant &value);
+   Iterator insert(const std::string &key, Variant &&value);
+   Iterator append(const Variant &value);
+   Iterator append(Variant &&value);
    // info access
    bool isEmpty() const ZAPI_DECL_NOEXCEPT;
    bool isNull() const ZAPI_DECL_NOEXCEPT;
    SizeType getSize() const ZAPI_DECL_NOEXCEPT;
    SizeType count() const ZAPI_DECL_NOEXCEPT;
+   Variant getValue(zapi_long index) const;
+   Variant getValue(const std::string &key) const;
+   // iterators
    Iterator begin() ZAPI_DECL_NOEXCEPT;
    ConstIterator begin() const ZAPI_DECL_NOEXCEPT;
    ConstIterator cbegin() const ZAPI_DECL_NOEXCEPT;
@@ -100,7 +102,6 @@ public:
       using ZvalPointer = zval *;
       using ZvalReference = zval &;
    public:
-      Iterator();
       Iterator(_zend_array *array, HashPosition index);
       Variant getValue();
       ZvalReference getZval();
@@ -133,7 +134,6 @@ public:
       using ZvalPointer = const zval *;
       using ZvalReference = const zval &;
    public:
-      ConstIterator();
       ConstIterator(_zend_array *array, HashPosition index);
       const Variant getValue() const;
       ZvalReference getZval() const;

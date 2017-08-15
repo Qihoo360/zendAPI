@@ -15,11 +15,18 @@
 
 #include "zapi/ds/ArrayVariant.h"
 #include "zapi/ds/ArrayItemProxy.h"
+#include "zapi/ds/internal/VariantPrivate.h"
 
 namespace zapi
 {
 namespace ds
 {
+
+using zapi::ds::internal::VariantPrivate;
+
+// iterator class alias
+using ArrayIterator = ArrayVariant::Iterator;
+using ConstArrayIterator = ArrayVariant::ConstIterator;
 
 ArrayVariant::ArrayVariant()
 {
@@ -59,6 +66,61 @@ Variant ArrayVariant::operator [](const std::string &key) const
    
 }
 
+ArrayVariant::Iterator ArrayVariant::insert(zapi_ulong index, const Variant &value)
+{
+   deployCopyOnWrite();
+}
+
+ArrayVariant::Iterator ArrayVariant::insert(zapi_ulong index, Variant &&value)
+{
+   deployCopyOnWrite();
+}
+
+ArrayVariant::Iterator ArrayVariant::insert(const std::string &key, const Variant &value)
+{
+   deployCopyOnWrite();
+}
+
+ArrayVariant::Iterator ArrayVariant::insert(const std::string &key, Variant &&value)
+{
+   deployCopyOnWrite();
+}
+
+ArrayVariant::Iterator ArrayVariant::append(const Variant &value)
+{
+   deployCopyOnWrite();
+   zval *zvalPtr = const_cast<zval *>(value.getZvalPtr());
+   zval temp;
+   ZVAL_DEREF(zvalPtr);
+   ZVAL_COPY(&temp, zvalPtr);
+   zend_array *selfArrPtr = getZendArrayPtr();
+   zval *retPtr = zend_hash_next_index_insert(selfArrPtr, &temp);
+   zapi_long cindex = selfArrPtr->nNextFreeElement;
+   if (retPtr) {
+      return ArrayIterator(selfArrPtr, cindex);
+   } else {
+      return ArrayIterator(selfArrPtr, HT_INVALID_IDX);
+   }
+}
+
+ArrayIterator ArrayVariant::append(Variant &&value)
+{
+   deployCopyOnWrite();
+   zval *zvalPtr = value.getZvalPtr();
+   zval temp;
+   ZVAL_DEREF(zvalPtr);
+   ZVAL_COPY_VALUE(&temp, zvalPtr);
+   std::memset(&value.m_implPtr->m_buffer, 0, sizeof(value.m_implPtr->m_buffer));
+   zend_array *selfArrPtr = getZendArrayPtr();
+   zval *retPtr = zend_hash_next_index_insert(selfArrPtr, &temp);
+   zapi_long cindex = selfArrPtr->nNextFreeElement;
+   if (retPtr) {
+      return ArrayIterator(selfArrPtr, cindex);
+   } else {
+      return ArrayIterator(selfArrPtr, HT_INVALID_IDX);
+   }
+}
+
 bool ArrayVariant::isEmpty() const ZAPI_DECL_NOEXCEPT
 {
    return 0 == getSize();
@@ -76,6 +138,46 @@ ArrayVariant::SizeType ArrayVariant::getSize() const ZAPI_DECL_NOEXCEPT
 ArrayVariant::SizeType ArrayVariant::count() const ZAPI_DECL_NOEXCEPT
 {
    return getSize();
+}
+
+Variant ArrayVariant::getValue(zapi_long index) const
+{
+   return zend_hash_index_find(getZendArrayPtr(), index);
+}
+
+Variant ArrayVariant::getValue(const std::string &key) const
+{
+   
+}
+
+ArrayIterator ArrayVariant::begin() ZAPI_DECL_NOEXCEPT
+{
+   return ArrayIterator(getZendArrayPtr(), 0);
+}
+
+ConstArrayIterator ArrayVariant::begin() const ZAPI_DECL_NOEXCEPT
+{
+   return ConstArrayIterator(getZendArrayPtr(), 0);
+}
+
+ConstArrayIterator ArrayVariant::cbegin() const ZAPI_DECL_NOEXCEPT
+{
+   return ConstArrayIterator(getZendArrayPtr(), 0);
+}
+
+ArrayIterator ArrayVariant::end() ZAPI_DECL_NOEXCEPT
+{
+   return ArrayIterator(getZendArrayPtr(), HT_INVALID_IDX);
+}
+
+ConstArrayIterator ArrayVariant::end() const ZAPI_DECL_NOEXCEPT
+{
+   return ConstArrayIterator(getZendArrayPtr(), HT_INVALID_IDX);
+}
+
+ConstArrayIterator ArrayVariant::cend() const ZAPI_DECL_NOEXCEPT
+{
+   return ConstArrayIterator(getZendArrayPtr(), HT_INVALID_IDX);
 }
 
 ArrayVariant::~ArrayVariant()
@@ -96,10 +198,188 @@ void ArrayVariant::deployCopyOnWrite()
    zval *self = getZvalPtr();
    if (nullptr == Z_ARRVAL_P(self)) {
       // null array alloc memory
-      Z_ARR_P(self) =  static_cast<zend_array *>(emalloc(sizeof(zend_array)));
+      array_init(self);
    } else {
       SEPARATE_ZVAL_NOREF(self);
    }
+}
+
+// iterator classes
+
+ArrayIterator::Iterator(_zend_array *array, HashPosition index)
+   : m_array(array),
+     m_index(index)
+{
+   ZAPI_ASSERT_X(m_array != nullptr, "zapi::ds::ArrayVariant::Iterator", "m_array can't be nullptr");
+}
+
+Variant ArrayIterator::getValue()
+{
+   
+}
+
+ArrayIterator::ZvalReference ArrayIterator::getZval()
+{
+   
+}
+
+ArrayIterator::ZvalPointer ArrayIterator::getZvalPtr()
+{
+   
+}
+
+ArrayVariant::KeyType ArrayIterator::getKey()
+{
+   
+}
+
+// operators
+ArrayIterator::ZvalReference ArrayIterator::operator *()
+{
+   
+}
+
+ArrayIterator::ZvalPointer ArrayIterator::operator->()
+{
+   
+}
+
+bool ArrayIterator::operator ==(const Iterator &other)
+{
+   
+}
+
+bool ArrayIterator::operator !=(const Iterator &other)
+{
+   
+}
+
+ArrayIterator &ArrayIterator::operator ++()
+{
+   
+}
+
+ArrayIterator ArrayIterator::operator ++(int)
+{
+   
+}
+
+ArrayIterator &ArrayIterator::operator --()
+{
+   
+}
+
+ArrayIterator ArrayIterator::operator --(int)
+{
+   
+}
+
+ArrayIterator ArrayIterator::operator +(int step) const
+{
+   
+}
+
+ArrayIterator ArrayIterator::operator -(int step) const
+{
+   
+}
+
+ArrayIterator &ArrayIterator::operator +=(int step)
+{
+   
+}
+
+ArrayIterator &ArrayIterator::operator -=(int step)
+{
+   
+}
+
+ConstArrayIterator::ConstIterator(_zend_array *array, HashPosition index)
+   : m_array(array),
+     m_index(index)
+{
+   ZAPI_ASSERT_X(m_array != nullptr, "zapi::ds::ArrayVariant::Iterator", "m_array can't be nullptr");
+}
+
+const Variant ConstArrayIterator::getValue() const
+{
+   
+}
+
+ConstArrayIterator::ZvalReference ConstArrayIterator::getZval() const
+{
+   
+}
+
+ConstArrayIterator::ZvalPointer ConstArrayIterator::getZvalPtr() const
+{
+   
+}
+
+const ArrayVariant::KeyType ConstArrayIterator::getKey() const
+{
+   
+}
+
+// operators
+const zval &ConstArrayIterator::operator *()
+{
+   
+}
+
+zval *ConstArrayIterator::operator->()
+{
+   
+}
+
+bool ConstArrayIterator::operator ==(const Iterator &other) const
+{
+   
+}
+
+bool ConstArrayIterator::operator !=(const Iterator &other) const
+{
+   
+}
+
+ConstArrayIterator &ConstArrayIterator::operator ++()
+{
+   
+}
+
+ConstArrayIterator ConstArrayIterator::operator ++(int)
+{
+   
+}
+
+ConstArrayIterator &ConstArrayIterator::operator --()
+{
+   
+}
+
+ConstArrayIterator ConstArrayIterator::operator --(int)
+{
+   
+}
+
+ConstArrayIterator ConstArrayIterator::operator +(int step) const
+{
+   
+}
+
+ConstArrayIterator ConstArrayIterator::operator -(int step) const
+{
+   
+}
+
+ConstArrayIterator &ConstArrayIterator::operator +=(int step)
+{
+   
+}
+
+ConstArrayIterator &ConstArrayIterator::operator -=(int step)
+{
+   
 }
 
 } // ds

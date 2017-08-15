@@ -17,8 +17,13 @@
 #include "gtest/gtest.h"
 #include "zapi/ds/ArrayVariant.h"
 #include "zapi/ds/ArrayItemProxy.h"
+#include "zapi/ds/NumericVariant.h"
+#include "zapi/ds/StringVariant.h"
 
 using zapi::ds::ArrayVariant;
+using zapi::ds::Variant;
+using zapi::ds::NumericVariant;
+using zapi::ds::StringVariant;
 
 TEST(ArrayVariantTest, testConstructor)
 {
@@ -26,8 +31,22 @@ TEST(ArrayVariantTest, testConstructor)
    ASSERT_TRUE(array.isNull());
    ASSERT_TRUE(array.isEmpty());
    ASSERT_TRUE(array.isArray());
-   ArrayVariant array1(12);
-   const ArrayVariant array2(12.4);
-   array[0];
-//   array2[1];
+   
+}
+
+TEST(ArrayVariantTest, testAppend)
+{
+   ArrayVariant array;
+   ASSERT_TRUE(array.isNull());
+   ASSERT_TRUE(array.isEmpty());
+   array.append(1);
+   ASSERT_FALSE(array.isNull());
+   ASSERT_FALSE(array.isEmpty());
+   ASSERT_EQ(array.getSize(), 1);
+   array.append("zapi");
+   ASSERT_EQ(array.getSize(), 2);
+   NumericVariant num = array.getValue(0);
+   std::cout << num.toLong() << std::endl;
+   StringVariant str = array.getValue(1);
+   std::cout << str << std::endl;
 }

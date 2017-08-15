@@ -28,7 +28,7 @@ class ArrayItemProxyPrivate;
 
 // forward declare
 class Variant;
-class NumericVarint;
+class NumericVariant;
 class DoubleVariant;
 class StringVariant;
 class BoolVariant;
@@ -47,14 +47,14 @@ public:
    ArrayItemProxy(zval *arrayZval, zapi_ulong index);
    // operators 
    ArrayItemProxy &operator =(const Variant &value);
-   ArrayItemProxy &operator =(const NumericVarint &value);
+   ArrayItemProxy &operator =(const NumericVariant &value);
    ArrayItemProxy &operator =(const DoubleVariant &value);
    ArrayItemProxy &operator =(const StringVariant &value);
    ArrayItemProxy &operator =(const BoolVariant &value);
    ArrayItemProxy &operator =(const ArrayVariant &value);
    // cast operators
    operator Variant();
-   operator NumericVarint();
+   operator NumericVariant();
    operator DoubleVariant();
    operator StringVariant();
    operator BoolVariant();

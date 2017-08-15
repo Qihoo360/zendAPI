@@ -29,6 +29,7 @@ public:
    BoolVariant();
    BoolVariant(const BoolVariant &other);
    BoolVariant(bool value);
+   virtual bool toBool() const ZAPI_DECL_NOEXCEPT override;
    operator bool () const override;
    BoolVariant &operator=(const BoolVariant &other);
    BoolVariant &operator=(const Variant &other);

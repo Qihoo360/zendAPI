@@ -36,7 +36,8 @@ public:
    NumericVariant(std::int64_t value);
 #endif
    NumericVariant(const NumericVariant &other);
-   NumericVariant(const Variant &source);
+   NumericVariant(const Variant &other);
+   NumericVariant(Variant &&other);
    NumericVariant &operator =(std::int8_t other);
    NumericVariant &operator =(std::int16_t other);
    NumericVariant &operator =(std::int32_t other);

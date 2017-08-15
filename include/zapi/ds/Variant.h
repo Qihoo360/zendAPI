@@ -43,6 +43,10 @@ class VariantPrivate;
 }
 
 class StringVariant;
+class NumericVariant;
+class DoubleVariant;
+class ArrayVariant;
+class BoolVariant;
 
 using internal::VariantPrivate;
 using zapi::lang::StdClass;
@@ -71,6 +75,16 @@ public:
    Variant(const char *value, size_t length);
    Variant(const char *value);
    Variant(double value);
+   Variant(const BoolVariant &value);
+   Variant(const NumericVariant &value);
+   Variant(const StringVariant &value);
+   Variant(const DoubleVariant &value);
+   Variant(const ArrayVariant &value);
+   Variant(BoolVariant &&value);
+   Variant(NumericVariant &&value);
+   Variant(StringVariant &&value);
+   Variant(DoubleVariant &&value);
+   Variant(ArrayVariant &&value);
    /**
     * Wrap object around zval
     * @param  zval Zval to wrap
@@ -198,6 +212,10 @@ protected:
    static void stdAssignZval(zval *dest, zval *source);
 protected: 
    friend class StringVariant;
+   friend class NumericVariant;
+   friend class DoubleVariant;
+   friend class ArrayVariant;
+   friend class BoolVariant;
    ZAPI_DECLARE_PRIVATE(Variant)
    std::shared_ptr<VariantPrivate> m_implPtr;
 };

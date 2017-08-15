@@ -32,8 +32,7 @@ BoolVariant::BoolVariant(bool value)
 
 BoolVariant::BoolVariant(const BoolVariant &other)
    : Variant(other)
-{
-}
+{}
 
 BoolVariant &BoolVariant::operator=(const BoolVariant &other)
 {
@@ -57,6 +56,11 @@ BoolVariant::~BoolVariant()
 {}
 
 BoolVariant::operator bool() const
+{
+   return toBool();
+}
+
+bool BoolVariant::toBool() const ZAPI_DECL_NOEXCEPT
 {
    return Z_TYPE_INFO_P(getZvalPtr()) == IS_TRUE ? true : false;
 }

@@ -19,7 +19,11 @@
 #include "zapi/ds/Variant.h"
 #include "zapi/ds/internal/VariantPrivate.h"
 #include "zapi/ds/String.h"
-
+#include "zapi/ds/ArrayVariant.h"
+#include "zapi/ds/StringVariant.h"
+#include "zapi/ds/BoolVariant.h"
+#include "zapi/ds/DoubleVariant.h"
+#include "zapi/ds/NumericVariant.h"
 #include <cstring>
 #include <iostream>
 
@@ -57,7 +61,6 @@ _zval_struct * VariantPrivate::dereference() const
 
 } // internal
 
-using zapi::ds::String;
 using internal::VariantPrivate;
 
 namespace
@@ -210,9 +213,7 @@ Variant::Variant(const char *value, size_t size)
 
 Variant::Variant(const char *value)
    : Variant(value, std::strlen(value))
-{
-}
-
+{}
 
 /**
  * Constructor based on decimal value
@@ -235,13 +236,43 @@ Variant::Variant(zval *value, bool isRef)
    : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
    if (!isRef) {
-      ZVAL_DUP(getZvalPtr(), value);
+      ZVAL_COPY(getZvalPtr(), value);
    } else {
       ZVAL_MAKE_REF(value);
       zend_reference *ref = Z_REF_P(value);
       ++GC_REFCOUNT(ref);
       ZVAL_REF(getZvalPtr(), ref);
    }
+}
+
+Variant::Variant(const BoolVariant &value)
+   : m_implPtr(new VariantPrivate, std_zval_deleter)
+{
+   ZVAL_BOOL(getZvalPtr(), value.toBool());
+}
+
+Variant::Variant(const NumericVariant &value)
+   : m_implPtr(new VariantPrivate, std_zval_deleter)
+{
+   ZVAL_LONG(getZvalPtr(), value.toLong());
+}
+
+Variant::Variant(const DoubleVariant &value)
+   : m_implPtr(new VariantPrivate, std_zval_deleter)
+{
+   ZVAL_DOUBLE(getZvalPtr(), value.toDouble());
+}
+
+Variant::Variant(const StringVariant &value)
+   : m_implPtr(new VariantPrivate, std_zval_deleter)
+{
+   stdCopyZval(getZvalPtr(), const_cast<zval *>(value.getZvalPtr()));
+}
+
+Variant::Variant(const ArrayVariant &value)
+   : m_implPtr(new VariantPrivate, std_zval_deleter)
+{
+   stdCopyZval(getZvalPtr(), const_cast<zval *>(value.getZvalPtr()));
 }
 
 Variant::Variant(const Variant &other)
@@ -260,9 +291,33 @@ Variant::Variant(Variant &&other) ZAPI_DECL_NOEXCEPT
    m_implPtr = std::move(other.m_implPtr);
 }
 
-Variant::~Variant() ZAPI_DECL_NOEXCEPT
+Variant::Variant(BoolVariant &&value)
 {
+   m_implPtr = std::move(value.m_implPtr);
 }
+
+Variant::Variant(NumericVariant &&value)
+{
+   m_implPtr = std::move(value.m_implPtr);
+}
+
+Variant::Variant(StringVariant &&value)
+{
+   m_implPtr = std::move(value.m_implPtr);
+}
+
+Variant::Variant(DoubleVariant &&value)
+{
+   m_implPtr = std::move(value.m_implPtr);
+}
+
+Variant::Variant(ArrayVariant &&value)
+{
+   m_implPtr = std::move(value.m_implPtr);
+}
+
+Variant::~Variant() ZAPI_DECL_NOEXCEPT
+{}
 
 Variant &Variant::operator =(zval *value)
 {

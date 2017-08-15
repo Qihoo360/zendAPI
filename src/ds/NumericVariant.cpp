@@ -48,11 +48,11 @@ NumericVariant::NumericVariant(const NumericVariant &other)
    : Variant(other)
 {}
 
-NumericVariant::NumericVariant(const Variant &source)
+NumericVariant::NumericVariant(const Variant &other)
    : NumericVariant()
 {
-   Type sourceType = source.getType();
-   zval *sourceZvalPtr = const_cast<zval *>(source.getZvalPtr());
+   Type sourceType = other.getType();
+   zval *sourceZvalPtr = const_cast<zval *>(other.getZvalPtr());
    zval *self = getZvalPtr();
    if (sourceType == Type::Numeric) {
       ZVAL_LONG(self, zval_get_long(sourceZvalPtr));
@@ -61,6 +61,16 @@ NumericVariant::NumericVariant(const Variant &source)
       ZVAL_DUP(&temp, sourceZvalPtr);
       convert_to_long(&temp);
       ZVAL_LONG(self, zval_get_long(sourceZvalPtr));
+   }
+}
+
+NumericVariant::NumericVariant(Variant &&other)
+   : Variant(std::move(other))
+{
+   zval *self = getZvalPtr();
+   if (getType() != Type::Long) {
+      // first we need convert to string type
+      convert_to_long(self);
    }
 }
 
