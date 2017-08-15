@@ -235,13 +235,18 @@ Variant::Variant(double value)
 Variant::Variant(zval *value, bool isRef)
    : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
-   if (!isRef) {
-      ZVAL_COPY(getZvalPtr(), value);
+   zval *self = getZvalPtr();
+   if (nullptr != value) {
+      if (!isRef) {
+         ZVAL_COPY(self, value);
+      } else {
+         ZVAL_MAKE_REF(value);
+         zend_reference *ref = Z_REF_P(value);
+         ++GC_REFCOUNT(ref);
+         ZVAL_REF(self, ref);
+      }
    } else {
-      ZVAL_MAKE_REF(value);
-      zend_reference *ref = Z_REF_P(value);
-      ++GC_REFCOUNT(ref);
-      ZVAL_REF(getZvalPtr(), ref);
+      ZVAL_NULL(self);
    }
 }
 

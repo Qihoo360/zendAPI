@@ -16,6 +16,7 @@
 #include "zapi/ds/ArrayVariant.h"
 #include "zapi/ds/ArrayItemProxy.h"
 #include "zapi/ds/internal/VariantPrivate.h"
+#include <iostream>
 
 namespace zapi
 {
@@ -66,27 +67,7 @@ Variant ArrayVariant::operator [](const std::string &key) const
    
 }
 
-ArrayVariant::Iterator ArrayVariant::insert(zapi_ulong index, const Variant &value)
-{
-   deployCopyOnWrite();
-}
-
-ArrayVariant::Iterator ArrayVariant::insert(zapi_ulong index, Variant &&value)
-{
-   deployCopyOnWrite();
-}
-
-ArrayVariant::Iterator ArrayVariant::insert(const std::string &key, const Variant &value)
-{
-   deployCopyOnWrite();
-}
-
-ArrayVariant::Iterator ArrayVariant::insert(const std::string &key, Variant &&value)
-{
-   deployCopyOnWrite();
-}
-
-ArrayVariant::Iterator ArrayVariant::append(const Variant &value)
+ArrayIterator ArrayVariant::insert(zapi_ulong index, const Variant &value)
 {
    deployCopyOnWrite();
    zval *zvalPtr = const_cast<zval *>(value.getZvalPtr());
@@ -94,8 +75,52 @@ ArrayVariant::Iterator ArrayVariant::append(const Variant &value)
    ZVAL_DEREF(zvalPtr);
    ZVAL_COPY(&temp, zvalPtr);
    zend_array *selfArrPtr = getZendArrayPtr();
-   zval *retPtr = zend_hash_next_index_insert(selfArrPtr, &temp);
+   zval *retPtr = zend_hash_index_update(selfArrPtr, index, &temp);
+   if (retPtr) {
+      return ArrayIterator(selfArrPtr, index);
+   } else {
+      return ArrayIterator(selfArrPtr, HT_INVALID_IDX);
+   }
+}
+
+ArrayIterator ArrayVariant::insert(zapi_ulong index, Variant &&value)
+{
+   deployCopyOnWrite();
+   zval *zvalPtr = value.getZvalPtr();
+   zval temp;
+   ZVAL_DEREF(zvalPtr);
+   ZVAL_COPY_VALUE(&temp, zvalPtr);
+   std::memset(&value.m_implPtr->m_buffer, 0, sizeof(value.m_implPtr->m_buffer));
+   zend_array *selfArrPtr = getZendArrayPtr();
+   zval *retPtr = zend_hash_index_update(selfArrPtr, index, &temp);
+   if (retPtr) {
+      return ArrayIterator(selfArrPtr, index);
+   } else {
+      return ArrayIterator(selfArrPtr, HT_INVALID_IDX);
+   }
+}
+
+ArrayIterator ArrayVariant::insert(const std::string &key, const Variant &value)
+{
+   deployCopyOnWrite();
+}
+
+ArrayIterator ArrayVariant::insert(const std::string &key, Variant &&value)
+{
+   deployCopyOnWrite();
+   
+}
+
+ArrayIterator ArrayVariant::append(const Variant &value)
+{
+   deployCopyOnWrite();
+   zval *zvalPtr = const_cast<zval *>(value.getZvalPtr());
+   zval temp;
+   ZVAL_DEREF(zvalPtr);
+   ZVAL_COPY(&temp, zvalPtr);
+   zend_array *selfArrPtr = getZendArrayPtr();
    zapi_long cindex = selfArrPtr->nNextFreeElement;
+   zval *retPtr = zend_hash_next_index_insert(selfArrPtr, &temp);
    if (retPtr) {
       return ArrayIterator(selfArrPtr, cindex);
    } else {
@@ -142,7 +167,11 @@ ArrayVariant::SizeType ArrayVariant::count() const ZAPI_DECL_NOEXCEPT
 
 Variant ArrayVariant::getValue(zapi_long index) const
 {
-   return zend_hash_index_find(getZendArrayPtr(), index);
+   zval *val = zend_hash_index_find(getZendArrayPtr(), index);
+   if (nullptr == val) {
+      zapi::notice << "Undefined offset: " << index << std::endl;
+   }
+   return val;
 }
 
 Variant ArrayVariant::getValue(const std::string &key) const

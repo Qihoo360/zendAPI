@@ -19,11 +19,13 @@
 #include "zapi/ds/ArrayItemProxy.h"
 #include "zapi/ds/NumericVariant.h"
 #include "zapi/ds/StringVariant.h"
+#include "zapi/ds/BoolVariant.h"
 
 using zapi::ds::ArrayVariant;
 using zapi::ds::Variant;
 using zapi::ds::NumericVariant;
 using zapi::ds::StringVariant;
+using zapi::ds::BoolVariant;
 
 TEST(ArrayVariantTest, testConstructor)
 {
@@ -46,7 +48,27 @@ TEST(ArrayVariantTest, testAppend)
    array.append("zapi");
    ASSERT_EQ(array.getSize(), 2);
    NumericVariant num = array.getValue(0);
-   //std::cout << num.toLong() << std::endl;
    StringVariant str = array.getValue(1);
-   //std::cout << str << std::endl
+   ASSERT_EQ(num.toLong(), 1);
+   ASSERT_STREQ(str.getCStr(), "zapi");
+   ASSERT_EQ(str.getRefCount(), 2);
+   //std::cout << str << std::endl;
+}
+
+TEST(ArrayVariantTest, testInsert)
+{
+   ArrayVariant array;
+   ASSERT_TRUE(array.isNull());
+   ASSERT_TRUE(array.isEmpty());
+   array.insert(1, "zapi");
+   array.insert(5, true);
+   BoolVariant boolVar = array.getValue(5);
+   StringVariant strVar = array.getValue(1);
+   ASSERT_EQ(array.getSize(), 2);
+   ASSERT_EQ(boolVar.toBool(), true);
+   ASSERT_STREQ(strVar.getCStr(), "zapi");
+   ASSERT_EQ(strVar.getRefCount(), 2);
+   array.insert(1, "zzu_softboy");
+   ASSERT_EQ(strVar.getRefCount(), 1);
+   array.getValue(111);
 }

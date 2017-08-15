@@ -32,7 +32,7 @@ $arr = array(
    "aa" => 0,
    "i" => array(1, 2, 3)
 );
-var_dump($arr["xiuxiu"]);
+var_dump($arr[111]);
 $d = $arr['i'];
 var_dump($arr);
 var_dump($d);
