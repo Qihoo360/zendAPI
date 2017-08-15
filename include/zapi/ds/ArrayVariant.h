@@ -161,6 +161,7 @@ protected:
    void deployCopyOnWrite();
    _zend_array *getZendArrayPtr() const ZAPI_DECL_NOEXCEPT;
    _zend_array &getZendArray() const ZAPI_DECL_NOEXCEPT;
+   uint32_t calculateIdxFromZval(zval *val) const ZAPI_DECL_NOEXCEPT;
 protected:
    friend class ArrayItemProxy;
 };

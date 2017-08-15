@@ -75,9 +75,9 @@ ArrayIterator ArrayVariant::insert(zapi_ulong index, const Variant &value)
    ZVAL_DEREF(zvalPtr);
    ZVAL_COPY(&temp, zvalPtr);
    zend_array *selfArrPtr = getZendArrayPtr();
-   zval *retPtr = zend_hash_index_update(selfArrPtr, index, &temp);
-   if (retPtr) {
-      return ArrayIterator(selfArrPtr, index);
+   zval *valPtr = zend_hash_index_update(selfArrPtr, index, &temp);
+   if (valPtr) {
+      return ArrayIterator(selfArrPtr, calculateIdxFromZval(valPtr));
    } else {
       return ArrayIterator(selfArrPtr, HT_INVALID_IDX);
    }
@@ -92,9 +92,9 @@ ArrayIterator ArrayVariant::insert(zapi_ulong index, Variant &&value)
    ZVAL_COPY_VALUE(&temp, zvalPtr);
    std::memset(&value.m_implPtr->m_buffer, 0, sizeof(value.m_implPtr->m_buffer));
    zend_array *selfArrPtr = getZendArrayPtr();
-   zval *retPtr = zend_hash_index_update(selfArrPtr, index, &temp);
-   if (retPtr) {
-      return ArrayIterator(selfArrPtr, index);
+   zval *valPtr = zend_hash_index_update(selfArrPtr, index, &temp);
+   if (valPtr) {
+      return ArrayIterator(selfArrPtr, calculateIdxFromZval(valPtr));
    } else {
       return ArrayIterator(selfArrPtr, HT_INVALID_IDX);
    }
@@ -103,12 +103,34 @@ ArrayIterator ArrayVariant::insert(zapi_ulong index, Variant &&value)
 ArrayIterator ArrayVariant::insert(const std::string &key, const Variant &value)
 {
    deployCopyOnWrite();
+   zval *zvalPtr = const_cast<zval *>(value.getZvalPtr());
+   zval temp;
+   ZVAL_DEREF(zvalPtr);
+   ZVAL_COPY(&temp, zvalPtr);
+   zend_array *selfArrPtr = getZendArrayPtr();
+   zval *valPtr = zend_hash_str_update(selfArrPtr, key.c_str(), key.length(), &temp);
+   if (valPtr) {
+      return ArrayIterator(selfArrPtr, calculateIdxFromZval(valPtr));
+   } else {
+      return ArrayIterator(selfArrPtr, HT_INVALID_IDX);
+   }
 }
 
 ArrayIterator ArrayVariant::insert(const std::string &key, Variant &&value)
 {
    deployCopyOnWrite();
-   
+   zval *zvalPtr = value.getZvalPtr();
+   zval temp;
+   ZVAL_DEREF(zvalPtr);
+   ZVAL_COPY_VALUE(&temp, zvalPtr);
+   std::memset(&value.m_implPtr->m_buffer, 0, sizeof(value.m_implPtr->m_buffer));
+   zend_array *selfArrPtr = getZendArrayPtr();
+   zval *valPtr = zend_hash_str_update(selfArrPtr, key.c_str(), key.length(), &temp);
+   if (valPtr) {
+      return ArrayIterator(selfArrPtr, calculateIdxFromZval(valPtr));
+   } else {
+      return ArrayIterator(selfArrPtr, HT_INVALID_IDX);
+   }
 }
 
 ArrayIterator ArrayVariant::append(const Variant &value)
@@ -120,8 +142,8 @@ ArrayIterator ArrayVariant::append(const Variant &value)
    ZVAL_COPY(&temp, zvalPtr);
    zend_array *selfArrPtr = getZendArrayPtr();
    zapi_long cindex = selfArrPtr->nNextFreeElement;
-   zval *retPtr = zend_hash_next_index_insert(selfArrPtr, &temp);
-   if (retPtr) {
+   zval *valPtr = zend_hash_next_index_insert(selfArrPtr, &temp);
+   if (valPtr) {
       return ArrayIterator(selfArrPtr, cindex);
    } else {
       return ArrayIterator(selfArrPtr, HT_INVALID_IDX);
@@ -137,9 +159,9 @@ ArrayIterator ArrayVariant::append(Variant &&value)
    ZVAL_COPY_VALUE(&temp, zvalPtr);
    std::memset(&value.m_implPtr->m_buffer, 0, sizeof(value.m_implPtr->m_buffer));
    zend_array *selfArrPtr = getZendArrayPtr();
-   zval *retPtr = zend_hash_next_index_insert(selfArrPtr, &temp);
    zapi_long cindex = selfArrPtr->nNextFreeElement;
-   if (retPtr) {
+   zval *valPtr = zend_hash_next_index_insert(selfArrPtr, &temp);
+   if (valPtr) {
       return ArrayIterator(selfArrPtr, cindex);
    } else {
       return ArrayIterator(selfArrPtr, HT_INVALID_IDX);
@@ -235,6 +257,12 @@ void ArrayVariant::deployCopyOnWrite()
    } else {
       SEPARATE_ZVAL_NOREF(self);
    }
+}
+
+uint32_t ArrayVariant::calculateIdxFromZval(zval *val) const ZAPI_DECL_NOEXCEPT
+{
+   zend_array *arr = getZendArrayPtr();
+   return (reinterpret_cast<char *>(val) - reinterpret_cast<char *>(arr->arData)) / sizeof(Bucket);
 }
 
 // iterator classes

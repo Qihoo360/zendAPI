@@ -70,6 +70,11 @@ TEST(ArrayVariantTest, testInsert)
    ASSERT_EQ(strVar.getRefCount(), 2);
    array.insert(1, "zzu_softboy");
    ASSERT_EQ(strVar.getRefCount(), 1);
-   array.getValue(111);
-   array.getValue("name");
+   //   array.getValue(111); echo notice msg
+   //   array.getValue("name"); echo notice msg
+   array.insert("name", "zzu_softboy");
+   array.insert("age", 123);
+   StringVariant name = array.getValue("name");
+   ASSERT_EQ(array.getSize(), 4);
+   ASSERT_STREQ(name.getCStr(), "zzu_softboy");
 }
