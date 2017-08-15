@@ -49,10 +49,19 @@ DoubleVariant::DoubleVariant(const DoubleVariant &other)
    : Variant(other)
 {}
 
-DoubleVariant::DoubleVariant(const Variant &source)
+DoubleVariant::DoubleVariant(Variant &&other)
+   : Variant(std::move(other))
 {
-   Type sourceType = source.getType();
-   zval *sourceZvalPtr = const_cast<zval *>(source.getZvalPtr());
+   zval *self = getZvalPtr();
+   if (getType() != Type::Double) {
+      convert_to_double(self);
+   }
+}
+
+DoubleVariant::DoubleVariant(const Variant &other)
+{
+   Type sourceType = other.getType();
+   zval *sourceZvalPtr = const_cast<zval *>(other.getZvalPtr());
    zval *self = getZvalPtr();
    if (sourceType == Type::Double) {
       ZVAL_DOUBLE(self, zval_get_double(sourceZvalPtr));

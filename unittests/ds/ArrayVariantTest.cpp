@@ -46,7 +46,7 @@ TEST(ArrayVariantTest, testAppend)
    array.append("zapi");
    ASSERT_EQ(array.getSize(), 2);
    NumericVariant num = array.getValue(0);
-   std::cout << num.toLong() << std::endl;
+   //std::cout << num.toLong() << std::endl;
    StringVariant str = array.getValue(1);
-   std::cout << str << std::endl;
+   //std::cout << str << std::endl
 }

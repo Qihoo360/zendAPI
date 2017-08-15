@@ -36,6 +36,7 @@ public:
    NumericVariant(std::int64_t value);
 #endif
    NumericVariant(const NumericVariant &other);
+   NumericVariant(NumericVariant &&other) ZAPI_DECL_NOEXCEPT;
    NumericVariant(const Variant &other);
    NumericVariant(Variant &&other);
    NumericVariant &operator =(std::int8_t other);
@@ -44,7 +45,10 @@ public:
    NumericVariant &operator =(std::int64_t other);
    NumericVariant &operator =(double other);
    NumericVariant &operator =(const NumericVariant &other);
+   NumericVariant &operator =(NumericVariant &&other) ZAPI_DECL_NOEXCEPT;
    NumericVariant &operator =(const DoubleVariant &other);
+   NumericVariant &operator =(const Variant &other);
+   NumericVariant &operator =(Variant &&other);
    operator zapi_long () const;
    NumericVariant &operator++();
    NumericVariant operator++(int);

@@ -74,6 +74,30 @@ TEST(NumericVariantTest, testAddOps)
    EXPECT_DOUBLE_EQ(dnum1, 1.2);
 }
 
+TEST(NumericVariantTest, testConstructors)
+{
+   NumericVariant empty;
+   ASSERT_EQ(empty.toLong(), 0);
+   NumericVariant num1(1);
+   ASSERT_EQ(num1.toLong(), 1);
+   empty = 123;
+   ASSERT_EQ(empty.toLong(), 123);
+   ASSERT_FALSE(empty.isNull());
+   NumericVariant num2(std::move(empty)); // move construct from here you can't do anything about empty
+   ASSERT_EQ(num2.toLong(), 123);
+   NumericVariant num4(222);
+   num2 = num4;
+   ASSERT_EQ(num4.toLong(), 222);
+   ASSERT_EQ(num2.toLong(), 222); // move assign from here you can't do anything about num4
+   num2 = std::move(num4);
+   Variant num5(5);
+   num2 = num5;
+   ASSERT_EQ(num2.toLong(), 5);
+   ASSERT_EQ(Z_LVAL_P(num5.getZvalPtr()), 5);
+   num2 = std::move(num5);
+   ASSERT_EQ(num2.toLong(), 5);
+}
+
 TEST(NumericVariantTest, testAssignOperators)
 {
    NumericVariant num1(1);

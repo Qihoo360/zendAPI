@@ -37,7 +37,8 @@ public:
    DoubleVariant(std::int64_t value);
    DoubleVariant(double value);
    DoubleVariant(const DoubleVariant &other);
-   DoubleVariant(const Variant &source);
+   DoubleVariant(const Variant &other);
+   DoubleVariant(Variant &&other);
    virtual bool toBool() const ZAPI_DECL_NOEXCEPT override;
    double toDouble() const ZAPI_DECL_NOEXCEPT;
    operator double() const;

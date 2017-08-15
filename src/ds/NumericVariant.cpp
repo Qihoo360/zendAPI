@@ -48,6 +48,10 @@ NumericVariant::NumericVariant(const NumericVariant &other)
    : Variant(other)
 {}
 
+NumericVariant::NumericVariant(NumericVariant &&other) ZAPI_DECL_NOEXCEPT
+   : Variant(std::move(other))
+{}
+
 NumericVariant::NumericVariant(const Variant &other)
    : NumericVariant()
 {
@@ -69,7 +73,6 @@ NumericVariant::NumericVariant(Variant &&other)
 {
    zval *self = getZvalPtr();
    if (getType() != Type::Long) {
-      // first we need convert to string type
       convert_to_long(self);
    }
 }
@@ -125,9 +128,39 @@ NumericVariant &NumericVariant::operator =(const NumericVariant &other)
    return *this;
 }
 
+NumericVariant &NumericVariant::operator =(NumericVariant &&other) ZAPI_DECL_NOEXCEPT
+{
+   m_implPtr = std::move(other.m_implPtr);
+   return *this;
+}
+
 NumericVariant &NumericVariant::operator =(const DoubleVariant &other)
 {
    ZVAL_LONG(getZvalPtr(), static_cast<zapi_long>(other.toDouble()));
+   return *this;
+}
+
+NumericVariant &NumericVariant::operator =(const Variant &other)
+{
+   zval *self = getZvalPtr();
+   zval *from = const_cast<zval *>(other.getZvalPtr());
+   if (other.getType() == Type::Long) {
+      ZVAL_LONG(self, Z_LVAL_P(from));
+   } else {
+      zval temp;
+      ZVAL_DUP(&temp, from);
+      convert_to_long(&temp);
+      ZVAL_COPY_VALUE(self, &temp);
+   }
+   return *this;
+}
+
+NumericVariant &NumericVariant::operator =(Variant &&other)
+{
+   m_implPtr = std::move(other.m_implPtr);
+   if (getType() != Type::Long) {
+      convert_to_long(getZvalPtr());
+   }
    return *this;
 }
 
