@@ -16,6 +16,7 @@
 #include "php/sapi/embed/php_embed.h"
 #include "gtest/gtest.h"
 #include "zapi/ds/ArrayVariant.h"
+#include "zapi/ds/ArrayItemProxy.h"
 
 using zapi::ds::ArrayVariant;
 
@@ -25,4 +26,8 @@ TEST(ArrayVariantTest, testConstructor)
    ASSERT_TRUE(array.isNull());
    ASSERT_TRUE(array.isEmpty());
    ASSERT_TRUE(array.isArray());
+   ArrayVariant array1(12);
+   const ArrayVariant array2(12.4);
+   array[0];
+//   array2[1];
 }

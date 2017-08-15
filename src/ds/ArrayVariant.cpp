@@ -14,6 +14,7 @@
 // Created by softboy on 2017/08/14.
 
 #include "zapi/ds/ArrayVariant.h"
+#include "zapi/ds/ArrayItemProxy.h"
 
 namespace zapi
 {
@@ -26,6 +27,36 @@ ArrayVariant::ArrayVariant()
    zval *self = getZvalPtr();
    Z_ARRVAL_P(self) = nullptr;
    Z_TYPE_INFO_P(self) = IS_ARRAY_EX;
+}
+
+ArrayVariant::ArrayVariant(const Variant &other)
+{
+   
+}
+
+ArrayVariant::ArrayVariant(Variant &&other) ZAPI_DECL_NOEXCEPT
+{
+   
+}
+
+ArrayItemProxy ArrayVariant::operator [](zapi_ulong index)
+{
+   return ArrayItemProxy(getZvalPtr(), index);
+}
+
+ArrayItemProxy ArrayVariant::operator [](const std::string &key)
+{
+   return ArrayItemProxy(getZvalPtr(), key);
+}
+
+Variant ArrayVariant::operator [](zapi_ulong index) const
+{
+   
+}
+
+Variant ArrayVariant::operator [](const std::string &key) const
+{
+   
 }
 
 bool ArrayVariant::isEmpty() const ZAPI_DECL_NOEXCEPT
@@ -58,6 +89,17 @@ _zend_array *ArrayVariant::getZendArrayPtr() const ZAPI_DECL_NOEXCEPT
 _zend_array &ArrayVariant::getZendArray() const ZAPI_DECL_NOEXCEPT
 {
    return *Z_ARR(getZval());
+}
+
+void ArrayVariant::deployCopyOnWrite()
+{
+   zval *self = getZvalPtr();
+   if (nullptr == Z_ARRVAL_P(self)) {
+      // null array alloc memory
+      Z_ARR_P(self) =  static_cast<zend_array *>(emalloc(sizeof(zend_array)));
+   } else {
+      SEPARATE_ZVAL_NOREF(self);
+   }
 }
 
 } // ds

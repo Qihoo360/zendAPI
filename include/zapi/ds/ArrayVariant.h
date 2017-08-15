@@ -16,14 +16,22 @@
 #ifndef ZAPI_DS_INTERNAL_ARRAY_VARIANT_PRIVATE_H
 #define ZAPI_DS_INTERNAL_ARRAY_VARIANT_PRIVATE_H
 
-#include "zapi/ds/Variant.h"
 #include <utility>
 #include <string>
+#include <type_traits>
+
+#include "zapi/ds/Variant.h"
 
 namespace zapi
 {
 namespace ds
 {
+
+class NumericVariant;
+class BoolVarint;
+class DoubleVarint;
+class StringVariant;
+class ArrayItemProxy;
 
 class ZAPI_DECL_EXPORT ArrayVariant : public Variant
 {
@@ -33,22 +41,135 @@ public:
    using KeyType = std::pair<zapi_ulong, std::string>;
    using DifferenceType = zapi_ptrdiff;
    using ValueType = Variant;
+   // forward declare
+   class Iterator;
+   class ConstIterator;
 public:
    ArrayVariant();
    ArrayVariant(const ArrayVariant &other);
    ArrayVariant(ArrayVariant &&other) ZAPI_DECL_NOEXCEPT;
    ArrayVariant(const Variant &other);
    ArrayVariant(Variant &&other) ZAPI_DECL_NOEXCEPT;
+   // transform constructors
+   ArrayVariant(const NumericVariant &value);
+   ArrayVariant(const BoolVarint &value);
+   ArrayVariant(const DoubleVarint &value);
+   ArrayVariant(const StringVariant &value);
+   ArrayVariant(const std::string &value);
+   ArrayVariant(const char *value);
+   template <typename ArithmeticType, 
+             typename Selector = typename std::enable_if<std::is_arithmetic<ArithmeticType>::value>::type>
+   ArrayVariant(ArithmeticType value);
+   // operators
+   ArrayItemProxy operator [](zapi_ulong index);
+   ArrayItemProxy operator [](const std::string &key);
+   Variant operator [](zapi_ulong index) const;
+   Variant operator [](const std::string &key) const;
+   
+   // modify methods
+   void clear();
+   Variant pop();
+   ArrayVariant &push(const Variant &value);
+   ArrayVariant &push(const StringVariant &value);
+   ArrayVariant &push(const NumericVariant &value);
+   ArrayVariant &push(const BoolVarint &value);
+   ArrayVariant &push(const DoubleVarint &value);
+   ArrayVariant &push(const ArrayVariant &value);
+   Iterator insert(zapi_ulong index);
+   Iterator insert(const std::string &key);
    // info access
    bool isEmpty() const ZAPI_DECL_NOEXCEPT;
    bool isNull() const ZAPI_DECL_NOEXCEPT;
    SizeType getSize() const ZAPI_DECL_NOEXCEPT;
    SizeType count() const ZAPI_DECL_NOEXCEPT;
+   Iterator begin() ZAPI_DECL_NOEXCEPT;
+   ConstIterator begin() const ZAPI_DECL_NOEXCEPT;
+   ConstIterator cbegin() const ZAPI_DECL_NOEXCEPT;
+   Iterator end() ZAPI_DECL_NOEXCEPT;
+   ConstIterator end() const ZAPI_DECL_NOEXCEPT;
+   ConstIterator cend() const ZAPI_DECL_NOEXCEPT;
    ~ArrayVariant();
+   
+   // iterator class
+   class Iterator
+   {
+   public:
+      using IteratorCategory = std::bidirectional_iterator_tag ;
+      using DifferenceType = zapi_ptrdiff;
+      using ValueType = Variant;
+      using ZvalPointer = zval *;
+      using ZvalReference = zval &;
+   public:
+      Iterator();
+      Iterator(_zend_array *array, HashPosition index);
+      Variant getValue();
+      ZvalReference getZval();
+      ZvalPointer getZvalPtr();
+      KeyType getKey();
+      // operators
+      ZvalReference operator *();
+      ZvalPointer operator->();
+      bool operator ==(const Iterator &other);
+      bool operator !=(const Iterator &other);
+      Iterator &operator ++();
+      Iterator operator ++(int);
+      Iterator &operator --();
+      Iterator operator --(int);
+      Iterator operator +(int step) const;
+      Iterator operator -(int step) const;
+      Iterator &operator +=(int step);
+      Iterator &operator -=(int step);
+   protected:
+      HashPosition m_index;
+      _zend_array *m_array;
+   };
+   
+   class ConstIterator
+   {
+   public:
+      using IteratorCategory = std::bidirectional_iterator_tag ;
+      using DifferenceType = zapi_ptrdiff;
+      using ValueType = Variant;
+      using ZvalPointer = const zval *;
+      using ZvalReference = const zval &;
+   public:
+      ConstIterator();
+      ConstIterator(_zend_array *array, HashPosition index);
+      const Variant getValue() const;
+      ZvalReference getZval() const;
+      ZvalPointer getZvalPtr() const;
+      const KeyType getKey() const;
+      // operators
+      const zval &operator *();
+      zval *operator->();
+      bool operator ==(const Iterator &other) const;
+      bool operator !=(const Iterator &other) const;
+      ConstIterator &operator ++();
+      ConstIterator operator ++(int);
+      ConstIterator &operator --();
+      ConstIterator operator --(int);
+      ConstIterator operator +(int step) const;
+      ConstIterator operator -(int step) const;
+      ConstIterator &operator +=(int step);
+      ConstIterator &operator -=(int step);
+   protected:
+      HashPosition m_index;
+      _zend_array *m_array;
+   };
+   
 protected:
+   void deployCopyOnWrite();
    _zend_array *getZendArrayPtr() const ZAPI_DECL_NOEXCEPT;
    _zend_array &getZendArray() const ZAPI_DECL_NOEXCEPT;
+protected:
+   friend class ArrayItemProxy;
 };
+
+template <typename ArithmeticType, typename Selector>
+ArrayVariant::ArrayVariant(ArithmeticType value)
+{
+   
+}
 
 } // ds
 } // zapi

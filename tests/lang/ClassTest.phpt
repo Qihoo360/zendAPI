@@ -26,21 +26,15 @@ var_dump(function_exists("zapi\\io\\show_something"));
 var_dump(defined("zapi\\SYS_VERSION"));
 var_dump(class_exists("zapi\\Address"));
 \zapi\io\print_name("wangyang");
-$a = 123;
-$b = "sss";
-$d = "sa";
-var_dump($b + $d);
-$c = [123];
-$c += [1, 1212,22];
-var_dump($c);
-$arr = [];
-$str = "abc";
-$str1 = $str;
-var_dump($str);
-var_dump($str1);
-$str = "xxxx";
-var_dump($str);
-var_dump($str1);
+
+$arr = array(
+   array(1)
+);
+var_dump($arr[0][1]);
+$arr[0][1] = 123;
+$arr[4][1] = 123;
+var_dump($arr[0][1]);
+var_dump($arr[4][1]);
 ?>
 --EXPECT--
 zapi v0.0.1 hello world, zapi
