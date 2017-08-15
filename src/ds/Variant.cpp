@@ -18,7 +18,6 @@
 #include "zapi/kernel/OrigException.h"
 #include "zapi/ds/Variant.h"
 #include "zapi/ds/internal/VariantPrivate.h"
-#include "zapi/ds/String.h"
 #include "zapi/ds/ArrayVariant.h"
 #include "zapi/ds/StringVariant.h"
 #include "zapi/ds/BoolVariant.h"

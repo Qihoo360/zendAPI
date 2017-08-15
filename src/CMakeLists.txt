@@ -18,8 +18,6 @@ set(ZAPI_SRC
    lang/Property.cpp
    lang/Type.cpp
    lang/StdClass.cpp
-   ds/String.cpp
-   ds/HashTable.cpp
    ds/AbstractIterator.cpp
    ds/Variant.cpp
    ds/StringVariant.cpp

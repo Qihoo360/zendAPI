@@ -22,9 +22,6 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Property.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Method.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/internal/StdClassPrivate.h
-   ${ZAPI_INCLUDE_DIR}/zapi/ds/HashTable.h
-   ${ZAPI_INCLUDE_DIR}/zapi/ds/List.h
-   ${ZAPI_INCLUDE_DIR}/zapi/ds/String.h
    ${ZAPI_INCLUDE_DIR}/zapi/ds/AbstractIterator.h
    ${ZAPI_INCLUDE_DIR}/zapi/ds/Variant.h
    ${ZAPI_INCLUDE_DIR}/zapi/ds/StringVariant.h

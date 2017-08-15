@@ -71,4 +71,5 @@ TEST(ArrayVariantTest, testInsert)
    array.insert(1, "zzu_softboy");
    ASSERT_EQ(strVar.getRefCount(), 1);
    array.getValue(111);
+   array.getValue("name");
 }

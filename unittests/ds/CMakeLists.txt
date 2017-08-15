@@ -1,7 +1,5 @@
 # data structure tests
 set(DS_TEST_SRCS
-    StringTest.cpp
-    HashTableTest.cpp
     BoolVariantTest.cpp
     NumericVariantTest.cpp
     StringVariantTest.cpp

@@ -176,7 +176,11 @@ Variant ArrayVariant::getValue(zapi_long index) const
 
 Variant ArrayVariant::getValue(const std::string &key) const
 {
-   
+   zval *val = zend_hash_str_find(getZendArrayPtr(), key.c_str(), key.length());
+   if (nullptr == val) {
+      zapi::notice << "Undefined index: " << key << std::endl;
+   }
+   return val;
 }
 
 ArrayIterator ArrayVariant::begin() ZAPI_DECL_NOEXCEPT
