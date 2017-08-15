@@ -122,13 +122,16 @@ DoubleVariant &DoubleVariant::operator =(double other)
 
 DoubleVariant &DoubleVariant::operator =(const DoubleVariant &other)
 {
+   assert(this != &other);
    ZVAL_DOUBLE(getZvalPtr(), other.toDouble());
    return *this;
 }
 
 DoubleVariant &DoubleVariant::operator =(DoubleVariant &&other) ZAPI_DECL_NOEXCEPT
 {
-   m_implPtr = std::move(other.m_implPtr);
+   if (this != &other) {
+      m_implPtr = std::move(other.m_implPtr);
+   }
    return *this;
 }
 

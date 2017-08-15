@@ -62,12 +62,15 @@ BoolVariant::BoolVariant(Variant &&other)
 
 BoolVariant &BoolVariant::operator=(const BoolVariant &other)
 {
-   Variant::operator=(other);
+   if (this != &other) {
+      ZVAL_BOOL(getZvalPtr(), Z_TYPE_INFO_P(other.getZvalPtr()) == IS_TRUE);
+   }
    return *this;
 }
 
 BoolVariant &BoolVariant::operator=(BoolVariant &&other) ZAPI_DECL_NOEXCEPT
 {
+   assert(this != &other);
    m_implPtr = std::move(other.m_implPtr);
    return *this;
 }

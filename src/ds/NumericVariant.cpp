@@ -122,12 +122,15 @@ NumericVariant &NumericVariant::operator =(double other)
 
 NumericVariant &NumericVariant::operator =(const NumericVariant &other)
 {
-   ZVAL_LONG(getZvalPtr(), other.toLong());
+   if (this != &other) {
+      ZVAL_LONG(getZvalPtr(), other.toLong());
+   }
    return *this;
 }
 
 NumericVariant &NumericVariant::operator =(NumericVariant &&other) ZAPI_DECL_NOEXCEPT
 {
+   assert(this != &other);
    m_implPtr = std::move(other.m_implPtr);
    return *this;
 }

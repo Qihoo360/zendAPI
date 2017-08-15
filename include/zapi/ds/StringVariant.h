@@ -49,7 +49,7 @@ protected:
 public:
    StringVariant();
    StringVariant(const Variant &other);
-   StringVariant(Variant &&other) ZAPI_DECL_NOEXCEPT;
+   StringVariant(Variant &&other);
    StringVariant(const StringVariant &other, bool ref = false);
    StringVariant(StringVariant &&other) ZAPI_DECL_NOEXCEPT;
    StringVariant(const std::string &value);
@@ -58,7 +58,7 @@ public:
    StringVariant &operator =(const StringVariant &other);
    StringVariant &operator =(StringVariant &&other) ZAPI_DECL_NOEXCEPT;
    StringVariant &operator =(const Variant &other);
-   StringVariant &operator =(Variant &&other) ZAPI_DECL_NOEXCEPT;
+   StringVariant &operator =(Variant &&other);
    StringVariant &operator =(char value);
    StringVariant &operator =(const std::string &value);
    StringVariant &operator =(const char *value);

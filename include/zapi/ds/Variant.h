@@ -115,14 +115,13 @@ public:
     * @return Value
     */
    Variant &operator =(Variant &&value) ZAPI_DECL_NOEXCEPT;
-   
+   Variant &operator =(const Variant &value);
    /**
     * Assignment operator for various types
     * @param  value
     * @return Value
     */
    Variant &operator =(std::nullptr_t value);
-   Variant &operator =(const Variant &value);
    Variant &operator =(std::int8_t value);
    Variant &operator =(std::int16_t value);
    Variant &operator =(std::int32_t value);

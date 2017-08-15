@@ -47,7 +47,7 @@ StringVariant::StringVariant(const Variant &other)
 {
    // chech the type, if the type is not the string, we just try to convert
    // if the type is string we deploy copy on write idiom
-   const zval *from = other.getZvalPtr();
+   zval *from = const_cast<zval *>(other.getZvalPtr());
    zval *self = getZvalPtr();
    if (other.getType() == Type::String) {
       ZVAL_COPY(self, from);
@@ -61,6 +61,17 @@ StringVariant::StringVariant(const Variant &other)
    }
    // we just set the capacity equal to default allocator algorithm
    // ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(len))
+   m_implPtr->m_strCapacity = ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(Z_STRLEN_P(self)));
+}
+
+StringVariant::StringVariant(Variant &&other)
+   : Variant(std::move(other))
+{
+   zval *self = getZvalPtr();
+   if (getType() != Type::String) {
+      // first we need convert to string type
+      convert_to_string(self);
+   }
    m_implPtr->m_strCapacity = ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(Z_STRLEN_P(self)));
 }
 
@@ -78,17 +89,6 @@ StringVariant::StringVariant(const StringVariant &other, bool ref)
       ZVAL_COPY(self, from);
       m_implPtr->m_strCapacity = ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(Z_STRLEN_P(self)));
    }
-}
-
-StringVariant::StringVariant(Variant &&other) ZAPI_DECL_NOEXCEPT
-   : Variant(std::move(other))
-{
-   zval *self = getZvalPtr();
-   if (getType() != Type::String) {
-      // first we need convert to string type
-      convert_to_string(self);
-   }
-   m_implPtr->m_strCapacity = ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(Z_STRLEN_P(self)));
 }
 
 StringVariant::StringVariant(const std::string &value)
@@ -166,7 +166,7 @@ StringVariant &StringVariant::operator =(const Variant &other)
    return *this;
 }
 
-StringVariant &StringVariant::operator =(Variant &&other) ZAPI_DECL_NOEXCEPT
+StringVariant &StringVariant::operator =(Variant &&other)
 {
    m_implPtr = std::move(other.m_implPtr);
    zval *self = getZvalPtr();
