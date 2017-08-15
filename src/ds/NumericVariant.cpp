@@ -55,25 +55,23 @@ NumericVariant::NumericVariant(NumericVariant &&other) ZAPI_DECL_NOEXCEPT
 NumericVariant::NumericVariant(const Variant &other)
    : NumericVariant()
 {
-   Type sourceType = other.getType();
-   zval *sourceZvalPtr = const_cast<zval *>(other.getZvalPtr());
+   zval *from = const_cast<zval *>(other.getZvalPtr());
    zval *self = getZvalPtr();
-   if (sourceType == Type::Numeric) {
-      ZVAL_LONG(self, zval_get_long(sourceZvalPtr));
+   if (other.getType() == Type::Numeric) {
+      ZVAL_LONG(self, zval_get_long(from));
    } else {
       zval temp;
-      ZVAL_DUP(&temp, sourceZvalPtr);
+      ZVAL_DUP(&temp, from);
       convert_to_long(&temp);
-      ZVAL_LONG(self, zval_get_long(sourceZvalPtr));
+      ZVAL_COPY_VALUE(self, &temp);
    }
 }
 
 NumericVariant::NumericVariant(Variant &&other)
    : Variant(std::move(other))
 {
-   zval *self = getZvalPtr();
    if (getType() != Type::Long) {
-      convert_to_long(self);
+      convert_to_long(getZvalPtr());
    }
 }
 

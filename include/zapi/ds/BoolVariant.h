@@ -28,11 +28,16 @@ class ZAPI_DECL_EXPORT BoolVariant final : public Variant
 public:
    BoolVariant();
    BoolVariant(const BoolVariant &other);
+   BoolVariant(BoolVariant &&other) ZAPI_DECL_NOEXCEPT;
+   BoolVariant(const Variant &other);
+   BoolVariant(Variant &&other);
    BoolVariant(bool value);
    virtual bool toBool() const ZAPI_DECL_NOEXCEPT override;
    operator bool () const override;
    BoolVariant &operator=(const BoolVariant &other);
+   BoolVariant &operator=(BoolVariant &&other) ZAPI_DECL_NOEXCEPT;
    BoolVariant &operator=(const Variant &other);
+   BoolVariant &operator=(Variant &&other);
    BoolVariant &operator=(bool value);
    virtual ~BoolVariant();
 };

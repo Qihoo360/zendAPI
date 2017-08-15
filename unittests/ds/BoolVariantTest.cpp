@@ -48,3 +48,28 @@ TEST(BoolVariantTest, testBoolVaraint)
    Variant baseVar(true);
    BoolVariant copyFromBaseVar(baseVar);
 }
+
+TEST(BoolVariantTest, testMoveConstuctorAndAssign)
+{
+   BoolVariant bool1(true);
+   BoolVariant bool2(false);
+   Variant bool3(true);
+   Variant str("zapi"); // true
+   BoolVariant bool4(std::move(bool1));
+   ASSERT_TRUE(bool4);
+   bool4 = bool2;
+   ASSERT_FALSE(bool4);
+   ASSERT_FALSE(bool2);
+   bool4 = std::move(bool2);
+   ASSERT_FALSE(bool4);
+   bool4 = bool3;
+   ASSERT_TRUE(bool4);
+   ASSERT_TRUE(bool3);
+   bool4 = std::move(bool3);
+   ASSERT_TRUE(bool4);
+   bool4 = str;
+   ASSERT_TRUE(bool4);
+   ASSERT_TRUE(nullptr != str.getZvalPtr());
+   bool4 = std::move(str);
+   ASSERT_TRUE(bool4);
+}

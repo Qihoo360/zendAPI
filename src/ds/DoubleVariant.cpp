@@ -49,27 +49,29 @@ DoubleVariant::DoubleVariant(const DoubleVariant &other)
    : Variant(other)
 {}
 
-DoubleVariant::DoubleVariant(Variant &&other)
+DoubleVariant::DoubleVariant(DoubleVariant &&other) ZAPI_DECL_NOEXCEPT
    : Variant(std::move(other))
-{
-   zval *self = getZvalPtr();
-   if (getType() != Type::Double) {
-      convert_to_double(self);
-   }
-}
+{}
 
 DoubleVariant::DoubleVariant(const Variant &other)
 {
-   Type sourceType = other.getType();
-   zval *sourceZvalPtr = const_cast<zval *>(other.getZvalPtr());
    zval *self = getZvalPtr();
-   if (sourceType == Type::Double) {
-      ZVAL_DOUBLE(self, zval_get_double(sourceZvalPtr));
+   zval *from = const_cast<zval *>(other.getZvalPtr());
+   if (other.getType() == Type::Double) {
+      ZVAL_DOUBLE(self, zval_get_double(from));
    } else {
       zval temp;
-      ZVAL_DUP(&temp, sourceZvalPtr);
+      ZVAL_DUP(&temp, from);
       convert_to_double(&temp);
-      ZVAL_DOUBLE(self, zval_get_double(sourceZvalPtr));
+      ZVAL_COPY_VALUE(self, &temp);
+   }
+}
+
+DoubleVariant::DoubleVariant(Variant &&other)
+   : Variant(std::move(other))
+{
+   if (getType() != Type::Double) {
+      convert_to_double(getZvalPtr());
    }
 }
 
@@ -124,9 +126,39 @@ DoubleVariant &DoubleVariant::operator =(const DoubleVariant &other)
    return *this;
 }
 
+DoubleVariant &DoubleVariant::operator =(DoubleVariant &&other) ZAPI_DECL_NOEXCEPT
+{
+   m_implPtr = std::move(other.m_implPtr);
+   return *this;
+}
+
 DoubleVariant &DoubleVariant::operator =(const NumericVariant &other)
 {
    ZVAL_DOUBLE(getZvalPtr(), static_cast<double>(other.toLong()));
+   return *this;
+}
+
+DoubleVariant &DoubleVariant::operator =(const Variant &other)
+{
+   zval *self = getZvalPtr();
+   zval *from = const_cast<zval *>(other.getZvalPtr());
+   if (other.getType() == Type::Double) {
+      ZVAL_DOUBLE(self, zval_get_double(from));
+   } else {
+      zval temp;
+      ZVAL_DUP(&temp, from);
+      convert_to_double(&temp);
+      ZVAL_COPY_VALUE(self, &temp);
+   }
+   return *this;
+}
+
+DoubleVariant &DoubleVariant::operator =(Variant &&other)
+{
+   m_implPtr = std::move(other.m_implPtr);
+   if (getType() != Type::Double) {
+      convert_to_double(getZvalPtr());
+   }
    return *this;
 }
 
