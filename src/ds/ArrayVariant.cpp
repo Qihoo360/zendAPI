@@ -276,17 +276,19 @@ ArrayIterator::Iterator(_zend_array *array, HashPosition index)
 
 Variant ArrayIterator::getValue()
 {
-   
+   return zend_hash_get_current_data_ex(m_array, &m_index);
 }
 
 ArrayIterator::ZvalReference ArrayIterator::getZval()
 {
-   
+   zval *valPtr = zend_hash_get_current_data_ex(m_array, &m_index);
+   assert(nullptr != valPtr);
+   return *valPtr;
 }
 
 ArrayIterator::ZvalPointer ArrayIterator::getZvalPtr()
 {
-   
+   return zend_hash_get_current_data_ex(m_array, &m_index);
 }
 
 ArrayVariant::KeyType ArrayIterator::getKey()
@@ -335,22 +337,22 @@ ArrayIterator ArrayIterator::operator --(int)
    
 }
 
-ArrayIterator ArrayIterator::operator +(int step) const
+ArrayIterator ArrayIterator::operator +(int32_t step) const
 {
    
 }
 
-ArrayIterator ArrayIterator::operator -(int step) const
+ArrayIterator ArrayIterator::operator -(int32_t step) const
 {
    
 }
 
-ArrayIterator &ArrayIterator::operator +=(int step)
+ArrayIterator &ArrayIterator::operator +=(int32_t step)
 {
    
 }
 
-ArrayIterator &ArrayIterator::operator -=(int step)
+ArrayIterator &ArrayIterator::operator -=(int32_t step)
 {
    
 }
@@ -423,22 +425,22 @@ ConstArrayIterator ConstArrayIterator::operator --(int)
    
 }
 
-ConstArrayIterator ConstArrayIterator::operator +(int step) const
+ConstArrayIterator ConstArrayIterator::operator +(int32_t step) const
 {
    
 }
 
-ConstArrayIterator ConstArrayIterator::operator -(int step) const
+ConstArrayIterator ConstArrayIterator::operator -(int32_t step) const
 {
    
 }
 
-ConstArrayIterator &ConstArrayIterator::operator +=(int step)
+ConstArrayIterator &ConstArrayIterator::operator +=(int32_t step)
 {
    
 }
 
-ConstArrayIterator &ConstArrayIterator::operator -=(int step)
+ConstArrayIterator &ConstArrayIterator::operator -=(int32_t step)
 {
    
 }

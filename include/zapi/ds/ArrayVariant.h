@@ -116,10 +116,10 @@ public:
       Iterator operator ++(int);
       Iterator &operator --();
       Iterator operator --(int);
-      Iterator operator +(int step) const;
-      Iterator operator -(int step) const;
-      Iterator &operator +=(int step);
-      Iterator &operator -=(int step);
+      Iterator operator +(int32_t step) const;
+      Iterator operator -(int32_t step) const;
+      Iterator &operator +=(int32_t step);
+      Iterator &operator -=(int32_t step);
    protected:
       HashPosition m_index;
       _zend_array *m_array;
@@ -148,10 +148,10 @@ public:
       ConstIterator operator ++(int);
       ConstIterator &operator --();
       ConstIterator operator --(int);
-      ConstIterator operator +(int step) const;
-      ConstIterator operator -(int step) const;
-      ConstIterator &operator +=(int step);
-      ConstIterator &operator -=(int step);
+      ConstIterator operator +(int32_t step) const;
+      ConstIterator operator -(int32_t step) const;
+      ConstIterator &operator +=(int32_t step);
+      ConstIterator &operator -=(int32_t step);
    protected:
       HashPosition m_index;
       _zend_array *m_array;

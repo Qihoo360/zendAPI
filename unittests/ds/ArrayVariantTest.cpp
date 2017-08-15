@@ -72,9 +72,11 @@ TEST(ArrayVariantTest, testInsert)
    ASSERT_EQ(strVar.getRefCount(), 1);
    //   array.getValue(111); echo notice msg
    //   array.getValue("name"); echo notice msg
-   array.insert("name", "zzu_softboy");
+   ArrayVariant::Iterator iter =  array.insert("name", "zzu_softboy");
    array.insert("age", 123);
    StringVariant name = array.getValue("name");
    ASSERT_EQ(array.getSize(), 4);
    ASSERT_STREQ(name.getCStr(), "zzu_softboy");
+   ASSERT_STREQ(Z_STRVAL_P(iter.getZvalPtr()), "zzu_softboy");
+   ASSERT_STREQ(StringVariant(iter.getValue()).getCStr(), "zzu_softboy");
 }
