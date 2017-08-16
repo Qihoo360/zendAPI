@@ -161,6 +161,8 @@ public:
     */
    Type getType() const ZAPI_DECL_NOEXCEPT;
    
+   std::string getTypeStr() const ZAPI_DECL_NOEXCEPT;
+   
    /**
     * Make a clone of the value with the same type
     * 

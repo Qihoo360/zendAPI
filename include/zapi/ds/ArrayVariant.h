@@ -29,7 +29,7 @@ namespace ds
 
 class NumericVariant;
 class BoolVarint;
-class DoubleVarint;
+class DoubleVariant;
 class StringVariant;
 class ArrayItemProxy;
 
@@ -51,15 +51,15 @@ public:
    ArrayVariant(const Variant &other);
    ArrayVariant(Variant &&other) ZAPI_DECL_NOEXCEPT;
    // transform constructors
-   ArrayVariant(const NumericVariant &value);
-   ArrayVariant(const BoolVarint &value);
-   ArrayVariant(const DoubleVarint &value);
-   ArrayVariant(const StringVariant &value);
-   ArrayVariant(const std::string &value);
-   ArrayVariant(const char *value);
+   explicit ArrayVariant(const NumericVariant &value);
+   explicit ArrayVariant(const BoolVarint &value);
+   explicit ArrayVariant(const DoubleVariant &value);
+   explicit ArrayVariant(const StringVariant &value);
+   explicit ArrayVariant(const std::string &value);
+   explicit ArrayVariant(const char *value);
    template <typename ArithmeticType, 
              typename Selector = typename std::enable_if<std::is_arithmetic<ArithmeticType>::value>::type>
-   ArrayVariant(ArithmeticType value);
+   explicit ArrayVariant(ArithmeticType value);
    // operators
    ArrayItemProxy operator [](zapi_ulong index);
    ArrayItemProxy operator [](const std::string &key);

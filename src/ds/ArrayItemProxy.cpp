@@ -15,7 +15,12 @@
 
 #include "zapi/ds/ArrayVariant.h"
 #include "zapi/ds/ArrayItemProxy.h"
+#include "zapi/ds/NumericVariant.h"
+#include "zapi/ds/DoubleVariant.h"
+#include "zapi/ds/StringVariant.h"
+#include "zapi/ds/BoolVariant.h"
 #include <iostream>
+#include <string>
 
 namespace zapi
 {
@@ -30,21 +35,21 @@ using KeyType = zapi::ds::ArrayItemProxy::KeyType;
 class ArrayItemProxyPrivate
 {
 public:
-   ArrayItemProxyPrivate(zval *arrayZval, const KeyType &requestKey, ArrayItemProxy *apiPtr)
+   ArrayItemProxyPrivate(zend_array *array, const KeyType &requestKey, ArrayItemProxy *apiPtr)
       : m_requestKey(requestKey),
-        m_arrayZval(arrayZval),
+        m_array(m_array),
         m_apiPtr(apiPtr)
    {}
    
-   ArrayItemProxyPrivate(zval *arrayZval, const std::string &key, ArrayItemProxy *apiPtr)
-      : m_requestKey(-1, key), // -1 is very big ulong
-        m_arrayZval(arrayZval),
+   ArrayItemProxyPrivate(zend_array *array, const std::string &key, ArrayItemProxy *apiPtr)
+      : m_requestKey(-1, std::make_shared<std::string>(key)), // -1 is very big ulong
+        m_array(array),
         m_apiPtr(apiPtr)
    {}
    
-   ArrayItemProxyPrivate(zval *arrayZval, zapi_ulong index, ArrayItemProxy *apiPtr)
-      : m_requestKey(index, std::string()),
-        m_arrayZval(arrayZval),
+   ArrayItemProxyPrivate(zend_array *array, zapi_ulong index, ArrayItemProxy *apiPtr)
+      : m_requestKey(index, nullptr),
+        m_array(array),
         m_apiPtr(apiPtr)
    {}
    
@@ -52,12 +57,12 @@ public:
    {
       // here we check some things
       if (m_needCheckRequestItem) {
-         m_apiPtr->checkItemExist();
+         m_apiPtr->retrieveZvalPtr();
       }
    }
    ZAPI_DECLARE_PUBLIC(ArrayItemProxy)
    ArrayItemProxy::KeyType m_requestKey;
-   zval *m_arrayZval;
+   zend_array *m_array;
    bool m_needCheckRequestItem = true;
    ArrayItemProxy *m_parent = nullptr;
    ArrayItemProxy *m_apiPtr;
@@ -65,22 +70,85 @@ public:
 
 } // internal
 
+using zapi::ds::internal::ArrayItemProxyPrivate;
 
-ArrayItemProxy::ArrayItemProxy(zval *arrayZval, const KeyType &requestKey)
-   : m_implPtr(new ArrayItemProxyPrivate(arrayZval, requestKey, this))
+ArrayItemProxy::ArrayItemProxy(zend_array *array, const KeyType &requestKey)
+   : m_implPtr(new ArrayItemProxyPrivate(array, requestKey, this))
 {}
 
-ArrayItemProxy::ArrayItemProxy(zval *arrayZval, const std::string &key)
-   : m_implPtr(new ArrayItemProxyPrivate(arrayZval, key, this))
+ArrayItemProxy::ArrayItemProxy(zend_array *array, const std::string &key)
+   : m_implPtr(new ArrayItemProxyPrivate(array, key, this))
 {}
 
-ArrayItemProxy::ArrayItemProxy(zval *arrayZval, zapi_ulong index)
-   : m_implPtr(new ArrayItemProxyPrivate(arrayZval, index, this))
+ArrayItemProxy::ArrayItemProxy(zend_array *array, zapi_ulong index)
+   : m_implPtr(new ArrayItemProxyPrivate(array, index, this))
+{
+   
+}
+
+ArrayItemProxy::~ArrayItemProxy()
 {}
+
+ArrayItemProxy::operator NumericVariant()
+{
+   Variant value(retrieveZvalPtr());
+   m_implPtr->m_needCheckRequestItem = false;
+   Type type = value.getType();
+   if (type != Type::Long && type != Type::Double) {
+      zapi::notice << "Array proxy type "<< value.getTypeStr() 
+                   << " not compatible with NumericVariant" << std::endl;
+   }
+   return NumericVariant(std::move(value));
+}
+
+ArrayItemProxy::operator DoubleVariant()
+{
+   Variant value(retrieveZvalPtr());
+   m_implPtr->m_needCheckRequestItem = false;
+   Type type = value.getType();
+   if (type != Type::Long && type != Type::Double) {
+      zapi::notice << "Array proxy type "<< value.getTypeStr() 
+                   << "not compatible with DoubleVariant" << std::endl;
+   }
+   return DoubleVariant(std::move(value));
+}
+
+ArrayItemProxy::operator Variant()
+{
+   zval *value = retrieveZvalPtr();
+   m_implPtr->m_needCheckRequestItem = false;
+   return Variant(value);
+}
+
+ArrayItemProxy::operator StringVariant()
+{
+   Variant value(retrieveZvalPtr());
+   m_implPtr->m_needCheckRequestItem = false;
+   Type type = value.getType();
+   if (type != Type::Long && type != Type::Double &&
+       type != Type::String && type != Type::Boolean) {
+      zapi::notice << "Array proxy type "<< value.getTypeStr() 
+                   << "not compatible with StringVariant" << std::endl;
+   }
+   return StringVariant(std::move(value));
+}
+
+ArrayItemProxy::operator BoolVariant()
+{
+   Variant value(retrieveZvalPtr());
+   m_implPtr->m_needCheckRequestItem = false;
+   return BoolVariant(std::move(value));
+}
+
+ArrayItemProxy::operator ArrayVariant()
+{
+   return ArrayVariant();
+}
 
 ArrayItemProxy ArrayItemProxy::operator [](zapi_long index)
 {
    // we check parent item exist here
+   
 }
 
 ArrayItemProxy ArrayItemProxy::operator [](const std::string &key)
@@ -88,14 +156,27 @@ ArrayItemProxy ArrayItemProxy::operator [](const std::string &key)
    // we check parent item exist here
 }
 
-void ArrayItemProxy::checkItemExist()
+zval *ArrayItemProxy::recursiveEnsureArrayExist()
 {
    
 }
 
-zval *ArrayItemProxy::recursiveEnsureArrayExist()
+zval *ArrayItemProxy::retrieveZvalPtr(bool quiet) const
 {
-   
+   zval *valPtr = nullptr;
+   if (m_implPtr->m_requestKey.second) {
+      std::string *key = m_implPtr->m_requestKey.second.get();
+      valPtr = zend_hash_str_find(m_implPtr->m_array, key->c_str(), key->length());
+      if (nullptr == valPtr && !quiet) {
+         zapi::notice << "Undefined offset: " << *key << std::endl;
+      }
+   } else {
+      valPtr = zend_hash_index_find(m_implPtr->m_array, m_implPtr->m_requestKey.first);
+      if (nullptr == valPtr && !quiet) {
+         zapi::notice << "Undefined index: " << m_implPtr->m_requestKey.first << std::endl;
+      }
+   }
+   return valPtr;
 }
 
 } // ds

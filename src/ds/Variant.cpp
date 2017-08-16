@@ -631,6 +631,39 @@ Type Variant::getType() const ZAPI_DECL_NOEXCEPT
    return static_cast<Type>(Z_TYPE_P(ptr));
 }
 
+std::string Variant::getTypeStr() const ZAPI_DECL_NOEXCEPT
+{
+   Type type = getType();
+   switch (type) {
+   case Type::Array:
+      return "Array";
+   case Type::False:
+   case Type::True:
+   case Type::Boolean:
+      return "Boolean";
+   case Type::Callable:
+      return "Callable";
+   case Type::Constant:
+      return "Constant";
+   case Type::Double:
+      return "Double";
+   case Type::Numeric:
+      return "Numeric";
+   case Type::Object:
+      return "Object";
+   case Type::Reference:
+      return "Reference";
+   case Type::Resource:
+      return "Resource";
+   case Type::String:
+      return "String";
+   case Type::Ptr:
+      return "Pointer";
+   default:
+      return "";
+   }
+}
+
 /**
  * Are we null? This will also check if we're a reference to a null value
  * 

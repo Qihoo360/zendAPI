@@ -52,7 +52,7 @@ TEST(ArrayVariantTest, testAppend)
    ASSERT_EQ(num.toLong(), 1);
    ASSERT_STREQ(str.getCStr(), "zapi");
    ASSERT_EQ(str.getRefCount(), 2);
-   std::cout << str << std::endl;
+   // std::cout << str << std::endl;
 }
 
 TEST(ArrayVariantTest, testInsert)
@@ -198,4 +198,19 @@ TEST(ArrayVariantTest, testIterators)
    preciter = --citer;
    ASSERT_STREQ(Z_STRVAL_P(preciter.getZvalPtr()), "zapi");
    ASSERT_STREQ(Z_STRVAL_P(citer.getZvalPtr()), "zapi");
+}
+
+TEST(ArrayVariantTest, testAccessOperator)
+{
+   ArrayVariant array;
+   array.append(1);
+   array.append("zapi");
+   array.append("zzu_softboy");
+   array.append("aaa");
+   array.append("bbb");
+   array.append("ccc");
+   StringVariant str = array[1];
+//   NumericVariant num1 = array[111];
+//   ASSERT_EQ(num1, 0);
+   std::cout << str << std::endl;
 }

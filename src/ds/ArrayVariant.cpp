@@ -50,12 +50,12 @@ ArrayVariant::ArrayVariant(Variant &&other) ZAPI_DECL_NOEXCEPT
 
 ArrayItemProxy ArrayVariant::operator [](zapi_ulong index)
 {
-   return ArrayItemProxy(getZvalPtr(), index);
+   return ArrayItemProxy(getZendArrayPtr(), index);
 }
 
 ArrayItemProxy ArrayVariant::operator [](const std::string &key)
 {
-   return ArrayItemProxy(getZvalPtr(), key);
+   return ArrayItemProxy(getZendArrayPtr(), key);
 }
 
 Variant ArrayVariant::operator [](zapi_ulong index) const

@@ -40,11 +40,12 @@ using zapi::lang::Type;
 class ZAPI_DECL_EXPORT ArrayItemProxy final
 {
 public:
-   using KeyType = std::pair<zapi_ulong, std::string>;
+   using KeyType = std::pair<zapi_ulong, std::shared_ptr<std::string>>;
 public:
-   ArrayItemProxy(zval *arrayZval, const KeyType &requestKey);
-   ArrayItemProxy(zval *arrayZval, const std::string &key);
-   ArrayItemProxy(zval *arrayZval, zapi_ulong index);
+   ArrayItemProxy(zend_array *array, const KeyType &requestKey);
+   ArrayItemProxy(zend_array *array, const std::string &key);
+   ArrayItemProxy(zend_array *array, zapi_ulong index);
+   ~ArrayItemProxy();
    // operators 
    ArrayItemProxy &operator =(const Variant &value);
    ArrayItemProxy &operator =(const NumericVariant &value);
@@ -64,8 +65,8 @@ public:
    ArrayItemProxy operator [](const std::string &key);
    bool canConvert(Type type) const ZAPI_DECL_NOEXCEPT;
 protected:
-   void checkItemExist();
    zval *recursiveEnsureArrayExist();
+   zval *retrieveZvalPtr(bool quiet = false) const;
 protected:
    ZAPI_DECLARE_PRIVATE(ArrayItemProxy)
    std::shared_ptr<ArrayItemProxyPrivate> m_implPtr;
