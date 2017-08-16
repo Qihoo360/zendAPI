@@ -210,7 +210,14 @@ TEST(ArrayVariantTest, testAccessOperator)
    array.append("bbb");
    array.append("ccc");
    StringVariant str = array[1];
-//   NumericVariant num1 = array[111];
-//   ASSERT_EQ(num1, 0);
-   std::cout << str << std::endl;
+   ASSERT_STREQ(str.getCStr(), "zapi");
+   array[0] = 123;
+   NumericVariant num = array.getValue(0);
+   ASSERT_EQ(num.toLong(), 123);
+   array[10] = "unicornteam";
+   StringVariant team = array[10];
+   ASSERT_STREQ(team.getCStr(), "unicornteam");
+   array["city"] = "beijing";
+   StringVariant city = array["city"];
+   ASSERT_STREQ(city.getCStr(), "beijing");
 }

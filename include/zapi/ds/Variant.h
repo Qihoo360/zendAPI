@@ -85,6 +85,12 @@ public:
    Variant(StringVariant &&value);
    Variant(DoubleVariant &&value);
    Variant(ArrayVariant &&value);
+   template <typename T, 
+             size_t arrayLength,
+             typename Selector = typename std::enable_if<std::is_integral<T>::value>::type>
+   Variant(char (&value)[arrayLength], T length);
+   template <size_t arrayLength>
+   Variant(char (&value)[arrayLength]);
    /**
     * Wrap object around zval
     * @param  zval Zval to wrap
@@ -229,6 +235,19 @@ protected:
  * @return ostream
  */
 ZAPI_DECL_EXPORT std::ostream &operator<<(std::ostream &stream, const Variant &value);
+
+template <typename T, 
+          size_t arrayLength, 
+          typename Selector>
+Variant::Variant(char (&value)[arrayLength], T length)
+   : Variant(reinterpret_cast<char *>(value),
+           length < 0 ? arrayLength : static_cast<size_t>(length))
+{}
+
+template <size_t arrayLength>
+Variant::Variant(char (&value)[arrayLength])
+   : Variant(reinterpret_cast<char *>(value), arrayLength)
+{}
 
 } // ds
 } // zapi

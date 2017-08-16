@@ -13,8 +13,8 @@
 //
 // Created by softboy on 2017/08/08.
 
-#ifndef ZAPI_DS_INTERNAL_BOOL_VARIANT_PRIVATE_H
-#define ZAPI_DS_INTERNAL_BOOL_VARIANT_PRIVATE_H
+#ifndef ZAPI_DS_INTERNAL_BOOL_VARIANT_H
+#define ZAPI_DS_INTERNAL_BOOL_VARIANT_H
 
 #include "zapi/ds/Variant.h"
 
@@ -47,4 +47,4 @@ ZAPI_DECL_EXPORT bool operator !=(const BoolVariant &lhs, const BoolVariant &rhs
 } // ds
 } // zapi
 
-#endif // ZAPI_DS_INTERNAL_BOOL_VARIANT_PRIVATE_H
+#endif // ZAPI_DS_INTERNAL_BOOL_VARIANT_H

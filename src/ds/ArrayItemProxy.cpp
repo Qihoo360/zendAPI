@@ -35,19 +35,19 @@ using KeyType = zapi::ds::ArrayItemProxy::KeyType;
 class ArrayItemProxyPrivate
 {
 public:
-   ArrayItemProxyPrivate(zend_array *array, const KeyType &requestKey, ArrayItemProxy *apiPtr)
+   ArrayItemProxyPrivate(zval *array, const KeyType &requestKey, ArrayItemProxy *apiPtr)
       : m_requestKey(requestKey),
-        m_array(m_array),
+        m_array(array),
         m_apiPtr(apiPtr)
    {}
    
-   ArrayItemProxyPrivate(zend_array *array, const std::string &key, ArrayItemProxy *apiPtr)
+   ArrayItemProxyPrivate(zval *array, const std::string &key, ArrayItemProxy *apiPtr)
       : m_requestKey(-1, std::make_shared<std::string>(key)), // -1 is very big ulong
         m_array(array),
         m_apiPtr(apiPtr)
    {}
    
-   ArrayItemProxyPrivate(zend_array *array, zapi_ulong index, ArrayItemProxy *apiPtr)
+   ArrayItemProxyPrivate(zval *array, zapi_ulong index, ArrayItemProxy *apiPtr)
       : m_requestKey(index, nullptr),
         m_array(array),
         m_apiPtr(apiPtr)
@@ -62,7 +62,7 @@ public:
    }
    ZAPI_DECLARE_PUBLIC(ArrayItemProxy)
    ArrayItemProxy::KeyType m_requestKey;
-   zend_array *m_array;
+   zval *m_array;
    bool m_needCheckRequestItem = true;
    ArrayItemProxy *m_parent = nullptr;
    ArrayItemProxy *m_apiPtr;
@@ -72,22 +72,106 @@ public:
 
 using zapi::ds::internal::ArrayItemProxyPrivate;
 
-ArrayItemProxy::ArrayItemProxy(zend_array *array, const KeyType &requestKey)
+ArrayItemProxy::ArrayItemProxy(zval *array, const KeyType &requestKey)
    : m_implPtr(new ArrayItemProxyPrivate(array, requestKey, this))
 {}
 
-ArrayItemProxy::ArrayItemProxy(zend_array *array, const std::string &key)
+ArrayItemProxy::ArrayItemProxy(zval *array, const std::string &key)
    : m_implPtr(new ArrayItemProxyPrivate(array, key, this))
 {}
 
-ArrayItemProxy::ArrayItemProxy(zend_array *array, zapi_ulong index)
+ArrayItemProxy::ArrayItemProxy(zval *array, zapi_ulong index)
    : m_implPtr(new ArrayItemProxyPrivate(array, index, this))
-{
-   
-}
+{}
 
 ArrayItemProxy::~ArrayItemProxy()
 {}
+
+ArrayItemProxy &ArrayItemProxy::operator =(const Variant &value)
+{
+   SEPARATE_ZVAL_NOREF(m_implPtr->m_array);
+   // here we don't check exist, we just insert it if not exists
+   m_implPtr->m_needCheckRequestItem = false;
+   zval *from = const_cast<zval *>(value.getZvalPtr());
+   zval temp;
+   ZVAL_DEREF(from);
+   ZVAL_COPY(&temp, from);
+   zend_array *target = Z_ARRVAL_P(m_implPtr->m_array);
+   zval *inserted = nullptr;
+   if (m_implPtr->m_requestKey.second) {
+      std::string *key = m_implPtr->m_requestKey.second.get();
+      inserted = zend_hash_str_update(target, key->c_str(), key->length(), &temp);
+   } else {
+      inserted = zend_hash_index_update(target, m_implPtr->m_requestKey.first, &temp);
+   }
+   // @TODO here we need check the inserted ?
+   return *this;
+}
+
+ArrayItemProxy &ArrayItemProxy::operator =(const NumericVariant &value)
+{
+   return operator =(Variant(value));
+}
+
+ArrayItemProxy &ArrayItemProxy::operator =(const DoubleVariant &value)
+{
+   return operator =(Variant(value));
+}
+
+ArrayItemProxy &ArrayItemProxy::operator =(const StringVariant &value)
+{
+   return operator =(Variant(value));
+}
+
+ArrayItemProxy &ArrayItemProxy::operator =(const BoolVariant &value)
+{
+   return operator =(Variant(value));
+}
+
+ArrayItemProxy &ArrayItemProxy::operator =(const ArrayVariant &value)
+{
+   return operator =(Variant(value));
+}
+
+ArrayItemProxy &ArrayItemProxy::operator =(NumericVariant &&value)
+{
+   return operator =(Variant(std::move(value)));
+}
+
+ArrayItemProxy &ArrayItemProxy::operator =(DoubleVariant &&value)
+{
+   return operator =(Variant(std::move(value)));
+}
+
+ArrayItemProxy &ArrayItemProxy::operator =(StringVariant &&value)
+{
+   return operator =(Variant(std::move(value)));
+}
+
+ArrayItemProxy &ArrayItemProxy::operator =(BoolVariant &&value)
+{
+   return operator =(Variant(std::move(value)));
+}
+
+ArrayItemProxy &ArrayItemProxy::operator =(ArrayVariant &&value)
+{
+   return operator =(Variant(std::move(value)));
+}
+
+ArrayItemProxy &ArrayItemProxy::operator =(const char *value)
+{
+   return operator =(Variant(value));
+}
+
+ArrayItemProxy &ArrayItemProxy::operator =(const char value)
+{
+   return operator =(Variant(value));
+}
+
+ArrayItemProxy &ArrayItemProxy::operator =(const std::string &value)
+{
+   return operator =(Variant(value));
+}
 
 ArrayItemProxy::operator NumericVariant()
 {
@@ -166,12 +250,12 @@ zval *ArrayItemProxy::retrieveZvalPtr(bool quiet) const
    zval *valPtr = nullptr;
    if (m_implPtr->m_requestKey.second) {
       std::string *key = m_implPtr->m_requestKey.second.get();
-      valPtr = zend_hash_str_find(m_implPtr->m_array, key->c_str(), key->length());
+      valPtr = zend_hash_str_find(Z_ARRVAL_P(m_implPtr->m_array), key->c_str(), key->length());
       if (nullptr == valPtr && !quiet) {
          zapi::notice << "Undefined offset: " << *key << std::endl;
       }
    } else {
-      valPtr = zend_hash_index_find(m_implPtr->m_array, m_implPtr->m_requestKey.first);
+      valPtr = zend_hash_index_find(Z_ARRVAL_P(m_implPtr->m_array), m_implPtr->m_requestKey.first);
       if (nullptr == valPtr && !quiet) {
          zapi::notice << "Undefined index: " << m_implPtr->m_requestKey.first << std::endl;
       }

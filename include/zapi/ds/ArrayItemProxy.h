@@ -13,6 +13,9 @@
 //
 // Created by softboy on 2017/08/15.
 
+#ifndef ZAPI_DS_INTERNAL_ARRAY_ITEM_PROXY_H
+#define ZAPI_DS_INTERNAL_ARRAY_ITEM_PROXY_H
+
 #include "zapi/Global.h"
 
 namespace zapi
@@ -42,9 +45,9 @@ class ZAPI_DECL_EXPORT ArrayItemProxy final
 public:
    using KeyType = std::pair<zapi_ulong, std::shared_ptr<std::string>>;
 public:
-   ArrayItemProxy(zend_array *array, const KeyType &requestKey);
-   ArrayItemProxy(zend_array *array, const std::string &key);
-   ArrayItemProxy(zend_array *array, zapi_ulong index);
+   ArrayItemProxy(zval *array, const KeyType &requestKey);
+   ArrayItemProxy(zval *array, const std::string &key);
+   ArrayItemProxy(zval *array, zapi_ulong index);
    ~ArrayItemProxy();
    // operators 
    ArrayItemProxy &operator =(const Variant &value);
@@ -53,6 +56,21 @@ public:
    ArrayItemProxy &operator =(const StringVariant &value);
    ArrayItemProxy &operator =(const BoolVariant &value);
    ArrayItemProxy &operator =(const ArrayVariant &value);
+   
+   ArrayItemProxy &operator =(NumericVariant &&value);
+   ArrayItemProxy &operator =(DoubleVariant &&value);
+   ArrayItemProxy &operator =(StringVariant &&value);
+   ArrayItemProxy &operator =(BoolVariant &&value);
+   ArrayItemProxy &operator =(ArrayVariant &&value);
+   
+   ArrayItemProxy &operator =(const char *value);
+   ArrayItemProxy &operator =(const char value);
+   ArrayItemProxy &operator =(const std::string &value);
+   template <typename T,
+             typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
+   ArrayItemProxy &operator =(T value);
+   template <size_t arrayLength>
+   ArrayItemProxy &operator =(char (&value)[arrayLength]);
    // cast operators
    operator Variant();
    operator NumericVariant();
@@ -63,7 +81,6 @@ public:
    // nest assign
    ArrayItemProxy operator [](zapi_long index);
    ArrayItemProxy operator [](const std::string &key);
-   bool canConvert(Type type) const ZAPI_DECL_NOEXCEPT;
 protected:
    zval *recursiveEnsureArrayExist();
    zval *retrieveZvalPtr(bool quiet = false) const;
@@ -72,5 +89,19 @@ protected:
    std::shared_ptr<ArrayItemProxyPrivate> m_implPtr;
 };
 
+template <typename T, typename Selector>
+ArrayItemProxy &ArrayItemProxy::operator =(T value)
+{
+   return operator =(Variant(value));
+}
+
+template <size_t arrayLength>
+ArrayItemProxy &ArrayItemProxy::operator =(char (&value)[arrayLength])
+{
+   return operator =(Variant(value));
+}
+
 } // ds
 } // zapi
+
+#endif // ZAPI_DS_INTERNAL_ARRAY_ITEM_PROXY_H

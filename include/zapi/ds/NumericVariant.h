@@ -13,8 +13,8 @@
 //
 // Created by softboy on 2017/08/08.
 
-#ifndef ZAPI_DS_INTERNAL_NUMERIC_VARIANT_PRIVATE_H
-#define ZAPI_DS_INTERNAL_NUMERIC_VARIANT_PRIVATE_H
+#ifndef ZAPI_DS_NUMERIC_VARIANT_H
+#define ZAPI_DS_NUMERIC_VARIANT_H
 
 #include "zapi/ds/Variant.h"
 
@@ -323,4 +323,4 @@ ZAPI_DECL_EXPORT zapi_long operator %(const NumericVariant &lhs, NumericVariant 
 } // ds
 } // zapi
 
-#endif // ZAPI_DS_INTERNAL_NUMERIC_VARIANT_PRIVATE_H
+#endif // ZAPI_DS_NUMERIC_VARIANT_H

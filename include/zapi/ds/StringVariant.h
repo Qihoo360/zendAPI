@@ -13,8 +13,8 @@
 //
 // Created by softboy on 2017/08/08.
 
-#ifndef ZAPI_DS_INTERNAL_STRING_VARIANT_PRIVATE_H
-#define ZAPI_DS_INTERNAL_STRING_VARIANT_PRIVATE_H
+#ifndef ZAPI_DS_STRING_VARIANT_H
+#define ZAPI_DS_STRING_VARIANT_H
 
 #include "zapi/ds/Variant.h"
 #include "zapi/utils/CommonFuncs.h"
@@ -1094,4 +1094,4 @@ bool StringVariant::endsWith(char (&str)[arrayLength], bool caseSensitive) const
 } // ds
 } // zapi
 
-#endif // ZAPI_DS_INTERNAL_STRING_VARIANT_PRIVATE_H
+#endif // ZAPI_DS_STRING_VARIANT_H

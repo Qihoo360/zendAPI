@@ -13,8 +13,8 @@
 //
 // Created by softboy on 2017/08/08.
 
-#ifndef ZAPI_DS_INTERNAL_OBJECT_VARIANT_PRIVATE_H
-#define ZAPI_DS_INTERNAL_OBJECT_VARIANT_PRIVATE_H
+#ifndef ZAPI_DS_OBJECT_VARIANT_H
+#define ZAPI_DS_OBJECT_VARIANT_H
 
 #include "zapi/ds/Variant.h"
 
@@ -31,4 +31,4 @@ class ZAPI_DECL_EXPORT ObjectVariant : public Variant
 } // ds
 } // zapi
 
-#endif // ZAPI_DS_INTERNAL_OBJECT_VARIANT_PRIVATE_H
+#endif // ZAPI_DS_OBJECT_VARIANT_H

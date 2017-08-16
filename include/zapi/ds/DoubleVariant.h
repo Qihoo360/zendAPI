@@ -13,8 +13,8 @@
 //
 // Created by softboy on 2017/08/08.
 
-#ifndef ZAPI_DS_INTERNAL_DOUBLE_VARIANT_PRIVATE_H
-#define ZAPI_DS_INTERNAL_DOUBLE_VARIANT_PRIVATE_H
+#ifndef ZAPI_DS_INTERNAL_DOUBLE_VARIANT_H
+#define ZAPI_DS_INTERNAL_DOUBLE_VARIANT_H
 
 #include "zapi/ds/Variant.h"
 #include <cmath>
@@ -292,4 +292,4 @@ ZAPI_DECL_EXPORT double operator %(const DoubleVariant &lhs, T rhs) ZAPI_DECL_NO
 } // ds
 } // zapi
 
-#endif // ZAPI_DS_INTERNAL_DOUBLE_VARIANT_PRIVATE_H
+#endif // ZAPI_DS_INTERNAL_DOUBLE_VARIANT_H

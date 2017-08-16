@@ -13,6 +13,9 @@
 //
 // Created by zzu_softboy on 2017/08/03.
 
+#ifndef ZAPI_DS_ABSTRACT_ITERATOR_H
+#define ZAPI_DS_ABSTRACT_ITERATOR_H
+
 #include "zapi/ds/Variant.h"
 
 namespace zapi
@@ -52,3 +55,5 @@ protected:
 
 } // ds
 } // zapi
+
+#endif // ZAPI_DS_ABSTRACT_ITERATOR_H

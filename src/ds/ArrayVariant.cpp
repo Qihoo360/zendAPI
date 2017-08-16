@@ -50,22 +50,17 @@ ArrayVariant::ArrayVariant(Variant &&other) ZAPI_DECL_NOEXCEPT
 
 ArrayItemProxy ArrayVariant::operator [](zapi_ulong index)
 {
-   return ArrayItemProxy(getZendArrayPtr(), index);
+   return ArrayItemProxy(getZvalPtr(), index);
 }
 
 ArrayItemProxy ArrayVariant::operator [](const std::string &key)
 {
-   return ArrayItemProxy(getZendArrayPtr(), key);
+   return ArrayItemProxy(getZvalPtr(), key);
 }
 
-Variant ArrayVariant::operator [](zapi_ulong index) const
+ArrayItemProxy ArrayVariant::operator [](const char *key)
 {
-   
-}
-
-Variant ArrayVariant::operator [](const std::string &key) const
-{
-   
+   return ArrayItemProxy(getZvalPtr(), key);
 }
 
 ArrayIterator ArrayVariant::insert(zapi_ulong index, const Variant &value)

@@ -13,14 +13,15 @@
 //
 // Created by softboy on 2017/08/08.
 
-#ifndef ZAPI_DS_INTERNAL_ARRAY_VARIANT_PRIVATE_H
-#define ZAPI_DS_INTERNAL_ARRAY_VARIANT_PRIVATE_H
+#ifndef ZAPI_DS_INTERNAL_ARRAY_VARIANT_H
+#define ZAPI_DS_INTERNAL_ARRAY_VARIANT_H
 
 #include <utility>
 #include <string>
 #include <type_traits>
 
 #include "zapi/ds/Variant.h"
+#include "zapi/ds/ArrayItemProxy.h"
 
 namespace zapi
 {
@@ -31,7 +32,6 @@ class NumericVariant;
 class BoolVarint;
 class DoubleVariant;
 class StringVariant;
-class ArrayItemProxy;
 
 class ZAPI_DECL_EXPORT ArrayVariant : public Variant
 {
@@ -62,10 +62,11 @@ public:
    explicit ArrayVariant(ArithmeticType value);
    // operators
    ArrayItemProxy operator [](zapi_ulong index);
+   template <typename T, 
+             typename Selector = typename std::enable_if<std::is_integral<T>::value>::type>
+   ArrayItemProxy operator [](T index);
    ArrayItemProxy operator [](const std::string &key);
-   Variant operator [](zapi_ulong index) const;
-   Variant operator [](const std::string &key) const;
-   
+   ArrayItemProxy operator [](const char *key);
    // modify methods
    void clear();
    Variant pop();
@@ -180,6 +181,15 @@ protected:
    friend class ArrayItemProxy;
 };
 
+template <typename T, typename Selector>
+ArrayItemProxy ArrayVariant::operator [](T index)
+{
+   if (index < 0) {
+      index = 0;
+   }
+   return operator [](static_cast<zapi_ulong>(index));
+}
+
 template <typename ArithmeticType, typename Selector>
 ArrayVariant::ArrayVariant(ArithmeticType value)
 {
@@ -189,4 +199,4 @@ ArrayVariant::ArrayVariant(ArithmeticType value)
 } // ds
 } // zapi
 
-#endif // ZAPI_DS_INTERNAL_ARRAY_VARIANT_PRIVATE_H
+#endif // ZAPI_DS_INTERNAL_ARRAY_VARIANT_H
