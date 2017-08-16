@@ -28,12 +28,10 @@ var_dump(class_exists("zapi\\Address"));
 \zapi\io\print_name("wangyang");
 
 $arr = [];
-$arr[1] = "bbb";
-
-$arr[0] = "aaa";
-foreach ($arr as $item) {
-    var_dump($item);
-}
+$arr[1] = 1;
+$arr[2][1][1][3] = 2;
+//$arr[1][2] = "beijing";
+var_dump($arr);
 ?>
 --EXPECT--
 zapi v0.0.1 hello world, zapi

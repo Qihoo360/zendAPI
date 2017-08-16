@@ -220,4 +220,5 @@ TEST(ArrayVariantTest, testAccessOperator)
    array["city"] = "beijing";
    StringVariant city = array["city"];
    ASSERT_STREQ(city.getCStr(), "beijing");
+   array[11][1][3];// = "xiuxiu";
 }

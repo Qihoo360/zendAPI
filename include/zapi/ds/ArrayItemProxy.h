@@ -45,11 +45,15 @@ class ZAPI_DECL_EXPORT ArrayItemProxy final
 public:
    using KeyType = std::pair<zapi_ulong, std::shared_ptr<std::string>>;
 public:
-   ArrayItemProxy(zval *array, const KeyType &requestKey);
-   ArrayItemProxy(zval *array, const std::string &key);
-   ArrayItemProxy(zval *array, zapi_ulong index);
+   ArrayItemProxy(zval *array, const KeyType &requestKey, ArrayItemProxy *parent = nullptr);
+   ArrayItemProxy(zval *array, const std::string &key, ArrayItemProxy *parent = nullptr);
+   ArrayItemProxy(zval *array, zapi_ulong index, ArrayItemProxy *parent = nullptr);
+   ArrayItemProxy(const ArrayItemProxy &other); // shadow copy
+   ArrayItemProxy(ArrayItemProxy &&other) ZAPI_DECL_NOEXCEPT;
    ~ArrayItemProxy();
-   // operators 
+   // operators
+   ArrayItemProxy &operator =(const ArrayItemProxy &other);
+   ArrayItemProxy &operator =(ArrayItemProxy &&other) ZAPI_DECL_NOEXCEPT;
    ArrayItemProxy &operator =(const Variant &value);
    ArrayItemProxy &operator =(const NumericVariant &value);
    ArrayItemProxy &operator =(const DoubleVariant &value);
@@ -82,7 +86,8 @@ public:
    ArrayItemProxy operator [](zapi_long index);
    ArrayItemProxy operator [](const std::string &key);
 protected:
-   zval *recursiveEnsureArrayExist();
+   zval *ensureArrayExist();
+   void checkExistRecursive(bool &stop) const;
    zval *retrieveZvalPtr(bool quiet = false) const;
 protected:
    ZAPI_DECLARE_PRIVATE(ArrayItemProxy)

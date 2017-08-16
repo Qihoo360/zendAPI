@@ -35,28 +35,37 @@ using KeyType = zapi::ds::ArrayItemProxy::KeyType;
 class ArrayItemProxyPrivate
 {
 public:
-   ArrayItemProxyPrivate(zval *array, const KeyType &requestKey, ArrayItemProxy *apiPtr)
+   ArrayItemProxyPrivate(zval *array, const KeyType &requestKey, 
+                         ArrayItemProxy *apiPtr, ArrayItemProxy *parent)
       : m_requestKey(requestKey),
         m_array(array),
+        m_parent(parent),
         m_apiPtr(apiPtr)
    {}
    
-   ArrayItemProxyPrivate(zval *array, const std::string &key, ArrayItemProxy *apiPtr)
+   ArrayItemProxyPrivate(zval *array, const std::string &key, 
+                         ArrayItemProxy *apiPtr, ArrayItemProxy *parent)
       : m_requestKey(-1, std::make_shared<std::string>(key)), // -1 is very big ulong
         m_array(array),
+        m_parent(parent),
         m_apiPtr(apiPtr)
    {}
    
-   ArrayItemProxyPrivate(zval *array, zapi_ulong index, ArrayItemProxy *apiPtr)
+   ArrayItemProxyPrivate(zval *array, zapi_ulong index, 
+                         ArrayItemProxy *apiPtr, ArrayItemProxy *parent)
       : m_requestKey(index, nullptr),
         m_array(array),
+        m_parent(parent),
         m_apiPtr(apiPtr)
    {}
    
    ~ArrayItemProxyPrivate()
    {
       // here we check some things
-      if (m_needCheckRequestItem) {
+      if (m_parent) {
+         bool stop = false;
+         m_apiPtr->checkExistRecursive(stop);
+      } else if (m_needCheckRequestItem) {
          m_apiPtr->retrieveZvalPtr();
       }
    }
@@ -71,21 +80,60 @@ public:
 } // internal
 
 using zapi::ds::internal::ArrayItemProxyPrivate;
+using KeyType = zapi::ds::internal::ArrayItemProxy::KeyType;
 
-ArrayItemProxy::ArrayItemProxy(zval *array, const KeyType &requestKey)
-   : m_implPtr(new ArrayItemProxyPrivate(array, requestKey, this))
+namespace 
+{
+
+void print_key_not_exist_notice(const KeyType &key)
+{
+   if (key.second) {
+      std::string *keyStr = key.second.get();
+      zapi::notice << "Undefined offset: " << *keyStr << std::endl;
+   } else {
+      zapi::notice << "Undefined index: " << key.first << std::endl;
+   }
+}
+
+}
+
+ArrayItemProxy::ArrayItemProxy(const ArrayItemProxy &other)
+   : m_implPtr(other.m_implPtr)
 {}
 
-ArrayItemProxy::ArrayItemProxy(zval *array, const std::string &key)
-   : m_implPtr(new ArrayItemProxyPrivate(array, key, this))
+ArrayItemProxy::ArrayItemProxy(ArrayItemProxy &&other) ZAPI_DECL_NOEXCEPT
+   : m_implPtr(std::move(other.m_implPtr))
 {}
 
-ArrayItemProxy::ArrayItemProxy(zval *array, zapi_ulong index)
-   : m_implPtr(new ArrayItemProxyPrivate(array, index, this))
+ArrayItemProxy::ArrayItemProxy(zval *array, const KeyType &requestKey, ArrayItemProxy *parent)
+   : m_implPtr(new ArrayItemProxyPrivate(array, requestKey, this, parent))
+{}
+
+ArrayItemProxy::ArrayItemProxy(zval *array, const std::string &key, ArrayItemProxy *parent)
+   : m_implPtr(new ArrayItemProxyPrivate(array, key, this, parent))
+{}
+
+ArrayItemProxy::ArrayItemProxy(zval *array, zapi_ulong index, ArrayItemProxy *parent)
+   : m_implPtr(new ArrayItemProxyPrivate(array, index, this, parent))
 {}
 
 ArrayItemProxy::~ArrayItemProxy()
 {}
+
+ArrayItemProxy &ArrayItemProxy::operator =(const ArrayItemProxy &other)
+{
+   if (this != &other) {
+      m_implPtr = other.m_implPtr;
+   }
+   return *this;
+}
+
+ArrayItemProxy &ArrayItemProxy::operator =(ArrayItemProxy &&other) ZAPI_DECL_NOEXCEPT
+{
+   assert(this != &other);
+   m_implPtr = std::move(other.m_implPtr);
+   return *this;
+}
 
 ArrayItemProxy &ArrayItemProxy::operator =(const Variant &value)
 {
@@ -231,18 +279,46 @@ ArrayItemProxy::operator ArrayVariant()
 
 ArrayItemProxy ArrayItemProxy::operator [](zapi_long index)
 {
-   // we check parent item exist here
-   
+   m_implPtr->m_needCheckRequestItem = false;
+   // let most derived proxy object do check
+   return ArrayItemProxy(nullptr, index, this);
 }
 
 ArrayItemProxy ArrayItemProxy::operator [](const std::string &key)
 {
-   // we check parent item exist here
+   m_implPtr->m_needCheckRequestItem = false;
+   // let most derived proxy object do check
+   return ArrayItemProxy(nullptr, key, this);
 }
 
-zval *ArrayItemProxy::recursiveEnsureArrayExist()
+zval *ArrayItemProxy::ensureArrayExist()
 {
-   
+   zval *value = retrieveZvalPtr();
+   if (nullptr == value) {
+      
+   }
+}
+
+void ArrayItemProxy::checkExistRecursive(bool &stop) const
+{
+   if (m_implPtr->m_parent) {
+      m_implPtr->m_parent->checkExistRecursive(stop);
+      m_implPtr->m_parent = nullptr;
+   } 
+   if (!stop) {
+      // check self
+      if (!m_implPtr->m_array) {
+         print_key_not_exist_notice(m_implPtr->m_requestKey);
+         stop = true;
+      } else {
+         // check self array
+         zval *valuePtr = retrieveZvalPtr(true);
+         if (!valuePtr) {
+            print_key_not_exist_notice(m_implPtr->m_requestKey);
+            stop = true;
+         }
+      }
+   }
 }
 
 zval *ArrayItemProxy::retrieveZvalPtr(bool quiet) const
