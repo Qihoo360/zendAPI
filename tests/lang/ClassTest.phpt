@@ -27,18 +27,13 @@ var_dump(defined("zapi\\SYS_VERSION"));
 var_dump(class_exists("zapi\\Address"));
 \zapi\io\print_name("wangyang");
 
-$arr = array(
-   "xiuxiu" => "xxxxx",
-   "aa" => 0,
-   "i" => array(1, 2, 3)
-);
-var_dump($arr["xxxx"]);
-$d = $arr['i'];
-var_dump($arr);
-var_dump($d);
-$d["xxx"] = "xxx";
-var_dump($arr);
-var_dump($d);
+$arr = [];
+$arr[1] = "bbb";
+
+$arr[0] = "aaa";
+foreach ($arr as $item) {
+    var_dump($item);
+}
 ?>
 --EXPECT--
 zapi v0.0.1 hello world, zapi

@@ -17,6 +17,7 @@
 #include "zapi/ds/ArrayItemProxy.h"
 #include "zapi/ds/internal/VariantPrivate.h"
 #include <iostream>
+#include <string>
 
 namespace zapi
 {
@@ -77,9 +78,10 @@ ArrayIterator ArrayVariant::insert(zapi_ulong index, const Variant &value)
    zend_array *selfArrPtr = getZendArrayPtr();
    zval *valPtr = zend_hash_index_update(selfArrPtr, index, &temp);
    if (valPtr) {
-      return ArrayIterator(selfArrPtr, calculateIdxFromZval(valPtr));
+      HashPosition pos = calculateIdxFromZval(valPtr);
+      return ArrayIterator(selfArrPtr, &pos);
    } else {
-      return ArrayIterator(selfArrPtr, HT_INVALID_IDX);
+      return ArrayIterator(selfArrPtr, nullptr);
    }
 }
 
@@ -94,9 +96,10 @@ ArrayIterator ArrayVariant::insert(zapi_ulong index, Variant &&value)
    zend_array *selfArrPtr = getZendArrayPtr();
    zval *valPtr = zend_hash_index_update(selfArrPtr, index, &temp);
    if (valPtr) {
-      return ArrayIterator(selfArrPtr, calculateIdxFromZval(valPtr));
+      HashPosition pos = calculateIdxFromZval(valPtr);
+      return ArrayIterator(selfArrPtr, &pos);
    } else {
-      return ArrayIterator(selfArrPtr, HT_INVALID_IDX);
+      return ArrayIterator(selfArrPtr, nullptr);
    }
 }
 
@@ -110,9 +113,10 @@ ArrayIterator ArrayVariant::insert(const std::string &key, const Variant &value)
    zend_array *selfArrPtr = getZendArrayPtr();
    zval *valPtr = zend_hash_str_update(selfArrPtr, key.c_str(), key.length(), &temp);
    if (valPtr) {
-      return ArrayIterator(selfArrPtr, calculateIdxFromZval(valPtr));
+      HashPosition pos = calculateIdxFromZval(valPtr);
+      return ArrayIterator(selfArrPtr, &pos);
    } else {
-      return ArrayIterator(selfArrPtr, HT_INVALID_IDX);
+      return ArrayIterator(selfArrPtr, nullptr);
    }
 }
 
@@ -127,9 +131,10 @@ ArrayIterator ArrayVariant::insert(const std::string &key, Variant &&value)
    zend_array *selfArrPtr = getZendArrayPtr();
    zval *valPtr = zend_hash_str_update(selfArrPtr, key.c_str(), key.length(), &temp);
    if (valPtr) {
-      return ArrayIterator(selfArrPtr, calculateIdxFromZval(valPtr));
+      HashPosition pos = calculateIdxFromZval(valPtr);
+      return ArrayIterator(selfArrPtr, &pos);
    } else {
-      return ArrayIterator(selfArrPtr, HT_INVALID_IDX);
+      return ArrayIterator(selfArrPtr, nullptr);
    }
 }
 
@@ -144,9 +149,10 @@ ArrayIterator ArrayVariant::append(const Variant &value)
    zapi_long cindex = selfArrPtr->nNextFreeElement;
    zval *valPtr = zend_hash_next_index_insert(selfArrPtr, &temp);
    if (valPtr) {
-      return ArrayIterator(selfArrPtr, cindex);
+      HashPosition pos = calculateIdxFromZval(valPtr);
+      return ArrayIterator(selfArrPtr, &pos);
    } else {
-      return ArrayIterator(selfArrPtr, HT_INVALID_IDX);
+      return ArrayIterator(selfArrPtr, nullptr);
    }
 }
 
@@ -162,9 +168,10 @@ ArrayIterator ArrayVariant::append(Variant &&value)
    zapi_long cindex = selfArrPtr->nNextFreeElement;
    zval *valPtr = zend_hash_next_index_insert(selfArrPtr, &temp);
    if (valPtr) {
-      return ArrayIterator(selfArrPtr, cindex);
+      HashPosition pos = calculateIdxFromZval(valPtr);
+      return ArrayIterator(selfArrPtr, &pos);
    } else {
-      return ArrayIterator(selfArrPtr, HT_INVALID_IDX);
+      return ArrayIterator(selfArrPtr, nullptr);
    }
 }
 
@@ -207,32 +214,35 @@ Variant ArrayVariant::getValue(const std::string &key) const
 
 ArrayIterator ArrayVariant::begin() ZAPI_DECL_NOEXCEPT
 {
-   return ArrayIterator(getZendArrayPtr(), 0);
+   HashPosition pos = 0;
+   return ArrayIterator(getZendArrayPtr(), &pos);
 }
 
 ConstArrayIterator ArrayVariant::begin() const ZAPI_DECL_NOEXCEPT
 {
-   return ConstArrayIterator(getZendArrayPtr(), 0);
+   HashPosition pos = 0;
+   return ConstArrayIterator(getZendArrayPtr(), &pos);
 }
 
 ConstArrayIterator ArrayVariant::cbegin() const ZAPI_DECL_NOEXCEPT
 {
-   return ConstArrayIterator(getZendArrayPtr(), 0);
+   HashPosition pos = 0;
+   return ConstArrayIterator(getZendArrayPtr(), &pos);
 }
 
 ArrayIterator ArrayVariant::end() ZAPI_DECL_NOEXCEPT
 {
-   return ArrayIterator(getZendArrayPtr(), HT_INVALID_IDX);
+   return ArrayIterator(getZendArrayPtr(), nullptr);
 }
 
 ConstArrayIterator ArrayVariant::end() const ZAPI_DECL_NOEXCEPT
 {
-   return ConstArrayIterator(getZendArrayPtr(), HT_INVALID_IDX);
+   return ConstArrayIterator(getZendArrayPtr(), nullptr);
 }
 
 ConstArrayIterator ArrayVariant::cend() const ZAPI_DECL_NOEXCEPT
 {
-   return ConstArrayIterator(getZendArrayPtr(), HT_INVALID_IDX);
+   return ConstArrayIterator(getZendArrayPtr(), nullptr);
 }
 
 ArrayVariant::~ArrayVariant()
@@ -267,182 +277,347 @@ uint32_t ArrayVariant::calculateIdxFromZval(zval *val) const ZAPI_DECL_NOEXCEPT
 
 // iterator classes
 
-ArrayIterator::Iterator(_zend_array *array, HashPosition index)
+ArrayIterator::Iterator(_zend_array *array, HashPosition *pos)
    : m_array(array),
-     m_index(index)
+     m_isEnd(nullptr != pos ? false : true)
 {
-   ZAPI_ASSERT_X(m_array != nullptr, "zapi::ds::ArrayVariant::Iterator", "m_array can't be nullptr");
+   ZAPI_ASSERT_X(m_array != nullptr, "ArrayVariant::Iterator", "m_array can't be nullptr");
+   if (!m_isEnd) {
+      if (0 == *pos) {
+         // auto detect
+         zend_hash_internal_pointer_reset_ex(m_array, pos);
+      }
+      m_idx = zend_hash_iterator_add(m_array, *pos);
+   }
 }
 
-Variant ArrayIterator::getValue()
+ArrayIterator::Iterator(const Iterator &other)
 {
-   return zend_hash_get_current_data_ex(m_array, &m_index);
+   // manual copy if not end iterator
+   // we create a new iterator here
+   m_isEnd = other.m_isEnd;
+   m_array = other.m_array;
+   if (!m_isEnd) {
+      HashPosition otherPos = zend_hash_iterator_pos(other.m_idx, other.m_array);
+      m_idx = zend_hash_iterator_add(m_array, otherPos);
+   }
 }
 
-ArrayIterator::ZvalReference ArrayIterator::getZval()
+ArrayIterator::Iterator(Iterator &&other) ZAPI_DECL_NOEXCEPT
 {
-   zval *valPtr = zend_hash_get_current_data_ex(m_array, &m_index);
-   assert(nullptr != valPtr);
+   m_isEnd = other.m_isEnd;
+   m_array = other.m_array;
+   m_idx = other.m_idx;
+   // prevent relase iterator
+   other.m_isEnd = false;
+}
+
+ArrayIterator::~Iterator()
+{
+   if (!m_isEnd) {
+      zend_hash_iterator_del(m_idx);
+   }
+}
+
+Variant ArrayIterator::getValue() const
+{
+   return getZvalPtr();
+}
+
+ArrayIterator::ZvalReference ArrayIterator::getZval() const
+{
+   HashPosition pos = getCurrentPos();
+   zval *valPtr = zend_hash_get_current_data_ex(m_array, &pos);
+   ZAPI_ASSERT_X(valPtr != nullptr, "ArrayVariant::Iterator::getZval", "can't apply * operator on nullptr");
    return *valPtr;
 }
 
-ArrayIterator::ZvalPointer ArrayIterator::getZvalPtr()
+ArrayIterator::ZvalPointer ArrayIterator::getZvalPtr() const
 {
-   return zend_hash_get_current_data_ex(m_array, &m_index);
+   HashPosition pos = getCurrentPos();
+   return zend_hash_get_current_data_ex(m_array, &pos);
 }
 
-ArrayVariant::KeyType ArrayIterator::getKey()
+ArrayVariant::KeyType ArrayIterator::getKey() const
 {
-   
+   ZAPI_ASSERT_X(m_array != nullptr, "ArrayVariant::Iterator::getKey", "m_array can't be nullptr");
+   KeyType key;
+   zend_string *keyStr;
+   zapi_ulong index;
+   HashPosition pos = getCurrentPos();
+   int keyType = zend_hash_get_current_key_ex(m_array, &keyStr, &index, &pos);
+   ZAPI_ASSERT_X(keyType != HASH_KEY_NON_EXISTENT, "ArrayVariant::Iterator::getKey", "Key can't not exist");
+   if (HASH_KEY_IS_STRING == keyType) {
+      key.second.reset(new std::string(ZSTR_VAL(keyStr), ZSTR_LEN(keyStr))); 
+   } else {
+      key.first = index;
+   }
+   return key;
+}
+
+HashPosition ArrayIterator::getCurrentPos() const
+{
+   if (m_isEnd) {
+      return HT_INVALID_IDX;
+   }
+   return zend_hash_iterator_pos(m_idx, m_array);
 }
 
 // operators
 ArrayIterator::ZvalReference ArrayIterator::operator *()
 {
-   
+   return getZval();
 }
 
 ArrayIterator::ZvalPointer ArrayIterator::operator->()
 {
-   
+   return getZvalPtr();
 }
 
-bool ArrayIterator::operator ==(const Iterator &other)
+ArrayIterator &ArrayIterator::operator =(const ArrayIterator &other)
 {
-   
+   if (this != &other) {
+      m_array = other.m_array;
+      if (!other.m_isEnd && m_isEnd) {
+         m_isEnd = false;
+         HashPosition otherPos = zend_hash_iterator_pos(other.m_idx, other.m_array);
+         m_idx = zend_hash_iterator_add(m_array, otherPos);
+      } else if (!other.m_isEnd && !m_isEnd) {
+         EG(ht_iterators)[m_idx].pos = zend_hash_iterator_pos(other.m_idx, other.m_array);
+         EG(ht_iterators)[m_idx].ht = other.m_array;
+      } else if (other.m_isEnd && !m_isEnd) {
+         m_isEnd = true;
+         zend_hash_iterator_del(m_idx);
+         m_idx = -1;
+      }
+   }
+   return *this;
 }
 
-bool ArrayIterator::operator !=(const Iterator &other)
+ArrayIterator &ArrayIterator::operator =(ArrayIterator &&other) ZAPI_DECL_NOEXCEPT
 {
-   
+   assert(this != &other);
+   m_array = other.m_array;
+   if (!other.m_isEnd && m_isEnd) {
+      std::swap(m_isEnd, other.m_isEnd);
+      std::swap(m_idx, other.m_idx);
+   } else if (!other.m_isEnd && !m_isEnd) {
+      EG(ht_iterators)[m_idx].pos = zend_hash_iterator_pos(other.m_idx, other.m_array);
+      EG(ht_iterators)[m_idx].ht = other.m_array;
+   } else if (other.m_isEnd && !m_isEnd) {
+      std::swap(m_isEnd, other.m_isEnd);
+      std::swap(m_idx, other.m_idx);
+   }
+   return *this;
+}
+
+bool ArrayIterator::operator ==(const ArrayIterator &other)
+{
+   return m_array == other.m_array &&
+         getCurrentPos() == other.getCurrentPos();
+}
+
+bool ArrayIterator::operator !=(const ArrayIterator &other)
+{
+   return m_array != other.m_array ||
+         getCurrentPos() != other.getCurrentPos();
 }
 
 ArrayIterator &ArrayIterator::operator ++()
 {
-   
+   ZAPI_ASSERT_X(m_array != nullptr, "ArrayVariant::Iterator", "m_array can't be nullptr");
+   HashPosition pos = getCurrentPos();
+   int result = zend_hash_move_forward_ex(m_array, &pos);
+   ZAPI_ASSERT_X(result == ZAPI_SUCCESS, "ArrayVariant::Iterator", "Iterating beyond end()");
+   EG(ht_iterators)[m_idx].pos = pos;
+   return *this;
 }
 
 ArrayIterator ArrayIterator::operator ++(int)
 {
-   
+   ArrayIterator iter = *this;
+   ZAPI_ASSERT_X(m_array != nullptr, "ArrayVariant::Iterator", "m_array can't be nullptr");
+   HashPosition pos = getCurrentPos();
+   int result = zend_hash_move_forward_ex(m_array, &pos);
+   ZAPI_ASSERT_X(result == ZAPI_SUCCESS, "ArrayVariant::Iterator", "Iterating beyond end()");
+   EG(ht_iterators)[m_idx].pos = pos;
+   return iter;
 }
 
 ArrayIterator &ArrayIterator::operator --()
 {
-   
+   ZAPI_ASSERT_X(m_array != nullptr, "ArrayVariant::Iterator", "m_array can't be nullptr");
+   HashPosition pos = getCurrentPos();
+   int result = zend_hash_move_backwards_ex(m_array, &pos);
+   ZAPI_ASSERT_X(result == ZAPI_SUCCESS, "ArrayVariant::Iterator", "Iterating beyond end()");
+   EG(ht_iterators)[m_idx].pos = pos;
+   return *this;
 }
 
 ArrayIterator ArrayIterator::operator --(int)
 {
-   
+   ArrayIterator iter = *this;
+   ZAPI_ASSERT_X(m_array != nullptr, "ArrayVariant::Iterator", "m_array can't be nullptr");
+   HashPosition pos = getCurrentPos();
+   int result = zend_hash_move_backwards_ex(m_array, &pos);
+   ZAPI_ASSERT_X(result == ZAPI_SUCCESS, "ArrayVariant::Iterator", "Iterating beyond end()");
+   EG(ht_iterators)[m_idx].pos = pos;
+   return iter;
 }
 
 ArrayIterator ArrayIterator::operator +(int32_t step) const
 {
-   
+   Iterator iter = *this;
+   if (step > 0) {
+      while (step--) {
+         ++iter;
+      }
+   } else {
+      while (step++) {
+         --iter;
+      }
+   }
+   return iter;
 }
 
 ArrayIterator ArrayIterator::operator -(int32_t step) const
 {
-   
+   return operator +(-step);
 }
 
 ArrayIterator &ArrayIterator::operator +=(int32_t step)
 {
-   
+   *this = *this + step;
+   return *this;
 }
 
 ArrayIterator &ArrayIterator::operator -=(int32_t step)
 {
-   
+   *this = *this - step;
+   return *this;
 }
 
-ConstArrayIterator::ConstIterator(_zend_array *array, HashPosition index)
-   : m_array(array),
-     m_index(index)
-{
-   ZAPI_ASSERT_X(m_array != nullptr, "zapi::ds::ArrayVariant::Iterator", "m_array can't be nullptr");
-}
+ConstArrayIterator::ConstIterator(_zend_array *array, HashPosition *pos)
+   : Iterator(array, pos)
+{}
+
+ConstArrayIterator::ConstIterator(const ConstIterator &other)
+   : Iterator(other)
+{}
+
+ConstArrayIterator::ConstIterator(ConstIterator &&other) ZAPI_DECL_NOEXCEPT
+   : Iterator(other)
+{}
+
+ConstArrayIterator::~ConstIterator()
+{}
 
 const Variant ConstArrayIterator::getValue() const
 {
-   
+   return Iterator::getZvalPtr();
 }
 
 ConstArrayIterator::ZvalReference ConstArrayIterator::getZval() const
 {
-   
+   return Iterator::getZval();
 }
 
 ConstArrayIterator::ZvalPointer ConstArrayIterator::getZvalPtr() const
 {
-   
+   return Iterator::getZvalPtr();
 }
 
 const ArrayVariant::KeyType ConstArrayIterator::getKey() const
 {
-   
+   return Iterator::getKey();
 }
 
 // operators
-const zval &ConstArrayIterator::operator *()
+ConstArrayIterator &ConstArrayIterator::operator =(const ConstArrayIterator &other)
 {
-   
+   if (this != &other) {
+      Iterator::operator =(other);
+   }
+   return *this;
 }
 
-zval *ConstArrayIterator::operator->()
+ConstArrayIterator &ConstArrayIterator::operator =(ConstArrayIterator &&other) ZAPI_DECL_NOEXCEPT
 {
-   
+   assert(this != &other);
+   Iterator::operator =(std::move(other));
+   return *this;
 }
 
-bool ConstArrayIterator::operator ==(const Iterator &other) const
+ConstArrayIterator::ZvalReference ConstArrayIterator::operator *()
 {
-   
+   return getZval();
 }
 
-bool ConstArrayIterator::operator !=(const Iterator &other) const
+ConstArrayIterator::ZvalPointer ConstArrayIterator::operator->()
 {
-   
+   return getZvalPtr();
+}
+
+bool ConstArrayIterator::operator ==(const ConstIterator &other) const
+{
+   return m_array == other.m_array &&
+         getCurrentPos() == other.getCurrentPos();
+}
+
+bool ConstArrayIterator::operator !=(const ConstIterator &other) const
+{
+   return m_array != other.m_array ||
+         getCurrentPos() != other.getCurrentPos();
 }
 
 ConstArrayIterator &ConstArrayIterator::operator ++()
 {
-   
+   Iterator::operator ++();
+   return *this;
 }
 
 ConstArrayIterator ConstArrayIterator::operator ++(int)
 {
-   
+   ConstIterator iter = *this;
+   Iterator::operator ++(1);
+   return iter;
 }
 
 ConstArrayIterator &ConstArrayIterator::operator --()
 {
-   
+   Iterator::operator --();
+   return *this;
 }
 
 ConstArrayIterator ConstArrayIterator::operator --(int)
 {
-   
+   ConstIterator iter = *this;
+   Iterator::operator --(1);
+   return iter;
 }
 
 ConstArrayIterator ConstArrayIterator::operator +(int32_t step) const
 {
-   
+   Iterator::operator +(step);
+   return *this;
 }
 
 ConstArrayIterator ConstArrayIterator::operator -(int32_t step) const
 {
-   
+   Iterator::operator -(step);
+   return *this;
 }
 
 ConstArrayIterator &ConstArrayIterator::operator +=(int32_t step)
 {
-   
+   Iterator::operator +=(step);
+   return *this;
 }
 
 ConstArrayIterator &ConstArrayIterator::operator -=(int32_t step)
 {
-   
+   Iterator::operator -=(step);
+   return *this;
 }
 
 } // ds

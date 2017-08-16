@@ -52,7 +52,7 @@ TEST(ArrayVariantTest, testAppend)
    ASSERT_EQ(num.toLong(), 1);
    ASSERT_STREQ(str.getCStr(), "zapi");
    ASSERT_EQ(str.getRefCount(), 2);
-   //std::cout << str << std::endl;
+   std::cout << str << std::endl;
 }
 
 TEST(ArrayVariantTest, testInsert)
@@ -79,4 +79,123 @@ TEST(ArrayVariantTest, testInsert)
    ASSERT_STREQ(name.getCStr(), "zzu_softboy");
    ASSERT_STREQ(Z_STRVAL_P(iter.getZvalPtr()), "zzu_softboy");
    ASSERT_STREQ(StringVariant(iter.getValue()).getCStr(), "zzu_softboy");
+   array.insert(0, "xiuxiu");
+   iter = array.begin();
+   // array keep insert order
+   ASSERT_STREQ(StringVariant(iter.getZvalPtr()).getCStr(), "zzu_softboy");
+}
+
+TEST(ArrayVariantTest, testIterators)
+{
+   ArrayVariant array;
+   array.append(1);
+   array.append("zapi");
+   array.append("zzu_softboy");
+   array.append("aaa");
+   array.append("bbb");
+   array.append("ccc");
+   ArrayVariant::Iterator iter = array.begin();
+   ArrayVariant::ConstIterator citer = array.cbegin();
+   zval &item1 = iter.getZval();
+   ASSERT_EQ(Z_LVAL(item1), 1);
+   const zval &citem1 = citer.getZval();
+   ASSERT_EQ(Z_LVAL(item1), 1);
+   // Z_LVAL(citem1) = 123; compile error
+   Z_LVAL(item1) = 123;
+   ASSERT_EQ(Z_LVAL(citem1), 123);
+   // iterator ++ operators
+   iter++;
+   ASSERT_STREQ(Z_STRVAL_P(iter.getZvalPtr()), "zapi");
+   iter += 2;
+   ASSERT_STREQ(Z_STRVAL_P(iter.getZvalPtr()), "aaa");
+   iter += -2;
+   ASSERT_STREQ(Z_STRVAL_P(iter.getZvalPtr()), "zapi");
+   iter += 2;
+   ASSERT_STREQ(Z_STRVAL_P(iter.getZvalPtr()), "aaa");
+   iter -= 2;
+   ASSERT_STREQ(Z_STRVAL_P(iter.getZvalPtr()), "zapi");
+   iter++;
+   ASSERT_STREQ(Z_STRVAL_P(iter.getZvalPtr()), "zzu_softboy");
+   iter--;
+   ASSERT_STREQ(Z_STRVAL_P(iter.getZvalPtr()), "zapi");
+   iter--;
+   
+   ++iter;
+   ASSERT_STREQ(Z_STRVAL_P(iter.getZvalPtr()), "zapi");
+   iter += 2;
+   ASSERT_STREQ(Z_STRVAL_P(iter.getZvalPtr()), "aaa");
+   iter += -2;
+   ASSERT_STREQ(Z_STRVAL_P(iter.getZvalPtr()), "zapi");
+   iter += 2;
+   ASSERT_STREQ(Z_STRVAL_P(iter.getZvalPtr()), "aaa");
+   iter -= 2;
+   ASSERT_STREQ(Z_STRVAL_P(iter.getZvalPtr()), "zapi");
+   ++iter;
+   ASSERT_STREQ(Z_STRVAL_P(iter.getZvalPtr()), "zzu_softboy");
+   --iter;
+   ASSERT_STREQ(Z_STRVAL_P(iter.getZvalPtr()), "zapi");
+   
+   ArrayVariant::Iterator preIter = iter++;
+   ASSERT_STREQ(Z_STRVAL_P(preIter.getZvalPtr()), "zapi");
+   ASSERT_STREQ(Z_STRVAL_P(iter.getZvalPtr()), "zzu_softboy");
+   
+   preIter = ++iter;
+   ASSERT_STREQ(Z_STRVAL_P(preIter.getZvalPtr()), "aaa");
+   ASSERT_STREQ(Z_STRVAL_P(iter.getZvalPtr()), "aaa");
+   
+   preIter = iter--;
+   ASSERT_STREQ(Z_STRVAL_P(preIter.getZvalPtr()), "aaa");
+   ASSERT_STREQ(Z_STRVAL_P(iter.getZvalPtr()), "zzu_softboy");
+   
+   preIter = --iter;
+   ASSERT_STREQ(Z_STRVAL_P(preIter.getZvalPtr()), "zapi");
+   ASSERT_STREQ(Z_STRVAL_P(iter.getZvalPtr()), "zapi");
+   
+   // const
+   citer++;
+   ASSERT_STREQ(Z_STRVAL_P(citer.getZvalPtr()), "zapi");
+   citer += 2;
+   ASSERT_STREQ(Z_STRVAL_P(citer.getZvalPtr()), "aaa");
+   citer += -2;
+   ASSERT_STREQ(Z_STRVAL_P(citer.getZvalPtr()), "zapi");
+   citer += 2;
+   ASSERT_STREQ(Z_STRVAL_P(citer.getZvalPtr()), "aaa");
+   citer -= 2;
+   ASSERT_STREQ(Z_STRVAL_P(citer.getZvalPtr()), "zapi");
+   citer++;
+   ASSERT_STREQ(Z_STRVAL_P(citer.getZvalPtr()), "zzu_softboy");
+   citer--;
+   ASSERT_STREQ(Z_STRVAL_P(citer.getZvalPtr()), "zapi");
+   citer--;
+   
+   ++citer;
+   ASSERT_STREQ(Z_STRVAL_P(citer.getZvalPtr()), "zapi");
+   citer += 2;
+   ASSERT_STREQ(Z_STRVAL_P(citer.getZvalPtr()), "aaa");
+   citer += -2;
+   ASSERT_STREQ(Z_STRVAL_P(citer.getZvalPtr()), "zapi");
+   citer += 2;
+   ASSERT_STREQ(Z_STRVAL_P(citer.getZvalPtr()), "aaa");
+   citer -= 2;
+   ASSERT_STREQ(Z_STRVAL_P(citer.getZvalPtr()), "zapi");
+   ++citer;
+   ASSERT_STREQ(Z_STRVAL_P(citer.getZvalPtr()), "zzu_softboy");
+   --citer;
+   ASSERT_STREQ(Z_STRVAL_P(citer.getZvalPtr()), "zapi");
+   
+   ArrayVariant::ConstIterator preciter = citer++;
+   ASSERT_STREQ(Z_STRVAL_P(preciter.getZvalPtr()), "zapi");
+   ASSERT_STREQ(Z_STRVAL_P(citer.getZvalPtr()), "zzu_softboy");
+   
+   preciter = ++citer;
+   ASSERT_STREQ(Z_STRVAL_P(preciter.getZvalPtr()), "aaa");
+   ASSERT_STREQ(Z_STRVAL_P(citer.getZvalPtr()), "aaa");
+   
+   preciter = citer--;
+   ASSERT_STREQ(Z_STRVAL_P(preciter.getZvalPtr()), "aaa");
+   ASSERT_STREQ(Z_STRVAL_P(citer.getZvalPtr()), "zzu_softboy");
+   
+   preciter = --citer;
+   ASSERT_STREQ(Z_STRVAL_P(preciter.getZvalPtr()), "zapi");
+   ASSERT_STREQ(Z_STRVAL_P(citer.getZvalPtr()), "zapi");
 }

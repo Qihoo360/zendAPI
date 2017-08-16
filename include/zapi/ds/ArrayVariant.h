@@ -38,7 +38,7 @@ class ZAPI_DECL_EXPORT ArrayVariant : public Variant
 public:
    using IndexType = uint32_t;
    using SizeType = uint32_t;
-   using KeyType = std::pair<zapi_ulong, std::string>;
+   using KeyType = std::pair<zapi_ulong, std::shared_ptr<std::string>>;
    using DifferenceType = zapi_ptrdiff;
    using ValueType = Variant;
    // forward declare
@@ -96,18 +96,23 @@ public:
    class Iterator
    {
    public:
-      using IteratorCategory = std::bidirectional_iterator_tag ;
+      using IteratorCategory = std::bidirectional_iterator_tag;
       using DifferenceType = zapi_ptrdiff;
       using ValueType = Variant;
       using ZvalPointer = zval *;
       using ZvalReference = zval &;
    public:
-      Iterator(_zend_array *array, HashPosition index);
-      Variant getValue();
-      ZvalReference getZval();
-      ZvalPointer getZvalPtr();
-      KeyType getKey();
+      Iterator(const Iterator &other);
+      Iterator(Iterator &&other) ZAPI_DECL_NOEXCEPT;
+      ~Iterator();
+      Variant getValue() const;
+      ZvalReference getZval() const;
+      ZvalPointer getZvalPtr() const;
+      KeyType getKey() const;
+      HashPosition getCurrentPos() const;
       // operators
+      Iterator &operator =(const Iterator &other);
+      Iterator &operator =(Iterator &&other) ZAPI_DECL_NOEXCEPT;
       ZvalReference operator *();
       ZvalPointer operator->();
       bool operator ==(const Iterator &other);
@@ -121,29 +126,37 @@ public:
       Iterator &operator +=(int32_t step);
       Iterator &operator -=(int32_t step);
    protected:
-      HashPosition m_index;
+      Iterator(_zend_array *array, HashPosition *pos = nullptr);
+   protected:
+      friend class ArrayVariant;
       _zend_array *m_array;
+      uint32_t m_idx = -1; // invalid idx
+      bool m_isEnd;
    };
    
-   class ConstIterator
+   class ConstIterator : public Iterator
    {
    public:
-      using IteratorCategory = std::bidirectional_iterator_tag ;
+      using IteratorCategory = std::bidirectional_iterator_tag;
       using DifferenceType = zapi_ptrdiff;
       using ValueType = Variant;
       using ZvalPointer = const zval *;
       using ZvalReference = const zval &;
    public:
-      ConstIterator(_zend_array *array, HashPosition index);
+      ConstIterator(const ConstIterator &other);
+      ConstIterator(ConstIterator &&other) ZAPI_DECL_NOEXCEPT;
+      ~ConstIterator();
       const Variant getValue() const;
       ZvalReference getZval() const;
       ZvalPointer getZvalPtr() const;
       const KeyType getKey() const;
       // operators
-      const zval &operator *();
-      zval *operator->();
-      bool operator ==(const Iterator &other) const;
-      bool operator !=(const Iterator &other) const;
+      ConstIterator &operator =(const ConstIterator &other);
+      ConstIterator &operator =(ConstIterator &&other) ZAPI_DECL_NOEXCEPT;
+      ZvalReference operator *();
+      ZvalPointer operator->();
+      bool operator ==(const ConstIterator &other) const;
+      bool operator !=(const ConstIterator &other) const;
       ConstIterator &operator ++();
       ConstIterator operator ++(int);
       ConstIterator &operator --();
@@ -153,8 +166,9 @@ public:
       ConstIterator &operator +=(int32_t step);
       ConstIterator &operator -=(int32_t step);
    protected:
-      HashPosition m_index;
-      _zend_array *m_array;
+      ConstIterator(_zend_array *array, HashPosition *pos = nullptr);
+   protected:
+      friend class ArrayVariant;
    };
    
 protected:
