@@ -21,17 +21,26 @@
 namespace zapi
 {
 
+// forward declare with namespace
+namespace ds
+{
+class ArrayItemProxy;
+} // ds
+
 // here we define some php function that can been used in c++ space
 
-static inline bridge::IniValue ini_get(const char *name) 
+ZAPI_DECL_EXPORT inline bridge::IniValue ini_get(const char *name) 
 {
    return bridge::IniValue(name, false);
 }
 
-static inline bridge::IniValue ini_get_orig(const char *name)
+ZAPI_DECL_EXPORT inline bridge::IniValue ini_get_orig(const char *name)
 {
    return bridge::IniValue(name, true);
 }
+
+ZAPI_DECL_EXPORT bool array_unset(zapi::ds::ArrayItemProxy &&arrayItem);
+ZAPI_DECL_EXPORT bool array_isset(zapi::ds::ArrayItemProxy &&arrayItem);
 
 } // zapi
 

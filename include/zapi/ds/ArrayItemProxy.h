@@ -20,6 +20,15 @@
 
 namespace zapi
 {
+
+namespace ds
+{
+class ArrayItemProxy;
+} // ds
+
+extern bool array_unset(ds::ArrayItemProxy &&arrayItem);
+extern bool array_isset(ds::ArrayItemProxy &&arrayItem);
+
 namespace ds
 {
 
@@ -36,7 +45,6 @@ class DoubleVariant;
 class StringVariant;
 class BoolVariant;
 class ArrayVariant;
-
 using internal::ArrayItemProxyPrivate;
 using zapi::lang::Type;
 
@@ -89,9 +97,12 @@ protected:
    void ensureArrayExistRecusive(zval *&childArrayPtr, const KeyType &childRequestKey,
                                  ArrayItemProxy *mostDerivedProxy);
    void checkExistRecursive(bool &stop, zval *&checkExistRecursive, 
-                            ArrayItemProxy *mostDerivedProxy) const;
+                            ArrayItemProxy *mostDerivedProxy, bool quiet = false);
+   bool isKeychianOk(bool quiet = false);
    zval *retrieveZvalPtr(bool quiet = false) const;
 protected:
+   friend bool zapi::array_unset(ArrayItemProxy &&arrayItem);
+   friend bool zapi::array_isset(ds::ArrayItemProxy &&arrayItem);
    ZAPI_DECLARE_PRIVATE(ArrayItemProxy)
    std::shared_ptr<ArrayItemProxyPrivate> m_implPtr;
 };

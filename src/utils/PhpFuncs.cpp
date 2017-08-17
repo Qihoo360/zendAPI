@@ -13,14 +13,46 @@
 //
 // Created by zzu_softboy on 2017/08/10.
 
-#include "zapi/utils/CommonFuncs.h"
+#include "zapi/utils/PhpFuncs.h"
+#include "zapi/ds/ArrayItemProxy.h"
+#include "zapi/ds/internal/ArrayItemProxyPrivate.h"
+#include <string>
 
 namespace zapi
 {
-namespace utils
+
+using zapi::ds::ArrayItemProxy;
+using zapi::ds::internal::ArrayItemProxyPrivate;
+
+bool array_unset(ArrayItemProxy &&arrayItem)
 {
+   // here we use the pointer to remove
+   ArrayItemProxy::KeyType requestKey = arrayItem.m_implPtr->m_requestKey;
+   zval *array = arrayItem.m_implPtr->m_array;
+   int ret;
+   if (requestKey.second) {
+      std::string *key = requestKey.second.get();
+      ret = zend_hash_str_del(Z_ARRVAL_P(array), key->c_str(), key->length());
+   } else {
+      ret = zend_hash_index_del(Z_ARRVAL_P(array), requestKey.first);
+   }
+   return ret == ZAPI_SUCCESS;
+}
 
+bool array_isset(ArrayItemProxy &&arrayItem)
+{
+   bool exist = false;
+   if (arrayItem.m_implPtr->m_parent) {
+      bool stop = false;
+      arrayItem.checkExistRecursive(stop, arrayItem.m_implPtr->m_array, 
+                                    arrayItem.m_implPtr->m_apiPtr, true);
+      exist = !stop;
+   } else {
+      exist = nullptr != arrayItem.retrieveZvalPtr(true);
+   }
+   arrayItem.m_implPtr->m_array = nullptr;
+   arrayItem.m_implPtr->m_needCheckRequestItem = false;
+   return exist;
+}
 
-
-} // utils
 } // zapi

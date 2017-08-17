@@ -21,6 +21,7 @@
 #include "zapi/ds/DoubleVariant.h"
 #include "zapi/ds/StringVariant.h"
 #include "zapi/ds/BoolVariant.h"
+#include "zapi/utils/PhpFuncs.h"
 
 using zapi::ds::ArrayVariant;
 using zapi::ds::Variant;
@@ -133,6 +134,69 @@ TEST(ArrayVariantTest,testRemove)
    ASSERT_TRUE(array.remove(0));
    ASSERT_TRUE(array.remove("name"));
    ASSERT_EQ(array.getSize(), 0);
+}
+
+//TEST(ArrayVariantTest, testUnset)
+//{
+////   ArrayVariant array;
+////   array.insert("name", "zapi");
+////   array.insert("address", "beijing");
+////   zapi::array_unset(array["name"]);
+////   array[1][2][3][4][5][6] = "zapi";
+////   array[1][2][3][4][5]["info"] = "cloud";
+////   zapi::array_unset(array[1][2][3][4][5][6]);
+////   zapi::array_unset(array[1][2][3][4][5]["info"]);
+//}
+
+TEST(ArrayVariantTest, testIsset)
+{
+   ArrayVariant array;
+   array.insert("name", "zapi");
+   array.insert("age", 123);
+   array[1][2][3][4][5][6] = "zapi";
+   array[1][2][3][4][5]["info"] = "cloud";
+   //std::cout << str << std::endl;
+   ASSERT_FALSE(zapi::array_isset(array[9][2][3][4][5][7]));
+   ASSERT_TRUE(zapi::array_isset(array[1][2][3][4][5]["info"]));
+}
+
+TEST(ArrayVariantTest, testCastOperators)
+{
+   ArrayVariant array;
+   array.insert("name", "zapi");
+   array.insert("age", 123);
+   array[1][2][3][4][5][6] = "zapi";
+   array[1][2][3][4][5]["info"] = "cloud";
+   array[1][2][3]["name"][5]["info"] = "zzu_softboy";
+   array[1][2][3][4][5][5] = true;
+   array[1][2][3][4][5][4] = 3.14;
+   
+   ASSERT_THROW(StringVariant str = array[2], std::bad_cast);
+   ASSERT_THROW(NumericVariant num = array[2], std::bad_cast);
+   ASSERT_THROW(DoubleVariant dnum = array[2], std::bad_cast);
+   ASSERT_THROW(BoolVariant bval = array[2], std::bad_cast);
+   ASSERT_THROW(Variant var = array[2], std::bad_cast);
+   ASSERT_THROW(StringVariant str = array[2][3], std::bad_cast);
+   ASSERT_THROW(NumericVariant num = array[2][3], std::bad_cast);
+   ASSERT_THROW(DoubleVariant dnum = array[2][3], std::bad_cast);
+   ASSERT_THROW(BoolVariant bval = array[2][3], std::bad_cast);
+   ASSERT_THROW(Variant var = array[2][3], std::bad_cast);
+   
+   ASSERT_THROW(StringVariant str = array["key"], std::bad_cast);
+   ASSERT_THROW(NumericVariant num = array["key"], std::bad_cast);
+   ASSERT_THROW(DoubleVariant dnum = array["key"], std::bad_cast);
+   ASSERT_THROW(BoolVariant bval = array["key"], std::bad_cast);
+   ASSERT_THROW(Variant var = array["key"], std::bad_cast);
+   ASSERT_THROW(StringVariant str = array["key"][3]["key2"], std::bad_cast);
+   ASSERT_THROW(NumericVariant num = array["key"][3]["key2"], std::bad_cast);
+   ASSERT_THROW(DoubleVariant dnum = array["key"][3]["key2"], std::bad_cast);
+   ASSERT_THROW(BoolVariant bval = array["key"][3]["key2"], std::bad_cast);
+   ASSERT_THROW(Variant var = array["key"][3]["key2"], std::bad_cast);
+   
+   StringVariant str = array[1][2][3][4][5][6];
+   ASSERT_STREQ(str.getCStr(), "zapi");
+//   str = array[1][2][3][4][5]["info"];
+   ASSERT_STREQ(str.getCStr(), "cloud");
 }
 
 TEST(ArrayVariantTest, testGetNextInertIndex)

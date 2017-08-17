@@ -15,6 +15,7 @@
 
 #include "zapi/ds/ArrayVariant.h"
 #include "zapi/ds/ArrayItemProxy.h"
+#include "zapi/ds/internal/ArrayItemProxyPrivate.h"
 #include "zapi/ds/NumericVariant.h"
 #include "zapi/ds/DoubleVariant.h"
 #include "zapi/ds/StringVariant.h"
@@ -22,66 +23,15 @@
 #include "zapi/utils/CommonFuncs.h"
 #include <iostream>
 #include <string>
+#include <typeinfo>
 
 namespace zapi
 {
 namespace ds
 {
 
-namespace internal
-{
-using zapi::ds::ArrayItemProxy;
-using zapi::ds::ArrayVariant;
-using KeyType = zapi::ds::ArrayItemProxy::KeyType;
-class ArrayItemProxyPrivate
-{
-public:
-   ArrayItemProxyPrivate(zval *array, const KeyType &requestKey, 
-                         ArrayItemProxy *apiPtr, ArrayItemProxy *parent)
-      : m_requestKey(requestKey),
-        m_array(array),
-        m_parent(parent),
-        m_apiPtr(apiPtr)
-   {}
-   
-   ArrayItemProxyPrivate(zval *array, const std::string &key, 
-                         ArrayItemProxy *apiPtr, ArrayItemProxy *parent)
-      : m_requestKey(-1, std::make_shared<std::string>(key)), // -1 is very big ulong
-        m_array(array),
-        m_parent(parent),
-        m_apiPtr(apiPtr)
-   {}
-   
-   ArrayItemProxyPrivate(zval *array, zapi_ulong index, 
-                         ArrayItemProxy *apiPtr, ArrayItemProxy *parent)
-      : m_requestKey(index, nullptr),
-        m_array(array),
-        m_parent(parent),
-        m_apiPtr(apiPtr)
-   {}
-   
-   ~ArrayItemProxyPrivate()
-   {
-      // here we check some things
-      if (m_parent) {
-         bool stop = false;
-         m_apiPtr->checkExistRecursive(stop, m_array, m_apiPtr);
-      } else if (m_needCheckRequestItem) {
-         m_apiPtr->retrieveZvalPtr();
-      }
-   }
-   ZAPI_DECLARE_PUBLIC(ArrayItemProxy)
-   ArrayItemProxy::KeyType m_requestKey;
-   zval *m_array;
-   bool m_needCheckRequestItem = true;
-   ArrayItemProxy *m_parent = nullptr;
-   ArrayItemProxy *m_apiPtr;
-};
-
-} // internal
-
 using zapi::ds::internal::ArrayItemProxyPrivate;
-using KeyType = zapi::ds::internal::ArrayItemProxy::KeyType;
+using KeyType = zapi::ds::ArrayItemProxy::KeyType;
 
 namespace 
 {
@@ -250,8 +200,9 @@ ArrayItemProxy &ArrayItemProxy::operator =(const std::string &value)
 
 ArrayItemProxy::operator NumericVariant()
 {
-   bool stop = false;
-   checkExistRecursive(stop, m_implPtr->m_array, this);
+   if (!isKeychianOk(false)) {
+      throw std::bad_cast();
+   }
    Variant value(retrieveZvalPtr());
    m_implPtr->m_needCheckRequestItem = false;
    Type type = value.getType();
@@ -264,8 +215,9 @@ ArrayItemProxy::operator NumericVariant()
 
 ArrayItemProxy::operator DoubleVariant()
 {
-   bool stop = false;
-   checkExistRecursive(stop, m_implPtr->m_array, this);
+   if (!isKeychianOk(false)) {
+      throw std::bad_cast();
+   }
    Variant value(retrieveZvalPtr());
    m_implPtr->m_needCheckRequestItem = false;
    Type type = value.getType();
@@ -278,8 +230,9 @@ ArrayItemProxy::operator DoubleVariant()
 
 ArrayItemProxy::operator Variant()
 {
-   bool stop = false;
-   checkExistRecursive(stop, m_implPtr->m_array, this);
+   if (!isKeychianOk(false)) {
+      throw std::bad_cast();
+   }
    zval *value = retrieveZvalPtr();
    m_implPtr->m_needCheckRequestItem = false;
    return Variant(value);
@@ -287,8 +240,9 @@ ArrayItemProxy::operator Variant()
 
 ArrayItemProxy::operator StringVariant()
 {
-   bool stop = false;
-   checkExistRecursive(stop, m_implPtr->m_array, this);
+   if (!isKeychianOk(false)) {
+      throw std::bad_cast();
+   }
    Variant value(retrieveZvalPtr());
    m_implPtr->m_needCheckRequestItem = false;
    Type type = value.getType();
@@ -302,6 +256,9 @@ ArrayItemProxy::operator StringVariant()
 
 ArrayItemProxy::operator BoolVariant()
 {
+   if (!isKeychianOk(false)) {
+      throw std::bad_cast();
+   }
    Variant value(retrieveZvalPtr());
    m_implPtr->m_needCheckRequestItem = false;
    return BoolVariant(std::move(value));
@@ -309,6 +266,9 @@ ArrayItemProxy::operator BoolVariant()
 
 ArrayItemProxy::operator ArrayVariant()
 {
+   if (!isKeychianOk(false)) {
+      throw std::bad_cast();
+   }
    return ArrayVariant();
 }
 
@@ -364,28 +324,48 @@ void ArrayItemProxy::ensureArrayExistRecusive(zval *&childArrayPtr,const KeyType
    }
 }
 
-void ArrayItemProxy::checkExistRecursive(bool &stop, zval *&childArrayPtr, ArrayItemProxy *mostDerivedProxy) const
+void ArrayItemProxy::checkExistRecursive(bool &stop, zval *&childArrayPtr, ArrayItemProxy *mostDerivedProxy,
+                                         bool quiet)
 {
    if (m_implPtr->m_parent) {
-      m_implPtr->m_parent->checkExistRecursive(stop, m_implPtr->m_array, mostDerivedProxy);
+      m_implPtr->m_parent->checkExistRecursive(stop, m_implPtr->m_array, mostDerivedProxy, quiet);
       m_implPtr->m_parent = nullptr;
    } 
    if (!stop) {
       // check self
       if (!m_implPtr->m_array) {
-         print_key_not_exist_notice(m_implPtr->m_requestKey);
+         if (!quiet) {
+            print_key_not_exist_notice(m_implPtr->m_requestKey);
+         }
          stop = true;
       } else {
          // check self array
          zval *valuePtr = retrieveZvalPtr(true);
          if (!valuePtr) {
-            print_key_not_exist_notice(m_implPtr->m_requestKey);
+            if (!quiet) {
+               print_key_not_exist_notice(m_implPtr->m_requestKey);
+            }
             stop = true;
          } else if (this != mostDerivedProxy){
             childArrayPtr = valuePtr;
          }
       }
    }
+   m_implPtr->m_needCheckRequestItem = false;
+}
+
+bool ArrayItemProxy::isKeychianOk(bool quiet)
+{
+   bool exist = false;
+   if (m_implPtr->m_parent) {
+      bool stop = false;
+      checkExistRecursive(stop, m_implPtr->m_array, m_implPtr->m_apiPtr, quiet);
+      exist = !stop;
+   } else {
+      exist = nullptr != retrieveZvalPtr(true);
+   }
+   m_implPtr->m_needCheckRequestItem = false;
+   return exist;
 }
 
 zval *ArrayItemProxy::retrieveZvalPtr(bool quiet) const

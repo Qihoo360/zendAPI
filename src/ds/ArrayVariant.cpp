@@ -242,12 +242,12 @@ Variant ArrayVariant::getValue(const std::string &key) const
 
 bool ArrayVariant::contains(zapi_ulong index) const
 {
-   return zend_hash_index_find(getZendArrayPtr(), index) != nullptr;
+   return zend_hash_index_exists(getZendArrayPtr(), index) == 1;
 }
 
 bool ArrayVariant::contains(const std::string &key) const
 {
-   return zend_hash_str_find(getZendArrayPtr(), key.c_str(), key.length());
+   return zend_hash_str_exists(getZendArrayPtr(), key.c_str(), key.length()) == 1;
 }
 
 zapi_long ArrayVariant::getNextInsertIndex() const
