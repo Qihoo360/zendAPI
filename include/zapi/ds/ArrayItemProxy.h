@@ -86,8 +86,10 @@ public:
    ArrayItemProxy operator [](zapi_long index);
    ArrayItemProxy operator [](const std::string &key);
 protected:
-   zval *ensureArrayExist();
-   void checkExistRecursive(bool &stop) const;
+   void ensureArrayExistRecusive(zval *&childArrayPtr, const KeyType &childRequestKey,
+                                 ArrayItemProxy *mostDerivedProxy);
+   void checkExistRecursive(bool &stop, zval *&checkExistRecursive, 
+                            ArrayItemProxy *mostDerivedProxy) const;
    zval *retrieveZvalPtr(bool quiet = false) const;
 protected:
    ZAPI_DECLARE_PRIVATE(ArrayItemProxy)

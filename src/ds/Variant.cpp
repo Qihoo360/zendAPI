@@ -660,7 +660,7 @@ std::string Variant::getTypeStr() const ZAPI_DECL_NOEXCEPT
    case Type::Ptr:
       return "Pointer";
    default:
-      return "";
+      return "Unknow";
    }
 }
 

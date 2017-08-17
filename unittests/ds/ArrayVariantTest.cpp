@@ -18,6 +18,7 @@
 #include "zapi/ds/ArrayVariant.h"
 #include "zapi/ds/ArrayItemProxy.h"
 #include "zapi/ds/NumericVariant.h"
+#include "zapi/ds/DoubleVariant.h"
 #include "zapi/ds/StringVariant.h"
 #include "zapi/ds/BoolVariant.h"
 
@@ -26,6 +27,7 @@ using zapi::ds::Variant;
 using zapi::ds::NumericVariant;
 using zapi::ds::StringVariant;
 using zapi::ds::BoolVariant;
+using zapi::ds::DoubleVariant;
 
 TEST(ArrayVariantTest, testConstructor)
 {
@@ -205,20 +207,43 @@ TEST(ArrayVariantTest, testAccessOperator)
    ArrayVariant array;
    array.append(1);
    array.append("zapi");
-   array.append("zzu_softboy");
-   array.append("aaa");
-   array.append("bbb");
-   array.append("ccc");
-   StringVariant str = array[1];
-   ASSERT_STREQ(str.getCStr(), "zapi");
-   array[0] = 123;
-   NumericVariant num = array.getValue(0);
-   ASSERT_EQ(num.toLong(), 123);
-   array[10] = "unicornteam";
-   StringVariant team = array[10];
-   ASSERT_STREQ(team.getCStr(), "unicornteam");
-   array["city"] = "beijing";
-   StringVariant city = array["city"];
-   ASSERT_STREQ(city.getCStr(), "beijing");
-   array[11][1][3];// = "xiuxiu";
+   //   array.append("zzu_softboy");
+   //   array.append("aaa");
+   //   array.append("bbb");
+   //   array.append("ccc");
+   //   StringVariant str = array[1];
+   //   ASSERT_STREQ(str.getCStr(), "zapi");
+   //   array[0] = 123;
+   //   NumericVariant num = array.getValue(0);
+   //   ASSERT_EQ(num.toLong(), 123);
+   //   array[10] = "unicornteam";
+   //   StringVariant team = array[10];
+   //   ASSERT_STREQ(team.getCStr(), "unicornteam");
+   //   array["city"] = "beijing";
+   //   StringVariant city = array["city"];
+   //   ASSERT_STREQ(city.getCStr(), "beijing");
+   array[11][1][3] = "zzu_softboy";
+   StringVariant str = array[11][1][3];
+   std::cout << str << std::endl;
+   ASSERT_STREQ(str.getCStr(), "zzu_softboy");
+   array[4][5][6][7][8][9][10][11][12]["name"] = "UnicornTeam";
+   array[4][5][6][7][8][9][10][11][12]["address"] = "Qihoo360 Building";
+   array[4][5][6][7][8][9][10][11][12]["offical_site"] = "http://unicorn.360.com";
+   array[4][5][6][7][8][9][10][11][12][111] = 213;
+   array[4][5][6][7][8][9][10][11][12][112] = 3.1415926;
+   NumericVariant num = array[4][5][6][7][8][9][10][11][12][111];
+   DoubleVariant doubleNum = array[4][5][6][7][8][9][10][11][12][112];
+   StringVariant unicornTeamName = array[4][5][6][7][8][9][10][11][12]["name"];
+   StringVariant unicornTeamAddress = array[4][5][6][7][8][9][10][11][12]["address"];
+   StringVariant unicornTeamOfficalSite = array[4][5][6][7][8][9][10][11][12]["offical_site"];
+   ASSERT_STREQ(unicornTeamName.getCStr(), "UnicornTeam");
+   ASSERT_STREQ(unicornTeamAddress.getCStr(), "Qihoo360 Building");
+   ASSERT_STREQ(unicornTeamOfficalSite.getCStr(), "http://unicorn.360.com");
+   ASSERT_EQ(num.toLong(), 213);
+   ASSERT_EQ(doubleNum.toDouble(), 3.1415926);
+//   std::cout << unicornTeamName << std::endl;
+//   std::cout << unicornTeamAddress << std::endl;
+//   std::cout << unicornTeamOfficalSite << std::endl;
+//   std::cout << num << std::endl;
+//   std::cout << doubleNum << std::endl;
 }

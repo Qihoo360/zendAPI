@@ -80,5 +80,37 @@ std::string &str_tolower(std::string &str) ZAPI_DECL_NOEXCEPT
    return str;
 }
 
+std::string get_zval_type_str(const zval *valuePtr) ZAPI_DECL_NOEXCEPT
+{
+   switch (Z_TYPE_P(valuePtr)) {
+   case IS_ARRAY:
+      return "Array";
+   case IS_TRUE:
+   case IS_FALSE:
+   case _IS_BOOL:
+      return "Boolean";
+   case IS_CALLABLE:
+      return "Callable";
+   case IS_CONSTANT:
+      return "Constant";
+   case IS_DOUBLE:
+      return "Double";
+   case IS_LONG:
+      return "Numeric";
+   case IS_OBJECT:
+      return "Object";
+   case IS_REFERENCE:
+      return "Reference";
+   case IS_RESOURCE:
+      return "Resource";
+   case IS_STRING:
+      return "String";
+   case IS_PTR:
+      return "Pointer";
+   default:
+      return "Unknow";
+   }
+}
+
 } // utils
 } // zapi

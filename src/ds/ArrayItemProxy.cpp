@@ -19,6 +19,7 @@
 #include "zapi/ds/DoubleVariant.h"
 #include "zapi/ds/StringVariant.h"
 #include "zapi/ds/BoolVariant.h"
+#include "zapi/utils/CommonFuncs.h"
 #include <iostream>
 #include <string>
 
@@ -64,7 +65,7 @@ public:
       // here we check some things
       if (m_parent) {
          bool stop = false;
-         m_apiPtr->checkExistRecursive(stop);
+         m_apiPtr->checkExistRecursive(stop, m_array, m_apiPtr);
       } else if (m_needCheckRequestItem) {
          m_apiPtr->retrieveZvalPtr();
       }
@@ -92,6 +93,29 @@ void print_key_not_exist_notice(const KeyType &key)
       zapi::notice << "Undefined offset: " << *keyStr << std::endl;
    } else {
       zapi::notice << "Undefined index: " << key.first << std::endl;
+   }
+}
+
+void print_type_not_compatible_info(const zval *valPtr)
+{
+   switch (Z_TYPE_P(valPtr)) {
+   case IS_OBJECT:
+      zapi::error << "Can't use object type as array" << std::endl;
+      break;
+   case IS_STRING:
+      zapi::error << "Can't use string offset as an array" << std::endl;
+      break;
+   case IS_TRUE:
+   case IS_FALSE:
+   case _IS_BOOL:
+   case IS_DOUBLE:
+   case IS_LONG:
+      zapi::warning << "Can't use a scalar value as an array" << std::endl;
+      break;
+   default:
+      zapi::warning << "Can't use type of " << zapi::utils::get_zval_type_str(valPtr)
+                    << " as array " << std::endl;
+      break;
    }
 }
 
@@ -137,6 +161,9 @@ ArrayItemProxy &ArrayItemProxy::operator =(ArrayItemProxy &&other) ZAPI_DECL_NOE
 
 ArrayItemProxy &ArrayItemProxy::operator =(const Variant &value)
 {
+   if (!m_implPtr->m_array) {
+      ensureArrayExistRecusive(m_implPtr->m_array, m_implPtr->m_requestKey, this);
+   }
    SEPARATE_ZVAL_NOREF(m_implPtr->m_array);
    // here we don't check exist, we just insert it if not exists
    m_implPtr->m_needCheckRequestItem = false;
@@ -223,6 +250,8 @@ ArrayItemProxy &ArrayItemProxy::operator =(const std::string &value)
 
 ArrayItemProxy::operator NumericVariant()
 {
+   bool stop = false;
+   checkExistRecursive(stop, m_implPtr->m_array, this);
    Variant value(retrieveZvalPtr());
    m_implPtr->m_needCheckRequestItem = false;
    Type type = value.getType();
@@ -235,6 +264,8 @@ ArrayItemProxy::operator NumericVariant()
 
 ArrayItemProxy::operator DoubleVariant()
 {
+   bool stop = false;
+   checkExistRecursive(stop, m_implPtr->m_array, this);
    Variant value(retrieveZvalPtr());
    m_implPtr->m_needCheckRequestItem = false;
    Type type = value.getType();
@@ -247,6 +278,8 @@ ArrayItemProxy::operator DoubleVariant()
 
 ArrayItemProxy::operator Variant()
 {
+   bool stop = false;
+   checkExistRecursive(stop, m_implPtr->m_array, this);
    zval *value = retrieveZvalPtr();
    m_implPtr->m_needCheckRequestItem = false;
    return Variant(value);
@@ -254,6 +287,8 @@ ArrayItemProxy::operator Variant()
 
 ArrayItemProxy::operator StringVariant()
 {
+   bool stop = false;
+   checkExistRecursive(stop, m_implPtr->m_array, this);
    Variant value(retrieveZvalPtr());
    m_implPtr->m_needCheckRequestItem = false;
    Type type = value.getType();
@@ -291,18 +326,48 @@ ArrayItemProxy ArrayItemProxy::operator [](const std::string &key)
    return ArrayItemProxy(nullptr, key, this);
 }
 
-zval *ArrayItemProxy::ensureArrayExist()
+void ArrayItemProxy::ensureArrayExistRecusive(zval *&childArrayPtr,const KeyType &childRequestKey,
+                                              ArrayItemProxy *mostDerivedProxy)
 {
-   zval *value = retrieveZvalPtr();
-   if (nullptr == value) {
-      
+   // if a ArrayItemProxyPrivate both m_parent and m_array is 
+   // nullptr, this is a bug, let me know.
+   if (m_implPtr->m_parent) {
+      m_implPtr->m_parent->ensureArrayExistRecusive(m_implPtr->m_array, m_implPtr->m_requestKey,
+                                                    mostDerivedProxy);
+   }
+   if (this != mostDerivedProxy) {
+      // here we don't need check exist in destroy process
+      m_implPtr->m_needCheckRequestItem = false;
+      const KeyType &requestKey = m_implPtr->m_requestKey;
+      // at this point m_array must be exist
+      // when m_parent is nullptr the m_array is top array self
+      zval *val = retrieveZvalPtr(true);
+      if (nullptr == val) {
+         zval temp;
+         array_init(&temp);
+         if (requestKey.second) {
+            std::string *keyStr = requestKey.second.get();
+            // @TODO here we need check status ?
+            childArrayPtr = zend_hash_str_add(Z_ARR_P(m_implPtr->m_array), keyStr->c_str(), keyStr->length(), &temp);
+         } else {
+            childArrayPtr = zend_hash_index_add(Z_ARR_P(m_implPtr->m_array), requestKey.first, &temp);
+         }
+      } else {
+         // if request key exists and check type compatible
+         // if child request key exists we must self must be array
+         if (Z_TYPE_P(val) != IS_ARRAY) {
+            print_type_not_compatible_info(val);
+         } else {
+            childArrayPtr = val;
+         }
+      }
    }
 }
 
-void ArrayItemProxy::checkExistRecursive(bool &stop) const
+void ArrayItemProxy::checkExistRecursive(bool &stop, zval *&childArrayPtr, ArrayItemProxy *mostDerivedProxy) const
 {
    if (m_implPtr->m_parent) {
-      m_implPtr->m_parent->checkExistRecursive(stop);
+      m_implPtr->m_parent->checkExistRecursive(stop, m_implPtr->m_array, mostDerivedProxy);
       m_implPtr->m_parent = nullptr;
    } 
    if (!stop) {
@@ -316,6 +381,8 @@ void ArrayItemProxy::checkExistRecursive(bool &stop) const
          if (!valuePtr) {
             print_key_not_exist_notice(m_implPtr->m_requestKey);
             stop = true;
+         } else if (this != mostDerivedProxy){
+            childArrayPtr = valuePtr;
          }
       }
    }

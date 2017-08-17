@@ -26,10 +26,10 @@ var_dump(function_exists("zapi\\io\\show_something"));
 var_dump(defined("zapi\\SYS_VERSION"));
 var_dump(class_exists("zapi\\Address"));
 \zapi\io\print_name("wangyang");
-
+class  P{};
 $arr = [];
-$arr[1] = 1;
-$arr[2][1][1][3] = 2;
+$arr[1] = new P;
+$arr[1][1][1][3] = 2;
 //$arr[1][2] = "beijing";
 var_dump($arr);
 ?>
