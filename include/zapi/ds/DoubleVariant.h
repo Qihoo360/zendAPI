@@ -26,6 +26,7 @@ namespace ds
 
 // forward declare
 class NumericVariant;
+class ArrayItemProxy;
 
 class ZAPI_DECL_EXPORT DoubleVariant final : public Variant
 {
@@ -53,6 +54,7 @@ public:
    DoubleVariant &operator =(const Variant &other);
    DoubleVariant &operator =(Variant &&other);
    DoubleVariant &operator =(const NumericVariant &other);
+   DoubleVariant &operator =(ArrayItemProxy &&other);
    template <typename T, typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>
    DoubleVariant &operator +=(T value) ZAPI_DECL_NOEXCEPT;
    DoubleVariant &operator +=(const DoubleVariant &value) ZAPI_DECL_NOEXCEPT;

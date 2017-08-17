@@ -29,6 +29,8 @@ namespace zapi
 namespace ds
 {
 
+class ArrayItemProxy;
+
 class ZAPI_DECL_EXPORT StringVariant final: public Variant
 {
 public:
@@ -59,6 +61,7 @@ public:
    StringVariant &operator =(StringVariant &&other) ZAPI_DECL_NOEXCEPT;
    StringVariant &operator =(const Variant &other);
    StringVariant &operator =(Variant &&other);
+   StringVariant &operator =(ArrayItemProxy &&other);
    StringVariant &operator =(char value);
    StringVariant &operator =(const std::string &value);
    StringVariant &operator =(const char *value);

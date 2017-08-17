@@ -24,6 +24,7 @@ namespace ds
 {
 
 class DoubleVariant;
+class ArrayItemProxy;
 
 class ZAPI_DECL_EXPORT NumericVariant final : public Variant
 {
@@ -49,6 +50,7 @@ public:
    NumericVariant &operator =(const Variant &other);
    NumericVariant &operator =(Variant &&other);
    NumericVariant &operator =(const DoubleVariant &other);
+   NumericVariant &operator =(ArrayItemProxy &&other);
    operator zapi_long () const;
    NumericVariant &operator++();
    NumericVariant operator++(int);

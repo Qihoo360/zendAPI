@@ -15,6 +15,7 @@
 
 #include "zapi/ds/StringVariant.h"
 #include "zapi/ds/internal/VariantPrivate.h"
+#include "zapi/ds/ArrayItemProxy.h"
 
 #include <cstring>
 #include <stdexcept>
@@ -175,6 +176,11 @@ StringVariant &StringVariant::operator =(Variant &&other)
    }
    m_implPtr->m_strCapacity = ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(Z_STRLEN_P(self)));
    return *this;
+}
+
+StringVariant &StringVariant::operator =(ArrayItemProxy &&other)
+{
+   return operator =(other.toStringVariant());
 }
 
 StringVariant &StringVariant::operator =(char value)

@@ -90,6 +90,12 @@ public:
    operator StringVariant();
    operator BoolVariant();
    operator ArrayVariant();
+   Variant toVariant();
+   NumericVariant toNumericVariant();
+   DoubleVariant toDoubleVariant();
+   StringVariant toStringVariant();
+   BoolVariant toBoolVariant();
+   ArrayVariant toArrayVariant();
    // nest assign
    ArrayItemProxy operator [](zapi_long index);
    ArrayItemProxy operator [](const std::string &key);

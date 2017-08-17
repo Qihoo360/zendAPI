@@ -170,6 +170,7 @@ TEST(ArrayVariantTest, testCastOperators)
    array[1][2][3]["name"][5]["info"] = "zzu_softboy";
    array[1][2][3][4][5][5] = true;
    array[1][2][3][4][5][4] = 3.14;
+   array[1][2][3][4][5]["num"] = 123;
    
    ASSERT_THROW(StringVariant str = array[2], std::bad_cast);
    ASSERT_THROW(NumericVariant num = array[2], std::bad_cast);
@@ -195,8 +196,24 @@ TEST(ArrayVariantTest, testCastOperators)
    
    StringVariant str = array[1][2][3][4][5][6];
    ASSERT_STREQ(str.getCStr(), "zapi");
-//   str = array[1][2][3][4][5]["info"];
+   str = array[1][2][3][4][5]["info"];
    ASSERT_STREQ(str.getCStr(), "cloud");
+   NumericVariant num = array[1][2][3][4][5]["num"];
+   ASSERT_EQ(num.toLong(), 123);
+   num = array[1][2][3][4][5]["num"];
+   ASSERT_EQ(num.toLong(), 123);
+   
+   BoolVariant bval = array[1][2][3][4][5][5];
+   ASSERT_TRUE(bval.toBool());
+   bval = array[1][2][3][4][5][5];
+   ASSERT_TRUE(bval.toBool());
+   
+   DoubleVariant dval = array[1][2][3][4][5][4];
+   ASSERT_EQ(dval.toDouble(), 3.14);
+   dval = array[1][2][3][4][5][4];
+   
+   Variant var = array[1][2][3]["name"][5]["info"];
+   var = array[1][2][3]["name"][5]["info"];
 }
 
 TEST(ArrayVariantTest, testGetNextInertIndex)

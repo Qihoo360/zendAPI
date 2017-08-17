@@ -14,6 +14,7 @@
 // Created by zzu_softboy on 2017/08/08.
 
 #include "zapi/ds/BoolVariant.h"
+#include "zapi/ds/ArrayItemProxy.h"
 
 namespace zapi
 {
@@ -88,6 +89,11 @@ BoolVariant &BoolVariant::operator=(Variant &&other)
       convert_to_boolean(getZvalPtr());
    }
    return *this;
+}
+
+BoolVariant &BoolVariant::operator=(ArrayItemProxy &&other)
+{
+   return operator =(other.toBoolVariant());
 }
 
 BoolVariant &BoolVariant::operator=(bool value)

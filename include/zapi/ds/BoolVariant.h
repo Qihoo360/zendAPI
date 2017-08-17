@@ -23,6 +23,8 @@ namespace zapi
 namespace ds
 {
 
+class ArrayItemProxy;
+
 class ZAPI_DECL_EXPORT BoolVariant final : public Variant
 {
 public:
@@ -38,6 +40,7 @@ public:
    BoolVariant &operator=(BoolVariant &&other) ZAPI_DECL_NOEXCEPT;
    BoolVariant &operator=(const Variant &other);
    BoolVariant &operator=(Variant &&other);
+   BoolVariant &operator=(ArrayItemProxy &&other);
    BoolVariant &operator=(bool value);
    virtual ~BoolVariant();
 };

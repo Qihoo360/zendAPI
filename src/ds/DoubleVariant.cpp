@@ -15,6 +15,7 @@
 
 #include "zapi/ds/DoubleVariant.h"
 #include "zapi/ds/NumericVariant.h"
+#include "zapi/ds/ArrayItemProxy.h"
 
 namespace zapi
 {
@@ -135,12 +136,6 @@ DoubleVariant &DoubleVariant::operator =(DoubleVariant &&other) ZAPI_DECL_NOEXCE
    return *this;
 }
 
-DoubleVariant &DoubleVariant::operator =(const NumericVariant &other)
-{
-   ZVAL_DOUBLE(getZvalPtr(), static_cast<double>(other.toLong()));
-   return *this;
-}
-
 DoubleVariant &DoubleVariant::operator =(const Variant &other)
 {
    zval *self = getZvalPtr();
@@ -163,6 +158,17 @@ DoubleVariant &DoubleVariant::operator =(Variant &&other)
       convert_to_double(getZvalPtr());
    }
    return *this;
+}
+
+DoubleVariant &DoubleVariant::operator =(const NumericVariant &other)
+{
+   ZVAL_DOUBLE(getZvalPtr(), static_cast<double>(other.toLong()));
+   return *this;
+}
+
+DoubleVariant &DoubleVariant::operator =(ArrayItemProxy &&other)
+{
+   return operator =(other.toDoubleVariant());
 }
 
 DoubleVariant::~DoubleVariant() ZAPI_DECL_NOEXCEPT

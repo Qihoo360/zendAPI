@@ -200,6 +200,46 @@ ArrayItemProxy &ArrayItemProxy::operator =(const std::string &value)
 
 ArrayItemProxy::operator NumericVariant()
 {
+   return toNumericVariant();
+}
+
+ArrayItemProxy::operator DoubleVariant()
+{
+   return toDoubleVariant();
+}
+
+ArrayItemProxy::operator Variant()
+{
+   return toVariant();
+}
+
+ArrayItemProxy::operator StringVariant()
+{
+   return toStringVariant();
+}
+
+ArrayItemProxy::operator BoolVariant()
+{
+   return toBoolVariant();
+}
+
+ArrayItemProxy::operator ArrayVariant()
+{
+   return toArrayVariant();
+}
+
+Variant ArrayItemProxy::toVariant()
+{
+   if (!isKeychianOk(false)) {
+      throw std::bad_cast();
+   }
+   zval *value = retrieveZvalPtr();
+   m_implPtr->m_needCheckRequestItem = false;
+   return Variant(value);
+}
+
+NumericVariant ArrayItemProxy::toNumericVariant()
+{
    if (!isKeychianOk(false)) {
       throw std::bad_cast();
    }
@@ -213,7 +253,7 @@ ArrayItemProxy::operator NumericVariant()
    return NumericVariant(std::move(value));
 }
 
-ArrayItemProxy::operator DoubleVariant()
+DoubleVariant ArrayItemProxy::toDoubleVariant()
 {
    if (!isKeychianOk(false)) {
       throw std::bad_cast();
@@ -228,17 +268,7 @@ ArrayItemProxy::operator DoubleVariant()
    return DoubleVariant(std::move(value));
 }
 
-ArrayItemProxy::operator Variant()
-{
-   if (!isKeychianOk(false)) {
-      throw std::bad_cast();
-   }
-   zval *value = retrieveZvalPtr();
-   m_implPtr->m_needCheckRequestItem = false;
-   return Variant(value);
-}
-
-ArrayItemProxy::operator StringVariant()
+StringVariant ArrayItemProxy::toStringVariant()
 {
    if (!isKeychianOk(false)) {
       throw std::bad_cast();
@@ -254,7 +284,7 @@ ArrayItemProxy::operator StringVariant()
    return StringVariant(std::move(value));
 }
 
-ArrayItemProxy::operator BoolVariant()
+BoolVariant ArrayItemProxy::toBoolVariant()
 {
    if (!isKeychianOk(false)) {
       throw std::bad_cast();
@@ -264,7 +294,7 @@ ArrayItemProxy::operator BoolVariant()
    return BoolVariant(std::move(value));
 }
 
-ArrayItemProxy::operator ArrayVariant()
+ArrayVariant ArrayItemProxy::toArrayVariant()
 {
    if (!isKeychianOk(false)) {
       throw std::bad_cast();

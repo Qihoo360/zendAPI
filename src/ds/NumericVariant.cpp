@@ -15,6 +15,7 @@
 
 #include "zapi/ds/NumericVariant.h"
 #include "zapi/ds/DoubleVariant.h"
+#include "zapi/ds/ArrayItemProxy.h"
 #include <cmath>
 
 namespace zapi
@@ -139,6 +140,11 @@ NumericVariant &NumericVariant::operator =(const DoubleVariant &other)
 {
    ZVAL_LONG(getZvalPtr(), static_cast<zapi_long>(other.toDouble()));
    return *this;
+}
+
+NumericVariant &NumericVariant::operator =(ArrayItemProxy &&other)
+{
+   return operator =(other.toNumericVariant());
 }
 
 NumericVariant &NumericVariant::operator =(const Variant &other)
