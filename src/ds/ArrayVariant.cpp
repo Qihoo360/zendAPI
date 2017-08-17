@@ -34,8 +34,7 @@ ArrayVariant::ArrayVariant()
 {
    // constructor null array
    zval *self = getZvalPtr();
-   Z_ARRVAL_P(self) = nullptr;
-   Z_TYPE_INFO_P(self) = IS_ARRAY_EX;
+   array_init(self);
 }
 
 ArrayVariant::ArrayVariant(const ArrayVariant &other)
@@ -77,7 +76,7 @@ ArrayItemProxy ArrayVariant::operator [](const char *key)
 
 ArrayIterator ArrayVariant::insert(zapi_ulong index, const Variant &value)
 {
-   deployCopyOnWrite();
+   SEPARATE_ZVAL_NOREF(getZvalPtr());
    zval *zvalPtr = const_cast<zval *>(value.getZvalPtr());
    zval temp;
    ZVAL_DEREF(zvalPtr);
@@ -94,7 +93,7 @@ ArrayIterator ArrayVariant::insert(zapi_ulong index, const Variant &value)
 
 ArrayIterator ArrayVariant::insert(zapi_ulong index, Variant &&value)
 {
-   deployCopyOnWrite();
+   SEPARATE_ZVAL_NOREF(getZvalPtr());
    zval *zvalPtr = value.getZvalPtr();
    zval temp;
    ZVAL_DEREF(zvalPtr);
@@ -112,7 +111,7 @@ ArrayIterator ArrayVariant::insert(zapi_ulong index, Variant &&value)
 
 ArrayIterator ArrayVariant::insert(const std::string &key, const Variant &value)
 {
-   deployCopyOnWrite();
+   SEPARATE_ZVAL_NOREF(getZvalPtr());
    zval *zvalPtr = const_cast<zval *>(value.getZvalPtr());
    zval temp;
    ZVAL_DEREF(zvalPtr);
@@ -129,7 +128,7 @@ ArrayIterator ArrayVariant::insert(const std::string &key, const Variant &value)
 
 ArrayIterator ArrayVariant::insert(const std::string &key, Variant &&value)
 {
-   deployCopyOnWrite();
+   SEPARATE_ZVAL_NOREF(getZvalPtr());
    zval *zvalPtr = value.getZvalPtr();
    zval temp;
    ZVAL_DEREF(zvalPtr);
@@ -147,7 +146,7 @@ ArrayIterator ArrayVariant::insert(const std::string &key, Variant &&value)
 
 ArrayIterator ArrayVariant::append(const Variant &value)
 {
-   deployCopyOnWrite();
+   SEPARATE_ZVAL_NOREF(getZvalPtr());
    zval *zvalPtr = const_cast<zval *>(value.getZvalPtr());
    zval temp;
    ZVAL_DEREF(zvalPtr);
@@ -165,7 +164,7 @@ ArrayIterator ArrayVariant::append(const Variant &value)
 
 ArrayIterator ArrayVariant::append(Variant &&value)
 {
-   deployCopyOnWrite();
+   SEPARATE_ZVAL_NOREF(getZvalPtr());
    zval *zvalPtr = value.getZvalPtr();
    zval temp;
    ZVAL_DEREF(zvalPtr);
@@ -182,6 +181,11 @@ ArrayIterator ArrayVariant::append(Variant &&value)
    }
 }
 
+void ArrayVariant::clear()
+{
+   zend_hash_clean(getZendArrayPtr());
+}
+
 bool ArrayVariant::isEmpty() const ZAPI_DECL_NOEXCEPT
 {
    return 0 == getSize();
@@ -189,16 +193,23 @@ bool ArrayVariant::isEmpty() const ZAPI_DECL_NOEXCEPT
 
 bool ArrayVariant::isNull() const ZAPI_DECL_NOEXCEPT
 {
-   return nullptr == getZendArrayPtr();
+   return false;
 }
 
 ArrayVariant::SizeType ArrayVariant::getSize() const ZAPI_DECL_NOEXCEPT
 {
-   return isNull() ? 0 : zend_hash_num_elements(getZendArrayPtr());
+   // @TODO here we just use zend_hash_num_elements or zend_array_count
+   return zend_hash_num_elements(getZendArrayPtr());
 }
+
 ArrayVariant::SizeType ArrayVariant::count() const ZAPI_DECL_NOEXCEPT
 {
    return getSize();
+}
+
+ArrayVariant::SizeType ArrayVariant::getCapacity() const ZAPI_DECL_NOEXCEPT
+{
+   return getZendArrayPtr()->nTableSize;
 }
 
 Variant ArrayVariant::getValue(zapi_ulong index) const
@@ -227,6 +238,11 @@ bool ArrayVariant::contains(zapi_ulong index) const
 bool ArrayVariant::contains(const std::string &key) const
 {
    return zend_hash_str_find(getZendArrayPtr(), key.c_str(), key.length());
+}
+
+zapi_long ArrayVariant::getNextInsertIndex() const
+{
+   return getZendArrayPtr()->nNextFreeElement;
 }
 
 ArrayIterator ArrayVariant::begin() ZAPI_DECL_NOEXCEPT
@@ -273,17 +289,6 @@ _zend_array *ArrayVariant::getZendArrayPtr() const ZAPI_DECL_NOEXCEPT
 _zend_array &ArrayVariant::getZendArray() const ZAPI_DECL_NOEXCEPT
 {
    return *Z_ARR(getZval());
-}
-
-void ArrayVariant::deployCopyOnWrite()
-{
-   zval *self = getZvalPtr();
-   if (nullptr == Z_ARRVAL_P(self)) {
-      // null array alloc memory
-      array_init(self);
-   } else {
-      SEPARATE_ZVAL_NOREF(self);
-   }
 }
 
 uint32_t ArrayVariant::calculateIdxFromZval(zval *val) const ZAPI_DECL_NOEXCEPT

@@ -68,24 +68,24 @@ public:
    ArrayItemProxy operator [](const std::string &key);
    ArrayItemProxy operator [](const char *key);
    // modify methods
-   void clear();
-   Variant pop();
-   ArrayVariant &push(const Variant &value);
    Iterator insert(zapi_ulong index, const Variant &value);
    Iterator insert(zapi_ulong index, Variant &&value);
    Iterator insert(const std::string &key, const Variant &value);
    Iterator insert(const std::string &key, Variant &&value);
    Iterator append(const Variant &value);
    Iterator append(Variant &&value);
+   void clear();
    // info access
    bool isEmpty() const ZAPI_DECL_NOEXCEPT;
    bool isNull() const ZAPI_DECL_NOEXCEPT;
    SizeType getSize() const ZAPI_DECL_NOEXCEPT;
+   SizeType getCapacity() const ZAPI_DECL_NOEXCEPT;
    SizeType count() const ZAPI_DECL_NOEXCEPT;
    Variant getValue(zapi_ulong index) const;
    Variant getValue(const std::string &key) const;
    bool contains(zapi_ulong index) const;
    bool contains(const std::string &key) const;
+   zapi_long getNextInsertIndex() const;
    // iterators
    Iterator begin() ZAPI_DECL_NOEXCEPT;
    ConstIterator begin() const ZAPI_DECL_NOEXCEPT;
@@ -175,7 +175,6 @@ public:
    };
    
 protected:
-   void deployCopyOnWrite();
    _zend_array *getZendArrayPtr() const ZAPI_DECL_NOEXCEPT;
    _zend_array &getZendArray() const ZAPI_DECL_NOEXCEPT;
    uint32_t calculateIdxFromZval(zval *val) const ZAPI_DECL_NOEXCEPT;

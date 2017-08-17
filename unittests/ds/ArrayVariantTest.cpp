@@ -32,9 +32,10 @@ using zapi::ds::DoubleVariant;
 TEST(ArrayVariantTest, testConstructor)
 {
    ArrayVariant array;
-   ASSERT_TRUE(array.isNull());
+   ASSERT_FALSE(array.isNull());
    ASSERT_TRUE(array.isEmpty());
    ASSERT_TRUE(array.isArray());
+   ASSERT_EQ(array.getCapacity(), 8);
 }
 
 TEST(ArrayVariantTest, testCopyConstructor)
@@ -74,6 +75,7 @@ TEST(ArrayVariantTest, testAssignOperators)
    
 }
 
+
 TEST(ArrayVariantTest, testContains)
 {
    ArrayVariant array;
@@ -89,10 +91,8 @@ TEST(ArrayVariantTest, testContains)
 TEST(ArrayVariantTest, testAppend)
 {
    ArrayVariant array;
-   ASSERT_TRUE(array.isNull());
    ASSERT_TRUE(array.isEmpty());
    array.append(1);
-   ASSERT_FALSE(array.isNull());
    ASSERT_FALSE(array.isEmpty());
    ASSERT_EQ(array.getSize(), 1);
    array.append("zapi");
@@ -105,10 +105,38 @@ TEST(ArrayVariantTest, testAppend)
    // std::cout << str << std::endl;
 }
 
+TEST(ArrayVariantTest, testClear)
+{
+   ArrayVariant array;
+   array.insert("name", "zapi");
+   array.insert("address", "beijing");
+   ASSERT_EQ(array.getSize(), 2);
+   ASSERT_EQ(array.getCapacity(), 8);
+   array.clear();
+   ASSERT_EQ(array.getSize(), 0);
+   ASSERT_EQ(array.getCapacity(), 8);
+   array.insert("age", 123);
+   ASSERT_EQ(array.getSize(), 1);
+   ASSERT_EQ(array.getCapacity(), 8);
+}
+
+TEST(ArrayVariantTest, testGetNextInertIndex)
+{
+   ArrayVariant array;
+   ASSERT_EQ(array.getNextInsertIndex(), 0);
+   array.append(123);
+   ASSERT_EQ(array.getNextInsertIndex(), 1);
+   array.append("beijing");
+   ASSERT_EQ(array.getNextInsertIndex(), 2);
+   array.insert(11, "360");
+   ASSERT_EQ(array.getNextInsertIndex(), 12);
+   array.append("beijing");
+   ASSERT_EQ(array.getNextInsertIndex(), 13);
+}
+
 TEST(ArrayVariantTest, testInsert)
 {
    ArrayVariant array;
-   ASSERT_TRUE(array.isNull());
    ASSERT_TRUE(array.isEmpty());
    array.insert(1, "zapi");
    array.insert(5, true);
