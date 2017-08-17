@@ -181,9 +181,19 @@ ArrayIterator ArrayVariant::append(Variant &&value)
    }
 }
 
-void ArrayVariant::clear()
+void ArrayVariant::clear() ZAPI_DECL_NOEXCEPT
 {
    zend_hash_clean(getZendArrayPtr());
+}
+
+bool ArrayVariant::remove(zapi_ulong index) ZAPI_DECL_NOEXCEPT
+{
+   return zend_hash_index_del(getZendArrayPtr(), index) == ZAPI_SUCCESS;
+}
+
+bool ArrayVariant::remove(const std::string &key) ZAPI_DECL_NOEXCEPT
+{
+   return zend_hash_str_del(getZendArrayPtr(), key.c_str(), key.length()) == ZAPI_SUCCESS;
 }
 
 bool ArrayVariant::isEmpty() const ZAPI_DECL_NOEXCEPT

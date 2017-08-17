@@ -74,7 +74,9 @@ public:
    Iterator insert(const std::string &key, Variant &&value);
    Iterator append(const Variant &value);
    Iterator append(Variant &&value);
-   void clear();
+   void clear() ZAPI_DECL_NOEXCEPT;
+   bool remove(zapi_ulong index) ZAPI_DECL_NOEXCEPT;
+   bool remove(const std::string &key) ZAPI_DECL_NOEXCEPT;
    // info access
    bool isEmpty() const ZAPI_DECL_NOEXCEPT;
    bool isNull() const ZAPI_DECL_NOEXCEPT;

@@ -120,6 +120,21 @@ TEST(ArrayVariantTest, testClear)
    ASSERT_EQ(array.getCapacity(), 8);
 }
 
+TEST(ArrayVariantTest,testRemove)
+{
+   ArrayVariant array;
+   ASSERT_FALSE(array.remove(1));
+   ASSERT_FALSE(array.remove("notExistItem"));
+   array.append("zapi");
+   array.insert("name", "zzu_softboy");
+   ASSERT_TRUE(array.contains(0));
+   ASSERT_TRUE(array.contains("name"));
+   ASSERT_EQ(array.getSize(), 2);
+   ASSERT_TRUE(array.remove(0));
+   ASSERT_TRUE(array.remove("name"));
+   ASSERT_EQ(array.getSize(), 0);
+}
+
 TEST(ArrayVariantTest, testGetNextInertIndex)
 {
    ArrayVariant array;
