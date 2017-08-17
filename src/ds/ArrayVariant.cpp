@@ -38,6 +38,18 @@ ArrayVariant::ArrayVariant()
    Z_TYPE_INFO_P(self) = IS_ARRAY_EX;
 }
 
+ArrayVariant::ArrayVariant(const ArrayVariant &other)
+{
+   // here we just need copy array zval
+   zval *self = getZvalPtr();
+   zval *from = const_cast<zval *>(other.getZvalPtr());
+   ZVAL_COPY(self, from);
+}
+
+ArrayVariant::ArrayVariant(ArrayVariant &&other) ZAPI_DECL_NOEXCEPT
+   : Variant(std::move(other))
+{}
+
 ArrayVariant::ArrayVariant(const Variant &other)
 {
    
@@ -189,7 +201,7 @@ ArrayVariant::SizeType ArrayVariant::count() const ZAPI_DECL_NOEXCEPT
    return getSize();
 }
 
-Variant ArrayVariant::getValue(zapi_long index) const
+Variant ArrayVariant::getValue(zapi_ulong index) const
 {
    zval *val = zend_hash_index_find(getZendArrayPtr(), index);
    if (nullptr == val) {
@@ -205,6 +217,16 @@ Variant ArrayVariant::getValue(const std::string &key) const
       zapi::notice << "Undefined index: " << key << std::endl;
    }
    return val;
+}
+
+bool ArrayVariant::contains(zapi_ulong index) const
+{
+   return zend_hash_index_find(getZendArrayPtr(), index) != nullptr;
+}
+
+bool ArrayVariant::contains(const std::string &key) const
+{
+   return zend_hash_str_find(getZendArrayPtr(), key.c_str(), key.length());
 }
 
 ArrayIterator ArrayVariant::begin() ZAPI_DECL_NOEXCEPT

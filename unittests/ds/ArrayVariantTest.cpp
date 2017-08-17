@@ -35,7 +35,55 @@ TEST(ArrayVariantTest, testConstructor)
    ASSERT_TRUE(array.isNull());
    ASSERT_TRUE(array.isEmpty());
    ASSERT_TRUE(array.isArray());
+}
+
+TEST(ArrayVariantTest, testCopyConstructor)
+{
+   ArrayVariant array;
+   array.insert("name", "zapi");
+   array.insert("address", "beijing");
+   ASSERT_EQ(array.getSize(), 2);
+   ASSERT_EQ(array.getRefCount(), 1);
+   ArrayVariant array1 = array;
+   ASSERT_EQ(array.getSize(), 2);
+   ASSERT_EQ(array.getRefCount(), 2);
+   ASSERT_EQ(array1.getSize(), 2);
+   ASSERT_EQ(array1.getRefCount(), 2);
+   array.insert("age", 12);
+   ASSERT_EQ(array.getSize(), 3);
+   ASSERT_EQ(array.getRefCount(), 1);
+   ASSERT_EQ(array1.getSize(), 2);
+   ASSERT_EQ(array1.getRefCount(), 1);
+}
+
+TEST(ArrayVariantTest, testMoveConstructor)
+{
+   ArrayVariant array;
+   array.insert("name", "zapi");
+   array.insert("address", "beijing");
+   ASSERT_EQ(array.getSize(), 2);
+   ASSERT_EQ(array.getRefCount(), 1);
+   ArrayVariant array1 = std::move(array);
+   // from here you can't do anything about array
+   ASSERT_EQ(array1.getSize(), 2);
+   ASSERT_EQ(array1.getRefCount(), 1);
+}
+
+TEST(ArrayVariantTest, testAssignOperators)
+{
    
+}
+
+TEST(ArrayVariantTest, testContains)
+{
+   ArrayVariant array;
+   array.insert("name", "zapi");
+   array.insert("address", "beijing");
+   ASSERT_FALSE(array.contains("age"));
+   ASSERT_TRUE(array.contains("name"));
+   ASSERT_TRUE(array.contains("address"));
+   array["age"] = 123;
+   ASSERT_TRUE(array.contains("age"));
 }
 
 TEST(ArrayVariantTest, testAppend)
@@ -247,3 +295,4 @@ TEST(ArrayVariantTest, testAccessOperator)
 //   std::cout << num << std::endl;
 //   std::cout << doubleNum << std::endl;
 }
+

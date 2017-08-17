@@ -27,11 +27,25 @@ var_dump(defined("zapi\\SYS_VERSION"));
 var_dump(class_exists("zapi\\Address"));
 \zapi\io\print_name("wangyang");
 class  P{};
-$arr = [];
-$arr[1] = new P;
-$arr[1][1][1][3] = 2;
+//$arr = [];
+//$arr[1] = new P;
+//$arr[1][1][1][3] = 2;
 //$arr[1][2] = "beijing";
-var_dump($arr);
+//var_dump($arr);
+$arr1 = array(
+   1 => array(
+      "name" => "xiux",
+      "age" => 123
+   )
+);
+$arr2 = $arr1;
+var_dump($arr2);
+var_dump($arr1);
+$arr1[1]["age"] = 321;
+//xdebug_debug_zval($arr1);
+//xdebug_debug_zval($arr2);
+var_dump($arr2);
+var_dump($arr1);
 ?>
 --EXPECT--
 zapi v0.0.1 hello world, zapi

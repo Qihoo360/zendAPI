@@ -82,8 +82,10 @@ public:
    bool isNull() const ZAPI_DECL_NOEXCEPT;
    SizeType getSize() const ZAPI_DECL_NOEXCEPT;
    SizeType count() const ZAPI_DECL_NOEXCEPT;
-   Variant getValue(zapi_long index) const;
+   Variant getValue(zapi_ulong index) const;
    Variant getValue(const std::string &key) const;
+   bool contains(zapi_ulong index) const;
+   bool contains(const std::string &key) const;
    // iterators
    Iterator begin() ZAPI_DECL_NOEXCEPT;
    ConstIterator begin() const ZAPI_DECL_NOEXCEPT;
