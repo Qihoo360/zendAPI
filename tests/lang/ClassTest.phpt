@@ -38,19 +38,20 @@ $arr1 = array(
       "age" => 123
    )
 );
-$arr2 = $arr1;
-var_dump($arr2);
-var_dump($arr1);
-$arr1[1]["age"] = 321;
-//xdebug_debug_zval($arr1);
-//xdebug_debug_zval($arr2);
-var_dump($arr2);
-var_dump($arr1);
-$n1 = $arr1[1];
-unset($n1["age"]);
-var_dump($arr1);
-var_dump($n1);
-unset($arr1);
+//$arr2 = $arr1;
+//var_dump($arr2);
+//var_dump($arr1);
+//$arr1[1]["age"] = 321;
+////xdebug_debug_zval($arr1);
+////xdebug_debug_zval($arr2);
+//var_dump($arr2);
+//var_dump($arr1);
+//$n1 = $arr1[1];
+//unset($n1["age"]);
+//var_dump($arr1);
+//var_dump($n1);
+//unset($arr1[2]["name"]["asdas"]["asassasa"]);
+unset($arr1[222]);
 var_dump($arr1);
 ?>
 --EXPECT--

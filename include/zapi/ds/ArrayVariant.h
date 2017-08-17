@@ -78,7 +78,6 @@ public:
    void clear() ZAPI_DECL_NOEXCEPT;
    bool remove(zapi_ulong index) ZAPI_DECL_NOEXCEPT;
    bool remove(const std::string &key) ZAPI_DECL_NOEXCEPT;
-   bool removeByPath(const std::list<Variant> &path);
    // info access
    bool isEmpty() const ZAPI_DECL_NOEXCEPT;
    bool isNull() const ZAPI_DECL_NOEXCEPT;

@@ -26,6 +26,10 @@ using zapi::ds::internal::ArrayItemProxyPrivate;
 
 bool array_unset(ArrayItemProxy &&arrayItem)
 {
+   if (!arrayItem.isKeychianOk(false)) {
+      return false;
+   }
+   // everything is ok
    // here we use the pointer to remove
    ArrayItemProxy::KeyType requestKey = arrayItem.m_implPtr->m_requestKey;
    zval *array = arrayItem.m_implPtr->m_array;

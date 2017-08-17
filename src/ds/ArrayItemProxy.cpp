@@ -112,7 +112,14 @@ ArrayItemProxy &ArrayItemProxy::operator =(ArrayItemProxy &&other) ZAPI_DECL_NOE
 ArrayItemProxy &ArrayItemProxy::operator =(const Variant &value)
 {
    if (!m_implPtr->m_array) {
-      ensureArrayExistRecusive(m_implPtr->m_array, m_implPtr->m_requestKey, this);
+      if (!ensureArrayExistRecusive(m_implPtr->m_array, m_implPtr->m_requestKey, this)){
+         // have something wrong
+         // just return without change anything
+         // don't check recursive, because we already do it
+         m_implPtr->m_parent = nullptr;
+         m_implPtr->m_needCheckRequestItem = false;
+         return *this;
+      }
    }
    SEPARATE_ZVAL_NOREF(m_implPtr->m_array);
    // here we don't check exist, we just insert it if not exists
@@ -316,14 +323,16 @@ ArrayItemProxy ArrayItemProxy::operator [](const std::string &key)
    return ArrayItemProxy(nullptr, key, this);
 }
 
-void ArrayItemProxy::ensureArrayExistRecusive(zval *&childArrayPtr,const KeyType &childRequestKey,
+bool ArrayItemProxy::ensureArrayExistRecusive(zval *&childArrayPtr,const KeyType &childRequestKey,
                                               ArrayItemProxy *mostDerivedProxy)
 {
    // if a ArrayItemProxyPrivate both m_parent and m_array is 
    // nullptr, this is a bug, let me know.
    if (m_implPtr->m_parent) {
-      m_implPtr->m_parent->ensureArrayExistRecusive(m_implPtr->m_array, m_implPtr->m_requestKey,
-                                                    mostDerivedProxy);
+      if (!m_implPtr->m_parent->ensureArrayExistRecusive(m_implPtr->m_array, m_implPtr->m_requestKey,
+                                                    mostDerivedProxy)){
+         return false;
+      }
    }
    if (this != mostDerivedProxy) {
       // here we don't need check exist in destroy process
@@ -347,11 +356,13 @@ void ArrayItemProxy::ensureArrayExistRecusive(zval *&childArrayPtr,const KeyType
          // if child request key exists we must self must be array
          if (Z_TYPE_P(val) != IS_ARRAY) {
             print_type_not_compatible_info(val);
+            return false;
          } else {
             childArrayPtr = val;
          }
       }
    }
+   return true;
 }
 
 void ArrayItemProxy::checkExistRecursive(bool &stop, zval *&childArrayPtr, ArrayItemProxy *mostDerivedProxy,
@@ -377,7 +388,16 @@ void ArrayItemProxy::checkExistRecursive(bool &stop, zval *&childArrayPtr, Array
             }
             stop = true;
          } else if (this != mostDerivedProxy){
-            childArrayPtr = valuePtr;
+            // if request key exists and check type compatible
+            // if child request key exists we must self must be array
+            if (Z_TYPE_P(valuePtr) != IS_ARRAY) {
+               if (!quiet) {
+                  print_type_not_compatible_info(valuePtr);
+               }
+               stop = true;
+            } else {
+               childArrayPtr = valuePtr;
+            }
          }
       }
    }

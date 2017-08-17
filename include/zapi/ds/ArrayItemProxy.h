@@ -100,7 +100,7 @@ public:
    ArrayItemProxy operator [](zapi_long index);
    ArrayItemProxy operator [](const std::string &key);
 protected:
-   void ensureArrayExistRecusive(zval *&childArrayPtr, const KeyType &childRequestKey,
+   bool ensureArrayExistRecusive(zval *&childArrayPtr, const KeyType &childRequestKey,
                                  ArrayItemProxy *mostDerivedProxy);
    void checkExistRecursive(bool &stop, zval *&checkExistRecursive, 
                             ArrayItemProxy *mostDerivedProxy, bool quiet = false);

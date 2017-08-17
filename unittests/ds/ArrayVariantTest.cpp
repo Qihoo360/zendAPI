@@ -136,17 +136,29 @@ TEST(ArrayVariantTest,testRemove)
    ASSERT_EQ(array.getSize(), 0);
 }
 
-//TEST(ArrayVariantTest, testUnset)
-//{
-////   ArrayVariant array;
-////   array.insert("name", "zapi");
-////   array.insert("address", "beijing");
-////   zapi::array_unset(array["name"]);
-////   array[1][2][3][4][5][6] = "zapi";
-////   array[1][2][3][4][5]["info"] = "cloud";
-////   zapi::array_unset(array[1][2][3][4][5][6]);
-////   zapi::array_unset(array[1][2][3][4][5]["info"]);
-//}
+TEST(ArrayVariantTest, testUnset)
+{
+   ArrayVariant array;
+   zapi::array_unset(array[1]); // quiet unset
+   array[1] = "zapi";
+   array[2] = 123;
+   array[3]["name"] = "zapi";
+   array[3][1] = 123;
+   array[3]["data"] = 123;
+   // zapi::array_unset(array[1]["name"]); // Fatal error - Can't use string offset as an array
+   // zapi::array_unset(array[1][1]); // Can't use string offset as an array
+   ASSERT_FALSE(zapi::array_unset(array[2][1]));
+   // zapi::array_unset(array[3]["name"][1]); // Fatal error: Can't use string offset as an array
+   // zapi::array_unset(array[3]["name"]["key"]); // Fatal error - Can't use string offset as an array
+   ASSERT_FALSE(zapi::array_unset(array[3][1]["age"]));
+   ASSERT_FALSE(zapi::array_unset(array[3]["data"][22]));
+   ASSERT_FALSE(zapi::array_unset(array[3]["data"]["xiuxiu"]));
+   // zapi::array_unset(array[3]["name"][1]); // Can't use string offset as an array
+   // zapi::array_unset(array[3]["name"]["age"]); // Can't use string offset as an array
+   ASSERT_TRUE(zapi::array_isset(array[3]["data"]));
+   ASSERT_TRUE(zapi::array_unset(array[3]["data"]));
+   ASSERT_FALSE(zapi::array_isset(array[3]["data"]));
+}
 
 TEST(ArrayVariantTest, testIsset)
 {
@@ -379,31 +391,32 @@ TEST(ArrayVariantTest, testAccessOperator)
    ArrayVariant array;
    array.append(1);
    array.append("zapi");
-   //   array.append("zzu_softboy");
-   //   array.append("aaa");
-   //   array.append("bbb");
-   //   array.append("ccc");
-   //   StringVariant str = array[1];
-   //   ASSERT_STREQ(str.getCStr(), "zapi");
-   //   array[0] = 123;
-   //   NumericVariant num = array.getValue(0);
-   //   ASSERT_EQ(num.toLong(), 123);
-   //   array[10] = "unicornteam";
-   //   StringVariant team = array[10];
-   //   ASSERT_STREQ(team.getCStr(), "unicornteam");
-   //   array["city"] = "beijing";
-   //   StringVariant city = array["city"];
-   //   ASSERT_STREQ(city.getCStr(), "beijing");
+   array.append("zzu_softboy");
+   array.append("aaa");
+   array.insert(5, "21212");
+   array.append("bbb");
+   array.append("ccc");
+   StringVariant str = array[1];
+   ASSERT_STREQ(str.getCStr(), "zapi");
+   array[0] = 123;
+   NumericVariant num = array.getValue(0);
+   ASSERT_EQ(num.toLong(), 123);
+   array[10] = "unicornteam";
+   StringVariant team = array[10];
+   ASSERT_STREQ(team.getCStr(), "unicornteam");
+   array["city"] = "beijing";
+   StringVariant city = array["city"];
+   ASSERT_STREQ(city.getCStr(), "beijing");
    array[11][1][3] = "zzu_softboy";
-   StringVariant str = array[11][1][3];
-   std::cout << str << std::endl;
-   ASSERT_STREQ(str.getCStr(), "zzu_softboy");
+   StringVariant str1 = array[11][1][3];
+   std::cout << str1 << std::endl;
+   ASSERT_STREQ(str1.getCStr(), "zzu_softboy");
    array[4][5][6][7][8][9][10][11][12]["name"] = "UnicornTeam";
    array[4][5][6][7][8][9][10][11][12]["address"] = "Qihoo360 Building";
    array[4][5][6][7][8][9][10][11][12]["offical_site"] = "http://unicorn.360.com";
    array[4][5][6][7][8][9][10][11][12][111] = 213;
    array[4][5][6][7][8][9][10][11][12][112] = 3.1415926;
-   NumericVariant num = array[4][5][6][7][8][9][10][11][12][111];
+   NumericVariant num1 = array[4][5][6][7][8][9][10][11][12][111];
    DoubleVariant doubleNum = array[4][5][6][7][8][9][10][11][12][112];
    StringVariant unicornTeamName = array[4][5][6][7][8][9][10][11][12]["name"];
    StringVariant unicornTeamAddress = array[4][5][6][7][8][9][10][11][12]["address"];
@@ -411,12 +424,22 @@ TEST(ArrayVariantTest, testAccessOperator)
    ASSERT_STREQ(unicornTeamName.getCStr(), "UnicornTeam");
    ASSERT_STREQ(unicornTeamAddress.getCStr(), "Qihoo360 Building");
    ASSERT_STREQ(unicornTeamOfficalSite.getCStr(), "http://unicorn.360.com");
-   ASSERT_EQ(num.toLong(), 213);
+   ASSERT_EQ(num1.toLong(), 213);
    ASSERT_EQ(doubleNum.toDouble(), 3.1415926);
-//   std::cout << unicornTeamName << std::endl;
-//   std::cout << unicornTeamAddress << std::endl;
-//   std::cout << unicornTeamOfficalSite << std::endl;
-//   std::cout << num << std::endl;
-//   std::cout << doubleNum << std::endl;
+   //   std::cout << unicornTeamName << std::endl;
+   //   std::cout << unicornTeamAddress << std::endl;
+   //   std::cout << unicornTeamOfficalSite << std::endl;
+   //   std::cout << num1 << std::endl;
+   //   std::cout << doubleNum << std::endl;
+   //array[5][6] = "fata error"; //Fatal error - Can't use string offset as an array
+   //array[0][1] = 123;
+   
+   // NumericVariant num11 = array[0][1][0]; // Can't use a scalar value as an array
+   // NumericVariant num12 = array[10][12]; // Can't use string offset as an array
+   // NumericVariant num12 = array[10]["key"]; // Can't use string offset as an array
+   // StringVariant name = array["city"][1][2]; // Can't use string offset as an array
+   // StringVariant name = array["city"]["name"]["name"]; //  Can't use string offset as an array
+   array["info"] = 3.14;
+   // StringVariant name = array["info"]["name"]["name"]; // Can't use a scalar value as an array
 }
 
