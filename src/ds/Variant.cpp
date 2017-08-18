@@ -503,6 +503,26 @@ Variant &Variant::operator =(double value)
    return operator =(value);
 }
 
+bool Variant::operator ==(const Variant &other)
+{
+   return fast_equal_check_function(const_cast<zval *>(getZvalPtr()), const_cast<zval *>(other.getZvalPtr()));
+}
+
+bool Variant::operator !=(const Variant &other)
+{
+   return !fast_equal_check_function(const_cast<zval *>(getZvalPtr()), const_cast<zval *>(other.getZvalPtr()));
+}
+
+bool Variant::strictEqual(const Variant &other) const
+{
+   return fast_is_identical_function(const_cast<zval *>(getZvalPtr()), const_cast<zval *>(other.getZvalPtr()));
+}
+
+bool Variant::structNotEqual(const Variant &other) const
+{
+   return fast_is_not_identical_function(const_cast<zval *>(getZvalPtr()), const_cast<zval *>(other.getZvalPtr()));
+}
+
 void Variant::stdCopyZval(zval *dest, zval *source)
 {
    // make sure what we are copied is not a reference

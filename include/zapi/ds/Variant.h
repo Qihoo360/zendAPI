@@ -140,7 +140,11 @@ public:
    Variant &operator =(const char *value);
    Variant &operator =(double value);
    Variant &operator =(zval *value);
+   bool operator ==(const Variant &other);
+   bool operator !=(const Variant &other);
    
+   bool strictEqual(const Variant &other) const;
+   bool structNotEqual(const Variant &other) const;
    /**
     * Cast to a boolean
     * @return boolean

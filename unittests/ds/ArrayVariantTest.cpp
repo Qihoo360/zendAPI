@@ -331,6 +331,8 @@ TEST(ArrayVariantTest, testGetKeys)
 TEST(ArrayVariantTest, testGetValues)
 {
    ArrayVariant array;
+   std::list<Variant> values = array.getValues();
+   ASSERT_EQ(values.size(), 0);
    array.insert("name", "zapi");
    array.insert("age", 123);
 }
