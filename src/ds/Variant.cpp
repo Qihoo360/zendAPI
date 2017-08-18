@@ -503,12 +503,12 @@ Variant &Variant::operator =(double value)
    return operator =(value);
 }
 
-bool Variant::operator ==(const Variant &other)
+bool Variant::operator ==(const Variant &other) const
 {
    return fast_equal_check_function(const_cast<zval *>(getZvalPtr()), const_cast<zval *>(other.getZvalPtr()));
 }
 
-bool Variant::operator !=(const Variant &other)
+bool Variant::operator !=(const Variant &other) const
 {
    return !fast_equal_check_function(const_cast<zval *>(getZvalPtr()), const_cast<zval *>(other.getZvalPtr()));
 }

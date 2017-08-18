@@ -332,9 +332,16 @@ TEST(ArrayVariantTest, testGetValues)
 {
    ArrayVariant array;
    std::list<Variant> values = array.getValues();
+   std::list<Variant> expectValues = {
+      Variant("zapi"),
+      Variant(123)
+   };
    ASSERT_EQ(values.size(), 0);
    array.insert("name", "zapi");
    array.insert("age", 123);
+   values = array.getValues();
+   ASSERT_EQ(values.size(), 2);
+   ASSERT_EQ(values, expectValues);
 }
 
 TEST(ArrayVariantTest, testInsert)
