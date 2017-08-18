@@ -58,6 +58,11 @@ public:
    ArrayItemProxy operator [](T index);
    ArrayItemProxy operator [](const std::string &key);
    ArrayItemProxy operator [](const char *key);
+   bool operator ==(const ArrayVariant &other) const;
+   bool operator !=(const ArrayVariant &other) const;
+   
+   bool strictEqual(const Variant &other) const;
+   bool strictNotEqual(const Variant &other) const;
    // modify methods
    Iterator insert(zapi_ulong index, const Variant &value);
    Iterator insert(zapi_ulong index, Variant &&value);

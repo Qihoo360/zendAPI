@@ -112,6 +112,27 @@ ArrayItemProxy ArrayVariant::operator [](const char *key)
    return ArrayItemProxy(getZvalPtr(), key);
 }
 
+bool ArrayVariant::operator ==(const ArrayVariant &other) const
+{
+   return this == &other ? true 
+                         : 0 == zend_compare_arrays(const_cast<zval *>(getZvalPtr()), const_cast<zval *>(other.getZvalPtr()));
+}
+
+bool ArrayVariant::operator !=(const ArrayVariant &other) const
+{
+   return !operator ==(other);
+}
+
+bool ArrayVariant::strictEqual(const Variant &other) const
+{
+   
+}
+
+bool ArrayVariant::strictNotEqual(const Variant &other) const
+{
+   
+}
+
 ArrayIterator ArrayVariant::insert(zapi_ulong index, const Variant &value)
 {
    SEPARATE_ZVAL_NOREF(getZvalPtr());

@@ -79,6 +79,68 @@ TEST(ArrayVariantTest, testAssignOperators)
 }
 
 
+TEST(ArrayVariantTest, testEqual)
+{
+   {
+      ArrayVariant arr1;
+      arr1.append(1);
+      arr1.append(2);
+      ArrayVariant arr2;
+      arr2.append(2);
+      arr2.append(1);
+      ArrayVariant arr3;
+      arr3.append(1);
+      arr3.append(2);
+      ArrayVariant arr4;
+      arr4.append(1);
+      arr4.append(2);
+      arr4.append(3);
+      ASSERT_FALSE(arr1 == arr2);
+      ASSERT_TRUE(arr1 == arr3);
+      ASSERT_TRUE(arr1 == arr1);
+      ASSERT_TRUE(arr2 == arr2);
+      ASSERT_TRUE(arr3 == arr3);
+      ASSERT_FALSE(arr1 == arr4);
+      
+      ASSERT_TRUE(arr1 != arr2);
+      ASSERT_FALSE(arr1 != arr3);
+      ASSERT_FALSE(arr1 != arr1);
+      ASSERT_FALSE(arr2 != arr2);
+      ASSERT_FALSE(arr3 != arr3);
+      ASSERT_TRUE(arr1 != arr4);
+   }
+   {
+      ArrayVariant arr1;
+      arr1["name"] = "zapi";
+      arr1["address"] = "beijing";
+      ArrayVariant arr2;
+      arr2["address"] = "beijing";
+      arr2["name"] = "zapi";
+      ArrayVariant arr3;
+      arr3["name"] = "zapi";
+      arr3["address"] = "beijing";
+      ArrayVariant arr4;
+      arr4["name"] = "zapi";
+      arr4["address"] = "beijing";
+      arr4["info"] = 3.14;
+      ASSERT_TRUE(arr1 == arr1);
+      ASSERT_TRUE(arr2 == arr2);
+      ASSERT_TRUE(arr3 == arr3);
+      ASSERT_TRUE(arr4 == arr4);
+      ASSERT_TRUE(arr1 == arr2);
+      ASSERT_TRUE(arr1 == arr3);
+      ASSERT_FALSE(arr2 == arr4);
+      
+      ASSERT_FALSE(arr1 != arr1);
+      ASSERT_FALSE(arr2 != arr2);
+      ASSERT_FALSE(arr3 != arr3);
+      ASSERT_FALSE(arr4 != arr4);
+      ASSERT_FALSE(arr1 != arr2);
+      ASSERT_FALSE(arr1 != arr3);
+      ASSERT_TRUE(arr2 != arr4);
+   }
+}
+
 TEST(ArrayVariantTest, testContains)
 {
    ArrayVariant array;
@@ -154,7 +216,6 @@ TEST(ArrayVariantTest, testErase)
    iter = array.end();
    iter = array.erase(iter);
    ASSERT_TRUE(iter == iter);
-   
    ArrayVariant::ConstIterator citer = array.cbegin();
    ASSERT_STREQ(StringVariant(citer.getValue()).getCStr(), "zapi");
    citer += 2;
