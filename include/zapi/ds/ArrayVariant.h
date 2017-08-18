@@ -34,7 +34,7 @@ class BoolVarint;
 class DoubleVariant;
 class StringVariant;
 
-class ZAPI_DECL_EXPORT ArrayVariant : public Variant
+class ZAPI_DECL_EXPORT ArrayVariant final : public Variant
 {
 public:
    using IndexType = uint32_t;
@@ -51,16 +51,6 @@ public:
    ArrayVariant(ArrayVariant &&other) ZAPI_DECL_NOEXCEPT;
    ArrayVariant(const Variant &other);
    ArrayVariant(Variant &&other) ZAPI_DECL_NOEXCEPT;
-   // transform constructors
-   explicit ArrayVariant(const NumericVariant &value);
-   explicit ArrayVariant(const BoolVarint &value);
-   explicit ArrayVariant(const DoubleVariant &value);
-   explicit ArrayVariant(const StringVariant &value);
-   explicit ArrayVariant(const std::string &value);
-   explicit ArrayVariant(const char *value);
-   template <typename ArithmeticType, 
-             typename Selector = typename std::enable_if<std::is_arithmetic<ArithmeticType>::value>::type>
-   explicit ArrayVariant(ArithmeticType value);
    // operators
    ArrayItemProxy operator [](zapi_ulong index);
    template <typename T, 
@@ -94,6 +84,10 @@ public:
    std::list<KeyType> getKeys() const;
    std::list<KeyType> getKeys(const Variant &value, bool strict = false) const;
    std::list<Variant> getValues() const;
+   Iterator find(zapi_ulong index);
+   Iterator find(const std::string &key);
+   ConstIterator find(zapi_ulong index) const;
+   ConstIterator find(const std::string &key) const;
    // iterators
    Iterator begin() ZAPI_DECL_NOEXCEPT;
    ConstIterator begin() const ZAPI_DECL_NOEXCEPT;
@@ -186,6 +180,8 @@ protected:
    _zend_array *getZendArrayPtr() const ZAPI_DECL_NOEXCEPT;
    _zend_array &getZendArray() const ZAPI_DECL_NOEXCEPT;
    uint32_t calculateIdxFromZval(zval *val) const ZAPI_DECL_NOEXCEPT;
+   uint32_t findArrayIdx(const std::string &key) const ZAPI_DECL_NOEXCEPT;
+   uint32_t findArrayIdx(zapi_ulong index) const ZAPI_DECL_NOEXCEPT;
 protected:
    friend class ArrayItemProxy;
    friend class Iterator;
@@ -199,12 +195,6 @@ ArrayItemProxy ArrayVariant::operator [](T index)
       index = 0;
    }
    return operator [](static_cast<zapi_ulong>(index));
-}
-
-template <typename ArithmeticType, typename Selector>
-ArrayVariant::ArrayVariant(ArithmeticType value)
-{
-   
 }
 
 } // ds

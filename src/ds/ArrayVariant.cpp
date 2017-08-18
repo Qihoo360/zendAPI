@@ -19,6 +19,44 @@
 #include <iostream>
 #include <string>
 
+#if ZEND_DEBUG
+
+#define HASH_MASK_CONSISTENCY	0xc0
+#define HT_OK					0x00
+#define HT_IS_DESTROYING		0x40
+#define HT_DESTROYED			0x80
+#define HT_CLEANING				0xc0
+
+static void _zend_is_inconsistent(const HashTable *ht, const char *file, int line)
+{
+   if ((ht->u.flags & HASH_MASK_CONSISTENCY) == HT_OK) {
+      return;
+   }
+   switch ((ht->u.flags & HASH_MASK_CONSISTENCY)) {
+   case HT_IS_DESTROYING:
+      zend_output_debug_string(1, "%s(%d) : ht=%p is being destroyed", file, line, ht);
+      break;
+   case HT_DESTROYED:
+      zend_output_debug_string(1, "%s(%d) : ht=%p is already destroyed", file, line, ht);
+      break;
+   case HT_CLEANING:
+      zend_output_debug_string(1, "%s(%d) : ht=%p is being cleaned", file, line, ht);
+      break;
+   default:
+      zend_output_debug_string(1, "%s(%d) : ht=%p is inconsistent", file, line, ht);
+      break;
+   }
+   zend_bailout();
+}
+#define IS_CONSISTENT(a) _zend_is_inconsistent(a, __FILE__, __LINE__);
+#define SET_INCONSISTENT(n) do { \
+   (ht)->u.flags |= n; \
+   } while (0)
+#else
+#define IS_CONSISTENT(a)
+#define SET_INCONSISTENT(n)
+#endif
+
 namespace zapi
 {
 namespace ds
@@ -353,6 +391,50 @@ std::list<Variant> ArrayVariant::getValues() const
    return values;
 }
 
+ArrayIterator ArrayVariant::find(zapi_ulong index)
+{
+   return static_cast<ArrayIterator>(static_cast<const ArrayVariant>(*this).find(index));
+}
+
+ArrayIterator ArrayVariant::find(const std::string &key)
+{
+   return static_cast<ArrayIterator>(static_cast<const ArrayVariant>(*this).find(key));
+}
+
+ConstArrayIterator ArrayVariant::find(zapi_ulong index) const
+{
+   zend_array *array = getZendArrayPtr();
+   Bucket *p;
+   IS_CONSISTENT(array);
+   uint32_t idx = HT_INVALID_IDX;
+   if (array->u.flags & HASH_FLAG_PACKED) {
+      if (index < array->nNumUsed) {
+         p = array->arData + index;
+         if (Z_TYPE(p->val) != IS_UNDEF) {
+            idx = index;
+         }
+      }
+   }
+   if (idx == HT_INVALID_IDX) {
+      idx = findArrayIdx(index);
+   }
+   if (idx == HT_INVALID_IDX) {
+      return end();
+   }
+   return ConstArrayIterator(array, &idx);
+}
+
+ConstArrayIterator ArrayVariant::find(const std::string &key) const
+{
+   zend_array *array = getZendArrayPtr();
+   IS_CONSISTENT(array);
+   uint32_t idx = findArrayIdx(key);
+   if (idx == HT_INVALID_IDX) {
+      return end();
+   }
+   return ConstArrayIterator(array, &idx);
+}
+
 ArrayIterator ArrayVariant::begin() ZAPI_DECL_NOEXCEPT
 {
    HashPosition pos = 0;
@@ -403,6 +485,52 @@ uint32_t ArrayVariant::calculateIdxFromZval(zval *val) const ZAPI_DECL_NOEXCEPT
 {
    zend_array *arr = getZendArrayPtr();
    return (reinterpret_cast<char *>(val) - reinterpret_cast<char *>(arr->arData)) / sizeof(Bucket);
+}
+
+uint32_t ArrayVariant::findArrayIdx(const std::string &key) const ZAPI_DECL_NOEXCEPT
+{
+   const char *keyStr = key.c_str();
+   size_t length = key.length();
+   zapi_ulong h = zend_inline_hash_func(key.c_str(), key.length());
+   uint32_t nIndex;
+   uint32_t idx;
+   zend_array *ht = getZendArrayPtr();
+   Bucket *p, *arData;
+   arData = ht->arData;
+   nIndex = h | ht->nTableMask;
+   idx = HT_HASH_EX(arData, nIndex);
+   while (idx != HT_INVALID_IDX) {
+      ZEND_ASSERT(idx < HT_IDX_TO_HASH(ht->nTableSize));
+      p = HT_HASH_TO_BUCKET_EX(arData, idx);
+      if ((p->h == h)
+          && p->key
+          && (ZSTR_LEN(p->key) == length)
+          && !memcmp(ZSTR_VAL(p->key), keyStr, length)) {
+         return idx;
+      }
+      idx = Z_NEXT(p->val);
+   }
+   return HT_INVALID_IDX;
+}
+
+uint32_t ArrayVariant::findArrayIdx(zapi_ulong index) const ZAPI_DECL_NOEXCEPT
+{
+   uint32_t nIndex;
+   uint32_t idx;
+   Bucket *p, *arData;
+   zend_array *ht = getZendArrayPtr();
+   arData = ht->arData;
+   nIndex = index | ht->nTableMask;
+   idx = HT_HASH_EX(arData, nIndex);
+   while (idx != HT_INVALID_IDX) {
+      ZEND_ASSERT(idx < HT_IDX_TO_HASH(ht->nTableSize));
+      p = HT_HASH_TO_BUCKET_EX(arData, idx);
+      if (p->h == index && !p->key) {
+         return idx;
+      }
+      idx = Z_NEXT(p->val);
+   }
+   return HT_INVALID_IDX;
 }
 
 // iterator classes

@@ -344,6 +344,38 @@ TEST(ArrayVariantTest, testGetValues)
    ASSERT_EQ(values, expectValues);
 }
 
+TEST(ArrayVariantTest, testFind)
+{
+   ArrayVariant array;
+   array.insert("name", "zapi");
+   array.insert("age", 123);
+   array.append("beijing");
+   array.append("aaa");
+   array.append("bbb");
+   array.insert("info", "ccc");
+   array.insert("data", 3.14);
+   array.insert("xxx", 3.14);
+   array.insert("key3", "ccc");
+   ArrayVariant::Iterator iter = array.find("notExist");
+   ASSERT_TRUE(iter == array.end());
+   iter = array.find(122);
+   ASSERT_TRUE(iter == array.end());
+   iter = array.find("name");
+   ASSERT_STREQ(StringVariant(iter.getValue()).getCStr(), "zapi");
+   ++iter;
+   ASSERT_EQ(NumericVariant(iter.getValue()).toLong(), 123);
+   
+   const ArrayVariant &carray = array;
+   ArrayVariant::ConstIterator citer = carray.find("notExist");
+   ASSERT_TRUE(citer == carray.cend());
+   citer = carray.find(122);
+   ASSERT_TRUE(citer == carray.cend());
+   citer = carray.find("name");
+   ASSERT_STREQ(StringVariant(citer.getValue()).getCStr(), "zapi");
+   ++citer;
+   ASSERT_EQ(NumericVariant(citer.getValue()).toLong(), 123);
+}
+
 TEST(ArrayVariantTest, testInsert)
 {
    ArrayVariant array;
@@ -511,7 +543,7 @@ TEST(ArrayVariantTest, testAccessOperator)
    ASSERT_STREQ(city.getCStr(), "beijing");
    array[11][1][3] = "zzu_softboy";
    StringVariant str1 = array[11][1][3];
-   std::cout << str1 << std::endl;
+   // ::cout << str1 << std::endl;
    ASSERT_STREQ(str1.getCStr(), "zzu_softboy");
    array[4][5][6][7][8][9][10][11][12]["name"] = "UnicornTeam";
    array[4][5][6][7][8][9][10][11][12]["address"] = "Qihoo360 Building";
