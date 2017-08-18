@@ -262,6 +262,26 @@ ArrayVariant::Iterator ArrayVariant::erase(Iterator &iter)
    return erase(static_cast<ConstIterator &>(iter));
 }
 
+Variant ArrayVariant::take(const std::string &key)
+{
+   Iterator iter = find(key);
+   Variant ret(iter.getValue());
+   if (iter != end()) {
+      remove(key);
+   }
+   return ret;
+}
+
+Variant ArrayVariant::take(zapi_ulong index)
+{
+   Iterator iter = find(index);
+   Variant ret(iter.getValue());
+   if (iter != end()) {
+      remove(index);
+   }
+   return ret;
+}
+
 bool ArrayVariant::isEmpty() const ZAPI_DECL_NOEXCEPT
 {
    return 0 == getSize();

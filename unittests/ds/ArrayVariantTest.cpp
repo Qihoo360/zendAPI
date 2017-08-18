@@ -163,6 +163,21 @@ TEST(ArrayVariantTest, testErase)
    ASSERT_EQ(NumericVariant(citer.getValue()).toLong(), 3);
 }
 
+TEST(ArrayVariantTest, testTake)
+{
+   ArrayVariant array;
+   array.insert("name", "zapi");
+   array.insert("address", "beijing");
+   array.append(1);
+   array.append(2);
+   array.append(3);
+   ASSERT_EQ(array.getSize(), 5);
+   StringVariant name = array.take("name");
+   ASSERT_EQ(array.getSize(), 4);
+   ASSERT_STREQ(name.getCStr(), "zapi");
+   ASSERT_EQ(name.getRefCount(), 1);
+}
+
 TEST(ArrayVariantTest, testUnset)
 {
    ArrayVariant array;

@@ -70,6 +70,8 @@ public:
    bool remove(const std::string &key) ZAPI_DECL_NOEXCEPT;
    Iterator erase(ConstIterator &iter);
    Iterator erase(Iterator &iter);
+   Variant take(const std::string &key);
+   Variant take(zapi_ulong index);
    // info access
    bool isEmpty() const ZAPI_DECL_NOEXCEPT;
    bool isNull() const ZAPI_DECL_NOEXCEPT;
