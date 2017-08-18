@@ -518,7 +518,7 @@ bool Variant::strictEqual(const Variant &other) const
    return fast_is_identical_function(const_cast<zval *>(getZvalPtr()), const_cast<zval *>(other.getZvalPtr()));
 }
 
-bool Variant::structNotEqual(const Variant &other) const
+bool Variant::strictNotEqual(const Variant &other) const
 {
    return fast_is_not_identical_function(const_cast<zval *>(getZvalPtr()), const_cast<zval *>(other.getZvalPtr()));
 }

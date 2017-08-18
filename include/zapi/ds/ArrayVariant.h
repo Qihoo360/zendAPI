@@ -61,8 +61,8 @@ public:
    bool operator ==(const ArrayVariant &other) const;
    bool operator !=(const ArrayVariant &other) const;
    
-   bool strictEqual(const Variant &other) const;
-   bool strictNotEqual(const Variant &other) const;
+   bool strictEqual(const ArrayVariant &other) const;
+   bool strictNotEqual(const ArrayVariant &other) const;
    // modify methods
    Iterator insert(zapi_ulong index, const Variant &value);
    Iterator insert(zapi_ulong index, Variant &&value);

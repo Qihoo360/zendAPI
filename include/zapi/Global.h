@@ -204,6 +204,9 @@ ZAPI_DECL_EXPORT void assert_x(const char *where, const char *what, const char *
 #define ZAPI_SUCCESS SUCCESS
 #define ZAPI_FAILURE FAILURE
 
+// define some zend macro
+#define zapi_bailout() _zend_bailout(const_cast<char *>(static_cast<const char *>(__FILE__)), __LINE__)
+
 namespace zapi
 {
 

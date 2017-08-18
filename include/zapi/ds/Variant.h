@@ -144,7 +144,7 @@ public:
    bool operator !=(const Variant &other) const;
    
    bool strictEqual(const Variant &other) const;
-   bool structNotEqual(const Variant &other) const;
+   bool strictNotEqual(const Variant &other) const;
    /**
     * Cast to a boolean
     * @return boolean

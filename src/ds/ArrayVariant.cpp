@@ -46,7 +46,7 @@ static void _zend_is_inconsistent(const HashTable *ht, const char *file, int lin
       zend_output_debug_string(1, "%s(%d) : ht=%p is inconsistent", file, line, ht);
       break;
    }
-   zend_bailout();
+   zapi_bailout();
 }
 #define IS_CONSISTENT(a) _zend_is_inconsistent(a, __FILE__, __LINE__);
 #define SET_INCONSISTENT(n) do { \
@@ -56,6 +56,30 @@ static void _zend_is_inconsistent(const HashTable *ht, const char *file, int lin
 #define IS_CONSISTENT(a)
 #define SET_INCONSISTENT(n)
 #endif
+
+namespace 
+{
+
+// copy from zend_operators.c
+int hash_zval_identical_function(const void *z1, const void *z2)
+{
+   zval result;
+   zval *zval1 = const_cast<zval *>(reinterpret_cast<const zval *>(z1));
+   zval *zval2 = const_cast<zval *>(reinterpret_cast<const zval *>(z2));
+   /* is_identical_function() returns 1 in case of identity and 0 in case
+    * of a difference;
+    * whereas this comparison function is expected to return 0 on identity,
+    * and non zero otherwise.
+    */
+   ZVAL_DEREF(zval1);
+   ZVAL_DEREF(zval2);
+   if (is_identical_function(&result, zval1, zval2) == FAILURE) {
+      return 1;
+   }
+   return Z_TYPE(result) != IS_TRUE;
+}
+
+}
 
 namespace zapi
 {
@@ -123,14 +147,18 @@ bool ArrayVariant::operator !=(const ArrayVariant &other) const
    return !operator ==(other);
 }
 
-bool ArrayVariant::strictEqual(const Variant &other) const
+bool ArrayVariant::strictEqual(const ArrayVariant &other) const
 {
-   
+   if (this == &other) {
+      return true;
+   }
+   return zend_hash_compare(getZendArrayPtr(), other.getZendArrayPtr(), 
+                            static_cast<compare_func_t>(hash_zval_identical_function), 1) == 0;
 }
 
-bool ArrayVariant::strictNotEqual(const Variant &other) const
+bool ArrayVariant::strictNotEqual(const ArrayVariant &other) const
 {
-   
+   return !strictEqual(other);
 }
 
 ArrayIterator ArrayVariant::insert(zapi_ulong index, const Variant &value)

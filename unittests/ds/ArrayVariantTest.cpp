@@ -79,7 +79,7 @@ TEST(ArrayVariantTest, testAssignOperators)
 }
 
 
-TEST(ArrayVariantTest, testEqual)
+TEST(ArrayVariantTest, testEqualAndNotEqual)
 {
    {
       ArrayVariant arr1;
@@ -95,6 +95,11 @@ TEST(ArrayVariantTest, testEqual)
       arr4.append(1);
       arr4.append(2);
       arr4.append(3);
+      
+      ASSERT_TRUE(arr1.strictEqual(arr1));
+      ASSERT_TRUE(arr2.strictEqual(arr2));
+      ASSERT_TRUE(arr2.strictEqual(arr2));
+      
       ASSERT_FALSE(arr1 == arr2);
       ASSERT_TRUE(arr1 == arr3);
       ASSERT_TRUE(arr1 == arr1);
@@ -112,22 +117,37 @@ TEST(ArrayVariantTest, testEqual)
    {
       ArrayVariant arr1;
       arr1["name"] = "zapi";
+      arr1[0] = 123;
       arr1["address"] = "beijing";
       ArrayVariant arr2;
       arr2["address"] = "beijing";
+      arr2[0] = 123;
       arr2["name"] = "zapi";
       ArrayVariant arr3;
       arr3["name"] = "zapi";
+      arr3[0] = 123;
       arr3["address"] = "beijing";
       ArrayVariant arr4;
       arr4["name"] = "zapi";
       arr4["address"] = "beijing";
       arr4["info"] = 3.14;
+      ArrayVariant arr5;
+      arr5["name"] = "zapi";
+      arr5["address"] = "beijing";
+      arr5[0] = 123;
+      
+      ASSERT_TRUE(arr1.strictEqual(arr1));
+      ASSERT_TRUE(arr2.strictEqual(arr2));
+      ASSERT_TRUE(arr3.strictEqual(arr3));
+      ASSERT_TRUE(arr4.strictEqual(arr4));
+      
       ASSERT_TRUE(arr1 == arr1);
       ASSERT_TRUE(arr2 == arr2);
       ASSERT_TRUE(arr3 == arr3);
       ASSERT_TRUE(arr4 == arr4);
       ASSERT_TRUE(arr1 == arr2);
+      ASSERT_FALSE(arr1.strictEqual(arr2));
+      ASSERT_TRUE(arr1.strictEqual(arr3));
       ASSERT_TRUE(arr1 == arr3);
       ASSERT_FALSE(arr2 == arr4);
       
@@ -138,6 +158,11 @@ TEST(ArrayVariantTest, testEqual)
       ASSERT_FALSE(arr1 != arr2);
       ASSERT_FALSE(arr1 != arr3);
       ASSERT_TRUE(arr2 != arr4);
+      
+      ASSERT_TRUE(arr1 == arr5);
+      ASSERT_FALSE(arr1 != arr5);
+      ASSERT_FALSE(arr1.strictEqual(arr5));
+      ASSERT_TRUE(arr1.strictNotEqual(arr5));
    }
 }
 
