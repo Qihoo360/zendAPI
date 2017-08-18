@@ -91,6 +91,9 @@ public:
    bool contains(zapi_ulong index) const;
    bool contains(const std::string &key) const;
    zapi_long getNextInsertIndex() const;
+   std::list<KeyType> getKeys() const;
+   std::list<KeyType> getKeys(const Variant &value, bool strict = false) const;
+   std::list<Variant> getValues() const;
    // iterators
    Iterator begin() ZAPI_DECL_NOEXCEPT;
    ConstIterator begin() const ZAPI_DECL_NOEXCEPT;

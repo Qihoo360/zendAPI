@@ -283,6 +283,76 @@ zapi_long ArrayVariant::getNextInsertIndex() const
    return getZendArrayPtr()->nNextFreeElement;
 }
 
+std::list<ArrayVariant::KeyType> ArrayVariant::getKeys() const
+{
+   std::list<KeyType> keys;
+   zapi_ulong index;
+   zend_string *key;
+   zval *entry;
+   if (0 == getSize()) {
+      return keys;
+   }
+   ZEND_HASH_FOREACH_KEY_VAL_IND(getZendArrayPtr(), index, key, entry) {
+      if (key) {
+         keys.push_back(KeyType(-1, std::shared_ptr<std::string>(new std::string(ZSTR_VAL(key), ZSTR_LEN(key)))));
+      } else {
+         keys.push_back(KeyType(index, nullptr));
+      }
+   } ZEND_HASH_FOREACH_END();
+   return keys;
+}
+
+std::list<ArrayVariant::KeyType> ArrayVariant::getKeys(const Variant &value, bool strict) const
+{
+   std::list<KeyType> keys;
+   zapi_ulong index;
+   zend_string *key;
+   zval *entry;
+   zval *searchValue = const_cast<zval *>(value.getZvalPtr());
+   if (0 == getSize()) {
+      return keys;
+   }
+   if (strict) {
+      ZEND_HASH_FOREACH_KEY_VAL_IND(getZendArrayPtr(), index, key, entry) {
+         ZVAL_DEREF(entry);
+         if (fast_is_identical_function(searchValue, entry)) {
+            if (key) {
+               keys.push_back(KeyType(-1, std::shared_ptr<std::string>(new std::string(ZSTR_VAL(key), ZSTR_LEN(key)))));
+            } else {
+               keys.push_back(KeyType(index, nullptr));
+            }
+         }
+      } ZEND_HASH_FOREACH_END();
+   } else {
+      ZEND_HASH_FOREACH_KEY_VAL_IND(getZendArrayPtr(), index, key, entry) {
+         if (fast_equal_check_function(searchValue, entry)) {
+            if (key) {
+               keys.push_back(KeyType(-1, std::shared_ptr<std::string>(new std::string(ZSTR_VAL(key), ZSTR_LEN(key)))));
+            } else {
+               keys.push_back(KeyType(index, nullptr));
+            }
+         }
+      } ZEND_HASH_FOREACH_END();
+   }
+   return keys;
+}
+
+std::list<Variant> ArrayVariant::getValues() const
+{
+   std::list<Variant> values;
+   zval *entry;
+   if (0 == getSize()) {
+      return values;
+   }
+   ZEND_HASH_FOREACH_VAL(getZendArrayPtr(), entry) {
+      if (UNEXPECTED(Z_ISREF_P(entry) && Z_REFCOUNT_P(entry) == 1)) {
+         entry = Z_REFVAL_P(entry);
+      }
+      values.emplace_back(entry);
+   } ZEND_HASH_FOREACH_END();
+   return values;
+}
+
 ArrayIterator ArrayVariant::begin() ZAPI_DECL_NOEXCEPT
 {
    HashPosition pos = 0;
@@ -401,18 +471,16 @@ ArrayIterator::ZvalPointer ArrayIterator::getZvalPtr() const
 ArrayVariant::KeyType ArrayIterator::getKey() const
 {
    ZAPI_ASSERT_X(m_array != nullptr, "ArrayVariant::Iterator::getKey", "m_array can't be nullptr");
-   KeyType key;
    zend_string *keyStr;
    zapi_ulong index;
    HashPosition pos = getCurrentPos();
    int keyType = zend_hash_get_current_key_ex(m_array, &keyStr, &index, &pos);
    ZAPI_ASSERT_X(keyType != HASH_KEY_NON_EXISTENT, "ArrayVariant::Iterator::getKey", "Key can't not exist");
    if (HASH_KEY_IS_STRING == keyType) {
-      key.second.reset(new std::string(ZSTR_VAL(keyStr), ZSTR_LEN(keyStr))); 
+      return KeyType(-1, std::shared_ptr<std::string>(new std::string(ZSTR_VAL(keyStr), ZSTR_LEN(keyStr))));
    } else {
-      key.first = index;
+      return KeyType(index, nullptr);
    }
-   return key;
 }
 
 HashPosition ArrayIterator::getCurrentPos() const

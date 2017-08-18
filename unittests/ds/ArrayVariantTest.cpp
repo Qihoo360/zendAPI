@@ -22,6 +22,7 @@
 #include "zapi/ds/StringVariant.h"
 #include "zapi/ds/BoolVariant.h"
 #include "zapi/utils/PhpFuncs.h"
+#include <list>
 
 using zapi::ds::ArrayVariant;
 using zapi::ds::Variant;
@@ -29,6 +30,7 @@ using zapi::ds::NumericVariant;
 using zapi::ds::StringVariant;
 using zapi::ds::BoolVariant;
 using zapi::ds::DoubleVariant;
+using KeyType = ArrayVariant::KeyType;
 
 TEST(ArrayVariantTest, testConstructor)
 {
@@ -266,6 +268,71 @@ TEST(ArrayVariantTest, testGetNextInertIndex)
    ASSERT_EQ(array.getNextInsertIndex(), 12);
    array.append("beijing");
    ASSERT_EQ(array.getNextInsertIndex(), 13);
+}
+
+TEST(ArrayVariantTest, testGetKeys) 
+{
+   ArrayVariant array;
+   
+   std::list<KeyType> expectKeys = {
+      KeyType(-1, std::shared_ptr<std::string>(new std::string("name"))),
+      KeyType(-1, std::shared_ptr<std::string>(new std::string("age"))),
+      KeyType(0, nullptr),
+      KeyType(1, nullptr),
+      KeyType(2, nullptr),
+      KeyType(-1, std::shared_ptr<std::string>(new std::string("info"))),
+      KeyType(-1, std::shared_ptr<std::string>(new std::string("data"))),
+      KeyType(-1, std::shared_ptr<std::string>(new std::string("xxx"))),
+      KeyType(-1, std::shared_ptr<std::string>(new std::string("key3"))),
+   };
+   std::list<ArrayVariant::KeyType> keys = array.getKeys();
+   ASSERT_EQ(keys.size(), 0);
+   array.insert("name", "zapi");
+   array.insert("age", 123);
+   array.append("beijing");
+   array.append("aaa");
+   array.append("bbb");
+   array.insert("info", "ccc");
+   array.insert("data", 3.14);
+   array.insert("xxx", 3.14);
+   array.insert("key3", "ccc");
+   keys = array.getKeys();
+   ASSERT_EQ(keys.size(), expectKeys.size());
+   auto iter = keys.begin();
+   auto expectIter = expectKeys.begin();
+   while (iter != keys.end()) {
+      ASSERT_EQ(iter->first, expectIter->first);
+      if (iter->second) {
+         ASSERT_EQ(*iter->second, *expectIter->second);
+      }
+      ++iter;
+      ++expectIter;
+   }
+   keys = array.getKeys("notExistValue");
+   ASSERT_TRUE(keys.empty());
+   keys = array.getKeys(3.14);
+   expectKeys = {
+      KeyType(-1, std::shared_ptr<std::string>(new std::string("data"))),
+      KeyType(-1, std::shared_ptr<std::string>(new std::string("xxx"))),
+   };
+   ASSERT_EQ(keys.size(), expectKeys.size());
+   iter = keys.begin();
+   expectIter = expectKeys.begin();
+   while (iter != keys.end()) {
+      ASSERT_EQ(iter->first, expectIter->first);
+      if (iter->second) {
+         ASSERT_EQ(*iter->second, *expectIter->second);
+      }
+      ++iter;
+      ++expectIter;
+   }
+}
+
+TEST(ArrayVariantTest, testGetValues)
+{
+   ArrayVariant array;
+   array.insert("name", "zapi");
+   array.insert("age", 123);
 }
 
 TEST(ArrayVariantTest, testInsert)
