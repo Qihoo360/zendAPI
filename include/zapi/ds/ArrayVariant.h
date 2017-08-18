@@ -50,7 +50,7 @@ public:
    ArrayVariant(const ArrayVariant &other);
    ArrayVariant(ArrayVariant &&other) ZAPI_DECL_NOEXCEPT;
    ArrayVariant(const Variant &other);
-   ArrayVariant(Variant &&other) ZAPI_DECL_NOEXCEPT;
+   ArrayVariant(Variant &&other);
    // operators
    ArrayItemProxy operator [](zapi_ulong index);
    template <typename T, 

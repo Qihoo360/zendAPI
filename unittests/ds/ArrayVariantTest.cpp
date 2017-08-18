@@ -58,6 +58,78 @@ TEST(ArrayVariantTest, testCopyConstructor)
    ASSERT_EQ(array.getRefCount(), 1);
    ASSERT_EQ(array1.getSize(), 2);
    ASSERT_EQ(array1.getRefCount(), 1);
+   
+   // copy from Variant
+   {
+      Variant val1; // copy from empty variant
+      ArrayVariant array2(val1);
+      ASSERT_EQ(array2.getSize(), 0);
+      ASSERT_EQ(array2.getRefCount(), 1);
+      Variant val3(123);
+      ASSERT_EQ(val3.getRefCount(), 0);
+      ArrayVariant array3(val3);
+      ASSERT_EQ(array3.getSize(), 1);
+      ASSERT_EQ((array3[0]).toNumericVariant().toLong(), 123);
+      ASSERT_EQ(val3.getRefCount(), 0);
+      ASSERT_EQ(array3.getRefCount(), 1);
+      
+      // test string
+      Variant val4("zapi");
+      ASSERT_EQ(val4.getRefCount(), 1);
+      ArrayVariant array4(val4);
+      ASSERT_EQ(val4.getRefCount(), 1); // of course 1 we convert string into array, deploy copy on write idiom
+      ASSERT_EQ(array4.getRefCount(), 1);
+      ASSERT_STREQ((array4[0]).toStringVariant().getCStr(), "zapi");
+      
+      // test array
+      Variant val5(array4);
+      ASSERT_EQ(val5.getRefCount(), 2);
+      ASSERT_EQ(array4.getRefCount(), 2);
+      ArrayVariant array5(val5);
+      ASSERT_EQ(val5.getRefCount(), 3);
+      ASSERT_EQ(array5.getRefCount(), 3);
+      ASSERT_EQ(array5.getSize(), 1);
+      ASSERT_STREQ((array5[0]).toStringVariant().getCStr(), "zapi");
+      array5[1] = 123;
+      
+      ASSERT_EQ(array4.getRefCount(), 2);
+      ASSERT_EQ(val5.getRefCount(), 2);
+      ASSERT_EQ(array5.getRefCount(), 1);
+   }
+   
+   {
+      // test move Variant
+      Variant val1; // copy from empty variant
+      ArrayVariant array1(std::move(val1));
+      ASSERT_EQ(array1.getSize(), 0);
+      ASSERT_EQ(array1.getRefCount(), 1);
+      // move scalar Variant
+      Variant val2(3.14);
+      ASSERT_EQ(val2.getRefCount(), 0);
+      ArrayVariant array2(std::move(val2));
+      ASSERT_EQ(array2.getRefCount(), 1);
+      ASSERT_EQ((array2[0]).toDoubleVariant().toDouble(), 3.14);
+      
+      Variant val3(true);
+      ASSERT_EQ(val3.getRefCount(), 0);
+      ArrayVariant array3(std::move(val3));
+      ASSERT_EQ(array3.getRefCount(), 1);
+      ASSERT_EQ((array3[0]).toBoolVariant().toBool(), true);
+      
+      ArrayVariant infoArray;
+      infoArray.append("zzu_softboy");
+      infoArray["team"] = "unicornteam";
+      infoArray["age"] = 123;
+      Variant val4(infoArray);
+      ASSERT_EQ(infoArray.getRefCount(), 2);
+      ASSERT_EQ(val4.getRefCount(), 2);
+      ArrayVariant array4(std::move(val4));
+      ASSERT_EQ(infoArray.getRefCount(), 2);
+      ASSERT_EQ(array4.getRefCount(), 2);
+      ASSERT_STREQ((array4[0]).toStringVariant().getCStr(), "zzu_softboy");
+      ASSERT_STREQ((array4["team"]).toStringVariant().getCStr(), "unicornteam");
+      ASSERT_EQ((array4["age"]).toNumericVariant().toLong(), 123);
+   }
 }
 
 TEST(ArrayVariantTest, testMoveConstructor)
@@ -504,6 +576,18 @@ TEST(ArrayVariantTest, testInsert)
    iter = array.begin();
    // array keep insert order
    ASSERT_STREQ(StringVariant(iter.getZvalPtr()).getCStr(), "zzu_softboy");
+   
+   ArrayVariant arr2;
+   arr2.insert("info", "beijing");
+   array.insert("data", arr2);
+   
+   Variant ditem = array["data"];
+   ASSERT_EQ(ditem.getType(), zapi::lang::Type::Array);
+   ArrayVariant arr3(std::move(ditem)); // can not use ditem anymore
+   ASSERT_EQ(arr2.getRefCount(), 3);
+   ASSERT_EQ(arr3.getRefCount(), 3);
+   StringVariant info = arr3["info"];
+   ASSERT_STREQ(info.getCStr(), "beijing");
 }
 
 TEST(ArrayVariantTest, testIterators)

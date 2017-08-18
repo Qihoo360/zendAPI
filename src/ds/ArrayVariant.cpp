@@ -113,12 +113,24 @@ ArrayVariant::ArrayVariant(ArrayVariant &&other) ZAPI_DECL_NOEXCEPT
 
 ArrayVariant::ArrayVariant(const Variant &other)
 {
-   
+   zval *from = const_cast<zval *>(other.getZvalPtr());
+   zval *self = getZvalPtr();
+   if (other.getType() == Type::Array) {
+      ZVAL_COPY(self, from);
+   } else {
+      zval temp;
+      ZVAL_DUP(&temp, from);
+      convert_to_array(&temp);
+      ZVAL_COPY_VALUE(self, &temp);
+   }
 }
 
-ArrayVariant::ArrayVariant(Variant &&other) ZAPI_DECL_NOEXCEPT
+ArrayVariant::ArrayVariant(Variant &&other)
+   : Variant(std::move(other))
 {
-   
+   if (getType() != Type::Array) {
+      convert_to_array(getZvalPtr());
+   }
 }
 
 ArrayItemProxy ArrayVariant::operator [](zapi_ulong index)
