@@ -147,7 +147,30 @@ TEST(ArrayVariantTest, testMoveConstructor)
 
 TEST(ArrayVariantTest, testAssignOperators)
 {
+   ArrayVariant array1;
+   ArrayVariant array2;
+   array1.insert("name", "zapi1");
+   array2.insert(1, "xiuxiu");
+   array2.insert(2, "beijing");
+   ASSERT_EQ(array1.getRefCount(), 1);
+   ASSERT_EQ(array2.getRefCount(), 1);
+   ASSERT_EQ(array1.getSize(), 1);
+   ASSERT_EQ(array2.getSize(), 2);
+   ASSERT_TRUE(array1.contains("name"));
+   ASSERT_TRUE(array2.contains(1));
+   ASSERT_TRUE(array2.contains(2));
+   array1 = array2;
+   ASSERT_EQ(array1.getRefCount(), 2);
+   ASSERT_EQ(array2.getRefCount(), 2);
+   ASSERT_FALSE(array1.contains("name"));
+   ASSERT_TRUE(array1.contains(1));
+   ASSERT_TRUE(array1.contains(2));
    
+   // move assgin
+   array1 = std::move(array2);
+   ASSERT_TRUE(array1.contains(1));
+   ASSERT_TRUE(array1.contains(2));
+   ASSERT_EQ(array1.getRefCount(), 1);
 }
 
 

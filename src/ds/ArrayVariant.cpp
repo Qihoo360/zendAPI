@@ -159,6 +159,21 @@ bool ArrayVariant::operator !=(const ArrayVariant &other) const
    return !operator ==(other);
 }
 
+ArrayVariant &ArrayVariant::operator =(const ArrayVariant &other)
+{
+   if (this != &other) {
+      Variant::operator =(other);
+   }
+   return *this;
+}
+
+ArrayVariant &ArrayVariant::operator =(ArrayVariant &&other) ZAPI_DECL_NOEXCEPT
+{
+   assert(this != &other);
+   m_implPtr = std::move(other.m_implPtr);
+   return *this;
+}
+
 bool ArrayVariant::strictEqual(const ArrayVariant &other) const
 {
    if (this == &other) {

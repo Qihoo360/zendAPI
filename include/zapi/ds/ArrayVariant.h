@@ -60,6 +60,8 @@ public:
    ArrayItemProxy operator [](const char *key);
    bool operator ==(const ArrayVariant &other) const;
    bool operator !=(const ArrayVariant &other) const;
+   ArrayVariant &operator =(const ArrayVariant &other);
+   ArrayVariant &operator =(ArrayVariant &&other) ZAPI_DECL_NOEXCEPT;
    
    bool strictEqual(const ArrayVariant &other) const;
    bool strictNotEqual(const ArrayVariant &other) const;
