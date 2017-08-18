@@ -196,6 +196,34 @@ bool ArrayVariant::remove(const std::string &key) ZAPI_DECL_NOEXCEPT
    return zend_hash_str_del(getZendArrayPtr(), key.c_str(), key.length()) == ZAPI_SUCCESS;
 }
 
+ArrayVariant::Iterator ArrayVariant::erase(ConstIterator &iter)
+{
+   zend_array *array = getZendArrayPtr();
+   // here we need check the iter check whether iter pointer this array
+   if (iter == cend() || array != iter.m_array) {
+      return iter;
+   }
+   Iterator nextIter = iter;
+   ++nextIter;
+   KeyType key = iter.getKey();
+   int deleteStatus;
+   if (key.second) {
+      std::string *keyStr = key.second.get();
+      deleteStatus = zend_hash_str_del(array, keyStr->c_str(), keyStr->length());
+   } else {
+      deleteStatus = zend_hash_index_del(array, key.first);
+   }
+   if (ZAPI_FAILURE == deleteStatus) {
+      return iter;
+   }
+   return nextIter;
+}
+
+ArrayVariant::Iterator ArrayVariant::erase(Iterator &iter)
+{
+   return erase(static_cast<ConstIterator &>(iter));
+}
+
 bool ArrayVariant::isEmpty() const ZAPI_DECL_NOEXCEPT
 {
    return 0 == getSize();
@@ -341,7 +369,7 @@ ArrayIterator::Iterator(Iterator &&other) ZAPI_DECL_NOEXCEPT
    m_array = other.m_array;
    m_idx = other.m_idx;
    // prevent relase iterator
-   other.m_isEnd = false;
+   other.m_isEnd = true;
 }
 
 ArrayIterator::~Iterator()

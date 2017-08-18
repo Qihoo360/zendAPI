@@ -78,6 +78,8 @@ public:
    void clear() ZAPI_DECL_NOEXCEPT;
    bool remove(zapi_ulong index) ZAPI_DECL_NOEXCEPT;
    bool remove(const std::string &key) ZAPI_DECL_NOEXCEPT;
+   Iterator erase(ConstIterator &iter);
+   Iterator erase(Iterator &iter);
    // info access
    bool isEmpty() const ZAPI_DECL_NOEXCEPT;
    bool isNull() const ZAPI_DECL_NOEXCEPT;
@@ -183,6 +185,8 @@ protected:
    uint32_t calculateIdxFromZval(zval *val) const ZAPI_DECL_NOEXCEPT;
 protected:
    friend class ArrayItemProxy;
+   friend class Iterator;
+   friend class ConstIterator;
 };
 
 template <typename T, typename Selector>

@@ -136,6 +136,31 @@ TEST(ArrayVariantTest,testRemove)
    ASSERT_EQ(array.getSize(), 0);
 }
 
+TEST(ArrayVariantTest, testErase)
+{
+   ArrayVariant array;
+   array.insert("name", "zapi");
+   ArrayVariant::Iterator iter = array.insert("address", "beijing");
+   array.append(1);
+   array.append(2);
+   array.append(3);
+   ASSERT_EQ(array.getSize(), 5);
+   ASSERT_STREQ(StringVariant(iter.getValue()).getCStr(), "beijing");
+   iter = array.erase(iter);
+   ASSERT_EQ(array.getSize(), 4);
+   ASSERT_EQ(NumericVariant(iter.getValue()).toLong(), 1);
+   iter = array.end();
+   iter = array.erase(iter);
+   ASSERT_TRUE(iter == iter);
+   
+   ArrayVariant::ConstIterator citer = array.cbegin();
+   ASSERT_STREQ(StringVariant(citer.getValue()).getCStr(), "zapi");
+   citer += 2;
+   ASSERT_EQ(NumericVariant(citer.getValue()).toLong(), 2);
+   iter = array.erase(citer);
+   ASSERT_EQ(NumericVariant(citer.getValue()).toLong(), 3);
+}
+
 TEST(ArrayVariantTest, testUnset)
 {
    ArrayVariant array;
@@ -158,6 +183,7 @@ TEST(ArrayVariantTest, testUnset)
    ASSERT_TRUE(zapi::array_isset(array[3]["data"]));
    ASSERT_TRUE(zapi::array_unset(array[3]["data"]));
    ASSERT_FALSE(zapi::array_isset(array[3]["data"]));
+   ASSERT_FALSE(zapi::array_unset(array[3]["data"]));
 }
 
 TEST(ArrayVariantTest, testIsset)
