@@ -96,7 +96,6 @@ TEST(ArrayVariantTest, testCopyConstructor)
       ASSERT_EQ(val5.getRefCount(), 2);
       ASSERT_EQ(array5.getRefCount(), 1);
    }
-   
    {
       // test move Variant
       Variant val1; // copy from empty variant
@@ -171,8 +170,79 @@ TEST(ArrayVariantTest, testAssignOperators)
    ASSERT_TRUE(array1.contains(1));
    ASSERT_TRUE(array1.contains(2));
    ASSERT_EQ(array1.getRefCount(), 1);
+   
 }
 
+TEST(ArrayVariantTest, testMoveAssignOperators)
+{
+   // test assign from ArrayVariant
+   ArrayVariant array1;
+   Variant val1(123);
+   ASSERT_EQ(array1.getRefCount(), 1);
+   ASSERT_EQ(val1.getRefCount(), 0);
+   ASSERT_EQ(array1.getSize(), 0);
+   array1 = val1;
+   ASSERT_EQ(array1.getSize(), 1);
+   ASSERT_EQ((array1[0]).toNumericVariant().toLong(), 123);
+   ASSERT_EQ(array1.getRefCount(), 1);
+   ASSERT_EQ(val1.getRefCount(), 0);
+   
+   Variant val2(true);
+   ASSERT_EQ(val2.getRefCount(), 0);
+   array1 = val2;
+   ASSERT_EQ(array1.getSize(), 1);
+   ASSERT_EQ((array1[0]).toBoolVariant().toBool(), true);
+   ASSERT_EQ(array1.getRefCount(), 1);
+   ASSERT_EQ(val2.getRefCount(), 0);
+   
+   Variant val3("zapi");
+   ASSERT_EQ(val3.getRefCount(), 1);
+   array1 = val3;
+   ASSERT_EQ(val3.getRefCount(), 1);
+   ASSERT_EQ(array1.getSize(), 1);
+   ASSERT_STREQ((array1[0]).toStringVariant().getCStr(), "zapi");
+   ASSERT_EQ(array1.getRefCount(), 1);
+   ASSERT_EQ(val3.getRefCount(), 1);
+   
+   ArrayVariant array2;
+   array2[1] = "zapi";
+   array2[2] = true;
+   array2[3] = 3.14;
+   Variant val4(array2);
+   ASSERT_EQ(val4.getRefCount(), 2);
+   array1 = val4;
+   ASSERT_EQ(array1.getRefCount(), 3);
+   ASSERT_EQ(val4.getRefCount(), 3);
+   ASSERT_STREQ((array1[1]).toStringVariant().getCStr(), "zapi");
+   ASSERT_EQ((array1[2]).toBoolVariant().toBool(), true);
+   ASSERT_EQ((array1[3]).toDoubleVariant().toDouble(), 3.14);
+   // test move assign from ArrayVariant
+   
+   array1 = std::move(val1);
+   // can't do anything about val1
+   ASSERT_EQ(array1.getSize(), 1);
+   ASSERT_EQ((array1[0]).toNumericVariant().toLong(), 123);
+   ASSERT_EQ(array1.getRefCount(), 1);
+   
+   array1 = std::move(val2);
+   // can't do anything about val2
+   ASSERT_EQ(array1.getSize(), 1);
+   ASSERT_EQ((array1[0]).toBoolVariant().toBool(), true);
+   ASSERT_EQ(array1.getRefCount(), 1);
+   
+   array1 = std::move(val3);
+   // can't do anything about val3
+   ASSERT_EQ(array1.getSize(), 1);
+   ASSERT_STREQ((array1[0]).toStringVariant().getCStr(), "zapi");
+   ASSERT_EQ(array1.getRefCount(), 1);
+   
+   array1 = std::move(val4);
+   // can't do anything about val4
+   ASSERT_EQ(array1.getRefCount(), 2);
+   ASSERT_STREQ((array1[1]).toStringVariant().getCStr(), "zapi");
+   ASSERT_EQ((array1[2]).toBoolVariant().toBool(), true);
+   ASSERT_EQ((array1[3]).toDoubleVariant().toDouble(), 3.14);
+}
 
 TEST(ArrayVariantTest, testEqualAndNotEqual)
 {

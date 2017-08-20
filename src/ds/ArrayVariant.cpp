@@ -174,6 +174,38 @@ ArrayVariant &ArrayVariant::operator =(ArrayVariant &&other) ZAPI_DECL_NOEXCEPT
    return *this;
 }
 
+ArrayVariant &ArrayVariant::operator =(const Variant &other)
+{
+   zval *self = getZvalPtr();
+   zval *from = const_cast<zval *>(other.getZvalPtr());
+   // need set gc info
+   if (other.getType() == Type::Array) {
+      // standard copy
+      Variant::operator =(from);
+   } else {
+      SEPARATE_ZVAL_NOREF(self);
+      zval temp;
+      // will increase 1 to gc refcount
+      ZVAL_DUP(&temp, from);
+      // will decrease 1 to gc refcount
+      convert_to_array(&temp);
+      // we need free original zend_array memory
+      zend_array_destroy(Z_ARR_P(self));
+      ZVAL_COPY_VALUE(self, &temp);
+   }
+   return *this;
+}
+
+ArrayVariant &ArrayVariant::operator =(Variant &&other)
+{
+   m_implPtr = std::move(other.m_implPtr);
+   zval *self = getZvalPtr();
+   if (getType() != Type::Array) {
+      convert_to_array(self);
+   }
+   return *this;
+}
+
 bool ArrayVariant::strictEqual(const ArrayVariant &other) const
 {
    if (this == &other) {
