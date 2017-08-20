@@ -20,6 +20,7 @@
 #include <string>
 #include <list>
 #include <type_traits>
+#include <initializer_list>
 
 #include "zapi/ds/Variant.h"
 #include "zapi/ds/ArrayItemProxy.h"
@@ -51,6 +52,7 @@ public:
    ArrayVariant(ArrayVariant &&other) ZAPI_DECL_NOEXCEPT;
    ArrayVariant(const Variant &other);
    ArrayVariant(Variant &&other);
+   ArrayVariant(const std::initializer_list<Variant> &list);
    // operators
    ArrayItemProxy operator [](zapi_ulong index);
    template <typename T, 

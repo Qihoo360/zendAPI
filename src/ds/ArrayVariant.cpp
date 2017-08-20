@@ -125,6 +125,16 @@ ArrayVariant::ArrayVariant(const Variant &other)
    }
 }
 
+ArrayVariant::ArrayVariant(const std::initializer_list<Variant> &list)
+   : ArrayVariant()
+{
+   std::initializer_list<Variant>::iterator iter = list.begin();
+   std::initializer_list<Variant>::iterator end = list.end();
+   while (iter != end) {
+      append(*iter++);
+   }
+}
+
 ArrayVariant::ArrayVariant(Variant &&other)
    : Variant(std::move(other))
 {

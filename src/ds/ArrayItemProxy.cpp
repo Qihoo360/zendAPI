@@ -306,7 +306,12 @@ ArrayVariant ArrayItemProxy::toArrayVariant()
    if (!isKeychianOk(false)) {
       throw std::bad_cast();
    }
-   return ArrayVariant();
+   Variant value(retrieveZvalPtr());
+   if (value.getType() != Type::Array) {
+      zapi::notice << "Array proxy type "<< value.getTypeStr() 
+                   << "is not Array" << std::endl;
+   }
+   return ArrayVariant(Variant(retrieveZvalPtr()));
 }
 
 ArrayItemProxy ArrayItemProxy::operator [](zapi_long index)

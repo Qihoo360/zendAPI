@@ -144,6 +144,29 @@ TEST(ArrayVariantTest, testMoveConstructor)
    ASSERT_EQ(array1.getRefCount(), 1);
 }
 
+TEST(ArrayVariantTest, testCopyFromInitList)
+{
+   ArrayVariant arrVal;
+   arrVal.insert(0, 312);
+   arrVal.insert("name", "zapi");
+   arrVal.insert("age", 11);
+   ASSERT_EQ(arrVal.getRefCount(), 1);
+   ArrayVariant array({1.2, "zapi", true, 123, arrVal});
+   ASSERT_EQ(arrVal.getRefCount(), 2);
+   ASSERT_EQ(array.getRefCount(), 1);
+   ASSERT_EQ(array.getSize(), 5);
+   ASSERT_EQ((array[0]).toDoubleVariant().toDouble(), 1.2);
+   ASSERT_STREQ((array[1]).toStringVariant().getCStr(), "zapi");
+   ASSERT_EQ((array[2]).toBoolVariant().toBool(), true);
+   ASSERT_EQ((array[3]).toNumericVariant().toLong(), 123);
+   ArrayVariant subArr = array[4];
+   ASSERT_EQ(arrVal.getRefCount(), 3);
+   ASSERT_EQ(subArr.getRefCount(), 3);
+   ASSERT_EQ((subArr[0]).toNumericVariant().toLong(), 312);
+   ASSERT_STREQ((arrVal["name"]).toStringVariant().getCStr(), "zapi");
+   ASSERT_EQ((subArr["age"]).toNumericVariant().toLong(), 11);
+}
+
 TEST(ArrayVariantTest, testAssignOperators)
 {
    ArrayVariant array1;
