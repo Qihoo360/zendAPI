@@ -128,10 +128,24 @@ ArrayVariant::ArrayVariant(const Variant &other)
 ArrayVariant::ArrayVariant(const std::initializer_list<Variant> &list)
    : ArrayVariant()
 {
-   std::initializer_list<Variant>::iterator iter = list.begin();
-   std::initializer_list<Variant>::iterator end = list.end();
-   while (iter != end) {
-      append(*iter++);
+   for (const Variant &item : list) {
+      append(item);
+   }
+}
+
+ArrayVariant::ArrayVariant(const std::initializer_list<std::pair<Variant, Variant>> &list)
+   : ArrayVariant()
+{
+   for(auto &item : list) {
+      Type type = item.first.getType();
+      if (type != Type::Long && type != Type::String) {
+         continue;
+      }
+      if (type == Type::Long) {
+         insert(Z_LVAL_P(item.first.getZvalPtr()), item.second);
+      } else {
+         insert(Z_STRVAL_P(item.first.getZvalPtr()), item.second);
+      }
    }
 }
 

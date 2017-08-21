@@ -56,6 +56,7 @@ public:
    ArrayVariant(const Variant &other);
    ArrayVariant(Variant &&other);
    ArrayVariant(const std::initializer_list<Variant> &list);
+   ArrayVariant(const std::initializer_list<std::pair<Variant, Variant>> &list);
    ArrayVariant(const std::map<Variant, Variant, zapi::utils::VariantKeyLess> &map);
    // operators
    ArrayItemProxy operator [](zapi_ulong index);
