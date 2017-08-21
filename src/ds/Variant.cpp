@@ -23,6 +23,8 @@
 #include "zapi/ds/BoolVariant.h"
 #include "zapi/ds/DoubleVariant.h"
 #include "zapi/ds/NumericVariant.h"
+#include "zapi/lang/StdClass.h"
+#include "zapi/lang/internal/StdClassPrivate.h"
 #include <cstring>
 #include <iostream>
 
@@ -61,6 +63,8 @@ _zval_struct * VariantPrivate::dereference() const
 } // internal
 
 using internal::VariantPrivate;
+using zapi::lang::StdClass;
+using zapi::kernel::FatalError;
 
 namespace
 {
@@ -227,7 +231,13 @@ Variant::Variant(double value)
 
 Variant::Variant(const StdClass &stdClass)
 {
-   
+   zend_object *zobject = stdClass.m_implPtr->m_zendObject;
+   if (nullptr == zobject) {
+      throw FatalError("Can't construct from an unregister StdClass Object");
+   }
+   zval *self = getZvalPtr();
+   ZVAL_OBJ(self, zobject);
+   Z_ADDREF_P(self);
 }
 
 /**
