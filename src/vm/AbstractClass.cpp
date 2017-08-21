@@ -31,6 +31,7 @@
 #include "zapi/lang/Property.h"
 #include "zapi/lang/Method.h"
 #include "zapi/lang/Interface.h"
+#include "zapi/lang/Parameters.h"
 #include "zapi/kernel/NotImplemented.h"
 #include "zapi/kernel/OrigException.h"
 
@@ -44,6 +45,11 @@ using zapi::lang::Variant;
 using zapi::lang::Property;
 using zapi::lang::Method;
 using zapi::lang::Interface;
+using zapi::lang::Parameters;
+using zapi::lang::StdClass;
+using zapi::vm::ObjectBinder;
+using zapi::kernel::NotImplemented;
+using zapi::kernel::Exception;
 
 namespace internal
 {
@@ -71,10 +77,25 @@ void acp_ptr_deleter(zend_string *ptr)
 }
 } // anonymous namespace
 
-using zapi::lang::StdClass;
-using zapi::vm::ObjectBinder;
-using zapi::kernel::NotImplemented;
-using zapi::kernel::Exception;
+struct CallContext
+{
+   zend_internal_function m_func;
+   AbstractClassPrivate *m_selfPtr;
+};
+
+class ScopedFree
+{
+public:
+   ScopedFree(void *data)
+      : m_data(data)
+   {}
+   ~ScopedFree()
+   {
+      efree(m_data);
+   }
+private:
+   void *m_data;
+};
 
 AbstractClassPrivate::AbstractClassPrivate(const char *className, lang::ClassType type)
    : m_name(className),
@@ -212,13 +233,108 @@ void AbstractClassPrivate::unsetProperty(zval *object, zval *member, void **cach
 
 zend_function *AbstractClassPrivate::getMethod(zend_object **object, zend_string *method, const zval *key)
 {
-   
+   zend_function *defaultFuncInfo = std_object_handlers.get_method(object, method, key);
+   if (defaultFuncInfo) {
+      return defaultFuncInfo;
+   }
+   zend_class_entry *entry = (*object)->ce;
+   CallContext *callContext = reinterpret_cast<CallContext *>(emalloc(sizeof(CallContext)));
+   zend_internal_function *func = &callContext->m_func;
+   func->type = ZEND_INTERNAL_FUNCTION;
+   func->module = nullptr;
+   func->handler = &AbstractClassPrivate::magicCallForwarder;
+   func->arg_info = nullptr;
+   func->num_args = 0;
+   func->required_num_args = 0;
+   func->scope = entry;
+   func->fn_flags = ZEND_ACC_CALL_VIA_HANDLER;
+   func->function_name = method;
+   callContext->m_selfPtr = retrieve_acp_ptr_from_cls_entry(entry);
+   return reinterpret_cast<zend_function *>(callContext);
 }
 
-int AbstractClassPrivate::getClosure(zval *object, zend_class_entry **entry, zend_function **func, 
+zend_function *AbstractClassPrivate::getStaticMethod(zend_class_entry *entry, zend_string *methodName)
+{
+   zend_function *defaultFuncInfo = zend_std_get_static_method(entry, methodName, nullptr);
+   if (defaultFuncInfo) {
+      return defaultFuncInfo;
+   }
+   // TODO here maybe have memory leak
+   CallContext *callContext = reinterpret_cast<CallContext *>(emalloc(sizeof(CallContext)));
+   zend_internal_function *func = &callContext->m_func;
+   func->type = ZEND_INTERNAL_FUNCTION;
+   func->module = nullptr;
+   func->handler = &AbstractClassPrivate::magicCallForwarder;
+   func->arg_info = nullptr;
+   func->num_args = 0;
+   func->required_num_args = 0;
+   func->scope = nullptr;
+   func->fn_flags = ZEND_ACC_CALL_VIA_HANDLER;
+   func->function_name = methodName;
+   callContext->m_selfPtr = retrieve_acp_ptr_from_cls_entry(entry);
+   return reinterpret_cast<zend_function *>(callContext);
+}
+
+int AbstractClassPrivate::getClosure(zval *object, zend_class_entry **entry, zend_function **retFunc, 
                                      zend_object **objectPtr)
 {
-   
+   // TODO here maybe have memory leak
+   CallContext *callContext = reinterpret_cast<CallContext *>(emalloc(sizeof(CallContext)));
+   zend_internal_function *func = &callContext->m_func;
+   func->type = ZEND_INTERNAL_FUNCTION;
+   func->module = nullptr;
+   func->handler = &AbstractClassPrivate::magicInvokeForwarder;
+   func->arg_info = nullptr;
+   func->num_args = 0;
+   func->required_num_args = 0;
+   func->scope = *entry;
+   func->fn_flags = ZEND_ACC_CALL_VIA_HANDLER;
+   func->function_name = nullptr;
+   callContext->m_selfPtr = retrieve_acp_ptr_from_cls_entry(Z_OBJCE_P(object));
+   *retFunc = reinterpret_cast<zend_function *>(callContext);
+   *objectPtr = Z_OBJ_P(object);
+   return ZAPI_SUCCESS;
+}
+
+void AbstractClassPrivate::magicCallForwarder(INTERNAL_FUNCTION_PARAMETERS)
+{
+   CallContext *callContext = reinterpret_cast<CallContext *>(execute_data->func);
+   zend_internal_function *func = &callContext->m_func;
+   const char *name = ZSTR_VAL(func->function_name);
+   AbstractClass *meta = callContext->m_selfPtr->m_apiPtr;
+   ScopedFree scopeFree(callContext);
+   try {
+      Variant result(return_value, true);
+      Parameters params(getThis(), ZEND_NUM_ARGS());
+      StdClass *nativeObject = params.getObject();
+      if (nativeObject) {
+         result = meta->callMagicCall(nativeObject, name, params);
+      } else {
+         result = meta->callMagicStaticCall(name, params);
+      }
+   } catch (const NotImplemented &exception) {
+      zend_error(E_ERROR, "Undefined method %s", name);
+   } catch (Exception &exception) {
+      zapi::kernel::process_exception(exception);
+   }
+}
+
+void AbstractClassPrivate::magicInvokeForwarder(INTERNAL_FUNCTION_PARAMETERS)
+{
+   CallContext *callContext = reinterpret_cast<CallContext *>(execute_data->func);
+   zend_internal_function *func = &callContext->m_func;
+   AbstractClass *meta = callContext->m_selfPtr->m_apiPtr;
+   ScopedFree scopeFree(callContext);
+   try {
+      Variant result(return_value, true);
+      Parameters params(getThis(), ZEND_NUM_ARGS());
+      StdClass *nativeObject = params.getObject();
+      result = meta->callMagicInvoke(nativeObject, params);
+   } catch (const NotImplemented &exception) {
+      zend_error(E_ERROR, "Function name must be a string");
+   } catch (Exception &exception) {
+      zapi::kernel::process_exception(exception);
+   }
 }
 
 int AbstractClassPrivate::cast(zval *object, zval *retValue, int type)
@@ -253,11 +369,6 @@ void AbstractClassPrivate::freeObject(zend_object *object)
 {
    ObjectBinder *binder = ObjectBinder::retrieveSelfPtr(object);
    binder->destroy();
-}
-
-zend_function *AbstractClassPrivate::getStaticMethod(zend_class_entry *entry, zend_string *methodName)
-{
-   return nullptr;
 }
 
 zend_class_entry *AbstractClassPrivate::initialize(AbstractClass *cls, const std::string &ns, int moduleNumber)
@@ -397,73 +508,14 @@ AbstractClass &AbstractClass::operator=(const AbstractClass &other)
    return *this;
 }
 
+AbstractClass::~AbstractClass()
+{}
+
 AbstractClass &AbstractClass::operator=(AbstractClass &&other) ZAPI_DECL_NOEXCEPT
 {
    assert(this != &other);
    m_implPtr = std::move(other.m_implPtr);
    return *this;
-}
-
-StdClass *AbstractClass::construct() const
-{
-   return nullptr;
-}
-
-StdClass *AbstractClass::clone() const
-{
-   return nullptr;
-}
-
-void AbstractClass::callClone(StdClass *nativeObject) const
-{}
-
-void AbstractClass::callDestruct(StdClass *nativeObject) const
-{}
-
-Variant AbstractClass::callGet(StdClass *nativeObject, const std::string &name) const
-{
-   return nullptr;
-}
-
-void AbstractClass::callSet(StdClass *nativeObject, const std::string &name, const Variant &value) const
-{
-}
-
-bool AbstractClass::callIsset(StdClass *nativeObject, const std::string &name) const
-{
-   return false;
-}
-
-void AbstractClass::callUnset(StdClass *nativeObject, const std::string &name) const
-{
-}
-
-bool AbstractClass::clonable() const
-{
-   return false;
-}
-
-bool AbstractClass::serializable() const
-{
-   return false;
-}
-
-bool AbstractClass::traversable() const
-{
-   return false;
-}
-
-AbstractClass::~AbstractClass()
-{}
-
-zend_class_entry *AbstractClass::initialize(const std::string &prefix, int moduleNumber)
-{
-   return getImplPtr()->initialize(this, prefix, moduleNumber);
-}
-
-zend_class_entry *AbstractClass::initialize(int moduleNumber)
-{
-   return initialize("", moduleNumber);
 }
 
 void AbstractClass::registerInterface(const Interface &interface)
@@ -586,6 +638,86 @@ void AbstractClass::registerMethod(const char *name, zapi::ZendCallable callable
 void AbstractClass::registerMethod(const char *name, Modifier flags, const Arguments &args)
 {
    m_implPtr->m_methods.push_back(std::make_shared<Method>(name, (flags & Modifier::MethodModifiers) | Modifier::Abstract, args));
+}
+
+StdClass *AbstractClass::construct() const
+{
+   return nullptr;
+}
+
+StdClass *AbstractClass::clone() const
+{
+   return nullptr;
+}
+
+void AbstractClass::callClone(StdClass *nativeObject) const
+{}
+
+void AbstractClass::callDestruct(StdClass *nativeObject) const
+{}
+
+Variant AbstractClass::callMagicCall(StdClass *nativeObject, const char *name, Parameters &params) const
+{
+   return nullptr;
+}
+
+Variant AbstractClass::callMagicStaticCall(const char *name, Parameters &params) const
+{
+   return nullptr;
+}
+
+Variant AbstractClass::callMagicInvoke(StdClass *nativeObject, Parameters &params) const
+{
+   return nullptr;
+}
+
+Variant AbstractClass::callGet(StdClass *nativeObject, const std::string &name) const
+{
+   return nullptr;
+}
+
+void AbstractClass::callSet(StdClass *nativeObject, const std::string &name, 
+                            const Variant &value) const
+{}
+
+bool AbstractClass::callIsset(StdClass *nativeObject, const std::string &name) const
+{
+   return false;
+}
+
+void AbstractClass::callUnset(StdClass *nativeObject, const std::string &name) const
+{
+}
+
+bool AbstractClass::clonable() const
+{
+   return false;
+}
+
+bool AbstractClass::serializable() const
+{
+   return false;
+}
+
+bool AbstractClass::traversable() const
+{
+   return false;
+}
+
+
+zend_class_entry *AbstractClass::initialize(const std::string &prefix, int moduleNumber)
+{
+   return getImplPtr()->initialize(this, prefix, moduleNumber);
+}
+
+zend_class_entry *AbstractClass::initialize(int moduleNumber)
+{
+   return initialize("", moduleNumber);
+}
+
+void AbstractClass::notImplemented()
+{
+   throw NotImplemented();
 }
 
 } // vm

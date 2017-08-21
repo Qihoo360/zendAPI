@@ -123,6 +123,10 @@ private:
    virtual StdClass *construct() const override;
    virtual StdClass *clone() const override;
    virtual void callDestruct(StdClass *nativeObject) const override;
+   virtual Variant callMagicCall(StdClass *nativeObject, const char *name, Parameters &params) const override;
+   virtual Variant callMagicStaticCall(const char *name, Parameters &params) const override;
+   virtual Variant callMagicInvoke(StdClass *nativeObject, Parameters &params) const override;
+   
    virtual Variant callGet(StdClass *nativeObject, const std::string &name) const override;
    virtual void callSet(StdClass *nativeObject, const std::string &name, const Variant &value) const override;
    virtual bool callIsset(StdClass *nativeObject, const std::string &name) const override;
@@ -135,6 +139,27 @@ private:
    template <typename X = T>
    typename std::enable_if<!std::is_default_constructible<X>::value, StdClass *>::type
    static doConstructObject();
+   
+   template <typename X>
+   class HasCallStatic
+   {
+      typedef char one;
+      typedef long two;
+      template <typename C> 
+      static one test(decltype(&C::__callStatic));
+      template <typename C> 
+      static two test(...);
+   public:
+      static const bool value = sizeof(test<X>(0)) == sizeof(char);
+   };
+   
+   template <typename X>
+   typename std::enable_if<HasCallStatic<X>::value, Variant>::type
+   static maybeCallStatic(const char *name, Parameters &params);
+   
+   template <typename X>
+   typename std::enable_if<!HasCallStatic<X>::value, Variant>::type
+   static maybeCallStatic(const char *name, Parameters &params);
 };
 
 template <typename T>
@@ -150,72 +175,6 @@ Class<T>::Class(const Class<T> &other)
 template <typename T>
 Class<T>::Class(Class<T> &&other) ZAPI_DECL_NOEXCEPT
    : AbstractClass(std::move(other))
-{}
-
-template <typename T>
-StdClass *Class<T>::construct() const
-{
-   return doConstructObject<T>();
-}
-
-template <typename T>
-template <typename X>
-typename std::enable_if<std::is_default_constructible<X>::value, StdClass *>::type
-Class<T>::doConstructObject()
-{
-   return new X();
-}
-
-template <typename T>
-template <typename X>
-typename std::enable_if<!std::is_default_constructible<X>::value, StdClass *>::type
-Class<T>::doConstructObject()
-{
-   return nullptr;
-}
-template <typename T>
-void Class<T>::callDestruct(StdClass *nativeObject) const
-{
-   T *object = dynamic_cast<T *>(nativeObject);
-   return object->__destruct();
-}
-
-template <typename T>
-Variant Class<T>::callGet(StdClass *nativeObject, const std::string &name) const
-{
-   T *object = dynamic_cast<T *>(nativeObject);
-   return object->__get(name);
-}
-
-template <typename T>
-void Class<T>::callSet(StdClass *nativeObject, const std::string &name, const Variant &value) const
-{
-   T *object = dynamic_cast<T *>(nativeObject);
-   object->__set(name, value);
-}
-
-template <typename T>
-bool Class<T>::callIsset(StdClass *nativeObject, const std::string &name) const
-{
-   T *object = dynamic_cast<T *>(nativeObject);
-   return object->__isset(name);
-}
-
-template <typename T>
-void Class<T>::callUnset(StdClass *nativeObject, const std::string &name) const
-{
-   T *object = dynamic_cast<T *>(nativeObject);
-   object->__unset(name);
-}
-
-template <typename T>
-StdClass *Class<T>::clone() const
-{
-   return nullptr;
-}
-
-template <typename T>
-Class<T>::~Class()
 {}
 
 template <typename T>
@@ -570,6 +529,111 @@ Class<T> &Class<T>::registerConstant(const Constant &constant)
    AbstractClass::registerConstant(constant);
    return *this;
 }
+
+template <typename T>
+StdClass *Class<T>::construct() const
+{
+   return doConstructObject<T>();
+}
+
+template <typename T>
+void Class<T>::callDestruct(StdClass *nativeObject) const
+{
+   T *object = dynamic_cast<T *>(nativeObject);
+   return object->__destruct();
+}
+
+template <typename T>
+Variant Class<T>::callMagicCall(StdClass *nativeObject, const char *name, Parameters &params) const
+{
+   T *object = static_cast<T *>(nativeObject);
+   return object->__call(name, params);
+}
+
+template <typename T>
+Variant Class<T>::callMagicStaticCall(const char *name, Parameters &params) const
+{
+   return maybeCallStatic<T>(name, params);
+}
+
+template <typename T>
+Variant Class<T>::callMagicInvoke(StdClass *nativeObject, Parameters &params) const
+{
+   T *object = dynamic_cast<T *>(nativeObject);
+   return object->__invoke(params);
+}
+
+template <typename T>
+Variant Class<T>::callGet(StdClass *nativeObject, const std::string &name) const
+{
+   T *object = dynamic_cast<T *>(nativeObject);
+   return object->__get(name);
+}
+
+template <typename T>
+void Class<T>::callSet(StdClass *nativeObject, const std::string &name, const Variant &value) const
+{
+   T *object = dynamic_cast<T *>(nativeObject);
+   object->__set(name, value);
+}
+
+template <typename T>
+bool Class<T>::callIsset(StdClass *nativeObject, const std::string &name) const
+{
+   T *object = dynamic_cast<T *>(nativeObject);
+   return object->__isset(name);
+}
+
+template <typename T>
+void Class<T>::callUnset(StdClass *nativeObject, const std::string &name) const
+{
+   T *object = dynamic_cast<T *>(nativeObject);
+   object->__unset(name);
+}
+
+template <typename T>
+template <typename X>
+typename std::enable_if<std::is_default_constructible<X>::value, StdClass *>::type
+Class<T>::doConstructObject()
+{
+   return new X();
+}
+
+template <typename T>
+template <typename X>
+typename std::enable_if<!std::is_default_constructible<X>::value, StdClass *>::type
+Class<T>::doConstructObject()
+{
+   return nullptr;
+}
+
+template <typename T>
+template <typename X>
+typename std::enable_if<Class<T>::template HasCallStatic<X>::value, Variant>::type
+Class<T>::maybeCallStatic(const char *name, Parameters &params)
+{
+   return X::__callStatic(name, params);
+}
+
+template <typename T>
+template <typename X>
+typename std::enable_if<!Class<T>::template HasCallStatic<X>::value, Variant>::type
+Class<T>::maybeCallStatic(const char *name, Parameters &params)
+{
+   notImplemented();
+   // prevent some compiler warnning
+   return nullptr;
+}
+
+template <typename T>
+StdClass *Class<T>::clone() const
+{
+   return nullptr;
+}
+
+template <typename T>
+Class<T>::~Class()
+{}
 
 } // lang
 } // zapi

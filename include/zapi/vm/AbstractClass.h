@@ -36,9 +36,13 @@ class ExtensionPrivate;
 
 namespace lang
 {
+
+// forward class declare
 class StdClass;
 class Constant;
 class Interface;
+class Parameters;
+
 namespace internal
 {
 class NamespacePrivate;
@@ -60,6 +64,7 @@ using zapi::lang::StdClass;
 using zapi::lang::Arguments;
 using zapi::lang::Constant;
 using zapi::lang::Interface;
+using zapi::lang::Parameters;
 using zapi::ds::Variant;
 
 class ZAPI_DECL_EXPORT AbstractClass
@@ -105,11 +110,16 @@ protected:
    virtual bool traversable() const;
    virtual void callClone(StdClass *nativeObject) const;
    virtual void callDestruct(StdClass *nativeObject) const;
+   virtual Variant callMagicCall(StdClass *nativeObject, const char *name, Parameters &params) const;
+   virtual Variant callMagicStaticCall(const char *name, Parameters &params) const;
+   virtual Variant callMagicInvoke(StdClass *nativeObject, Parameters &params) const;
    // property
    virtual Variant callGet(StdClass *nativeObject, const std::string &name) const;
    virtual void callSet(StdClass *nativeObject, const std::string &name, const Variant &value) const;
    virtual bool callIsset(StdClass *nativeObject, const std::string &name) const;
    virtual void callUnset(StdClass *nativeObject, const std::string &name) const;
+protected:
+   static void notImplemented();
 private:
    zend_class_entry *initialize(const std::string &ns, int moduleNumber);
    zend_class_entry *initialize(int moduleNumber);

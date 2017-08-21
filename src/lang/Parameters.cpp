@@ -14,14 +14,17 @@
 // Created by zzu_softboy on 27/05/2017.
 
 #include "zapi/lang/Parameters.h"
+#include "zapi/vm/ObjectBinder.h"
 
 namespace zapi
 {
 namespace lang
 {
 
+using zapi::vm::ObjectBinder;
+
 Parameters::Parameters(zval *thisPtr, uint32_t argc)
-   : Parameters(nullptr)
+   : Parameters(nullptr != thisPtr ? ObjectBinder::retrieveSelfPtr(thisPtr)->getNativeObject() : nullptr)
 {
    m_data.reserve(argc);
    zval arguments[argc];

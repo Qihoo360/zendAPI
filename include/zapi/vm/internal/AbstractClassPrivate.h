@@ -79,7 +79,9 @@ public:
    // method call
    static zend_function *getMethod(zend_object **object, zend_string *method, const zval *key);
    static zend_function *getStaticMethod(zend_class_entry *entry, zend_string *methodName);
-   static int getClosure(zval *object, zend_class_entry **entry, zend_function **func, zend_object **objectPtr);
+   static int getClosure(zval *object, zend_class_entry **entry, zend_function **retFunc, zend_object **objectPtr);
+   static void magicCallForwarder(zend_execute_data *execute_data, zval *return_value);
+   static void magicInvokeForwarder(zend_execute_data *execute_data, zval *return_value);
    // destruct object
    static void destructObject(zend_object *object);
    static void freeObject(zend_object *object);
@@ -87,6 +89,7 @@ public:
    static int cast(zval *object, zval *retValue, int type);
    static int compare(zval *left, zval *right);
    static zval *toZval(Variant &&value, int type, zval *rv);
+   
 public:
    AbstractClass *m_apiPtr;
    std::string m_name;
