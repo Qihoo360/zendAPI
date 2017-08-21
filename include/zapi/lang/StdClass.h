@@ -43,6 +43,7 @@ class StdClassPrivate;
 
 using zapi::lang::internal::StdClassPrivate;
 using zapi::ds::Variant;
+using zapi::vm::ObjectBinder;
 class Parameters;
 
 class ZAPI_DECL_EXPORT StdClass
@@ -226,6 +227,8 @@ public:
    
 protected:
    ZAPI_DECLARE_PRIVATE(StdClass)
+   friend class Variant;// for Variant(const StdClass &stdClass);
+   friend class ObjectBinder; // for set zend_object pointer
    std::unique_ptr<StdClassPrivate> m_implPtr;
 };
 

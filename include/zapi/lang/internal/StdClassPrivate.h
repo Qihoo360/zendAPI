@@ -30,6 +30,7 @@ class StdClassPrivate
 {
 public:
    StdClassPrivate();
+   zend_object *m_zendObject = nullptr;
 };
 } // internal
 } // lang

@@ -41,7 +41,7 @@ StdClass::~StdClass()
 {}
 
 StdClass::StdClass(const StdClass &object)
-   : m_implPtr(nullptr)
+   : m_implPtr(new StdClassPrivate)
 {}
 
 /**

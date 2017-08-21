@@ -225,6 +225,11 @@ Variant::Variant(double value)
    ZVAL_DOUBLE(getZvalPtr(), value);
 }
 
+Variant::Variant(const StdClass &stdClass)
+{
+   
+}
+
 /**
  * Wrap object around zval
  * 

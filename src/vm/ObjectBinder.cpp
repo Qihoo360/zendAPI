@@ -39,6 +39,7 @@ ObjectBinder::ObjectBinder(zend_class_entry *entry, StdClass *nativeObject,
    if (refCount != 1) {
       GC_REFCOUNT(&m_container->m_zendObject) = refCount;
    }
+   nativeObject->m_implPtr->m_zendObject = &m_container->m_zendObject;
 }
 
 zend_object *ObjectBinder::getZendObject() const
