@@ -26,7 +26,7 @@ namespace ds
 class ZAPI_DECL_EXPORT ObjectVariant final : public Variant
 {
 public:
-   bool isCallable() const;
+   bool isCallable(const char *name) const;
    Variant call(const char *name);
    Variant call(const char *name) const;
    
@@ -35,12 +35,30 @@ public:
    template <typename ...Args>
    Variant call(const char *name, Args&&... args) const;
    
-   bool instanceOf(const char *className, bool allowString = false);
-   bool instanceOf(const std::string &className, bool allowString = false);
+   bool instanceOf(const char *className, size_t size) const;
+   bool instanceOf(const char *className) const;
+   bool instanceOf(const std::string &className) const;
    
-   bool derivedFrom(const char *className, bool allowString = false);
-   bool derivedFrom(const std::string &className, bool allowString = false);
+   bool derivedFrom(const char *className, size_t size) const;
+   bool derivedFrom(const char *className) const;
+   bool derivedFrom(const std::string &className) const;
+protected:
+   Variant exec(const char *name, int argc, Variant *argv);
+   Variant exec(const char *name, int argc, Variant *argv) const;
 };
+
+template <typename ...Args>
+Variant ObjectVariant::call(const char *name, Args&&... args) const
+{
+   Variant vargs[] = { static_cast<Variant>(args)... };
+   return exec(name, sizeof...(Args), vargs);
+}
+
+template <typename ...Args>
+Variant ObjectVariant::call(const char *name, Args&&... args)
+{
+   return const_cast<const ObjectVariant &>(*this).call(name, args...);
+}
 
 } // ds
 } // zapi
