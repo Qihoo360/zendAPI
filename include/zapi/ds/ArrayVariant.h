@@ -19,11 +19,13 @@
 #include <utility>
 #include <string>
 #include <list>
+#include <map>
 #include <type_traits>
 #include <initializer_list>
 
 #include "zapi/ds/Variant.h"
 #include "zapi/ds/ArrayItemProxy.h"
+#include "zapi/utils/CommonFuncs.h"
 
 namespace zapi
 {
@@ -43,6 +45,7 @@ public:
    using KeyType = std::pair<zapi_ulong, std::shared_ptr<std::string>>;
    using DifferenceType = zapi_ptrdiff;
    using ValueType = Variant;
+   using InitMapType = std::map<Variant, Variant, zapi::utils::VariantKeyLess>;
    // forward declare
    class Iterator;
    class ConstIterator;
@@ -53,6 +56,7 @@ public:
    ArrayVariant(const Variant &other);
    ArrayVariant(Variant &&other);
    ArrayVariant(const std::initializer_list<Variant> &list);
+   ArrayVariant(const std::map<Variant, Variant, zapi::utils::VariantKeyLess> &map);
    // operators
    ArrayItemProxy operator [](zapi_ulong index);
    template <typename T, 

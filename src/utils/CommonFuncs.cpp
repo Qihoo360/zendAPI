@@ -14,6 +14,8 @@
 // Created by zzu_softboy on 2017/08/10.
 
 #include "zapi/utils/CommonFuncs.h"
+#include "zapi/ds/Variant.h"
+#include "zapi/lang/Type.h"
 #include <string>
 #include <cstring>
 #include <cctype>
@@ -22,6 +24,9 @@ namespace zapi
 {
 namespace utils
 {
+
+using zapi::ds::Variant;
+using zapi::lang::Type;
 
 void std_php_memory_deleter(void *ptr)
 {
@@ -110,6 +115,31 @@ std::string get_zval_type_str(const zval *valuePtr) ZAPI_DECL_NOEXCEPT
    default:
       return "Unknow";
    }
+}
+
+bool VariantKeyLess::operator ()(const zapi::ds::Variant &lhs, const zapi::ds::Variant &rhs) const
+{
+   Type ltype = lhs.getType();
+   Type rtype = rhs.getType();
+   bool result;
+   if (ltype == Type::String && rtype == Type::String) {
+      result = std::strcmp(Z_STRVAL_P(lhs.getZvalPtr()), Z_STRVAL_P(rhs.getZvalPtr())) < 0;
+   } else if (ltype == Type::String && rtype == Type::Long) {
+      zval temp;
+      ZVAL_COPY_VALUE(&temp, rhs.getZvalPtr());
+      convert_to_string(&temp);
+      result = std::strcmp(Z_STRVAL_P(lhs.getZvalPtr()), Z_STRVAL_P(&temp)) < 0;
+      zval_dtor(&temp);
+   } else if (ltype == Type::Long && rtype == Type::String) {
+      zval temp;
+      ZVAL_COPY_VALUE(&temp, lhs.getZvalPtr());
+      convert_to_string(&temp);
+      result = std::strcmp(Z_STRVAL_P(&temp), Z_STRVAL_P(rhs.getZvalPtr())) < 0;
+      zval_dtor(&temp);
+   } else {
+      result = Z_LVAL_P(lhs.getZvalPtr()) < Z_LVAL_P(rhs.getZvalPtr());
+   }
+   return result;
 }
 
 } // utils

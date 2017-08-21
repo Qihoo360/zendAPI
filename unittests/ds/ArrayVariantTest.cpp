@@ -163,8 +163,36 @@ TEST(ArrayVariantTest, testCopyFromInitList)
    ASSERT_EQ(arrVal.getRefCount(), 3);
    ASSERT_EQ(subArr.getRefCount(), 3);
    ASSERT_EQ((subArr[0]).toNumericVariant().toLong(), 312);
-   ASSERT_STREQ((arrVal["name"]).toStringVariant().getCStr(), "zapi");
+   ASSERT_STREQ((subArr["name"]).toStringVariant().getCStr(), "zapi");
    ASSERT_EQ((subArr["age"]).toNumericVariant().toLong(), 11);
+}
+
+TEST(ArrayVariantTest, testCopyFromStdMap)
+{
+   {
+      ArrayVariant arrVal;
+      arrVal.insert(0, 312);
+      arrVal.insert("name", "zapi");
+      arrVal.insert("age", 11);
+      ASSERT_EQ(arrVal.getRefCount(), 1);
+      ArrayVariant array(ArrayVariant::InitMapType(
+      {
+                               {0, 1.2},
+                               {"name", "zapi"},
+                               {3, 123},
+                               {"data", arrVal}
+                            }));
+      ASSERT_EQ(array.getSize(), 4);
+      ASSERT_EQ((array[0]).toDoubleVariant().toDouble(), 1.2);
+      ASSERT_STREQ((array["name"]).toStringVariant().getCStr(), "zapi");
+      ASSERT_EQ((array[3]).toNumericVariant().toLong(), 123);
+      ArrayVariant subArr = array["data"];
+      ASSERT_EQ(arrVal.getRefCount(), 3);
+      ASSERT_EQ(subArr.getRefCount(), 3);
+      ASSERT_EQ((subArr[0]).toNumericVariant().toLong(), 312);
+      ASSERT_STREQ((subArr["name"]).toStringVariant().getCStr(), "zapi");
+      ASSERT_EQ((subArr["age"]).toNumericVariant().toLong(), 11);
+   }
 }
 
 TEST(ArrayVariantTest, testAssignOperators)
