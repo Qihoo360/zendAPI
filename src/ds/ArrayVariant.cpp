@@ -603,6 +603,24 @@ ConstArrayIterator ArrayVariant::find(const std::string &key) const
    return ConstArrayIterator(array, &idx);
 }
 
+void ArrayVariant::map(Visitor visitor) const ZAPI_DECL_NOEXCEPT
+{
+   zapi_ulong index;
+   zend_string *key;
+   zval *entry;
+   bool visitorRet = true;
+   ZEND_HASH_FOREACH_KEY_VAL_IND(getZendArrayPtr(), index, key, entry) {
+      if (key) {
+         visitorRet = visitor(KeyType(-1, std::shared_ptr<std::string>(new std::string(ZSTR_VAL(key), ZSTR_LEN(key)))), Variant(entry));
+      } else {
+         visitorRet = visitor(KeyType(index, nullptr), Variant(entry));
+      }
+      if (!visitorRet) {
+         return;
+      }
+   } ZEND_HASH_FOREACH_END();
+}
+
 ArrayIterator ArrayVariant::begin() ZAPI_DECL_NOEXCEPT
 {
    HashPosition pos = 0;

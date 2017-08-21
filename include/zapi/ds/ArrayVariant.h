@@ -46,6 +46,7 @@ public:
    using DifferenceType = zapi_ptrdiff;
    using ValueType = Variant;
    using InitMapType = std::map<Variant, Variant, zapi::utils::VariantKeyLess>;
+   using Visitor = std::function<bool(const KeyType &key, const Variant &value)>;
    // forward declare
    class Iterator;
    class ConstIterator;
@@ -106,6 +107,7 @@ public:
    Iterator find(const std::string &key);
    ConstIterator find(zapi_ulong index) const;
    ConstIterator find(const std::string &key) const;
+   void map(Visitor visitor) const ZAPI_DECL_NOEXCEPT;
    // iterators
    Iterator begin() ZAPI_DECL_NOEXCEPT;
    ConstIterator begin() const ZAPI_DECL_NOEXCEPT;

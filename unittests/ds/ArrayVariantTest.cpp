@@ -722,6 +722,54 @@ TEST(ArrayVariantTest, testFind)
    ASSERT_EQ(NumericVariant(citer.getValue()).toLong(), 123);
 }
 
+TEST(ArrayVariantTest, testMap)
+{
+   ArrayVariant array;
+   array.insert("name", "zapi");
+   array.insert("age", 123);
+   array.append("beijing");
+   array.append("aaa");
+   array.append("bbb");
+   array.insert("info", "ccc");
+   array.insert("data", 3.14);
+   array.insert("xxx", 3.14);
+   array.insert("key3", "ccc");
+   std::list<std::string> strKeys;
+   std::list<std::string> expectedStrKeys {
+      "name", "age", "info", "data", "xxx", "key3"
+   };
+   std::list<zapi_ulong> indexes;
+   std::list<zapi_ulong> expectedIndexes {
+      0, 1, 2
+   };
+   array.map([&strKeys, &indexes](const ArrayVariant::KeyType &key, const Variant &value) -> bool {
+      if (key.second) {
+         strKeys.push_back(*key.second.get());
+      } else {
+         indexes.push_back(key.first);
+      }
+      return true;
+   });
+   ASSERT_EQ(strKeys, expectedStrKeys);
+   ASSERT_EQ(indexes, expectedIndexes);
+   
+   strKeys.clear();
+   expectedStrKeys = {"name", "age"};
+   array.map([&strKeys](const ArrayVariant::KeyType &key, const Variant &value) -> bool {
+      if (key.second) {
+         std::string &str = *key.second.get();
+         if (str != "info") {
+            strKeys.push_back(*key.second.get());
+            return true;
+         } else {
+            return false;
+         }
+      }
+      return true;
+   });
+   ASSERT_EQ(strKeys, expectedStrKeys);
+}
+
 TEST(ArrayVariantTest, testInsert)
 {
    ArrayVariant array;
