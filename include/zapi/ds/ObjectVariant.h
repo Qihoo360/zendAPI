@@ -23,9 +23,23 @@ namespace zapi
 namespace ds
 {
 
-class ZAPI_DECL_EXPORT ObjectVariant : public Variant
+class ZAPI_DECL_EXPORT ObjectVariant final : public Variant
 {
+public:
+   bool isCallable() const;
+   Variant call(const char *name);
+   Variant call(const char *name) const;
    
+   template <typename ...Args>
+   Variant call(const char *name, Args&&... args);
+   template <typename ...Args>
+   Variant call(const char *name, Args&&... args) const;
+   
+   bool instanceOf(const char *className, bool allowString = false);
+   bool instanceOf(const std::string &className, bool allowString = false);
+   
+   bool derivedFrom(const char *className, bool allowString = false);
+   bool derivedFrom(const std::string &className, bool allowString = false);
 };
 
 } // ds

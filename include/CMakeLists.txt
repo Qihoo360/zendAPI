@@ -29,7 +29,7 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/ds/NumericVariant.h
    ${ZAPI_INCLUDE_DIR}/zapi/ds/DoubleVariant.h
    ${ZAPI_INCLUDE_DIR}/zapi/ds/ObjectVariant.h
-   ${ZAPI_INCLUDE_DIR}/zapi/ds/FunctionVariant.h
+   ${ZAPI_INCLUDE_DIR}/zapi/ds/CallableVariant.h
    ${ZAPI_INCLUDE_DIR}/zapi/ds/ArrayVariant.h
    ${ZAPI_INCLUDE_DIR}/zapi/ds/ArrayItemProxy.h
    ${ZAPI_INCLUDE_DIR}/zapi/ds/internal/VariantPrivate.h

@@ -25,7 +25,7 @@ set(ZAPI_SRC
    ds/NumericVariant.cpp
    ds/DoubleVariant.cpp
    ds/ObjectVariant.cpp
-   ds/FunctionVariant.cpp
+   ds/CallableVariant.cpp
    ds/ArrayVariant.cpp
    ds/ArrayItemProxy.cpp
    vm/AbstractClass.cpp

@@ -13,8 +13,8 @@
 //
 // Created by softboy on 2017/08/08.
 
-#ifndef ZAPI_DS_FUNCTION_VARIANT_H
-#define ZAPI_DS_FUNCTION_VARIANT_H
+#ifndef ZAPI_DS_CALLABLE_VARIANT_H
+#define ZAPI_DS_CALLABLE_VARIANT_H
 
 #include "zapi/ds/Variant.h"
 
@@ -23,12 +23,24 @@ namespace zapi
 namespace ds
 {
 
-class ZAPI_DECL_EXPORT FunctionVariant : public Variant
+class ZAPI_DECL_EXPORT CallableVariant final : public Variant
 {
-   
+public:
+   Variant operator ()() const;
+   template <typename ...Args>
+   Variant operator ()(Args&&... args);
+protected:
+   Variant exec(int argc, Variant *argv) const;
 };
+
+template <typename ...Args>
+Variant CallableVariant::operator ()(Args&&... args)
+{
+   Variant vargs[] = { static_cast<Variant>(args)... };
+   return exec(sizeof...(Args), vargs);
+}
 
 } // ds
 } // zapi
 
-#endif // ZAPI_DS_FUNCTION_VARIANT_H
+#endif // ZAPI_DS_CALLABLE_VARIANT_H
