@@ -28,13 +28,13 @@ namespace ds
 {
 class Variant;
 } // ds
-namespace bridge
+namespace lang
 {
 namespace internal
 {
 class ExtensionPrivate;
 } // internal
-} // bridge
+} // lang
 
 namespace lang
 {
@@ -56,7 +56,7 @@ using zapi::lang::Type;
 using zapi::lang::Parameters;
 using zapi::ds::Variant;
 using internal::CallablePrivate;
-using zapi::bridge::internal::ExtensionPrivate;
+using zapi::lang::internal::ExtensionPrivate;
 
 class ZAPI_DECL_EXPORT Callable
 {

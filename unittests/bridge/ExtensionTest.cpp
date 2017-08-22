@@ -1,5 +1,5 @@
 #include "zapi/Global.h"
-#include "zapi/bridge/Extension.h"
+#include "zapi/lang/Extension.h"
 #include "zapi/lang/IniEntry.h"
 #include "zapi/lang/Constant.h"
 #include "zapi/utils/PhpFuncs.h"
@@ -20,8 +20,8 @@ extern sapi_module_struct php_embed_module;
 extern ::HashTable module_registry;
 
 static bool dummyExtExist = false;
-using zapi::bridge::Extension;
-using zapi::bridge::IniEntry;
+using zapi::lang::Extension;
+using zapi::lang::IniEntry;
 using zapi::lang::Constant;
 using zapi::vm::Engine;
 

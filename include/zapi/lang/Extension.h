@@ -14,15 +14,15 @@
 // Created by softboy on 18/05/2017.
 //
 
-#ifndef ZAPI_BRIDGE_EXTENSION_H
-#define ZAPI_BRIDGE_EXTENSION_H
+#ifndef ZAPI_LANG_EXTENSION_H
+#define ZAPI_LANG_EXTENSION_H
 
 #include "zapi/Global.h"
 #include "zapi/lang/Argument.h"
 #include "zapi/lang/Interface.h"
 #include "zapi/vm/InvokeBridge.h"
 #include "zapi/vm/AbstractClass.h"
-#include "zapi/bridge/internal/ExtensionPrivate.h"
+#include "zapi/lang/internal/ExtensionPrivate.h"
 
 #include <list>
 
@@ -45,7 +45,7 @@ template <typename> class Class;
 } // lang
 // end forware declare
 
-namespace bridge
+namespace lang
 {
 
 using zapi::ds::Variant;
@@ -237,7 +237,7 @@ Extension &Extension::registerFunction(const char *name, const Arguments &args)
    return registerFunction(name, &zapi::vm::InvokeBridge::invoke<func>, args);
 }
 
-} // bridge
+} // lang
 } // zapi
 
-#endif //ZAPI_BRIDGE_EXTENSION_H
+#endif // ZAPI_LANG_EXTENSION_H

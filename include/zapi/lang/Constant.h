@@ -20,13 +20,13 @@
 
 namespace zapi
 {
-namespace bridge
+namespace lang
 {
 namespace internal
 {
 class ExtensionPrivate;
 } // internal
-} // bridge
+} // lang
 
 namespace lang
 {
@@ -65,7 +65,7 @@ private:
 private:
    ZAPI_DECLARE_PRIVATE(Constant)
    std::shared_ptr<ConstantPrivate> m_implPtr;
-   friend class zapi::bridge::internal::ExtensionPrivate;
+   friend class zapi::lang::internal::ExtensionPrivate;
    friend class zapi::lang::internal::NamespacePrivate;
 };
 

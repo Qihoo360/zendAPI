@@ -28,7 +28,7 @@ namespace zapi
 {
 
 // forward declare with namespace
-namespace bridge
+namespace lang
 {
 namespace internal
 {
@@ -85,7 +85,7 @@ protected:
 private:
    ZAPI_DECLARE_PRIVATE(Namespace)
    std::shared_ptr<NamespacePrivate> m_implPtr;
-   friend class zapi::bridge::internal::ExtensionPrivate;
+   friend class zapi::lang::internal::ExtensionPrivate;
 };
 
 template <typename T>

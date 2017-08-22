@@ -14,9 +14,10 @@
 // Created by softboy on 7/25/17.
 
 #include <ostream>
-#include "zapi/bridge/Extension.h"
-#include "zapi/bridge/internal/ExtensionPrivate.h"
+
 #include "zapi/vm/internal/CallablePrivate.h"
+#include "zapi/lang/Extension.h"
+#include "zapi/lang/internal/ExtensionPrivate.h"
 #include "zapi/lang/IniEntry.h"
 #include "zapi/lang/internal/NamespacePrivate.h"
 #include "zapi/lang/Function.h"
@@ -41,8 +42,8 @@ ZEND_DECLARE_MODULE_GLOBALS(zapi)
 
 namespace
 {
-   using zapi::bridge::Extension;
-   using zapi::bridge::internal::ExtensionPrivate;
+   using zapi::lang::Extension;
+   using zapi::lang::internal::ExtensionPrivate;
    /**
    * Function that must be defined to initialize the "globals"
    * We do not have to initialize anything, but PHP needs to call this
@@ -82,11 +83,11 @@ namespace
 
 namespace zapi
 {
-namespace bridge
+namespace lang
 {
 
 using zapi::lang::Constant;
-using zapi::bridge::internal::ExtensionPrivate;
+using zapi::lang::internal::ExtensionPrivate;
 using zapi::lang::internal::NamespacePrivate;
 
 Extension::Extension(const char *name, const char *version, int apiVersion)
@@ -364,7 +365,7 @@ void ExtensionPrivate::iterateFunctions(const std::function<void(Function &func)
    }
 }
 
-void ExtensionPrivate::iterateIniEntries(const std::function<void (bridge::IniEntry &)> &callback)
+void ExtensionPrivate::iterateIniEntries(const std::function<void (lang::IniEntry &)> &callback)
 {
    for (auto &entry : m_iniEntries) {
       callback(*entry);
@@ -471,5 +472,5 @@ bool ExtensionPrivate::shutdown(int moduleNumber)
 
 } // internal
 
-} // bridge
+} // lang
 } // zapi

@@ -26,13 +26,13 @@ namespace ds
 {
 class Variant;
 } // ds
-namespace bridge
+namespace lang
 {
 namespace internal
 {
 class ExtensionPrivate;
 } // internal
-} // bridge
+} // lang
 
 namespace lang
 {
@@ -126,7 +126,7 @@ private:
 private:
    ZAPI_DECLARE_PRIVATE(AbstractClass)
    std::shared_ptr<AbstractClassPrivate> m_implPtr;
-   friend class zapi::bridge::internal::ExtensionPrivate;
+   friend class zapi::lang::internal::ExtensionPrivate;
    friend class zapi::lang::internal::NamespacePrivate;
 };
 

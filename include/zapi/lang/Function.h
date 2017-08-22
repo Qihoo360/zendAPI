@@ -23,7 +23,7 @@ namespace zapi
 namespace lang
 {
 
-using zapi::bridge::internal::ExtensionPrivate;
+using zapi::lang::internal::ExtensionPrivate;
 using zapi::ds::Variant;
 class FunctionPrivate;
 

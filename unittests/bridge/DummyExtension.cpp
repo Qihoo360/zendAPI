@@ -16,13 +16,13 @@ extern "C" {
 
 ZAPI_DECL_EXPORT void *get_module() 
 {
-   static zapi::bridge::Extension extension("dummyext", "1.0");
+   static zapi::lang::Extension extension("dummyext", "1.0");
    // this have no effect we write this in php.ini
-   extension.registerIniEntry(zapi::bridge::IniEntry("zapi_author", "xiuxiu"));
+   extension.registerIniEntry(zapi::lang::IniEntry("zapi_author", "xiuxiu"));
    // rewrite in php.ini
-   extension.registerIniEntry(zapi::bridge::IniEntry("zapi_team_address", "beijing"));
+   extension.registerIniEntry(zapi::lang::IniEntry("zapi_team_address", "beijing"));
    // register but empty value
-   extension.registerIniEntry(zapi::bridge::IniEntry("zapi_product", ""));
+   extension.registerIniEntry(zapi::lang::IniEntry("zapi_product", ""));
    extension.registerConstant(Constant("MY_CONST", 12333));
    Constant nameConst("ZAPI_NAME", "zapi");
    extension.registerConstant(nameConst);

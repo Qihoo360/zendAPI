@@ -36,7 +36,7 @@ namespace vm
 class AbstractClass;
 } // vm
 
-namespace bridge
+namespace lang
 {
 
 class Extension;
@@ -101,7 +101,7 @@ public:
 };
 
 } // internal
-} // bridge
+} // lang
 } // zapi
 
 #endif // ZAPI_BRIDGE_INTERNAL_EXTENSIONPRIVATE_H
