@@ -59,10 +59,10 @@ class ZAPI_DECL_EXPORT Traversable
 class ZAPI_DECL_EXPORT ArrayAccess
 {
 public:
-   virtual bool offsetExists(const Variant &key) = 0;
-   virtual void offsetSet(const Variant &key, const Variant &value) = 0;
-   virtual Variant offsetGet(const Variant &key) = 0;
-   virtual Variant offsetUnset(const Variant &key) = 0;
+   virtual bool offsetExists(const Variant &offset) = 0;
+   virtual void offsetSet(const Variant &offset, const Variant &value) = 0;
+   virtual Variant offsetGet(const Variant &offset) = 0;
+   virtual Variant offsetUnset(const Variant &offset) = 0;
    virtual ~ArrayAccess();
 };
 

@@ -194,7 +194,20 @@ zval *AbstractClassPrivate::readDimension(zval *object, zval *offset, int type, 
 
 void AbstractClassPrivate::writeDimension(zval *object, zval *offset, zval *value)
 {
-   
+   ArrayAccess *arrayAccess = dynamic_cast<ArrayAccess *>(ObjectBinder::retrieveSelfPtr(object)->getNativeObject());
+   if (arrayAccess) {
+      try {
+         arrayAccess->offsetSet(offset, value);
+      } catch (Exception &exception) {
+         process_exception(exception);
+      }
+   } else {
+      if (std_object_handlers.write_dimension) {
+         return;
+      } else {
+         std_object_handlers.write_dimension(object, offset, value);
+      }
+   }
 }
 
 int AbstractClassPrivate::hasDimension(zval *object, zval *offset, int checkEmpty)
