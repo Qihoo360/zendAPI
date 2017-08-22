@@ -112,6 +112,119 @@ AbstractClassPrivate::AbstractClassPrivate(const char *className, lang::ClassTyp
      m_self(nullptr, acp_ptr_deleter)
 {}
 
+zend_class_entry *AbstractClassPrivate::initialize(AbstractClass *cls, const std::string &ns, int moduleNumber)
+{
+   m_apiPtr = cls;
+   zend_class_entry entry;
+   if (ns.size() > 0 && ns != "\\") {
+      m_name = ns + "\\" + m_name;
+   }
+   // initialize the class entry
+   INIT_CLASS_ENTRY_EX(entry, m_name.c_str(), m_name.size(), getMethodEntries().get());
+   entry.create_object = &AbstractClassPrivate::createObject;
+   entry.get_static_method = &AbstractClassPrivate::getStaticMethod;
+   // check if traversable
+   // check if serializable
+   if (m_parent) {
+      if (m_parent->m_implPtr->m_classEntry) {
+         m_classEntry = zend_register_internal_class_ex(&entry, m_parent->m_implPtr->m_classEntry);
+      } else {
+         std::cerr << "Derived class " << m_name << " is initialized before base class " << m_parent->m_implPtr->m_name
+                   << ": base class is ignored" << std::endl;
+         // ignore base class
+         m_classEntry = zend_register_internal_class(&entry);
+      }
+   } else {
+      m_classEntry = zend_register_internal_class(&entry);
+   }
+   // register the interfaces of the class
+   for (std::shared_ptr<AbstractClass> &interface : m_interfaces) {
+      if (interface->m_implPtr->m_classEntry) {
+         zend_class_implements(m_classEntry, 1, interface->m_implPtr->m_classEntry);
+      } else {
+         // interface that want to implement is not initialized
+         std::cerr << "Derived class " << m_name << " is initialized before base class "
+                   << interface->m_implPtr->m_name << ": interface is ignored"
+                   << std::endl;
+      }
+   }
+   m_classEntry->ce_flags = static_cast<uint32_t>(m_type);
+   
+   for (std::shared_ptr<AbstractMember> &member : m_members) {
+      member->initialize(m_classEntry);
+   }
+   // save AbstractClassPrivate instance pointer into the info.user.doc_comment of zend_class_entry
+   // we need save the address of this pointer
+   AbstractClassPrivate *selfPtr = this;
+   m_self.reset(zend_string_alloc(sizeof(this), 1));
+   // make the string look like empty
+   ZSTR_VAL(m_self)[0] = '\0';
+   ZSTR_LEN(m_self) = 0;
+   std::memcpy(ZSTR_VAL(m_self.get()) + 1, &selfPtr, sizeof(selfPtr));
+   // save into the doc_comment
+   m_classEntry->info.user.doc_comment = m_self.get();
+   return m_classEntry;
+}
+
+std::unique_ptr<zend_function_entry[]>& AbstractClassPrivate::getMethodEntries()
+{
+   if (m_methodEntries) {
+      return m_methodEntries;
+   }
+   m_methodEntries.reset(new zend_function_entry[m_methods.size() + 1]);
+   size_t i = 0;
+   for (std::shared_ptr<Method> &method : m_methods) {
+      zend_function_entry *entry = &m_methodEntries[i++];
+      method->initialize(entry, m_name.c_str());
+   }
+   zend_function_entry *last = &m_methodEntries[i];
+   memset(last, 0, sizeof(*last));
+   return m_methodEntries;
+}
+
+zend_object_handlers *AbstractClassPrivate::getObjectHandlers()
+{
+   if (m_intialized) {
+      return &m_handlers;
+   }
+   memcpy(&m_handlers, &std_object_handlers, sizeof(zend_object_handlers));
+   if (!m_apiPtr->clonable()) {
+      m_handlers.clone_obj = nullptr;
+   } else {
+      m_handlers.clone_obj = &AbstractClassPrivate::cloneObject;
+   }
+   // function for array access interface
+   m_handlers.count_elements = &AbstractClassPrivate::countElements;
+   m_handlers.write_dimension = &AbstractClassPrivate::writeDimension;
+   m_handlers.read_dimension = &AbstractClassPrivate::readDimension;
+   m_handlers.has_dimension = &AbstractClassPrivate::hasDimension;
+   m_handlers.unset_dimension = &AbstractClassPrivate::unsetDimension;
+   
+   // functions for magic properties handlers __get, __set, __isset and __unset
+   m_handlers.write_property = &AbstractClassPrivate::writeProperty;
+   m_handlers.read_property = &AbstractClassPrivate::readProperty;
+   m_handlers.has_property = &AbstractClassPrivate::hasProperty;
+   m_handlers.unset_property = &AbstractClassPrivate::unsetProperty;
+   
+   // functions for method is called
+   m_handlers.get_method = &AbstractClassPrivate::getMethod;
+   m_handlers.get_closure = &AbstractClassPrivate::getClosure;
+   
+   // functions for object destruct
+   m_handlers.dtor_obj = &AbstractClassPrivate::destructObject;
+   m_handlers.free_obj = &AbstractClassPrivate::freeObject;
+   
+   // functions for type cast
+   m_handlers.cast_object = &AbstractClassPrivate::cast;
+   m_handlers.compare_objects = &AbstractClassPrivate::compare;
+   // we set offset here zend engine will free ObjectBinder::m_container
+   // resource automatic
+   // this offset is very important if you set this not right, memory will leak
+   m_handlers.offset = ObjectBinder::calculateZendObjectOffset();
+   m_intialized = true;
+   return &m_handlers;
+}
+
 zend_object *AbstractClassPrivate::createObject(zend_class_entry *entry)
 {
    // here we lose everything from AbstractClass object
@@ -252,20 +365,6 @@ void AbstractClassPrivate::unsetDimension(zval *object, zval *offset)
    }
 }
 
-zval *AbstractClassPrivate::toZval(Variant &&value, int type, zval *rv)
-{
-   zval result;
-   if (type == 0 || value.getRefCount() <= 1) {
-      result = value.detach(true);
-   } else {
-      // editable zval return a reference to it
-      zval orig = value.detach(false);
-      result = Variant(&orig, true).detach(true);
-   }
-   ZVAL_COPY_VALUE(rv, &result);
-   return rv;
-}
-
 zval *AbstractClassPrivate::readProperty(zval *object, zval *name, int type, void **cacheSlot, zval *rv)
 {
    // what to do with the type?
@@ -285,12 +384,12 @@ zval *AbstractClassPrivate::readProperty(zval *object, zval *name, int type, voi
    // from PHP. If someone wants to get a reference to such an internal variable,
    // that is in most cases simply impossible.
    // retrieve the object and class
-   ObjectBinder *objectBinder = ObjectBinder::retrieveSelfPtr(object);
-   zend_class_entry *entry = Z_OBJCE_P(object);
-   AbstractClassPrivate *selfPtr = retrieve_acp_ptr_from_cls_entry(entry);
-   AbstractClass *meta = selfPtr->m_apiPtr;
-   StdClass *nativeObject = objectBinder->getNativeObject();
+   
    try {
+      ObjectBinder *objectBinder = ObjectBinder::retrieveSelfPtr(object);
+      AbstractClassPrivate *selfPtr = retrieve_acp_ptr_from_cls_entry(Z_OBJCE_P(object));
+      AbstractClass *meta = selfPtr->m_apiPtr;
+      StdClass *nativeObject = objectBinder->getNativeObject();
       std::string key(Z_STRVAL_P(name), Z_STRLEN_P(name));
       auto iter = selfPtr->m_properties.find(key);
       if (iter != selfPtr->m_properties.end()) {
@@ -301,26 +400,76 @@ zval *AbstractClassPrivate::readProperty(zval *object, zval *name, int type, voi
       }
    } catch (const NotImplemented &exception) {
       if (!std_object_handlers.read_property) {
-         zval *ret = (zval *) emalloc(sizeof(zval));
-         ZVAL_NULL(ret);
-         return ret;
+         // TODO here maybe problems
+         return nullptr; 
       }
       return std_object_handlers.read_property(object, name, type, cacheSlot, rv);
    } catch (Exception &exception) {
       process_exception(exception);
+      // this statement will never execute
+      return nullptr;
    }
-   // this statement will never execute
-   return nullptr;
 }
 
 void AbstractClassPrivate::writeProperty(zval *object, zval *name, zval *value, void **cacheSlot)
 {
-   
+   try {
+      ObjectBinder *objectBinder = ObjectBinder::retrieveSelfPtr(object);
+      AbstractClassPrivate *selfPtr = retrieve_acp_ptr_from_cls_entry(Z_OBJCE_P(object));
+      AbstractClass *meta = selfPtr->m_apiPtr;
+      StdClass *nativeObject = objectBinder->getNativeObject();
+      std::string key(Z_STRVAL_P(name), Z_STRLEN_P(name));
+      auto iter = selfPtr->m_properties.find(key);
+      if (iter != selfPtr->m_properties.end()) {
+         if (iter->second->set(nativeObject, value)) {
+            return;
+         }
+         zend_error(E_ERROR, "Unable to write to read-only property %s", key.c_str());
+      } else {
+         meta->callSet(nativeObject, key, value);
+      }
+   } catch (const NotImplemented &exception) {
+      if (!std_object_handlers.write_property) {
+         return;
+      }
+      std_object_handlers.write_property(object, name, value, cacheSlot);
+   } catch (Exception &exception) {
+      process_exception(exception);
+   }
 }
 
 int AbstractClassPrivate::hasProperty(zval *object, zval *name, int hasSetExists, void **cacheSlot)
 {
-   
+   try {
+      ObjectBinder *objectBinder = ObjectBinder::retrieveSelfPtr(object);
+      AbstractClassPrivate *selfPtr = retrieve_acp_ptr_from_cls_entry(Z_OBJCE_P(object));
+      AbstractClass *meta = selfPtr->m_apiPtr;
+      StdClass *nativeObject = objectBinder->getNativeObject();
+      std::string key(Z_STRVAL_P(name), Z_STRLEN_P(name));
+      if (selfPtr->m_properties.find(key) != selfPtr->m_properties.end()) {
+         return true;
+      }
+      if (!meta->callIsset(nativeObject, key)) {
+         return false;
+      }
+      if (2 == hasSetExists) {
+         return true;
+      }
+      Variant value = meta->callGet(nativeObject, key);
+      if (0 == hasSetExists) {
+         return value.getType() != Type::Null;
+      } else {
+         return value.toBool();
+      }
+   } catch (const NotImplemented &exception) {
+      if (!std_object_handlers.has_property) {
+         return false;
+      }
+      return std_object_handlers.has_property(object, name, hasSetExists, cacheSlot);
+   } catch (Exception &exception) {
+      process_exception(exception);
+      return false; 
+   }
 }
 
 void AbstractClassPrivate::unsetProperty(zval *object, zval *member, void **cacheSlot)
@@ -398,9 +547,9 @@ void AbstractClassPrivate::magicCallForwarder(INTERNAL_FUNCTION_PARAMETERS)
    CallContext *callContext = reinterpret_cast<CallContext *>(execute_data->func);
    zend_internal_function *func = &callContext->m_func;
    const char *name = ZSTR_VAL(func->function_name);
-   AbstractClass *meta = callContext->m_selfPtr->m_apiPtr;
    ScopedFree scopeFree(callContext);
    try {
+      AbstractClass *meta = callContext->m_selfPtr->m_apiPtr;
       Variant result(return_value, true);
       Parameters params(getThis(), ZEND_NUM_ARGS());
       StdClass *nativeObject = params.getObject();
@@ -468,120 +617,19 @@ void AbstractClassPrivate::freeObject(zend_object *object)
    binder->destroy();
 }
 
-zend_class_entry *AbstractClassPrivate::initialize(AbstractClass *cls, const std::string &ns, int moduleNumber)
+zval *AbstractClassPrivate::toZval(Variant &&value, int type, zval *rv)
 {
-   m_apiPtr = cls;
-   zend_class_entry entry;
-   if (ns.size() > 0 && ns != "\\") {
-      m_name = ns + "\\" + m_name;
-   }
-   // initialize the class entry
-   INIT_CLASS_ENTRY_EX(entry, m_name.c_str(), m_name.size(), getMethodEntries().get());
-   entry.create_object = &AbstractClassPrivate::createObject;
-   entry.get_static_method = &AbstractClassPrivate::getStaticMethod;
-   // check if traversable
-   // check if serializable
-   if (m_parent) {
-      if (m_parent->m_implPtr->m_classEntry) {
-         m_classEntry = zend_register_internal_class_ex(&entry, m_parent->m_implPtr->m_classEntry);
-      } else {
-         std::cerr << "Derived class " << m_name << " is initialized before base class " << m_parent->m_implPtr->m_name
-                   << ": base class is ignored" << std::endl;
-         // ignore base class
-         m_classEntry = zend_register_internal_class(&entry);
-      }
+   zval result;
+   if (type == 0 || value.getRefCount() <= 1) {
+      result = value.detach(true);
    } else {
-      m_classEntry = zend_register_internal_class(&entry);
+      // editable zval return a reference to it
+      zval orig = value.detach(false);
+      result = Variant(&orig, true).detach(true);
    }
-   // register the interfaces of the class
-   for (std::shared_ptr<AbstractClass> &interface : m_interfaces) {
-      if (interface->m_implPtr->m_classEntry) {
-         zend_class_implements(m_classEntry, 1, interface->m_implPtr->m_classEntry);
-      } else {
-         // interface that want to implement is not initialized
-         std::cerr << "Derived class " << m_name << " is initialized before base class "
-                   << interface->m_implPtr->m_name << ": interface is ignored"
-                   << std::endl;
-         
-      }
-   }
-   m_classEntry->ce_flags = static_cast<uint32_t>(m_type);
-   
-   for (std::shared_ptr<AbstractMember> &member : m_members) {
-      member->initialize(m_classEntry);
-   }
-   // save AbstractClassPrivate instance pointer into the info.user.doc_comment of zend_class_entry
-   // we need save the address of this pointer
-   AbstractClassPrivate *selfPtr = this;
-   m_self.reset(zend_string_alloc(sizeof(this), 1));
-   // make the string look like empty
-   ZSTR_VAL(m_self)[0] = '\0';
-   ZSTR_LEN(m_self) = 0;
-   std::memcpy(ZSTR_VAL(m_self.get()) + 1, &selfPtr, sizeof(selfPtr));
-   // save into the doc_comment
-   m_classEntry->info.user.doc_comment = m_self.get();
-   return m_classEntry;
+   ZVAL_COPY_VALUE(rv, &result);
+   return rv;
 }
-
-std::unique_ptr<zend_function_entry[]>& AbstractClassPrivate::getMethodEntries()
-{
-   if (m_methodEntries) {
-      return m_methodEntries;
-   }
-   m_methodEntries.reset(new zend_function_entry[m_methods.size() + 1]);
-   size_t i = 0;
-   for (std::shared_ptr<Method> &method : m_methods) {
-      zend_function_entry *entry = &m_methodEntries[i++];
-      method->initialize(entry, m_name.c_str());
-   }
-   zend_function_entry *last = &m_methodEntries[i];
-   memset(last, 0, sizeof(*last));
-   return m_methodEntries;
-}
-
-zend_object_handlers *AbstractClassPrivate::getObjectHandlers()
-{
-   if (m_intialized) {
-      return &m_handlers;
-   }
-   memcpy(&m_handlers, &std_object_handlers, sizeof(zend_object_handlers));
-   if (!m_apiPtr->clonable()) {
-      m_handlers.clone_obj = nullptr;
-   } else {
-      m_handlers.clone_obj = &AbstractClassPrivate::cloneObject;
-   }
-   // function for array access interface
-   m_handlers.count_elements = &AbstractClassPrivate::countElements;
-   m_handlers.write_dimension = &AbstractClassPrivate::writeDimension;
-   m_handlers.read_dimension = &AbstractClassPrivate::readDimension;
-   m_handlers.has_dimension = &AbstractClassPrivate::hasDimension;
-   m_handlers.unset_dimension = &AbstractClassPrivate::unsetDimension;
-   
-   // functions for magic properties handlers __get, __set, __isset and __unset
-   m_handlers.write_property = &AbstractClassPrivate::writeProperty;
-   m_handlers.read_property = &AbstractClassPrivate::readProperty;
-   m_handlers.has_property = &AbstractClassPrivate::hasProperty;
-   m_handlers.unset_property = &AbstractClassPrivate::unsetProperty;
-   
-   // functions for method is called
-   m_handlers.get_method = &AbstractClassPrivate::getMethod;
-   m_handlers.get_closure = &AbstractClassPrivate::getClosure;
-   
-   // functions for object destruct
-   m_handlers.dtor_obj = &AbstractClassPrivate::destructObject;
-   m_handlers.free_obj = &AbstractClassPrivate::freeObject;
-   
-   // functions for type cast
-   m_handlers.cast_object = &AbstractClassPrivate::cast;
-   m_handlers.compare_objects = &AbstractClassPrivate::compare;
-   // we set offset here zend engine will free ObjectBinder::m_container
-   // resource automatic
-   // this offset is very important if you set this not right, memory will leak
-   m_handlers.offset = ObjectBinder::calculateZendObjectOffset();
-   m_intialized = true;
-   return &m_handlers;
-}
-
 } // internal
 
 
@@ -801,7 +849,6 @@ bool AbstractClass::traversable() const
 {
    return false;
 }
-
 
 zend_class_entry *AbstractClass::initialize(const std::string &prefix, int moduleNumber)
 {
