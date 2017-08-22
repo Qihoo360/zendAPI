@@ -355,12 +355,18 @@ std::string StringVariant::toString() const ZAPI_DECL_NOEXCEPT
 
 std::string StringVariant::toLowerCase() const
 {
+   if (isEmpty()) {
+      return std::string();
+   }
    std::string ret(cbegin(), cend());
    return zapi::utils::str_tolower(ret);
 }
 
 std::string StringVariant::toUpperCase() const
 {
+   if (isEmpty()) {
+      return std::string();
+   }
    std::string ret(cbegin(), cend());
    return zapi::utils::str_toupper(ret);
 }
@@ -442,6 +448,9 @@ StringVariant::ConstReverseIterator StringVariant::crend() const ZAPI_DECL_NOEXC
 zapi_long StringVariant::indexOf(const char *needle, zapi_long offset, 
                                  bool caseSensitive) const ZAPI_DECL_NOEXCEPT
 {
+   if (isEmpty()) {
+      return -1;
+   }
    Pointer haystack = getRawStrPtr();
    size_t haystackLength = getSize();
    size_t needleLength = std::strlen(needle);
@@ -503,6 +512,9 @@ StringVariant StringVariant::makeReference() const
 zapi_long StringVariant::lastIndexOf(const char *needle, zapi_long offset, 
                                      bool caseSensitive) const ZAPI_DECL_NOEXCEPT
 {
+   if (isEmpty()) {
+      return -1;
+   }
    Pointer haystack = getRawStrPtr();
    size_t haystackLength = getSize();
    size_t needleLength = std::strlen(needle);
@@ -595,6 +607,9 @@ bool StringVariant::startsWith(const StringVariant &str, bool caseSensitive) con
 
 bool StringVariant::startsWith(const char *str, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
 {
+   if (isEmpty()) {
+      return false;
+   }
    Pointer selfStr = getRawStrPtr();
    Pointer otherStrPtr = const_cast<Pointer>(str);
    GuardValuePtrType selfStrLowerCase(nullptr, zapi::utils::std_php_memory_deleter);
@@ -635,6 +650,9 @@ bool StringVariant::endsWith(const StringVariant &str, bool caseSensitive) const
 
 bool StringVariant::endsWith(const char *str, bool caseSensitive) const ZAPI_DECL_NOEXCEPT
 {
+   if (isEmpty()) {
+      return false;
+   }
    Pointer selfStr = getRawStrPtr();
    Pointer otherStrPtr = const_cast<Pointer>(str);
    GuardValuePtrType selfStrLowerCase(nullptr, zapi::utils::std_php_memory_deleter);
@@ -994,6 +1012,9 @@ void StringVariant::resize(SizeType size, char fillChar)
 
 std::string StringVariant::trimmed() const
 {
+   if (isEmpty()) {
+      return std::string();
+   }
    ConstPointer start = getRawStrPtr();
    ConstPointer end = start + getLength();
    while (start < end && std::isspace(*start)) {
@@ -1009,6 +1030,9 @@ std::string StringVariant::trimmed() const
 
 std::string StringVariant::simplified() const
 {
+   if (isEmpty()) {
+      return std::string();
+   }
    ConstPointer start = getRawStrPtr();
    ConstPointer end = start + getLength();
    GuardValuePtrType tempStr(static_cast<Pointer>(emalloc(getSize())), zapi::utils::std_php_memory_deleter);
@@ -1041,6 +1065,9 @@ std::string StringVariant::simplified() const
 
 std::string StringVariant::left(size_t size) const
 {
+   if (isEmpty()) {
+      return std::string();
+   }
    size_t needCopyLength = std::min(size, getSize());
    Pointer strPtr = getRawStrPtr();
    return std::string(strPtr, strPtr + needCopyLength);
@@ -1048,6 +1075,9 @@ std::string StringVariant::left(size_t size) const
 
 std::string StringVariant::right(size_t size) const
 {
+   if (isEmpty()) {
+      return std::string();
+   }
    size_t selfLength = getSize();
    size_t needCopyLength = std::min(size, selfLength);
    Pointer strPtr = getRawStrPtr();
@@ -1056,6 +1086,9 @@ std::string StringVariant::right(size_t size) const
 
 std::string StringVariant::leftJustified(size_t size, char fill) const
 {
+   if (isEmpty()) {
+      return std::string();
+   }
    Pointer strPtr = getRawStrPtr();
    size_t selfLength = getLength();
    size_t needCopyLength = std::min(size, selfLength);
@@ -1072,6 +1105,9 @@ std::string StringVariant::leftJustified(size_t size, char fill) const
 
 std::string StringVariant::rightJustified(size_t size, char fill) const
 {
+   if (isEmpty()) {
+      return std::string();
+   }
    Pointer strPtr = getRawStrPtr();
    size_t selfLength = getLength();
    size_t needCopyLength = std::min(size, selfLength);
@@ -1090,6 +1126,9 @@ std::string StringVariant::rightJustified(size_t size, char fill) const
 
 std::string StringVariant::substring(size_t pos, size_t length) const
 {
+   if (isEmpty()) {
+      return std::string();
+   }
    size_t selfLength = getLength();
    if (pos > selfLength) {
       throw std::out_of_range("string pos out of range");
@@ -1105,6 +1144,9 @@ std::string StringVariant::substring(size_t pos) const
 
 std::string StringVariant::repeated(size_t times) const
 {
+   if (isEmpty()) {
+      return std::string();
+   }
    std::string ret;
    Pointer dataPtr = getRawStrPtr();
    Pointer endDataPtr = dataPtr + getLength();
@@ -1121,9 +1163,12 @@ std::vector<std::string> StringVariant::split(char sep, bool keepEmptyParts, boo
 }
 
 std::vector<std::string> StringVariant::split(const char *sep, bool keepEmptyParts, bool caseSensitive)
-{
-   std::list<size_t> points;
+{   
    std::vector<std::string> list;
+   if (isEmpty()) {
+      return list;
+   }
+   std::list<size_t> points;
    zapi_long pos = -1;
    size_t startPos = 0;
    size_t sepLength = std::strlen(sep);
@@ -1152,22 +1197,22 @@ std::vector<std::string> StringVariant::split(const char *sep, bool keepEmptyPar
 
 const char *StringVariant::getCStr() const ZAPI_DECL_NOEXCEPT
 {
-   return Z_STRVAL_P(const_cast<zval *>(getZvalPtr()));
+   return Z_STR_P(getZvalPtr()) ? Z_STRVAL_P(const_cast<zval *>(getZvalPtr())) : nullptr;
 }
 
 char *StringVariant::getData() ZAPI_DECL_NOEXCEPT
 {
-   return Z_STRVAL_P(const_cast<zval *>(getZvalPtr()));
+   return Z_STR_P(getZvalPtr()) ? Z_STRVAL_P(const_cast<zval *>(getZvalPtr())) : nullptr;
 }
 
 const char *StringVariant::getData() const ZAPI_DECL_NOEXCEPT
 {
-   return Z_STRVAL_P(const_cast<zval *>(getZvalPtr()));
+   return Z_STR_P(getZvalPtr()) ? Z_STRVAL_P(const_cast<zval *>(getZvalPtr())) : nullptr;
 }
 
 char *StringVariant::getRawStrPtr() const ZAPI_DECL_NOEXCEPT
 {
-   return Z_STRVAL_P(const_cast<zval *>(getZvalPtr()));
+   return Z_STR_P(getZvalPtr()) ? Z_STRVAL_P(const_cast<zval *>(getZvalPtr())) : nullptr;
 }
 
 StringVariant::SizeType StringVariant::getSize() const ZAPI_DECL_NOEXCEPT

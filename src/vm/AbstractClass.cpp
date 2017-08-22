@@ -26,6 +26,10 @@
 #include "zapi/vm/NumericMember.h"
 #include "zapi/vm/NullMember.h"
 #include "zapi/ds/Variant.h"
+#include "zapi/ds/StringVariant.h"
+#include "zapi/ds/NumericVariant.h"
+#include "zapi/ds/DoubleVariant.h"
+#include "zapi/ds/BoolVariant.h"
 #include "zapi/lang/Method.h"
 #include "zapi/lang/StdClass.h"
 #include "zapi/lang/Constant.h"
@@ -43,6 +47,10 @@ namespace zapi
 namespace vm
 {
 
+using zapi::ds::BoolVariant;
+using zapi::ds::StringVariant;
+using zapi::ds::DoubleVariant;
+using zapi::ds::NumericVariant;
 using zapi::lang::Constant;
 using zapi::lang::Variant;
 using zapi::lang::Property;
@@ -884,22 +892,22 @@ void AbstractClass::callUnset(StdClass *nativeObject, const std::string &name) c
 
 Variant AbstractClass::castToString(StdClass *nativeObject) const
 {
-   
+   return StringVariant();
 }
 
 Variant AbstractClass::castToInteger(StdClass *nativeObject) const
 {
-   
+   return NumericVariant();
 }
 
 Variant AbstractClass::castToDouble(StdClass *nativeObject) const
 {
-   
+   return DoubleVariant();
 }
 
 Variant AbstractClass::castToBool(StdClass *nativeObject) const
 {
-   
+   return BoolVariant();
 }
 
 bool AbstractClass::clonable() const

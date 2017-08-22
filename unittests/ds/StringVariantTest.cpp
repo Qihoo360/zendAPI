@@ -768,6 +768,26 @@ TEST(StringVariantTest, testPlusOperator)
    ASSERT_STREQ(ret.c_str(), "czapi");
 }
 
+TEST(StringVariantTest, testEmptyStr)
+{
+   StringVariant emptyStr;
+   ASSERT_EQ(emptyStr.getLength(), 0);
+   ASSERT_EQ(emptyStr.getCStr(), nullptr);
+   ASSERT_EQ(emptyStr.getData(), nullptr);
+   ASSERT_FALSE(emptyStr.startsWith("x"));
+   ASSERT_FALSE(emptyStr.endsWith("x"));
+   ASSERT_EQ(emptyStr.indexOf("x"), -1);
+   ASSERT_EQ(emptyStr.lastIndexOf("x"), -1);
+   emptyStr.clear();
+   ASSERT_EQ(emptyStr.getLength(), 0);
+   ASSERT_EQ(emptyStr.getCStr(), nullptr);
+   ASSERT_EQ(emptyStr.getData(), nullptr);
+   ASSERT_FALSE(emptyStr.startsWith("x"));
+   ASSERT_FALSE(emptyStr.endsWith("x"));
+   ASSERT_EQ(emptyStr.indexOf("x"), -1);
+   ASSERT_EQ(emptyStr.lastIndexOf("x"), -1);
+}
+
 int main(int argc, char **argv)
 {
    int retCode = 0;
