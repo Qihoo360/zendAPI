@@ -34,11 +34,13 @@ namespace ds
 {
 class Variant;
 } // ds
+
 namespace lang
 {
 class Parameters;
 class Constant;
 class Namespace;
+class IniEntry;
 template <typename> class Class;
 } // lang
 // end forware declare
@@ -46,8 +48,6 @@ template <typename> class Class;
 namespace bridge
 {
 
-// forward declare
-class IniEntry;
 using zapi::ds::Variant;
 using zapi::lang::Parameters;
 using zapi::lang::Arguments;
@@ -55,9 +55,9 @@ using zapi::lang::Constant;
 using zapi::lang::Class;
 using zapi::lang::Interface;
 using zapi::lang::Namespace;
+using zapi::lang::IniEntry;
 using internal::ExtensionPrivate;
 using zapi::vm::AbstractClass;
-
 
 class ZAPI_DECL_EXPORT Extension
 {

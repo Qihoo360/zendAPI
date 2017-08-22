@@ -8,7 +8,7 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/kernel/Exception.h
    ${ZAPI_INCLUDE_DIR}/zapi/kernel/AbstractIterator.h
    ${ZAPI_INCLUDE_DIR}/zapi/bridge/Extension.h
-   ${ZAPI_INCLUDE_DIR}/zapi/bridge/IniEntry.h
+   ${ZAPI_INCLUDE_DIR}/zapi/lang/IniEntry.h
    ${ZAPI_INCLUDE_DIR}/zapi/bridge/internal/ExtensionPrivate.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Type.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Class.h

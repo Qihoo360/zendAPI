@@ -1,4 +1,4 @@
-#include "zapi/bridge/IniEntry.h"
+#include "zapi/lang/IniEntry.h"
 #include "php/sapi/embed/php_embed.h"
 #include "php/main/php_ini.h"
 #include "gtest/gtest.h"
@@ -8,7 +8,7 @@
 #include <string>
 #include <cstring>
 
-using zapi::bridge::IniEntry;
+using zapi::lang::IniEntry;
 
 TEST(IniEntryTest, testConstructor)
 {
@@ -19,11 +19,11 @@ TEST(IniEntryTest, testConstructor)
       ASSERT_STREQ(entryDef.name, "zapi_version");
       ASSERT_EQ(entryDef.name_length, std::strlen("zapi_version"));
       ASSERT_EQ(entryDef.modifiable, static_cast<int>(IniEntry::CfgType::All));
-   #ifdef ZTS
+#ifdef ZTS
       ASSERT_EQ(entryDef.mh_arg2, (void *) &zapi_globals_id);
-   #else
+#else
       ASSERT_EQ(entryDef.mh_arg2, (void *) &zapi_globals);
-   #endif
+#endif
       ASSERT_EQ(entryDef.mh_arg1, nullptr);
       ASSERT_EQ(entryDef.mh_arg3, nullptr);
       ASSERT_EQ(entryDef.displayer, nullptr);

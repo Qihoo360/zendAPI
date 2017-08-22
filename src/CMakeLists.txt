@@ -1,12 +1,12 @@
 set(ZAPI_SRC
    Global.cpp
    bridge/Extension.cpp
-   bridge/IniEntry.cpp
    kernel/Meta.cpp
    kernel/StreamBuffer.cpp
    kernel/FatalError.cpp
    kernel/Exception.cpp
    kernel/AbstractIterator.cpp
+   lang/IniEntry.cpp
    lang/Class.cpp
    lang/Interface.cpp
    lang/Method.cpp

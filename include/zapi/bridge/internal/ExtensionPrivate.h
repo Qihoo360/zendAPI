@@ -28,7 +28,7 @@ namespace lang
 class Function;
 class Constant;
 class Namespace;
-
+class IniEntry;
 } // lang
 
 namespace vm
@@ -40,7 +40,6 @@ namespace bridge
 {
 
 class Extension;
-class IniEntry;
 
 namespace internal
 {
@@ -49,8 +48,8 @@ using zapi::lang::Arguments;
 using zapi::lang::Function;
 using zapi::lang::Constant;
 using zapi::lang::Namespace;
+using zapi::lang::IniEntry;
 using zapi::vm::AbstractClass;
-using zapi::bridge::IniEntry;
 
 class ExtensionPrivate
 {

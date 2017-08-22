@@ -13,13 +13,13 @@
 //
 // Created by softboy on 7/25/17.
 
-#include "zapi/bridge/IniEntry.h"
+#include "zapi/lang/IniEntry.h"
 #include "php/Zend/zend_ini.h"
 #include <iostream>
 
 namespace zapi
 {
-namespace bridge
+namespace lang
 {
 
 class IniEntryPrivate
@@ -202,5 +202,5 @@ std::ostream &operator<<(std::ostream &stream, const IniValue &iniValue)
    return stream << static_cast<const char *>(iniValue);
 }
 
-} // kernel
+} // lang
 } // zapi

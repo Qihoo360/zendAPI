@@ -31,8 +31,8 @@
 #include "zapi/lang/StdClass.h"
 #include "zapi/lang/Interface.h"
 #include "zapi/lang/Namespace.h"
+#include "zapi/lang/IniEntry.h"
 #include "zapi/bridge/Extension.h"
-#include "zapi/bridge/IniEntry.h"
 #include "zapi/kernel/StreamBuffer.h"
 
 #endif //ZAPI_ZENDAPI_H

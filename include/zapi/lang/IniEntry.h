@@ -11,10 +11,10 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by softboy on 7/25/17.
+// Created by softboy on 2017/7/25.
 
-#ifndef ZAPI_BRIDGE_INIENTRY_H
-#define ZAPI_BRIDGE_INIENTRY_H
+#ifndef ZAPI_LANG_INIENTRY_H
+#define ZAPI_LANG_INIENTRY_H
 
 #include "zapi/Global.h"
 #include <string>
@@ -23,7 +23,7 @@ struct _zend_ini_entry;
 
 namespace zapi
 {
-namespace bridge
+namespace lang
 {
 
 class IniEntryPrivate;
@@ -123,7 +123,7 @@ private:
 
 ZAPI_DECL_EXPORT std::ostream &operator<<(std::ostream &stream, const IniValue &iniValue);
 
-} // kernel
+} // lang
 } // zapi
 
 #endif // ZAPI_BRIDGE_INIENTRY_H

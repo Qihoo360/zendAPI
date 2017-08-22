@@ -16,7 +16,7 @@
 #ifndef ZAPI_UTILS_PHPFUNCS_H
 #define ZAPI_UTILS_PHPFUNCS_H
 
-#include "zapi/bridge/IniEntry.h"
+#include "zapi/lang/IniEntry.h"
 
 namespace zapi
 {
@@ -29,14 +29,14 @@ class ArrayItemProxy;
 
 // here we define some php function that can been used in c++ space
 
-ZAPI_DECL_EXPORT inline bridge::IniValue ini_get(const char *name) 
+ZAPI_DECL_EXPORT inline lang::IniValue ini_get(const char *name) 
 {
-   return bridge::IniValue(name, false);
+   return lang::IniValue(name, false);
 }
 
-ZAPI_DECL_EXPORT inline bridge::IniValue ini_get_orig(const char *name)
+ZAPI_DECL_EXPORT inline lang::IniValue ini_get_orig(const char *name)
 {
-   return bridge::IniValue(name, true);
+   return lang::IniValue(name, true);
 }
 
 ZAPI_DECL_EXPORT bool array_unset(zapi::ds::ArrayItemProxy &&arrayItem);

@@ -1,6 +1,6 @@
 #include "zapi/Global.h"
 #include "zapi/bridge/Extension.h"
-#include "zapi/bridge/IniEntry.h"
+#include "zapi/lang/IniEntry.h"
 #include "zapi/lang/Constant.h"
 #include "zapi/utils/PhpFuncs.h"
 #include "zapi/vm/Engine.h"
