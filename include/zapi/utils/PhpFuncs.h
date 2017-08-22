@@ -25,6 +25,7 @@ namespace zapi
 namespace ds
 {
 class ArrayItemProxy;
+class Variant;
 } // ds
 
 // here we define some php function that can been used in c++ space
@@ -41,6 +42,8 @@ ZAPI_DECL_EXPORT inline lang::IniValue ini_get_orig(const char *name)
 
 ZAPI_DECL_EXPORT bool array_unset(zapi::ds::ArrayItemProxy &&arrayItem);
 ZAPI_DECL_EXPORT bool array_isset(zapi::ds::ArrayItemProxy &&arrayItem);
+
+ZAPI_DECL_EXPORT bool empty(const zapi::ds::Variant &value);
 
 } // zapi
 

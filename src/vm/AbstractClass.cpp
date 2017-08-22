@@ -36,6 +36,7 @@
 #include "zapi/kernel/NotImplemented.h"
 #include "zapi/kernel/OrigException.h"
 #include "zapi/kernel/AbstractIterator.h"
+#include "zapi/utils/PhpFuncs.h"
 
 namespace zapi
 {
@@ -212,7 +213,26 @@ void AbstractClassPrivate::writeDimension(zval *object, zval *offset, zval *valu
 
 int AbstractClassPrivate::hasDimension(zval *object, zval *offset, int checkEmpty)
 {
-   
+   ArrayAccess *arrayAccess = dynamic_cast<ArrayAccess *>(ObjectBinder::retrieveSelfPtr(object)->getNativeObject());
+   if (arrayAccess) {
+      try {
+         if (!arrayAccess->offsetExists(offset)) {
+            return false;
+         }
+         if (!checkEmpty) {
+            return true;
+         }
+         return zapi::empty(arrayAccess->offsetGet(offset));
+      } catch (Exception &exception) {
+         process_exception(exception);
+         return false; // unreachable, prevent some compiler warning
+      }
+   } else {
+      if (!std_object_handlers.has_dimension) {
+         return false;
+      }
+      return std_object_handlers.has_dimension(object, offset, checkEmpty);
+   }
 }
 
 void AbstractClassPrivate::unsetDimension(zval *object, zval *offset)

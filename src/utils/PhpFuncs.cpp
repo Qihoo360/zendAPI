@@ -16,6 +16,7 @@
 #include "zapi/utils/PhpFuncs.h"
 #include "zapi/ds/ArrayItemProxy.h"
 #include "zapi/ds/internal/ArrayItemProxyPrivate.h"
+#include "zapi/ds/Variant.h"
 #include <string>
 
 namespace zapi
@@ -23,6 +24,7 @@ namespace zapi
 
 using zapi::ds::ArrayItemProxy;
 using zapi::ds::internal::ArrayItemProxyPrivate;
+using zapi::ds::Variant;
 
 bool array_unset(ArrayItemProxy &&arrayItem)
 {
@@ -57,6 +59,11 @@ bool array_isset(ArrayItemProxy &&arrayItem)
    arrayItem.m_implPtr->m_array = nullptr;
    arrayItem.m_implPtr->m_needCheckRequestItem = false;
    return exist;
+}
+
+bool empty(const Variant &value)
+{
+   return value.isNull() || !value.toBool();
 }
 
 } // zapi
