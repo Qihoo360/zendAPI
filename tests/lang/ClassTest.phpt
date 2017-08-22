@@ -2,6 +2,9 @@
 Class register test
 --FILE--
 <?php
+
+\pdk\
+
 var_dump(class_exists("XXXXXXXX"));
 if (class_exists("Person")) {
    echo "class Person exist";

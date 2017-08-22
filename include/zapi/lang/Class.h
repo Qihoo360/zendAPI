@@ -18,6 +18,10 @@
 
 #include "zapi/vm/AbstractClass.h"
 #include "zapi/vm/InvokeBridge.h"
+#include "zapi/ds/StringVariant.h"
+#include "zapi/ds/BoolVariant.h"
+#include "zapi/ds/DoubleVariant.h"
+#include "zapi/ds/NumericVariant.h"
 
 namespace zapi
 {
@@ -131,6 +135,11 @@ private:
    virtual void callSet(StdClass *nativeObject, const std::string &name, const Variant &value) const override;
    virtual bool callIsset(StdClass *nativeObject, const std::string &name) const override;
    virtual void callUnset(StdClass *nativeObject, const std::string &name) const override;
+   
+   virtual Variant castToString(StdClass *nativeObject) const override;
+   virtual Variant castToInteger(StdClass *nativeObject) const override;
+   virtual Variant castToDouble(StdClass *nativeObject) const override;
+   virtual Variant castToBool(StdClass *nativeObject) const override;
    
    template <typename X = T>
    typename std::enable_if<std::is_default_constructible<X>::value, StdClass *>::type
@@ -589,6 +598,34 @@ void Class<T>::callUnset(StdClass *nativeObject, const std::string &name) const
 {
    T *object = dynamic_cast<T *>(nativeObject);
    object->__unset(name);
+}
+
+template <typename T>
+Variant Class<T>::castToString(StdClass *nativeObject) const
+{
+   T *object = static_cast<T *>(nativeObject);
+   return zapi::ds::StringVariant(object->__toString());
+}
+
+template <typename T>
+Variant Class<T>::castToInteger(StdClass *nativeObject) const
+{
+   T *object = static_cast<T *>(nativeObject);
+   return zapi::ds::NumericVariant(object->__toInteger());
+}
+
+template <typename T>
+Variant Class<T>::castToDouble(StdClass *nativeObject) const
+{
+   T *object = static_cast<T *>(nativeObject);
+   return zapi::ds::DoubleVariant(object->__toDouble());
+}
+
+template <typename T>
+Variant Class<T>::castToBool(StdClass *nativeObject) const
+{
+   T *object = static_cast<T *>(nativeObject);
+   return zapi::ds::BoolVariant(object->__toBool());
 }
 
 template <typename T>
