@@ -603,7 +603,37 @@ void AbstractClassPrivate::magicInvokeForwarder(INTERNAL_FUNCTION_PARAMETERS)
 
 int AbstractClassPrivate::cast(zval *object, zval *retValue, int type)
 {
-   
+   ObjectBinder *objectBinder = ObjectBinder::retrieveSelfPtr(object);
+   AbstractClassPrivate *selfPtr = retrieve_acp_ptr_from_cls_entry(Z_OBJCE_P(object));
+   AbstractClass *meta = selfPtr->m_apiPtr;
+   StdClass *nativeObject = objectBinder->getNativeObject();
+   try {
+      Variant result;
+      switch (static_cast<Type>(type)) {
+      case Type::Numeric:
+         result = meta->castToInteger(nativeObject);
+         break;
+      case Type::Double:
+         result = meta->castToDouble(nativeObject);
+      case Type::Boolean:
+         result = meta->castToBool(nativeObject);
+      case Type::String:
+         result = meta->castToString(nativeObject);
+      default:
+         throw NotImplemented();
+         break;
+      }
+      ZVAL_DUP(retValue, result.getZvalPtr());
+      return ZAPI_SUCCESS;
+   } catch (const NotImplemented &exception) {
+      if (!std_object_handlers.cast_object) {
+         return ZAPI_FAILURE;
+      }
+      return std_object_handlers.cast_object(object, retValue, type);
+   } catch (Exception &exception) {
+      process_exception(exception);
+      return ZAPI_FAILURE;
+   }
 }
 
 int AbstractClassPrivate::compare(zval *left, zval *right)
@@ -850,7 +880,26 @@ bool AbstractClass::callIsset(StdClass *nativeObject, const std::string &name) c
 }
 
 void AbstractClass::callUnset(StdClass *nativeObject, const std::string &name) const
+{}
+
+Variant AbstractClass::castToString(StdClass *nativeObject) const
 {
+   
+}
+
+Variant AbstractClass::castToInteger(StdClass *nativeObject) const
+{
+   
+}
+
+Variant AbstractClass::castToDouble(StdClass *nativeObject) const
+{
+   
+}
+
+Variant AbstractClass::castToBool(StdClass *nativeObject) const
+{
+   
 }
 
 bool AbstractClass::clonable() const

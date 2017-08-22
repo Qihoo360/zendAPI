@@ -118,6 +118,11 @@ protected:
    virtual void callSet(StdClass *nativeObject, const std::string &name, const Variant &value) const;
    virtual bool callIsset(StdClass *nativeObject, const std::string &name) const;
    virtual void callUnset(StdClass *nativeObject, const std::string &name) const;
+   // cast
+   virtual Variant castToString(StdClass *nativeObject) const;
+   virtual Variant castToInteger(StdClass *nativeObject) const;
+   virtual Variant castToDouble(StdClass *nativeObject) const;
+   virtual Variant castToBool(StdClass *nativeObject) const;
 protected:
    static void notImplemented();
 private:
