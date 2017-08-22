@@ -237,7 +237,19 @@ int AbstractClassPrivate::hasDimension(zval *object, zval *offset, int checkEmpt
 
 void AbstractClassPrivate::unsetDimension(zval *object, zval *offset)
 {
-   
+   ArrayAccess *arrayAccess = dynamic_cast<ArrayAccess *>(ObjectBinder::retrieveSelfPtr(object)->getNativeObject());
+   if (arrayAccess) {
+      try {
+         arrayAccess->offsetUnset(offset);
+      } catch (Exception &exception) {
+         process_exception(exception);
+      }
+   } else {
+      if (!std_object_handlers.unset_dimension) {
+         return;
+      }
+      return std_object_handlers.unset_dimension(object, offset);
+   }
 }
 
 zval *AbstractClassPrivate::toZval(Variant &&value, int type, zval *rv)
