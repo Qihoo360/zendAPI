@@ -472,9 +472,27 @@ int AbstractClassPrivate::hasProperty(zval *object, zval *name, int hasSetExists
    }
 }
 
-void AbstractClassPrivate::unsetProperty(zval *object, zval *member, void **cacheSlot)
+void AbstractClassPrivate::unsetProperty(zval *object, zval *name, void **cacheSlot)
 {
-   
+   try {
+      ObjectBinder *objectBinder = ObjectBinder::retrieveSelfPtr(object);
+      AbstractClassPrivate *selfPtr = retrieve_acp_ptr_from_cls_entry(Z_OBJCE_P(object));
+      AbstractClass *meta = selfPtr->m_apiPtr;
+      StdClass *nativeObject = objectBinder->getNativeObject();
+      std::string key(Z_STRVAL_P(name), Z_STRLEN_P(name));
+      if (selfPtr->m_properties.find(key) == selfPtr->m_properties.end()) {
+         meta->callUnset(nativeObject, key);
+         return;
+      }
+      zend_error(E_ERROR, "Property %s can not be unset", key.c_str());
+   } catch (const NotImplemented &exception) {
+      if (!std_object_handlers.unset_property) {
+         return;
+      }
+      std_object_handlers.unset_property(object, name, cacheSlot);
+   } catch (Exception &exception) {
+      process_exception(exception);
+   }
 }
 
 zend_function *AbstractClassPrivate::getMethod(zend_object **object, zend_string *method, const zval *key)

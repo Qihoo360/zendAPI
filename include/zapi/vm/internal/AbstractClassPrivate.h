@@ -75,7 +75,7 @@ public:
    static zval *readProperty(zval *object, zval *name, int type, void **cacheSlot, zval *returnValue);
    static void writeProperty(zval *object, zval *name, zval *value, void **cacheSlot);
    static int hasProperty(zval *object, zval *name, int hasSetExists, void **cacheSlot);
-   static void unsetProperty(zval *object, zval *member, void **cacheSlot);
+   static void unsetProperty(zval *object, zval *name, void **cacheSlot);
    // method call
    static zend_function *getMethod(zend_object **object, zend_string *method, const zval *key);
    static zend_function *getStaticMethod(zend_class_entry *entry, zend_string *methodName);
