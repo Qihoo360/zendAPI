@@ -15,7 +15,6 @@
 
 #include <iostream>
 #include <cstring>
-#include "zapi/vm/Interfaces.h"
 #include "zapi/vm/AbstractClass.h"
 #include "zapi/vm/internal/AbstractClassPrivate.h"
 #include "zapi/vm/ObjectBinder.h"
@@ -39,7 +38,11 @@
 #include "zapi/lang/Parameters.h"
 #include "zapi/kernel/NotImplemented.h"
 #include "zapi/kernel/OrigException.h"
-#include "zapi/kernel/AbstractIterator.h"
+#include "zapi/protocol/AbstractIterator.h"
+#include "zapi/protocol/ArrayAccess.h"
+#include "zapi/protocol/Countable.h"
+#include "zapi/protocol/Serializable.h"
+#include "zapi/protocol/Traversable.h"
 #include "zapi/utils/PhpFuncs.h"
 
 namespace zapi
@@ -59,13 +62,13 @@ using zapi::lang::Interface;
 using zapi::lang::Parameters;
 using zapi::lang::StdClass;
 using zapi::vm::ObjectBinder;
-using zapi::vm::Countable;
-using zapi::vm::Traversable;
-using zapi::vm::Serializable;
-using zapi::vm::ArrayAccess;
+using zapi::protocol::Countable;
+using zapi::protocol::Traversable;
+using zapi::protocol::Serializable;
+using zapi::protocol::ArrayAccess;
+using zapi::protocol::AbstractIterator;
 using zapi::kernel::NotImplemented;
 using zapi::kernel::Exception;
-using zapi::kernel::AbstractIterator;
 using zapi::kernel::process_exception;
 
 namespace internal
@@ -132,6 +135,14 @@ zend_class_entry *AbstractClassPrivate::initialize(AbstractClass *cls, const std
    entry.create_object = &AbstractClassPrivate::createObject;
    entry.get_static_method = &AbstractClassPrivate::getStaticMethod;
    // check if traversable
+   if (m_apiPtr->traversable()) {
+      entry.get_iterator = &AbstractClassPrivate::getIterator;
+   }
+   
+   if (m_apiPtr->serializable()) {
+      entry.serialize = &AbstractClassPrivate::serialize;
+      entry.unserialize = &AbstractClassPrivate::unserialize;
+   }
    // check if serializable
    if (m_parent) {
       if (m_parent->m_implPtr->m_classEntry) {
@@ -255,9 +266,28 @@ zend_object *AbstractClassPrivate::createObject(zend_class_entry *entry)
    return binder->getZendObject();
 }
 
-zend_object *AbstractClassPrivate::cloneObject(zval *value)
+zend_object *AbstractClassPrivate::cloneObject(zval *object)
 {
-   return nullptr;
+   zend_class_entry *entry = Z_OBJCE_P(object);
+   ObjectBinder *objectBinder = ObjectBinder::retrieveSelfPtr(object);
+   AbstractClassPrivate *selfPtr = retrieve_acp_ptr_from_cls_entry(entry);
+   AbstractClass *meta = selfPtr->m_apiPtr;
+   StdClass *origObject = objectBinder->getNativeObject();
+   StdClass *newNativeObject = meta->clone(origObject);
+   // report error on failure (this does not occur because the cloneObject()
+   // method is only installed as handler when we have seen that there is indeed
+   // a copy constructor). Because this function is directly called from the
+   // Zend engine, we can call zend_error() (which does a longjmp()) to throw
+   // an exception back to the Zend engine)
+   if (!newNativeObject) {
+      zend_error(E_ERROR, "Unable to clone %s", entry->name);
+   }
+   ObjectBinder *newObjectBinder = new ObjectBinder(entry, newNativeObject, selfPtr->getObjectHandlers(), 1);
+   zend_objects_clone_members(newObjectBinder->getZendObject(), objectBinder->getZendObject());
+   if (!entry->clone) {
+      meta->callClone(newNativeObject);
+   }
+   return newObjectBinder->getZendObject();
 }
 
 int AbstractClassPrivate::countElements(zval *object, zend_long *count)
@@ -847,7 +877,7 @@ StdClass *AbstractClass::construct() const
    return nullptr;
 }
 
-StdClass *AbstractClass::clone() const
+StdClass *AbstractClass::clone(StdClass *orig) const
 {
    return nullptr;
 }

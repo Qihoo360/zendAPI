@@ -1,12 +1,22 @@
 set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/apidoc.h
+   ${ZAPI_INCLUDE_DIR}/zapi/CompilerDetection.h
+   ${ZAPI_INCLUDE_DIR}/zapi/Global.h
+   ${ZAPI_INCLUDE_DIR}/zapi/Typedefs.h
+   ${ZAPI_INCLUDE_DIR}/zapi/ProcessorDetection.h 
+   ${ZAPI_INCLUDE_DIR}/zapi/SystemDetection.h
+   ${ZAPI_INCLUDE_DIR}/zapi/ZendApi.h
+   ${ZAPI_INCLUDE_DIR}/zapi/protocol/AbstractIterator.h
+   ${ZAPI_INCLUDE_DIR}/zapi/protocol/ArrayAccess.h
+   ${ZAPI_INCLUDE_DIR}/zapi/protocol/Countable.h
+   ${ZAPI_INCLUDE_DIR}/zapi/protocol/Serializable.h
+   ${ZAPI_INCLUDE_DIR}/zapi/protocol/Traversable.h
    ${ZAPI_INCLUDE_DIR}/zapi/kernel/Meta.h
    ${ZAPI_INCLUDE_DIR}/zapi/kernel/StreamBuffer.h
    ${ZAPI_INCLUDE_DIR}/zapi/kernel/NotImplemented.h
    ${ZAPI_INCLUDE_DIR}/zapi/kernel/OrigException.h
    ${ZAPI_INCLUDE_DIR}/zapi/kernel/FatalError.h
    ${ZAPI_INCLUDE_DIR}/zapi/kernel/Exception.h
-   ${ZAPI_INCLUDE_DIR}/zapi/kernel/AbstractIterator.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Extension.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/IniEntry.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/internal/ExtensionPrivate.h
@@ -36,13 +46,6 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/ds/internal/ArrayItemProxyPrivate.h
    ${ZAPI_INCLUDE_DIR}/zapi/utils/PhpFuncs.h
    ${ZAPI_INCLUDE_DIR}/zapi/utils/CommonFuncs.h
-   ${ZAPI_INCLUDE_DIR}/zapi/ZendApi.h
-   ${ZAPI_INCLUDE_DIR}/zapi/CompilerDetection.h
-   ${ZAPI_INCLUDE_DIR}/zapi/Global.h
-   ${ZAPI_INCLUDE_DIR}/zapi/Typedefs.h
-   ${ZAPI_INCLUDE_DIR}/zapi/ProcessorDetection.h
-   ${ZAPI_INCLUDE_DIR}/zapi/SystemDetection.h
-   ${ZAPI_INCLUDE_DIR}/zapi/vm/Interfaces.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/AbstractClass.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/InvokeBridge.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/Callable.h
@@ -57,7 +60,7 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/vm/NumericMember.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/NullMember.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/ExecStateGuard.h
-   ${ZAPI_INCLUDE_DIR}/zapi/vm/IterateBridge.h
+   ${ZAPI_INCLUDE_DIR}/zapi/vm/IteratorBridge.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/ObjectBinder.h
    )
 

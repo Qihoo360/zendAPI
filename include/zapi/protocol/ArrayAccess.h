@@ -11,10 +11,10 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by zzu_softboy on 2017/08/22.
+// Created by zzu_softboy on 2017/08/23.
 
-#ifndef ZAPI_VM_INTERFACES_H
-#define ZAPI_VM_INTERFACES_H
+#ifndef ZAPI_PROTOCOL_ARRAY_ACCESS_H
+#define ZAPI_PROTOCOL_ARRAY_ACCESS_H
 
 #include "zapi/Global.h"
 
@@ -22,39 +22,15 @@ namespace zapi
 {
 
 // forward declare with namespace
-namespace kernel
-{
-class AbstractIterator;
-} // kernel
-
 namespace ds
 {
 class Variant;
 } // ds
 
-namespace vm
+namespace protocol
 {
 
-using zapi::kernel::AbstractIterator;
 using zapi::ds::Variant;
-
-class ZAPI_DECL_EXPORT Countable
-{
-public:
-   virtual zapi_long count() = 0;
-};
-
-class ZAPI_DECL_EXPORT Serializable
-{
-public:
-   virtual std::string serialize() = 0;
-   virtual void unserialize(const char *input, size_t size) = 0;
-};
-
-class ZAPI_DECL_EXPORT Traversable
-{
-   virtual AbstractIterator *getIterator() = 0;
-};
 
 class ZAPI_DECL_EXPORT ArrayAccess
 {
@@ -66,7 +42,9 @@ public:
    virtual ~ArrayAccess();
 };
 
-} // vm
+
+} // protocol
 } // zapi
 
-#endif // ZAPI_VM_INTERFACES_H
+
+#endif // ZAPI_PROTOCOL_ARRAY_ACCESS_H

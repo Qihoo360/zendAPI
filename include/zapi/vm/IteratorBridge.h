@@ -11,17 +11,24 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by zzu_softboy on 2017/08/22.
+// Created by zzu_softboy on 2017/08/03.
 
-#include "zapi/vm/Interfaces.h"
+#ifndef ZAPI_VM_ITERATOR_BRIDGE_H
+#define ZAPI_VM_ITERATOR_BRIDGE_H
+
+#include "zapi/protocol/AbstractIterator.h"
 
 namespace zapi
 {
 namespace vm
 {
 
-ArrayAccess::~ArrayAccess()
-{}
+class IteratorBridge
+{
+private:
+};
 
 } // vm
 } // zapi
+
+#endif // ZAPI_VM_ITERATOR_BRIDGE_H

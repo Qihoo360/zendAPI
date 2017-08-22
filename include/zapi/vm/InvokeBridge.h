@@ -47,7 +47,7 @@ using zapi::lang::Arguments;
 using zapi::lang::StdClass;
 using zapi::ds::Variant;
 
-class ZAPI_DECL_EXPORT InvokeBridge
+class InvokeBridge
 {
 public:
    virtual ~InvokeBridge() = default;

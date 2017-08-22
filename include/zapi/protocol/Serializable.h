@@ -11,36 +11,27 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by zzu_softboy on 2017/08/03.
+// Created by zzu_softboy on 2017/08/23.
 
-#include "zapi/kernel/AbstractIterator.h"
+#ifndef ZAPI_PROTOCOL_SERIALIZABLE_H
+#define ZAPI_PROTOCOL_SERIALIZABLE_H
+
+#include "zapi/Global.h"
 
 namespace zapi
 {
-namespace kernel
-{
-namespace internal
+namespace protocol
 {
 
-using zapi::ds::Variant;
-using zapi::lang::StdClass;
-
-class AbstractIteratorPrivate 
+class ZAPI_DECL_EXPORT Serializable
 {
 public:
-   AbstractIteratorPrivate(StdClass *nativeObject)
-   {}
-   Variant m_object;
+   virtual std::string serialize() = 0;
+   virtual void unserialize(const char *input, size_t size) = 0;
 };
 
-} // internal
-
-AbstractIterator::AbstractIterator(lang::StdClass *nativeObject)
-   : m_implPtr(new AbstractIteratorPrivate(nativeObject))
-{}
-
-AbstractIterator::~AbstractIterator()
-{}
-
-} // kernel
+} // protocol
 } // zapi
+
+
+#endif // ZAPI_PROTOCOL_SERIALIZABLE_H

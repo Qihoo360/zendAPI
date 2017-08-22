@@ -125,7 +125,7 @@ public:
    Class<T> &registerInterface(Interface &&interface);
 private:
    virtual StdClass *construct() const override;
-   virtual StdClass *clone() const override;
+   virtual StdClass *clone(StdClass *orig) const override;
    virtual void callDestruct(StdClass *nativeObject) const override;
    virtual Variant callMagicCall(StdClass *nativeObject, const char *name, Parameters &params) const override;
    virtual Variant callMagicStaticCall(const char *name, Parameters &params) const override;
@@ -663,7 +663,7 @@ Class<T>::maybeCallStatic(const char *name, Parameters &params)
 }
 
 template <typename T>
-StdClass *Class<T>::clone() const
+StdClass *Class<T>::clone(StdClass *orig) const
 {
    return nullptr;
 }

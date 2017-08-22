@@ -13,8 +13,8 @@
 //
 // Created by zzu_softboy on 2017/08/03.
 
-#ifndef ZAPI_KERNEL_ABSTRACT_ITERATOR_H
-#define ZAPI_KERNEL_ABSTRACT_ITERATOR_H
+#ifndef ZAPI_PROTOCOL_ABSTRACT_ITERATOR_H
+#define ZAPI_PROTOCOL_ABSTRACT_ITERATOR_H
 
 #include "zapi/ds/Variant.h"
 
@@ -27,7 +27,7 @@ namespace lang
 class StdClass;
 } // lang
 
-namespace kernel
+namespace protocol
 {
 
 namespace internal
@@ -56,7 +56,7 @@ protected:
    std::unique_ptr<AbstractIteratorPrivate> m_implPtr;
 };
 
-} // ds
+} // protocol
 } // zapi
 
-#endif // ZAPI_KERNEL_ABSTRACT_ITERATOR_H
+#endif // ZAPI_PROTOCOL_ABSTRACT_ITERATOR_H

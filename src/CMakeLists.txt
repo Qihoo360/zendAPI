@@ -4,7 +4,7 @@ set(ZAPI_SRC
    kernel/StreamBuffer.cpp
    kernel/FatalError.cpp
    kernel/Exception.cpp
-   kernel/AbstractIterator.cpp
+   protocol/AbstractIterator.cpp
    lang/Extension.cpp
    lang/IniEntry.cpp
    lang/Class.cpp
@@ -38,9 +38,8 @@ set(ZAPI_SRC
    vm/InvokeBridge.cpp
    vm/Callable.cpp
    vm/Engine.cpp
-   vm/IterateBridge.cpp
+   vm/IteratorBridge.cpp
    vm/ObjectBinder.cpp
-   vm/Interfaces.cpp
    utils/PhpFuncs.cpp
    utils/CommonFuncs.cpp)
 

@@ -104,7 +104,7 @@ protected:
    void registerConstant(const Constant &constant);
 protected:
    virtual StdClass *construct() const;
-   virtual StdClass *clone() const;
+   virtual StdClass *clone(StdClass *orig) const;
    virtual bool clonable() const;
    virtual bool serializable() const;
    virtual bool traversable() const;

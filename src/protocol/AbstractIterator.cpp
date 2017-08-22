@@ -13,13 +13,34 @@
 //
 // Created by zzu_softboy on 2017/08/03.
 
-#include "zapi/vm/IterateBridge.h"
+#include "zapi/protocol/AbstractIterator.h"
 
 namespace zapi
 {
-namespace vm
+namespace protocol
+{
+namespace internal
 {
 
+using zapi::ds::Variant;
+using zapi::lang::StdClass;
 
-} // vm
+class AbstractIteratorPrivate 
+{
+public:
+   AbstractIteratorPrivate(StdClass *nativeObject)
+   {}
+   Variant m_object;
+};
+
+} // internal
+
+AbstractIterator::AbstractIterator(lang::StdClass *nativeObject)
+   : m_implPtr(new AbstractIteratorPrivate(nativeObject))
+{}
+
+AbstractIterator::~AbstractIterator()
+{}
+
+} // protocol
 } // zapi

@@ -13,8 +13,7 @@
 //
 // Created by zzu_softboy on 2017/08/03.
 
-#ifndef ZAPI_VM_ITERATE_BRIDGE_H
-#define ZAPI_VM_ITERATE_BRIDGE_H
+#include "zapi/vm/IteratorBridge.h"
 
 namespace zapi
 {
@@ -25,5 +24,3 @@ namespace vm
 
 } // vm
 } // zapi
-
-#endif // ZAPI_VM_ITERATE_BRIDGE_H
