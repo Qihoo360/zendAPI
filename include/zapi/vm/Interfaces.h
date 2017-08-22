@@ -20,8 +20,17 @@
 
 namespace zapi
 {
+
+// forward declare with namespace
+namespace kernel
+{
+class AbstractIterator;
+} // kernel
+
 namespace vm
 {
+
+using zapi::kernel::AbstractIterator;
 
 class ZAPI_DECL_EXPORT Countable
 {
@@ -38,7 +47,7 @@ public:
 
 class ZAPI_DECL_EXPORT Traversable
 {
-   virtual Iterator *getIterator() = 0;
+   virtual AbstractIterator *getIterator() = 0;
 };
 
 } // vm

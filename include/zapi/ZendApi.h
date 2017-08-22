@@ -34,5 +34,7 @@
 #include "zapi/lang/IniEntry.h"
 #include "zapi/lang/Extension.h"
 #include "zapi/kernel/StreamBuffer.h"
+#include "zapi/kernel/AbstractIterator.h"
+#include "zapi/vm/Interfaces.h"
 
 #endif //ZAPI_ZENDAPI_H

@@ -66,7 +66,7 @@ public:
    static zend_object *cloneObject(zval *value);
    
    // php object handlers
-   static int countElements(zval *objecy, zend_long *count);
+   static int countElements(zval *object, zend_long *count);
    static zval *readDimension(zval *object, zval *offset, int type, zval *rv);
    static void writeDimension(zval *object, zval *offset, zval *value);
    static int hasDimension(zval *object, zval *offset, int checkEmpty);

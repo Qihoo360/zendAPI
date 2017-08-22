@@ -15,6 +15,7 @@
 
 #include <iostream>
 #include <cstring>
+#include "zapi/vm/Interfaces.h"
 #include "zapi/vm/AbstractClass.h"
 #include "zapi/vm/internal/AbstractClassPrivate.h"
 #include "zapi/vm/ObjectBinder.h"
@@ -34,6 +35,7 @@
 #include "zapi/lang/Parameters.h"
 #include "zapi/kernel/NotImplemented.h"
 #include "zapi/kernel/OrigException.h"
+#include "zapi/kernel/AbstractIterator.h"
 
 namespace zapi
 {
@@ -48,8 +50,13 @@ using zapi::lang::Interface;
 using zapi::lang::Parameters;
 using zapi::lang::StdClass;
 using zapi::vm::ObjectBinder;
+using zapi::vm::Countable;
+using zapi::vm::Traversable;
+using zapi::vm::Serializable;
 using zapi::kernel::NotImplemented;
 using zapi::kernel::Exception;
+using zapi::kernel::AbstractIterator;
+using zapi::kernel::process_exception;
 
 namespace internal
 {
@@ -130,9 +137,23 @@ zend_object *AbstractClassPrivate::cloneObject(zval *value)
    return nullptr;
 }
 
-int AbstractClassPrivate::countElements(zval *objecy, zend_long *count)
+int AbstractClassPrivate::countElements(zval *object, zend_long *count)
 {
-   
+   Countable *countable = dynamic_cast<Countable *>(ObjectBinder::retrieveSelfPtr(object)->getNativeObject());
+   if (countable) {
+      try {
+         *count = countable->count();
+         return ZAPI_SUCCESS;
+      } catch (Exception &exception) {
+         process_exception(exception);
+         return ZAPI_FAILURE; // unreachable, prevent some compiler warning
+      }
+   } else {
+      if (!std_object_handlers.count_elements) {
+         return ZAPI_FAILURE;
+      }
+      return std_object_handlers.count_elements(object, count);
+   }
 }
 
 zval *AbstractClassPrivate::readDimension(zval *object, zval *offset, int type, zval *rv)
@@ -210,7 +231,7 @@ zval *AbstractClassPrivate::readProperty(zval *object, zval *name, int type, voi
       }
       return std_object_handlers.read_property(object, name, type, cacheSlot, rv);
    } catch (Exception &exception) {
-      kernel::process_exception(exception);
+      process_exception(exception);
    }
    // this statement will never execute
    return nullptr;
@@ -315,7 +336,7 @@ void AbstractClassPrivate::magicCallForwarder(INTERNAL_FUNCTION_PARAMETERS)
    } catch (const NotImplemented &exception) {
       zend_error(E_ERROR, "Undefined method %s", name);
    } catch (Exception &exception) {
-      zapi::kernel::process_exception(exception);
+      process_exception(exception);
    }
 }
 
@@ -333,7 +354,7 @@ void AbstractClassPrivate::magicInvokeForwarder(INTERNAL_FUNCTION_PARAMETERS)
    } catch (const NotImplemented &exception) {
       zend_error(E_ERROR, "Function name must be a string");
    } catch (Exception &exception) {
-      zapi::kernel::process_exception(exception);
+      process_exception(exception);
    }
 }
 
@@ -361,7 +382,7 @@ void AbstractClassPrivate::destructObject(zend_object *object)
    } catch (Exception &exception) {
       // a regular zapi::kernel::Exception was thrown by the extension, pass it on
       // to PHP user space
-      kernel::process_exception(exception);
+      process_exception(exception);
    }
 }
 
