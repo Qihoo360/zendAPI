@@ -13,11 +13,11 @@
 //
 // Created by zzu_softboy on 2017/08/03.
 
-#include "zapi/ds/AbstractIterator.h"
+#include "zapi/kernel/AbstractIterator.h"
 
 namespace zapi
 {
-namespace ds
+namespace kernel
 {
 namespace internal
 {
@@ -28,19 +28,19 @@ using zapi::lang::StdClass;
 class AbstractIteratorPrivate 
 {
 public:
-   AbstractIteratorPrivate(StdClass *stdClass)
+   AbstractIteratorPrivate(StdClass *nativeObject)
    {}
    Variant m_object;
 };
 
 } // internal
 
-AbstractIterator::AbstractIterator(lang::StdClass *stdClass)
-   : m_implPtr(new AbstractIteratorPrivate(stdClass))
+AbstractIterator::AbstractIterator(lang::StdClass *nativeObject)
+   : m_implPtr(new AbstractIteratorPrivate(nativeObject))
 {}
 
 AbstractIterator::~AbstractIterator()
 {}
 
-} // ds
+} // kernel
 } // zapi

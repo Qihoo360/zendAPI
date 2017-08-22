@@ -479,6 +479,7 @@ zend_object_handlers *AbstractClassPrivate::getObjectHandlers()
    m_handlers.compare_objects = &AbstractClassPrivate::compare;
    // we set offset here zend engine will free ObjectBinder::m_container
    // resource automatic
+   // this offset is very important if you set this not right, memory will leak
    m_handlers.offset = ObjectBinder::calculateZendObjectOffset();
    m_intialized = true;
    return &m_handlers;

@@ -11,49 +11,37 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by zzu_softboy on 2017/08/03.
+// Created by zzu_softboy on 2017/08/22.
 
-#ifndef ZAPI_DS_ABSTRACT_ITERATOR_H
-#define ZAPI_DS_ABSTRACT_ITERATOR_H
+#ifndef ZAPI_VM_INTERFACES_H
+#define ZAPI_VM_INTERFACES_H
 
-#include "zapi/ds/Variant.h"
+#include "zapi/Global.h"
 
 namespace zapi
 {
-
-namespace lang
-{
-class StdClass;
-} // lang
-namespace ds
+namespace vm
 {
 
-namespace internal
-{
-class AbstractIteratorPrivate;
-} // internal
-
-using zapi::lang::StdClass;
-using internal::AbstractIteratorPrivate;
-
-class ZAPI_DECL_EXPORT AbstractIterator
+class ZAPI_DECL_EXPORT Countable
 {
 public:
-   AbstractIterator(StdClass *stdClass);
-   virtual ~AbstractIterator();
-   
-   virtual bool valid() = 0;
-   virtual Variant current() = 0;
-   virtual Variant key() = 0;
-   virtual void next() = 0;
-   virtual void rewind() = 0;
-   
-protected:
-   ZAPI_DECLARE_PRIVATE(AbstractIterator)
-   std::unique_ptr<AbstractIteratorPrivate> m_implPtr;
+   virtual zapi_long count() = 0;
 };
 
-} // ds
+class ZAPI_DECL_EXPORT Serializable
+{
+public:
+   virtual std::string serialize() = 0;
+   virtual void unserialize(const char *input, size_t size) = 0;
+};
+
+class ZAPI_DECL_EXPORT Traversable
+{
+   virtual Iterator *getIterator() = 0;
+};
+
+} // vm
 } // zapi
 
-#endif // ZAPI_DS_ABSTRACT_ITERATOR_H
+#endif // ZAPI_VM_INTERFACES_H

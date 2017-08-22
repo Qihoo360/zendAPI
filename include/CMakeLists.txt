@@ -6,6 +6,7 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/kernel/OrigException.h
    ${ZAPI_INCLUDE_DIR}/zapi/kernel/FatalError.h
    ${ZAPI_INCLUDE_DIR}/zapi/kernel/Exception.h
+   ${ZAPI_INCLUDE_DIR}/zapi/kernel/AbstractIterator.h
    ${ZAPI_INCLUDE_DIR}/zapi/bridge/Extension.h
    ${ZAPI_INCLUDE_DIR}/zapi/bridge/IniEntry.h
    ${ZAPI_INCLUDE_DIR}/zapi/bridge/internal/ExtensionPrivate.h
@@ -22,7 +23,6 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Property.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Method.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/internal/StdClassPrivate.h
-   ${ZAPI_INCLUDE_DIR}/zapi/ds/AbstractIterator.h
    ${ZAPI_INCLUDE_DIR}/zapi/ds/Variant.h
    ${ZAPI_INCLUDE_DIR}/zapi/ds/StringVariant.h
    ${ZAPI_INCLUDE_DIR}/zapi/ds/BoolVariant.h
@@ -42,6 +42,7 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/Typedefs.h
    ${ZAPI_INCLUDE_DIR}/zapi/ProcessorDetection.h
    ${ZAPI_INCLUDE_DIR}/zapi/SystemDetection.h
+   ${ZAPI_INCLUDE_DIR}/zapi/vm/Interfaces.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/AbstractClass.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/InvokeBridge.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/Callable.h

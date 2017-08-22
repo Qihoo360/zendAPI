@@ -6,6 +6,7 @@ set(ZAPI_SRC
    kernel/StreamBuffer.cpp
    kernel/FatalError.cpp
    kernel/Exception.cpp
+   kernel/AbstractIterator.cpp
    lang/Class.cpp
    lang/Interface.cpp
    lang/Method.cpp
@@ -18,7 +19,6 @@ set(ZAPI_SRC
    lang/Property.cpp
    lang/Type.cpp
    lang/StdClass.cpp
-   ds/AbstractIterator.cpp
    ds/Variant.cpp
    ds/StringVariant.cpp
    ds/BoolVariant.cpp
