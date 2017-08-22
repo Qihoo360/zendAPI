@@ -18,6 +18,7 @@
 
 #include "zapi/Global.h"
 
+// forward declare with namespace
 namespace zapi
 {
 namespace lang
@@ -25,19 +26,17 @@ namespace lang
 namespace internal
 {
 class ExtensionPrivate;
-} // internal
-} // lang
-
-namespace lang
-{
-
-namespace internal
-{
-
 class ConstantPrivate;
 class NamespacePrivate;
-
 } // internal
+} // lang
+} //zapi
+// end forward declare
+
+namespace zapi
+{
+namespace lang
+{
 
 using internal::ConstantPrivate;
 

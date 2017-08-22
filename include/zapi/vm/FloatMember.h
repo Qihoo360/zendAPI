@@ -27,7 +27,9 @@ namespace internal
 {
 class FloatMemberPrivate;
 } // internal
+
 using internal::FloatMemberPrivate;
+
 class FloatMember : public AbstractMember
 {
 public:

@@ -20,6 +20,7 @@
 #include "zapi/lang/Argument.h"
 #include <list>
 
+// forward declare with namespace
 namespace zapi
 {
 namespace lang
@@ -29,6 +30,7 @@ class Function;
 class Constant;
 class Namespace;
 class IniEntry;
+class Extension;
 } // lang
 
 namespace vm
@@ -36,11 +38,13 @@ namespace vm
 class AbstractClass;
 } // vm
 
+} // zapi
+// end forward declare
+
+namespace zapi
+{
 namespace lang
 {
-
-class Extension;
-
 namespace internal
 {
 

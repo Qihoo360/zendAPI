@@ -18,15 +18,19 @@
 
 #include "zapi/lang/IniEntry.h"
 
+// forward declare with namespace
 namespace zapi
 {
-
-// forward declare with namespace
 namespace ds
 {
 class ArrayItemProxy;
 class Variant;
 } // ds
+} // zapi
+// forward declare
+
+namespace zapi
+{
 
 // here we define some php function that can been used in c++ space
 

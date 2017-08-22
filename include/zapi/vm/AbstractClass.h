@@ -19,25 +19,17 @@
 #include "zapi/Global.h"
 #include "zapi/lang/Argument.h"
 
+// forward declare with namespace
 namespace zapi
 {
-// forward declare with namespace
+
 namespace ds
 {
 class Variant;
 } // ds
-namespace lang
-{
-namespace internal
-{
-class ExtensionPrivate;
-} // internal
-} // lang
 
 namespace lang
 {
-
-// forward class declare
 class StdClass;
 class Constant;
 class Interface;
@@ -45,10 +37,10 @@ class Parameters;
 
 namespace internal
 {
+class ExtensionPrivate;
 class NamespacePrivate;
 } // internal
 } // lang
-// end forward declare
 
 namespace vm
 {
@@ -56,6 +48,15 @@ namespace internal
 {
 class AbstractClassPrivate;
 } // internal
+} // vm
+
+} // zapi
+// end forward declare
+
+namespace zapi
+{
+namespace vm
+{
 
 using zapi::vm::internal::AbstractClassPrivate;
 using zapi::lang::Modifier;

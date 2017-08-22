@@ -26,10 +26,9 @@
 
 #include <list>
 
+// forware declare with namespace
 namespace zapi
 {
-
-// forware declare with namespace
 namespace ds
 {
 class Variant;
@@ -43,8 +42,11 @@ class Namespace;
 class IniEntry;
 template <typename> class Class;
 } // lang
+} // zapi
 // end forware declare
 
+namespace zapi
+{
 namespace lang
 {
 

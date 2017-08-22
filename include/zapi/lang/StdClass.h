@@ -27,19 +27,27 @@ namespace ds
 {
 class Variant;
 } // ds
+
 namespace vm
 {
 class ObjectBinder;
 } // vm
-// end forware declare
 
 namespace lang
 {
-
 namespace internal
 {
 class StdClassPrivate;
 } // internal
+} // lang
+
+} // zapi
+// end forware declare
+
+namespace zapi
+{
+namespace lang
+{
 
 using zapi::lang::internal::StdClassPrivate;
 using zapi::ds::Variant;

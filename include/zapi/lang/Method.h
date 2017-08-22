@@ -21,13 +21,18 @@
 #include "zapi/Global.h"
 #include "zapi/vm/Callable.h"
 
+// forward declare with namespace
 namespace zapi
 {
-// forward declare with namespace
-namespace ds
-{
 
-} // ds
+namespace lang
+{
+namespace internal
+{
+class MethodPrivate;
+} // internal
+} // lang
+
 namespace vm
 {
 namespace internal
@@ -35,15 +40,14 @@ namespace internal
 class AbstractClassPrivate;
 } // internal
 } // vm
+
+} // zapi
 // end forward declare
 
+namespace zapi
+{
 namespace lang
 {
-
-namespace internal
-{
-class MethodPrivate;
-} // internal
 
 using internal::MethodPrivate;
 using zapi::ds::Variant;

@@ -21,9 +21,10 @@
 #include <list>
 #include <map>
 
+// forware declare with namespace
 namespace zapi
 {
-// forware declare with namespace
+
 namespace ds
 {
 class Variant;
@@ -36,13 +37,19 @@ class Property;
 class StdClass;
 } // lang
 
-// end forware declare
-
 namespace vm
 {
 class AbstractMember;
 class AbstractClass;
+} // vm
 
+} // zapi
+// end forware declare
+
+namespace zapi
+{
+namespace vm
+{
 namespace internal
 {
 

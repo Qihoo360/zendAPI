@@ -18,6 +18,7 @@
 
 #include "zapi/Global.h"
 
+// forward declare with namespace
 namespace zapi
 {
 namespace vm
@@ -27,6 +28,14 @@ namespace internal
 class AbstractMemberPrivate;
 class AbstractClassPrivate;
 } // internal
+} // vm
+} // zapi
+// end forward declare
+
+namespace zapi
+{
+namespace vm
+{
 
 using zapi::lang::Modifier;
 using zapi::vm::internal::AbstractMemberPrivate;

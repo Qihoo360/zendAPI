@@ -15,7 +15,6 @@
 // Created by softboy on 18/05/2017.
 //
 
-
 #ifndef ZAPI_LANG_NAMESPACE_H
 #define ZAPI_LANG_NAMESPACE_H
 
@@ -24,18 +23,23 @@
 #include "zapi/lang/Class.h"
 #include "zapi/lang/internal/NamespacePrivate.h"
 
+// forward declare with namespace
 namespace zapi
 {
 
-// forward declare with namespace
 namespace lang
 {
 namespace internal
 {
 class ExtensionPrivate;
 } // internal
-} // vm
+} // lang
 
+} // zapi
+// end forward declare
+
+namespace zapi
+{
 namespace lang
 {
 

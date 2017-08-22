@@ -25,7 +25,11 @@ namespace ds
 {
 class Variant;
 } // ds
+} // zapi
+// end forward declare
 
+namespace zapi
+{
 namespace utils
 {
 

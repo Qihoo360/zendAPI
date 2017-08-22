@@ -27,7 +27,9 @@ namespace internal
 {
 class BoolMemberPrivate;
 } // internal
+
 using internal::BoolMemberPrivate;
+
 class BoolMember : public AbstractMember
 {
 public:

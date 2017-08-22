@@ -19,13 +19,18 @@
 #include "zapi/Global.h"
 #include "zapi/lang/Argument.h"
 
+// forware declare with namespace
 namespace zapi
 {
 namespace lang
 {
 class Argument;
 } // lang
+} // zapi
+// end forware declare
 
+namespace zapi
+{
 namespace vm
 {
 namespace internal

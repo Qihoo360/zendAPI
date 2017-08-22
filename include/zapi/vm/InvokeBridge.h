@@ -25,6 +25,7 @@
 struct _zend_execute_data;
 struct _zval_struct;
 
+// forward declare with namespace
 namespace zapi
 {
 
@@ -38,6 +39,11 @@ class Parameters;
 class StdClass;
 } // lang
 
+} // zapi
+// end forward declare 
+
+namespace zapi
+{
 namespace vm
 {
 

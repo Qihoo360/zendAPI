@@ -19,16 +19,19 @@
 #include "zapi/Global.h"
 #include "php/Zend/zend_compile.h"
 
+// forward declare with namespace
 namespace zapi
 {
 
-// forward declare with namespace
 namespace ds
 {
 class Variant;
-} // lang
+} // ds
+} // zapi
 // end forward declare
 
+namespace zapi
+{
 namespace vm
 {
 

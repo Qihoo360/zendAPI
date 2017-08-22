@@ -20,13 +20,15 @@
 
 #include "zapi/Global.h"
 
+// forward declare with namespace
 namespace zapi
 {
-// forward declare with namespace
+
 namespace ds
 {
 class Variant;
 } // ds
+
 namespace vm
 {
 namespace internal
@@ -34,15 +36,22 @@ namespace internal
 class AbstractClassPrivate;
 } // internal
 } // vm
-// end forward declare
 
 namespace lang
 {
-
 namespace internal
 {
 class PropertyPrivate;
 } // internal
+} // lang
+
+} // zapi
+// end forward declare
+
+namespace zapi
+{
+namespace lang
+{
 
 using internal::PropertyPrivate;
 using zapi::ds::Variant;
