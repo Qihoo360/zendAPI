@@ -67,12 +67,12 @@ public:
    
    // php object handlers
    static int countElements(zval *object, zend_long *count);
-   static zval *readDimension(zval *object, zval *offset, int type, zval *rv);
+   static zval *readDimension(zval *object, zval *offset, int type, zval *returnValue);
    static void writeDimension(zval *object, zval *offset, zval *value);
    static int hasDimension(zval *object, zval *offset, int checkEmpty);
    static void unsetDimension(zval *object, zval *offset);
    // property
-   static zval *readProperty(zval *object, zval *name, int type, void **cacheSlot, zval *rv);
+   static zval *readProperty(zval *object, zval *name, int type, void **cacheSlot, zval *returnValue);
    static void writeProperty(zval *object, zval *name, zval *value, void **cacheSlot);
    static int hasProperty(zval *object, zval *name, int hasSetExists, void **cacheSlot);
    static void unsetProperty(zval *object, zval *member, void **cacheSlot);

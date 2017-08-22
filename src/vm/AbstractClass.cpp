@@ -53,6 +53,7 @@ using zapi::vm::ObjectBinder;
 using zapi::vm::Countable;
 using zapi::vm::Traversable;
 using zapi::vm::Serializable;
+using zapi::vm::ArrayAccess;
 using zapi::kernel::NotImplemented;
 using zapi::kernel::Exception;
 using zapi::kernel::AbstractIterator;
@@ -156,9 +157,39 @@ int AbstractClassPrivate::countElements(zval *object, zend_long *count)
    }
 }
 
-zval *AbstractClassPrivate::readDimension(zval *object, zval *offset, int type, zval *rv)
+zval *AbstractClassPrivate::readDimension(zval *object, zval *offset, int type, zval *returnValue)
 {
-   
+   // what to do with the type?
+   //
+   // the type parameter tells us whether the dimension was read in READ
+   // mode, WRITE mode, READWRITE mode or UNSET mode.
+   //
+   // In 99 out of 100 situations, it is called in regular READ mode (value 0),
+   // only when it is called from a PHP script that has statements like
+   // $x =& $object["x"], $object["x"]["y"] = "something" or unset($object["x"]["y"]),
+   // the type parameter is set to a different value.
+   //
+   // But we must ask ourselves the question what we should be doing with such
+   // cases. Internally, the object most likely has a full native implementation,
+   // and the property that is returned is just a string or integer or some
+   // other value, that is temporary WRAPPED into a zval to make it accessible
+   // from PHP. If someone wants to get a reference to such an internal variable,
+   // that is in most cases simply impossible.
+   ArrayAccess *arrayAccess = dynamic_cast<ArrayAccess *>(ObjectBinder::retrieveSelfPtr(object)->getNativeObject());
+   if (arrayAccess) {
+      try {
+         return toZval(arrayAccess->offsetGet(offset), type, returnValue);
+      } catch (Exception &exception) {
+         process_exception(exception);
+         return nullptr; // unreachable, prevent some compiler warning
+      }
+   } else {
+      if (std_object_handlers.read_dimension) {
+         return nullptr;
+      } else {
+         return std_object_handlers.read_dimension(object, offset, type, returnValue);
+      }
+   }
 }
 
 void AbstractClassPrivate::writeDimension(zval *object, zval *offset, zval *value)

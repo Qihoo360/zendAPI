@@ -27,10 +27,16 @@ namespace kernel
 class AbstractIterator;
 } // kernel
 
+namespace ds
+{
+class Variant;
+} // ds
+
 namespace vm
 {
 
 using zapi::kernel::AbstractIterator;
+using zapi::ds::Variant;
 
 class ZAPI_DECL_EXPORT Countable
 {
@@ -48,6 +54,16 @@ public:
 class ZAPI_DECL_EXPORT Traversable
 {
    virtual AbstractIterator *getIterator() = 0;
+};
+
+class ZAPI_DECL_EXPORT ArrayAccess
+{
+public:
+   virtual bool offsetExists(const Variant &key) = 0;
+   virtual void offsetSet(const Variant &key, const Variant &value) = 0;
+   virtual Variant offsetGet(const Variant &key) = 0;
+   virtual Variant offsetUnset(const Variant &key) = 0;
+   virtual ~ArrayAccess();
 };
 
 } // vm
