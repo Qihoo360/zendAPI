@@ -18,27 +18,17 @@
 
 #include "zapi/Global.h"
 
+// forward declare with namespace
 namespace zapi
 {
-
 namespace ds
 {
-class ArrayItemProxy;
-} // ds
-
-extern bool array_unset(ds::ArrayItemProxy &&arrayItem);
-extern bool array_isset(ds::ArrayItemProxy &&arrayItem);
-
-namespace ds
-{
-
-// forward declare with namespace
 namespace internal
 {
 class ArrayItemProxyPrivate;
 } // internal
 
-// forward declare
+class ArrayItemProxy;
 class Variant;
 class NumericVariant;
 class DoubleVariant;
@@ -47,6 +37,19 @@ class BoolVariant;
 class ArrayVariant;
 using internal::ArrayItemProxyPrivate;
 using zapi::lang::Type;
+
+} // ds
+
+extern bool array_unset(ds::ArrayItemProxy &&arrayItem);
+extern bool array_isset(ds::ArrayItemProxy &&arrayItem);
+
+} // zapi
+// end forward declare
+
+namespace zapi
+{
+namespace ds
+{
 
 class ZAPI_DECL_EXPORT ArrayItemProxy final
 {

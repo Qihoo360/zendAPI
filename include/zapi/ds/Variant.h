@@ -25,10 +25,10 @@
 #include <cstring>
 #include <string>
 
+// forward declare with namespace
 namespace zapi
 {
 
-// forward declare with namespace
 namespace lang
 {
 class StdClass;
@@ -36,7 +36,6 @@ class StdClass;
 
 namespace ds
 {
-
 namespace internal
 {
 class VariantPrivate;
@@ -47,6 +46,15 @@ class NumericVariant;
 class DoubleVariant;
 class ArrayVariant;
 class BoolVariant;
+
+} // ds
+} // zapi
+// end forward declare 
+
+namespace zapi
+{
+namespace ds
+{
 
 using internal::VariantPrivate;
 using zapi::lang::StdClass;
