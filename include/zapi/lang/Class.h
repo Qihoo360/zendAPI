@@ -150,6 +150,14 @@ private:
    typename std::enable_if<!std::is_default_constructible<X>::value, StdClass *>::type
    static doConstructObject();
    
+   template <typename X = T>
+   typename std::enable_if<std::is_copy_constructible<X>::value, StdClass *>::type
+   static doCloneObject(X *orig);
+   
+   template <typename X = T>
+   typename std::enable_if<!std::is_copy_constructible<X>::value, StdClass *>::type
+   static doCloneObject(X *orig);
+   
    template <typename X>
    class HasCallStatic
    {
@@ -165,11 +173,11 @@ private:
    
    template <typename X>
    typename std::enable_if<HasCallStatic<X>::value, Variant>::type
-   static maybeCallStatic(const char *name, Parameters &params);
+   static doCallStatic(const char *name, Parameters &params);
    
    template <typename X>
    typename std::enable_if<!HasCallStatic<X>::value, Variant>::type
-   static maybeCallStatic(const char *name, Parameters &params);
+   static doCallStatic(const char *name, Parameters &params);
 };
 
 template <typename T>
@@ -563,7 +571,7 @@ Variant Class<T>::callMagicCall(StdClass *nativeObject, const char *name, Parame
 template <typename T>
 Variant Class<T>::callMagicStaticCall(const char *name, Parameters &params) const
 {
-   return maybeCallStatic<T>(name, params);
+   return doCallStatic<T>(name, params);
 }
 
 template <typename T>
@@ -647,8 +655,24 @@ Class<T>::doConstructObject()
 
 template <typename T>
 template <typename X>
+typename std::enable_if<std::is_copy_constructible<X>::value, StdClass *>::type
+Class<T>::doCloneObject(X *orig)
+{
+   return new X(*orig);
+}
+
+template <typename T>
+template <typename X>
+typename std::enable_if<!std::is_copy_constructible<X>::value, StdClass *>::type
+Class<T>::doCloneObject(X *orig)
+{
+   return nullptr;
+}
+
+template <typename T>
+template <typename X>
 typename std::enable_if<Class<T>::template HasCallStatic<X>::value, Variant>::type
-Class<T>::maybeCallStatic(const char *name, Parameters &params)
+Class<T>::doCallStatic(const char *name, Parameters &params)
 {
    return X::__callStatic(name, params);
 }
@@ -656,7 +680,7 @@ Class<T>::maybeCallStatic(const char *name, Parameters &params)
 template <typename T>
 template <typename X>
 typename std::enable_if<!Class<T>::template HasCallStatic<X>::value, Variant>::type
-Class<T>::maybeCallStatic(const char *name, Parameters &params)
+Class<T>::doCallStatic(const char *name, Parameters &params)
 {
    notImplemented();
    // prevent some compiler warnning
@@ -666,7 +690,7 @@ Class<T>::maybeCallStatic(const char *name, Parameters &params)
 template <typename T>
 StdClass *Class<T>::clone(StdClass *orig) const
 {
-   return nullptr;
+   return doCloneObject<T>(static_cast<T *>(orig));
 }
 
 template <typename T>
