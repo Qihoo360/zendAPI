@@ -388,7 +388,11 @@ void ExtensionPrivate::iterateClasses(const std::function<void(AbstractClass &cl
 
 int ExtensionPrivate::processIdle(int type, int moduleNumber)
 {
-   return 0;
+   Extension *extension = find_module(moduleNumber);
+   if (extension->m_implPtr->m_idleHandler) {
+      extension->m_implPtr->m_idleHandler();
+   }
+   return BOOL2SUCCESS(true);
 }
 
 int ExtensionPrivate::processMismatch(int type, int moduleNumber)
@@ -402,7 +406,11 @@ int ExtensionPrivate::processMismatch(int type, int moduleNumber)
 
 int ExtensionPrivate::processRequest(int type, int moduleNumber)
 {
-   return 0;
+   Extension *extension = find_module(moduleNumber);
+   if (extension->m_implPtr->m_requestHandler) {
+      extension->m_implPtr->m_requestHandler();
+   }
+   return BOOL2SUCCESS(true);
 }
 
 int ExtensionPrivate::processStartup(int type, int moduleNumber)
@@ -414,7 +422,11 @@ int ExtensionPrivate::processStartup(int type, int moduleNumber)
 
 int ExtensionPrivate::processShutdown(int type, int moduleNumber)
 {
-   return 0;
+   Extension *extension = find_module(moduleNumber);
+   if (extension->m_implPtr->m_requestHandler) {
+      extension->m_implPtr->m_requestHandler();
+   }
+   return BOOL2SUCCESS(extension->m_implPtr->shutdown(moduleNumber));
 }
 
 ExtensionPrivate &ExtensionPrivate::registerFunction(const char *name, zapi::ZendCallable function, 
@@ -439,9 +451,7 @@ bool ExtensionPrivate::initialize(int moduleNumber)
    });
    memset(&m_zendIniDefs[i], 0, sizeof(m_zendIniDefs[i]));
    zend_register_ini_entries(m_zendIniDefs.get(), moduleNumber);
-   if (m_startupHandler) {
-      m_startupHandler();
-   }
+   
    iterateConstants([moduleNumber](Constant &constant) {
       constant.initialize(moduleNumber);
    });
@@ -466,6 +476,12 @@ bool ExtensionPrivate::initialize(int moduleNumber)
 
 bool ExtensionPrivate::shutdown(int moduleNumber)
 {
+   zend_unregister_ini_entries(moduleNumber);
+   m_zendIniDefs.reset();
+   if (m_shutdownHandler) {
+      m_shutdownHandler();
+   }
+   m_locked = false;
    return true;
 }
 
