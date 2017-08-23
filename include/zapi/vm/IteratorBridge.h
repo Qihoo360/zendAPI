@@ -16,16 +16,56 @@
 #ifndef ZAPI_VM_ITERATOR_BRIDGE_H
 #define ZAPI_VM_ITERATOR_BRIDGE_H
 
-#include "zapi/protocol/AbstractIterator.h"
+#include "zapi/Global.h"
+#include "zapi/ds/Variant.h"
+
+// forward declare with namespace
+namespace zapi
+{
+
+namespace protocol
+{
+class AbstractIterator;
+} // protocol
+
+} // zapi
+// end forward declare
 
 namespace zapi
 {
 namespace vm
 {
 
+using zapi::protocol::AbstractIterator;
+using zapi::ds::Variant;
+
 class IteratorBridge
 {
+public:
+   IteratorBridge(zval *object, AbstractIterator *iterator);
+   ~IteratorBridge();
+   zend_object_iterator *getZendIterator();
+   static zend_object_iterator_funcs *getIteratorFuncs();
 private:
+   bool valid();
+   Variant &current();
+   Variant key();
+   void next();
+   void rewind();
+   void invalidate();
+private:
+   static IteratorBridge *getSelfPtr(zend_object_iterator *iterator);
+   static void destructor(zend_object_iterator *iterator);
+   static int valid(zend_object_iterator *iterator);
+   static zval *current(zend_object_iterator *iterator);
+   static void key(zend_object_iterator *iterator, zval *data);
+   static void next(zend_object_iterator *iterator);
+   static void rewind(zend_object_iterator *iterator);
+   static void invalidate(zend_object_iterator *iterator);
+private:
+   zend_object_iterator m_iterator;
+   std::unique_ptr<AbstractIterator> m_userspaceIterator;
+   Variant m_current;
 };
 
 } // vm

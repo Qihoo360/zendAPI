@@ -227,6 +227,7 @@ public:
    zval detach(bool keeprefcount);
    Variant makeReferenceByZval();
    bool isReference() const ZAPI_DECL_NOEXCEPT;
+   void invalidate() ZAPI_DECL_NOEXCEPT;
 protected:
    static void stdCopyZval(zval *dest, zval *source);
    static void stdAssignZval(zval *dest, zval *source);

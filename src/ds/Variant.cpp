@@ -795,6 +795,16 @@ bool Variant::isReference() const ZAPI_DECL_NOEXCEPT
    return !!m_implPtr->m_ref || Z_TYPE_P(static_cast<zval *>(*m_implPtr)) == IS_REFERENCE;
 }
 
+void Variant::invalidate() ZAPI_DECL_NOEXCEPT
+{
+   zval *self = getZvalPtr();
+   if (Z_TYPE_P(self) == IS_UNDEF) {
+      return;
+   }
+   zval_ptr_dtor(self);
+   ZVAL_UNDEF(self);
+}
+
 /**
  * Make a clone of the type
  * @return Variant
