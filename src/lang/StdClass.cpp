@@ -52,6 +52,9 @@ void StdClass::__destruct() const
    throw NotImplemented();
 }
 
+void StdClass::__clone() const
+{}
+
 /**
  * Overridable method that is called to check if a property is set
  *

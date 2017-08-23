@@ -22,6 +22,8 @@
 #include "zapi/ds/BoolVariant.h"
 #include "zapi/ds/DoubleVariant.h"
 #include "zapi/ds/NumericVariant.h"
+#include "zapi/protocol/Serializable.h"
+#include "zapi/protocol/Traversable.h"
 
 namespace zapi
 {
@@ -30,6 +32,8 @@ namespace lang
 
 using zapi::vm::AbstractClass;
 using zapi::vm::InvokeBridge;
+using zapi::protocol::Serializable;
+using zapi::protocol::Traversable;
 
 class Constant;
 class Interface;
@@ -126,6 +130,10 @@ public:
 private:
    virtual StdClass *construct() const override;
    virtual StdClass *clone(StdClass *orig) const override;
+   virtual bool clonable() const override;
+   virtual bool serializable() const override;
+   virtual bool traversable() const override;
+   virtual void callClone(StdClass *nativeObject) const override;
    virtual int callCompare(StdClass *left, StdClass *right) const override;
    virtual void callDestruct(StdClass *nativeObject) const override;
    virtual Variant callMagicCall(StdClass *nativeObject, const char *name, Parameters &params) const override;
@@ -557,7 +565,7 @@ StdClass *Class<T>::construct() const
 template <typename T>
 void Class<T>::callDestruct(StdClass *nativeObject) const
 {
-   T *object = dynamic_cast<T *>(nativeObject);
+   T *object = static_cast<T *>(nativeObject);
    return object->__destruct();
 }
 
@@ -577,35 +585,35 @@ Variant Class<T>::callMagicStaticCall(const char *name, Parameters &params) cons
 template <typename T>
 Variant Class<T>::callMagicInvoke(StdClass *nativeObject, Parameters &params) const
 {
-   T *object = dynamic_cast<T *>(nativeObject);
+   T *object = static_cast<T *>(nativeObject);
    return object->__invoke(params);
 }
 
 template <typename T>
 Variant Class<T>::callGet(StdClass *nativeObject, const std::string &name) const
 {
-   T *object = dynamic_cast<T *>(nativeObject);
+   T *object = static_cast<T *>(nativeObject);
    return object->__get(name);
 }
 
 template <typename T>
 void Class<T>::callSet(StdClass *nativeObject, const std::string &name, const Variant &value) const
 {
-   T *object = dynamic_cast<T *>(nativeObject);
+   T *object = static_cast<T *>(nativeObject);
    object->__set(name, value);
 }
 
 template <typename T>
 bool Class<T>::callIsset(StdClass *nativeObject, const std::string &name) const
 {
-   T *object = dynamic_cast<T *>(nativeObject);
+   T *object = static_cast<T *>(nativeObject);
    return object->__isset(name);
 }
 
 template <typename T>
 void Class<T>::callUnset(StdClass *nativeObject, const std::string &name) const
 {
-   T *object = dynamic_cast<T *>(nativeObject);
+   T *object = static_cast<T *>(nativeObject);
    object->__unset(name);
 }
 
@@ -691,6 +699,31 @@ template <typename T>
 StdClass *Class<T>::clone(StdClass *orig) const
 {
    return doCloneObject<T>(static_cast<T *>(orig));
+}
+
+template <typename T>
+bool Class<T>::clonable() const
+{
+   return std::is_copy_constructible<T>::value;
+}
+
+template <typename T>
+bool Class<T>::serializable() const
+{
+   return std::is_base_of<Serializable, T>::value;
+}
+
+template <typename T>
+bool Class<T>::traversable() const
+{
+   return std::is_base_of<Traversable, T>::value;
+}
+
+template <typename T>
+void Class<T>::callClone(StdClass *nativeObject) const
+{
+   T *object = static_cast<T *>(nativeObject);
+   object->__clone();
 }
 
 template <typename T>
