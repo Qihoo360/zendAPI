@@ -34,6 +34,7 @@ ZAPI_DECL_EXPORT void *get_module()
    // register but empty value
    extension.registerIniEntry(zapi::lang::IniEntry("zapi_product", ""));
    extension.registerConstant(Constant("MY_CONST", 12333));
+   extension.registerConstant(Constant("PI", 3.14));
    Constant nameConst("ZAPI_NAME", "zapi");
    extension.registerConstant(nameConst);
    extension.registerConstant(Constant("ZAPI_VERSION", "v0.0.1"));
@@ -58,7 +59,6 @@ ZAPI_DECL_EXPORT void *get_module()
    dummyext::register_ns_zapi(zapi);
    zapi.registerClass(addressClass);
    zapi.registerNamespace(io);
-   
    extension.registerNamespace(zapi);
    return extension;
 }

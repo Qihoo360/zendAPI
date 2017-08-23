@@ -60,9 +60,6 @@ void NamespacePrivate::initializeConstants(const std::string &ns, int moduleNumb
    for (std::shared_ptr<Constant> &constant : m_constants) {
       constant->initialize(ns, moduleNumber);
    }
-   for (std::shared_ptr<Namespace> &subns : m_namespaces) {
-      subns->m_implPtr->initializeConstants(ns + "\\" + subns->m_implPtr->m_name, moduleNumber);
-   }
 }
 
 void NamespacePrivate::initializeClasses(const std::string &ns, int moduleNumber)
@@ -70,9 +67,6 @@ void NamespacePrivate::initializeClasses(const std::string &ns, int moduleNumber
    // register self
    for (std::shared_ptr<AbstractClass> &cls : m_classes) {
       cls->initialize(ns, moduleNumber);
-   }
-   for (std::shared_ptr<Namespace> &subns : m_namespaces) {
-      subns->m_implPtr->initializeClasses(ns + "\\" + subns->m_implPtr->m_name, moduleNumber);
    }
 }
 

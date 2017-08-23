@@ -1,8 +1,8 @@
-set(BRIDGE_TEST_SRCS
+set(EXTENSION_TEST_SRCS
    ExtensionTest.cpp
    IniEntryTest.cpp
    )
-zapi_add_unittest(UnitTests BridgeTest ${BRIDGE_TEST_SRCS})
+zapi_add_unittest(UnitTests ExtensionTest ${EXTENSION_TEST_SRCS})
 
 add_library(dummyext MODULE 
    DummyExtension.cpp
@@ -18,7 +18,7 @@ set_target_properties(dummyext PROPERTIES
    LIBRARY_OUTPUT_DIRECTORY ${ZAPI_BINARY_DIR}/extensions
    PREFIX ""
    )
-set_target_properties(BridgeTest PROPERTIES
+set_target_properties(ExtensionTest PROPERTIES
    COMPILE_DEFINITIONS
    PHP_INI_FILENAME="${ZAPI_BINARY_DIR}/etc/php.ini"
    )

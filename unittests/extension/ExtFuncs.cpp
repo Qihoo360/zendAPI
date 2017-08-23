@@ -64,6 +64,8 @@ void register_ns_io(Namespace &io)
              ValueArgument("name", zapi::lang::Type::String)
           });
    io.registerFunction<dummyext::show_something>("show_something");
+   io.registerConstant(Constant("IO_TYPE", "ASYNC"));
+   io.registerConstant(Constant("NATIVE_STREAM", true));
 }
 
 void register_ns_zapi(Namespace &zapi)
