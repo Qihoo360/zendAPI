@@ -11,6 +11,14 @@ using zapi::lang::Interface;
 using zapi::lang::Modifier;
 using zapi::lang::Namespace;
 using zapi::ds::StringVariant;
+using zapi::lang::Extension;
+
+namespace dummyext
+{
+
+extern void register_funcs(Extension &extension);
+
+} // dummyext
 
 extern "C" {
 
@@ -28,19 +36,7 @@ ZAPI_DECL_EXPORT void *get_module()
    extension.registerConstant(nameConst);
    extension.registerConstant(Constant("ZAPI_VERSION", "v0.0.1"));
    extension.registerConstant(Constant("QIHOO", "beijing qihoo"));
-   extension.registerFunction<dummyext::show_something>("show_something");
-   extension.registerFunction<dummyext::get_name>("get_name");
-   extension.registerFunction<dummyext::print_name>("print_name", {
-                                                       ValueArgument("name", zapi::lang::Type::String)
-                                                    });
-   extension.registerFunction<dummyext::print_name_and_age>("print_name_and_age", {
-                                                               ValueArgument("name", zapi::lang::Type::String),
-                                                               ValueArgument("age", zapi::lang::Type::Long)
-                                                            });
-   extension.registerFunction<dummyext::add_two_number>("add_two_number", {
-                                                           ValueArgument("number1", zapi::lang::Type::Long),
-                                                           ValueArgument("number2", zapi::lang::Type::Long)
-                                                        });
+   dummyext::register_funcs(extension);
    zapi::lang::Class<Person> personClass("Person");
    personClass.registerMethod<&Person::__construct>("__construct");
    personClass.registerConstant("QIHOO", "beijing qihoo asdasd");

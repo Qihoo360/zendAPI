@@ -16,7 +16,7 @@ void Person::__construct()
 
 void Person::__destruct()
 {
-   zapi::out << "Person destruct" << std::endl;
+   // zapi::out << "Person destruct" << std::endl;
 }
 
 
