@@ -17,6 +17,8 @@ namespace dummyext
 {
 
 extern void register_funcs(Extension &extension);
+extern void register_ns_io(Namespace &io);
+extern void register_ns_zapi(Namespace &zapi);
 
 } // dummyext
 
@@ -37,7 +39,7 @@ ZAPI_DECL_EXPORT void *get_module()
    extension.registerConstant(Constant("ZAPI_VERSION", "v0.0.1"));
    extension.registerConstant(Constant("QIHOO", "beijing qihoo"));
    dummyext::register_funcs(extension);
-   zapi::lang::Class<Person> personClass("Person");
+   zapi::lang::Class<Person> personClass("Person1");
    personClass.registerMethod<&Person::__construct>("__construct");
    personClass.registerConstant("QIHOO", "beijing qihoo asdasd");
    personClass.registerConstant("MY_CONST", "MY_CONST_VALUE");
@@ -52,14 +54,11 @@ ZAPI_DECL_EXPORT void *get_module()
    zapi::lang::Class<Address> addressClass("Address");
    Namespace zapi("zapi");
    Namespace io("io");
-   io.registerFunction<dummyext::print_name>("print_name", {
-                                                ValueArgument("name", zapi::lang::Type::String)
-                                             });
-   io.registerFunction<dummyext::show_something>("show_something");
+   dummyext::register_ns_io(io);
+   dummyext::register_ns_zapi(zapi);
    zapi.registerClass(addressClass);
    zapi.registerNamespace(io);
-   zapi.registerFunction<dummyext::get_name>("get_name");
-   zapi.registerConstant(Constant("SYS_VERSION", "0.1.1-alpha"));
+   
    extension.registerNamespace(zapi);
    return extension;
 }

@@ -423,9 +423,7 @@ int ExtensionPrivate::processStartup(int type, int moduleNumber)
 int ExtensionPrivate::processShutdown(int type, int moduleNumber)
 {
    Extension *extension = find_module(moduleNumber);
-   if (extension->m_implPtr->m_requestHandler) {
-      extension->m_implPtr->m_requestHandler();
-   }
+   mid2extension.erase(moduleNumber);
    return BOOL2SUCCESS(extension->m_implPtr->shutdown(moduleNumber));
 }
 

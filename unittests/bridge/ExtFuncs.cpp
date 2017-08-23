@@ -9,6 +9,7 @@ using zapi::ds::NumericVariant;
 using zapi::lang::Parameters;
 using zapi::lang::Arguments;
 using zapi::lang::ValueArgument;
+using zapi::lang::Constant;
 
 void show_something()
 {
@@ -55,5 +56,21 @@ void register_funcs(Extension &extension)
                                                            ValueArgument("number2", zapi::lang::Type::Long)
                                                         });
 }
+
+void register_ns_io(Namespace &io)
+{
+   io.registerFunction<dummyext::print_name>
+         ("print_name", {
+             ValueArgument("name", zapi::lang::Type::String)
+          });
+   io.registerFunction<dummyext::show_something>("show_something");
+}
+
+void register_ns_zapi(Namespace &zapi)
+{
+   zapi.registerFunction<dummyext::get_name>("get_name");
+   zapi.registerConstant(Constant("SYS_VERSION", "0.1.1-alpha"));
+}
+
 
 } // dummyext
