@@ -27,6 +27,7 @@ class AbstractIterator;
 
 class ZAPI_DECL_EXPORT Traversable
 {
+public:
    virtual AbstractIterator *getIterator() = 0;
 };
 

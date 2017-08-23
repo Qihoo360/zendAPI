@@ -11,17 +11,17 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by zzu_softboy on 2017/08/22.
+// Created by zzu_softboy on 2017/08/23.
 
-#include "zapi/Interfaces.h"
+#include "zapi/protocol/ArrayAccess.h"
 
 namespace zapi
 {
-namespace vm
+namespace protocol
 {
 
 ArrayAccess::~ArrayAccess()
 {}
 
-} // vm
+} // protocol
 } // zapi

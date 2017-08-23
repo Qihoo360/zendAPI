@@ -35,7 +35,7 @@ public:
 
 } // internal
 
-AbstractIterator::AbstractIterator(lang::StdClass *nativeObject)
+AbstractIterator::AbstractIterator(StdClass *nativeObject)
    : m_implPtr(new AbstractIteratorPrivate(nativeObject))
 {}
 

@@ -15,6 +15,7 @@
 
 #include <iostream>
 #include <cstring>
+#include "zapi/vm/IteratorBridge.h"
 #include "zapi/vm/AbstractClass.h"
 #include "zapi/vm/internal/AbstractClassPrivate.h"
 #include "zapi/vm/ObjectBinder.h"
@@ -62,6 +63,7 @@ using zapi::lang::Interface;
 using zapi::lang::Parameters;
 using zapi::lang::StdClass;
 using zapi::vm::ObjectBinder;
+using zapi::vm::IteratorBridge;
 using zapi::protocol::Countable;
 using zapi::protocol::Traversable;
 using zapi::protocol::Serializable;
@@ -137,6 +139,7 @@ zend_class_entry *AbstractClassPrivate::initialize(AbstractClass *cls, const std
    // check if traversable
    if (m_apiPtr->traversable()) {
       entry.get_iterator = &AbstractClassPrivate::getIterator;
+      entry.iterator_funcs.funcs = IteratorBridge::getIteratorFuncs();
    }
    
    if (m_apiPtr->serializable()) {
@@ -401,6 +404,42 @@ void AbstractClassPrivate::unsetDimension(zval *object, zval *offset)
       }
       return std_object_handlers.unset_dimension(object, offset);
    }
+}
+
+zend_object_iterator *AbstractClassPrivate::getIterator(zend_class_entry *entry, zval *object, int byRef)
+{
+   // by-ref is not possible (copied from SPL), this function is called directly
+   // from the Zend engine, so we can use zend_error() to longjmp() back to the
+   // Zend engine)
+   // TODO but why
+   if (byRef) {
+      zend_error(E_ERROR, "Foreach by ref is not possible");
+   }
+   Traversable *traversable = dynamic_cast<Traversable *>(ObjectBinder::retrieveSelfPtr(object)->getNativeObject());
+   
+   try {
+      AbstractIterator *iterator = traversable->getIterator();
+      // we are going to allocate an extended iterator (because php nowadays destructs
+      // the iteraters itself, we can no longer let c++ allocate the buffer + object
+      // directly, so we first allocate the buffer, which is going to be cleaned up by php)
+      void *buffer = emalloc(sizeof(IteratorBridge));
+      IteratorBridge *iteratorBridge = new (buffer)IteratorBridge(object, iterator);
+      return iteratorBridge->getZendIterator();
+   } catch (Exception &exception) {
+      process_exception(exception);
+      return nullptr; // unreachable, prevent some compiler warning
+   }
+}
+
+int AbstractClassPrivate::serialize(zval *object, unsigned char **buffer, size_t *bufLength, zend_serialize_data *data)
+{
+   
+}
+
+int AbstractClassPrivate::unserialize(zval *object, zend_class_entry *entry, const unsigned char *buffer, 
+                                      size_t bufLength, zend_unserialize_data *data)
+{
+   
 }
 
 zval *AbstractClassPrivate::readProperty(zval *object, zval *name, int type, void **cacheSlot, zval *rv)

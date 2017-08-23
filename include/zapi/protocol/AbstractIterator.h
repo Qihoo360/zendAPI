@@ -18,10 +18,10 @@
 
 #include "zapi/ds/Variant.h"
 
+// forward declare with namespace
 namespace zapi
 {
 
-// forward declare with namespace
 namespace lang
 {
 class StdClass;
@@ -29,11 +29,19 @@ class StdClass;
 
 namespace protocol
 {
-
 namespace internal
 {
 class AbstractIteratorPrivate;
 } // internal
+} // protocol
+
+} // zapi
+// end forward declare
+
+namespace zapi
+{
+namespace protocol
+{
 
 using zapi::lang::StdClass;
 using zapi::ds::Variant;

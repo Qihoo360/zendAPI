@@ -79,6 +79,9 @@ public:
    static int hasDimension(zval *object, zval *offset, int checkEmpty);
    static void unsetDimension(zval *object, zval *offset);
    static zend_object_iterator *getIterator(zend_class_entry *entry, zval *object, int byRef);
+   static int serialize(zval *object, unsigned char **buffer, size_t *bufLength, zend_serialize_data *data);
+   static int unserialize(zval *object, zend_class_entry *entry, const unsigned char *buffer, 
+                          size_t bufLength, zend_unserialize_data *data);
    // property
    static zval *readProperty(zval *object, zval *name, int type, void **cacheSlot, zval *returnValue);
    static void writeProperty(zval *object, zval *name, zval *value, void **cacheSlot);
@@ -96,8 +99,6 @@ public:
    // cast
    static int cast(zval *object, zval *retValue, int type);
    static int compare(zval *left, zval *right);
-   static int serialize(zval *object, unsigned char **buffer, size_t *bufLength, zend_serialize_data *data);
-   static int unserialize(zval *object, zend_class_entry *entry, const unsigned char *buffer, size_t bufLength, zend_unserialize_data *data);
    static zval *toZval(Variant &&value, int type, zval *rv);
    
 public:

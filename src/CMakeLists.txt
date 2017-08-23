@@ -5,6 +5,7 @@ set(ZAPI_SRC
    kernel/FatalError.cpp
    kernel/Exception.cpp
    protocol/AbstractIterator.cpp
+   protocol/ArrayAccess.cpp
    lang/Extension.cpp
    lang/IniEntry.cpp
    lang/Class.cpp
