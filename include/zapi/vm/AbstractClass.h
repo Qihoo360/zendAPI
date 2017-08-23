@@ -109,6 +109,7 @@ protected:
    virtual bool clonable() const;
    virtual bool serializable() const;
    virtual bool traversable() const;
+   virtual int callCompare(StdClass *left, StdClass *right) const;
    virtual void callClone(StdClass *nativeObject) const;
    virtual void callDestruct(StdClass *nativeObject) const;
    virtual Variant callMagicCall(StdClass *nativeObject, const char *name, Parameters &params) const;

@@ -126,6 +126,7 @@ public:
 private:
    virtual StdClass *construct() const override;
    virtual StdClass *clone(StdClass *orig) const override;
+   virtual int callCompare(StdClass *left, StdClass *right) const override;
    virtual void callDestruct(StdClass *nativeObject) const override;
    virtual Variant callMagicCall(StdClass *nativeObject, const char *name, Parameters &params) const override;
    virtual Variant callMagicStaticCall(const char *name, Parameters &params) const override;
@@ -666,6 +667,14 @@ template <typename T>
 StdClass *Class<T>::clone(StdClass *orig) const
 {
    return nullptr;
+}
+
+template <typename T>
+int Class<T>::callCompare(StdClass *left, StdClass *right) const
+{
+   T *leftNativeObject = static_cast<T *>(left);
+   T *rightNativeObject = static_cast<T *>(right);
+   return leftNativeObject->__compare(*rightNativeObject);
 }
 
 template <typename T>

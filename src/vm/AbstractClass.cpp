@@ -433,13 +433,34 @@ zend_object_iterator *AbstractClassPrivate::getIterator(zend_class_entry *entry,
 
 int AbstractClassPrivate::serialize(zval *object, unsigned char **buffer, size_t *bufLength, zend_serialize_data *data)
 {
-   
+   Serializable *serializable = dynamic_cast<Serializable *>(ObjectBinder::retrieveSelfPtr(object)->getNativeObject());
+   // user may throw an exception in the serialize() function
+   try {
+      std::string value = serializable->serialize();
+      *buffer = reinterpret_cast<unsigned char *>(estrndup(value.c_str(), value.length()));
+      *bufLength = value.length();
+   } catch (Exception &exception) {
+      process_exception(exception);
+      return ZAPI_FAILURE; // unreachable, prevent some compiler warning
+   }
+   return ZAPI_SUCCESS;
 }
 
 int AbstractClassPrivate::unserialize(zval *object, zend_class_entry *entry, const unsigned char *buffer, 
                                       size_t bufLength, zend_unserialize_data *data)
 {
-   
+   object_init_ex(object, entry);
+   Serializable *serializable = dynamic_cast<Serializable *>(ObjectBinder::retrieveSelfPtr(object)->getNativeObject());
+   // user may throw an exception in the unserialize() function
+   try {
+      serializable->unserialize(reinterpret_cast<const char *>(buffer), bufLength);
+   } catch (Exception &exception) {
+      // user threw an exception in its method
+      // implementation, send it to user space
+      php_error_docref(NULL, E_NOTICE, "Error while unserializing");
+      return ZAPI_FAILURE;
+   }
+   return ZAPI_SUCCESS;
 }
 
 zval *AbstractClassPrivate::readProperty(zval *object, zval *name, int type, void **cacheSlot, zval *rv)
@@ -715,7 +736,28 @@ int AbstractClassPrivate::cast(zval *object, zval *retValue, int type)
 
 int AbstractClassPrivate::compare(zval *left, zval *right)
 {
-   
+   try {
+      zend_class_entry *entry = Z_OBJCE_P(left);
+      if (entry != Z_OBJCE_P(right)) {
+         throw NotImplemented();
+      }
+      
+      AbstractClassPrivate *selfPtr = retrieve_acp_ptr_from_cls_entry(entry);
+      AbstractClass *meta = selfPtr->m_apiPtr;
+      StdClass *leftNativeObject = ObjectBinder::retrieveSelfPtr(left)->getNativeObject();
+      StdClass *rightNativeObject = ObjectBinder::retrieveSelfPtr(right)->getNativeObject();
+      return meta->callCompare(leftNativeObject, rightNativeObject);
+   } catch (const NotImplemented &exception) {
+      if (!std_object_handlers.compare_objects) {
+         return 1;
+      }
+      return std_object_handlers.compare_objects(left, right);
+   } catch (Exception &exception) {
+      // a Exception was thrown by the extension __compare function,
+      // pass this on to user space
+      process_exception(exception);
+      return 1;
+   }
 }
 
 void AbstractClassPrivate::destructObject(zend_object *object)
@@ -919,6 +961,11 @@ StdClass *AbstractClass::construct() const
 StdClass *AbstractClass::clone(StdClass *orig) const
 {
    return nullptr;
+}
+
+int AbstractClass::callCompare(StdClass *left, StdClass *right) const
+{
+   return 1;
 }
 
 void AbstractClass::callClone(StdClass *nativeObject) const
