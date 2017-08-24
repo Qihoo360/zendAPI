@@ -7,7 +7,7 @@ set(ZAPI_SRC
    protocol/AbstractIterator.cpp
    protocol/ArrayAccess.cpp
    lang/Extension.cpp
-   lang/IniEntry.cpp
+   lang/Ini.cpp
    lang/Class.cpp
    lang/Interface.cpp
    lang/Method.cpp

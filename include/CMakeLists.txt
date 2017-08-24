@@ -18,7 +18,7 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/kernel/FatalError.h
    ${ZAPI_INCLUDE_DIR}/zapi/kernel/Exception.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Extension.h
-   ${ZAPI_INCLUDE_DIR}/zapi/lang/IniEntry.h
+   ${ZAPI_INCLUDE_DIR}/zapi/lang/Ini.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/internal/ExtensionPrivate.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Type.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Class.h

@@ -28,11 +28,11 @@ ZAPI_DECL_EXPORT void *get_module()
 {
    static zapi::lang::Extension extension("dummyext", "1.0");
    // this have no effect we write this in php.ini
-   extension.registerIniEntry(zapi::lang::IniEntry("zapi_author", "xiuxiu"));
+   extension.registerIni(zapi::lang::Ini("zapi_author", "xiuxiu"));
    // rewrite in php.ini
-   extension.registerIniEntry(zapi::lang::IniEntry("zapi_team_address", "beijing"));
+   extension.registerIni(zapi::lang::Ini("zapi_team_address", "beijing"));
    // register but empty value
-   extension.registerIniEntry(zapi::lang::IniEntry("zapi_product", ""));
+   extension.registerIni(zapi::lang::Ini("zapi_product", ""));
    extension.registerConstant(Constant("MY_CONST", 12333));
    extension.registerConstant(Constant("PI", 3.14));
    Constant nameConst("ZAPI_NAME", "zapi");

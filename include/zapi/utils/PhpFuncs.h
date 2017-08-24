@@ -16,7 +16,7 @@
 #ifndef ZAPI_UTILS_PHPFUNCS_H
 #define ZAPI_UTILS_PHPFUNCS_H
 
-#include "zapi/lang/IniEntry.h"
+#include "zapi/lang/Ini.h"
 
 // forward declare with namespace
 namespace zapi

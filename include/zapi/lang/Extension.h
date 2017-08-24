@@ -39,7 +39,7 @@ namespace lang
 class Parameters;
 class Constant;
 class Namespace;
-class IniEntry;
+class Ini;
 template <typename> class Class;
 } // lang
 } // zapi
@@ -57,7 +57,7 @@ using zapi::lang::Constant;
 using zapi::lang::Class;
 using zapi::lang::Interface;
 using zapi::lang::Namespace;
-using zapi::lang::IniEntry;
+using zapi::lang::Ini;
 using internal::ExtensionPrivate;
 using zapi::vm::AbstractClass;
 
@@ -92,8 +92,8 @@ public:
    template <Variant (*func)(Parameters &parameters)>
    Extension &registerFunction(const char *name, const Arguments &args = {});
    
-   Extension &registerIniEntry(const IniEntry &entry);
-   Extension &registerIniEntry(IniEntry &&entry);
+   Extension &registerIni(const Ini &entry);
+   Extension &registerIni(Ini &&entry);
    
    template <typename T>
    Extension &registerClass(const Class<T> &nativeClass);
@@ -108,7 +108,7 @@ public:
    
    Extension &registerConstant(Constant &&constant);
    Extension &registerConstant(const Constant &constant);
-   size_t getIniEntryQuantity() const;
+   size_t getIniQuantity() const;
    size_t getFunctionQuantity() const;
    size_t getConstantQuantity() const;
    operator void * ()

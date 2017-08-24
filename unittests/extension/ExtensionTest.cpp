@@ -1,6 +1,6 @@
 #include "zapi/Global.h"
 #include "zapi/lang/Extension.h"
-#include "zapi/lang/IniEntry.h"
+#include "zapi/lang/Ini.h"
 #include "zapi/lang/Constant.h"
 #include "zapi/utils/PhpFuncs.h"
 #include "zapi/vm/Engine.h"
@@ -21,7 +21,7 @@ extern ::HashTable module_registry;
 
 static bool dummyExtExist = false;
 using zapi::lang::Extension;
-using zapi::lang::IniEntry;
+using zapi::lang::Ini;
 using zapi::lang::Constant;
 using zapi::vm::Engine;
 
@@ -65,13 +65,13 @@ static std::string phpOutput;
 //   }
 //}
 
-//TEST(ExtensionTest, testRegisterIniEntry)
+//TEST(ExtensionTest, testRegisterIni)
 //{
 //   Extension extension("zapi");
-//   ASSERT_EQ(extension.getIniEntryQuantity(), 0);
-//   IniEntry entry("zapi", "2.0");
-//   extension.registerIniEntry(entry);
-//   ASSERT_EQ(extension.getIniEntryQuantity(), 1);
+//   ASSERT_EQ(extension.getIniQuantity(), 0);
+//   Ini entry("zapi", "2.0");
+//   extension.registerIni(entry);
+//   ASSERT_EQ(extension.getIniQuantity(), 1);
 //}
 
 //TEST(ExtensionTest, testRegisterContsant)

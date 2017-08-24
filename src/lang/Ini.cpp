@@ -13,7 +13,7 @@
 //
 // Created by softboy on 7/25/17.
 
-#include "zapi/lang/IniEntry.h"
+#include "zapi/lang/Ini.h"
 #include "php/Zend/zend_ini.h"
 #include <iostream>
 
@@ -22,35 +22,35 @@ namespace zapi
 namespace lang
 {
 
-class IniEntryPrivate
+class IniPrivate
 {
 public:
-   using CfgType = IniEntry::CfgType;
+   using CfgType = Ini::CfgType;
 public:
-   IniEntryPrivate(const char *name, const char *value, const CfgType cfgType = CfgType::All) 
+   IniPrivate(const char *name, const char *value, const CfgType cfgType = CfgType::All) 
       :m_name(name), m_value(value), m_cfgType(cfgType)
    {}
-   IniEntryPrivate(const char *name, bool value, const CfgType cfgType = CfgType::All)
+   IniPrivate(const char *name, bool value, const CfgType cfgType = CfgType::All)
       :m_name(name), m_value(bool2str(value)), m_cfgType(cfgType)
    {}
    
-   IniEntryPrivate(const char *name, const int16_t value, const CfgType cfgType = CfgType::All)
+   IniPrivate(const char *name, const int16_t value, const CfgType cfgType = CfgType::All)
       :m_name(name), m_value(std::to_string(value)), m_cfgType(cfgType)
    {}
    
-   IniEntryPrivate(const char *name, const int32_t value, const CfgType cfgType = CfgType::All)
+   IniPrivate(const char *name, const int32_t value, const CfgType cfgType = CfgType::All)
       :m_name(name), m_value(std::to_string(value)), m_cfgType(cfgType)
    {}
    
-   IniEntryPrivate(const char *name, const int64_t value, const CfgType cfgType = CfgType::All)
+   IniPrivate(const char *name, const int64_t value, const CfgType cfgType = CfgType::All)
       :m_name(name), m_value(std::to_string(value)), m_cfgType(cfgType)
    {}
    
-   IniEntryPrivate(const char *name, const double value, const CfgType cfgType = CfgType::All)
+   IniPrivate(const char *name, const double value, const CfgType cfgType = CfgType::All)
       :m_name(name), m_value(std::to_string(value)), m_cfgType(cfgType)
    {}
    
-   IniEntryPrivate(const IniEntryPrivate &other)
+   IniPrivate(const IniPrivate &other)
       : m_name(other.m_name),
         m_value(other.m_value),
         m_cfgType(other.m_cfgType)
@@ -69,51 +69,51 @@ public:
    CfgType m_cfgType;
 };
 
-IniEntry::IniEntry(const char *name, const char *value, const CfgType cfgType) 
-   : m_implPtr(new IniEntryPrivate(name, value, cfgType))
+Ini::Ini(const char *name, const char *value, const CfgType cfgType) 
+   : m_implPtr(new IniPrivate(name, value, cfgType))
 {}
-IniEntry::IniEntry(const char *name, bool value, const CfgType cfgType)
-   : m_implPtr(new IniEntryPrivate(name, value, cfgType))
-{}
-
-IniEntry::IniEntry(const char *name, const int16_t value, const CfgType cfgType)
-   : m_implPtr(new IniEntryPrivate(name, value, cfgType))
+Ini::Ini(const char *name, bool value, const CfgType cfgType)
+   : m_implPtr(new IniPrivate(name, value, cfgType))
 {}
 
-IniEntry::IniEntry(const char *name, const int32_t value, const CfgType cfgType)
-   : m_implPtr(new IniEntryPrivate(name, value, cfgType))
+Ini::Ini(const char *name, const int16_t value, const CfgType cfgType)
+   : m_implPtr(new IniPrivate(name, value, cfgType))
 {}
 
-IniEntry::IniEntry(const char *name, const int64_t value, const CfgType cfgType)
-   : m_implPtr(new IniEntryPrivate(name, value, cfgType))
+Ini::Ini(const char *name, const int32_t value, const CfgType cfgType)
+   : m_implPtr(new IniPrivate(name, value, cfgType))
 {}
 
-IniEntry::IniEntry(const char *name, const double value, const CfgType cfgType)
-   : m_implPtr(new IniEntryPrivate(name, value, cfgType))
+Ini::Ini(const char *name, const int64_t value, const CfgType cfgType)
+   : m_implPtr(new IniPrivate(name, value, cfgType))
 {}
 
-IniEntry::IniEntry(const IniEntry &other)
-   : m_implPtr(new IniEntryPrivate(*other.m_implPtr.get()))
+Ini::Ini(const char *name, const double value, const CfgType cfgType)
+   : m_implPtr(new IniPrivate(name, value, cfgType))
 {}
 
-IniEntry::IniEntry(IniEntry &&other)
+Ini::Ini(const Ini &other)
+   : m_implPtr(new IniPrivate(*other.m_implPtr.get()))
+{}
+
+Ini::Ini(Ini &&other)
    : m_implPtr(std::move(other.m_implPtr))
 {}
 
-bool IniEntry::operator==(const IniEntry &other) const
+bool Ini::operator==(const Ini &other) const
 {
-   ZAPI_D(const IniEntry);
+   ZAPI_D(const Ini);
    return implPtr->m_name == other.m_implPtr->m_name &&
          implPtr->m_value == other.m_implPtr->m_value &&
          implPtr->m_cfgType == other.m_implPtr->m_cfgType;
 }
 
-IniEntry::~IniEntry()
+Ini::~Ini()
 {}
 
-void IniEntry::setupIniEntryDef(_zend_ini_entry_def *zendIniDef, int moduleNumber)
+void Ini::setupIniDef(_zend_ini_entry_def *zendIniDef, int moduleNumber)
 {
-   ZAPI_D(IniEntry);
+   ZAPI_D(Ini);
    zendIniDef->modifiable = static_cast<int>(implPtr->m_cfgType);
    zendIniDef->name = implPtr->m_name.data();
    zendIniDef->name_length = implPtr->m_name.size();

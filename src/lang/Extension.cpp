@@ -18,7 +18,7 @@
 #include "zapi/vm/internal/CallablePrivate.h"
 #include "zapi/lang/Extension.h"
 #include "zapi/lang/internal/ExtensionPrivate.h"
-#include "zapi/lang/IniEntry.h"
+#include "zapi/lang/Ini.h"
 #include "zapi/lang/internal/NamespacePrivate.h"
 #include "zapi/lang/Function.h"
 #include "zapi/lang/Constant.h"
@@ -223,23 +223,23 @@ bool Extension::initialize(int moduleNumber)
    return getImplPtr()->initialize(moduleNumber);
 }
 
-Extension &Extension::registerIniEntry(const IniEntry &entry)
+Extension &Extension::registerIni(const Ini &entry)
 {
    ZAPI_D(Extension);
    if (isLocked()) {
       return *this;
    }
-   implPtr->m_iniEntries.emplace_back(new IniEntry(entry));
+   implPtr->m_iniEntries.emplace_back(new Ini(entry));
    return *this;
 }
 
-Extension &Extension::registerIniEntry(IniEntry &&entry)
+Extension &Extension::registerIni(Ini &&entry)
 {
    ZAPI_D(Extension);
    if (isLocked()) {
       return *this;
    }
-   implPtr->m_iniEntries.emplace_back(new IniEntry(std::move(entry)));
+   implPtr->m_iniEntries.emplace_back(new Ini(std::move(entry)));
    return *this;
 }
 
@@ -249,7 +249,7 @@ size_t Extension::getFunctionQuantity() const
    return implPtr->m_functions.size();
 }
 
-size_t Extension::getIniEntryQuantity() const
+size_t Extension::getIniQuantity() const
 {
    ZAPI_D(const Extension);
    return implPtr->m_iniEntries.size();
@@ -323,7 +323,7 @@ size_t ExtensionPrivate::getFunctionQuantity() const
    return ret;
 }
 
-size_t ExtensionPrivate::getIniEntryQuantity() const
+size_t ExtensionPrivate::getIniQuantity() const
 {
    return m_iniEntries.size(); 
 }
@@ -365,7 +365,7 @@ void ExtensionPrivate::iterateFunctions(const std::function<void(Function &func)
    }
 }
 
-void ExtensionPrivate::iterateIniEntries(const std::function<void (lang::IniEntry &)> &callback)
+void ExtensionPrivate::iterateIniEntries(const std::function<void (lang::Ini &)> &callback)
 {
    for (auto &entry : m_iniEntries) {
       callback(*entry);
@@ -439,12 +439,12 @@ ExtensionPrivate &ExtensionPrivate::registerFunction(const char *name, zapi::Zen
 
 bool ExtensionPrivate::initialize(int moduleNumber)
 {
-   m_zendIniDefs.reset(new zend_ini_entry_def[getIniEntryQuantity() + 1]);
+   m_zendIniDefs.reset(new zend_ini_entry_def[getIniQuantity() + 1]);
    int i = 0;
    // fill ini entry def
-   iterateIniEntries([this, &i, moduleNumber](IniEntry &iniEntry){
+   iterateIniEntries([this, &i, moduleNumber](Ini &iniEntry){
       zend_ini_entry_def *zendIniDef = &m_zendIniDefs[i];
-      iniEntry.setupIniEntryDef(zendIniDef, moduleNumber);
+      iniEntry.setupIniDef(zendIniDef, moduleNumber);
       i++;
    });
    memset(&m_zendIniDefs[i], 0, sizeof(m_zendIniDefs[i]));

@@ -29,7 +29,7 @@ namespace lang
 class Function;
 class Constant;
 class Namespace;
-class IniEntry;
+class Ini;
 class Extension;
 } // lang
 
@@ -52,7 +52,7 @@ using zapi::lang::Arguments;
 using zapi::lang::Function;
 using zapi::lang::Constant;
 using zapi::lang::Namespace;
-using zapi::lang::IniEntry;
+using zapi::lang::Ini;
 using zapi::vm::AbstractClass;
 
 class ExtensionPrivate
@@ -72,13 +72,13 @@ public:
    
    ExtensionPrivate &registerFunction(const char *name, zapi::ZendCallable function, const Arguments &arguments = {});
    void iterateFunctions(const std::function<void(Function &func)> &callback);
-   void iterateIniEntries(const std::function<void(IniEntry &ini)> &callback);
+   void iterateIniEntries(const std::function<void(Ini &ini)> &callback);
    void iterateConstants(const std::function<void(Constant &constant)> &callback);
    void iterateClasses(const std::function<void(AbstractClass &cls)> &callback);
 
    zend_module_entry *getModule();
    size_t getFunctionQuantity() const;
-   size_t getIniEntryQuantity() const;
+   size_t getIniQuantity() const;
    bool initialize(int moduleNumber);
    bool shutdown(int moduleNumber);
    static int processStartup(int type, int moduleNumber);
@@ -96,7 +96,7 @@ public:
    zapi::Callback m_shutdownHandler;
    zend_module_entry m_entry;
    bool m_locked = false;
-   std::list<std::shared_ptr<IniEntry>> m_iniEntries;
+   std::list<std::shared_ptr<Ini>> m_iniEntries;
    std::unique_ptr<zend_ini_entry_def[]> m_zendIniDefs = nullptr;
    std::list<std::shared_ptr<Function>> m_functions;
    std::list<std::shared_ptr<Constant>> m_constants;

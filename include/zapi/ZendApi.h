@@ -31,7 +31,7 @@
 #include "zapi/lang/StdClass.h"
 #include "zapi/lang/Interface.h"
 #include "zapi/lang/Namespace.h"
-#include "zapi/lang/IniEntry.h"
+#include "zapi/lang/Ini.h"
 #include "zapi/lang/Extension.h"
 #include "zapi/kernel/StreamBuffer.h"
 #include "zapi/protocol/AbstractIterator.h"

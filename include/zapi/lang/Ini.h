@@ -26,9 +26,9 @@ namespace zapi
 namespace lang
 {
 
-class IniEntryPrivate;
+class IniPrivate;
 
-class ZAPI_DECL_EXPORT IniEntry
+class ZAPI_DECL_EXPORT Ini
 {
 public:
    enum class CfgType : int
@@ -40,23 +40,23 @@ public:
    };
    
 public:
-   IniEntry(const char *name, const char *value, const CfgType cfgType = CfgType::All);
-   IniEntry(const char *name, bool value, const CfgType cfgType = CfgType::All);
-   IniEntry(const char *name, const int16_t value, const CfgType cfgType = CfgType::All);
-   IniEntry(const char *name, const int32_t value, const CfgType cfgType = CfgType::All);
-   IniEntry(const char *name, const int64_t value, const CfgType cfgType = CfgType::All);
-   IniEntry(const char *name, const double value, const CfgType cfgType = CfgType::All);
-   IniEntry(const IniEntry &other);
-   IniEntry(IniEntry &&other);
-   ~IniEntry();
+   Ini(const char *name, const char *value, const CfgType cfgType = CfgType::All);
+   Ini(const char *name, bool value, const CfgType cfgType = CfgType::All);
+   Ini(const char *name, const int16_t value, const CfgType cfgType = CfgType::All);
+   Ini(const char *name, const int32_t value, const CfgType cfgType = CfgType::All);
+   Ini(const char *name, const int64_t value, const CfgType cfgType = CfgType::All);
+   Ini(const char *name, const double value, const CfgType cfgType = CfgType::All);
+   Ini(const Ini &other);
+   Ini(Ini &&other);
+   ~Ini();
    
 public:
-   bool operator==(const IniEntry &other) const;
-   void setupIniEntryDef(struct _zend_ini_entry_def *zendIniDef, int moduleNumber = -1);
+   bool operator==(const Ini &other) const;
+   void setupIniDef(struct _zend_ini_entry_def *zendIniDef, int moduleNumber = -1);
    
 private:
-   ZAPI_DECLARE_PRIVATE(IniEntry)
-   std::unique_ptr<IniEntryPrivate> m_implPtr;
+   ZAPI_DECLARE_PRIVATE(Ini)
+   std::unique_ptr<IniPrivate> m_implPtr;
 };
 
 
