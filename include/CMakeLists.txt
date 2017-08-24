@@ -6,6 +6,9 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/ProcessorDetection.h 
    ${ZAPI_INCLUDE_DIR}/zapi/SystemDetection.h
    ${ZAPI_INCLUDE_DIR}/zapi/ZendApi.h
+   ${ZAPI_INCLUDE_DIR}/zapi/std/Functional.h
+   ${ZAPI_INCLUDE_DIR}/zapi/std/TypeTraits.h
+   ${ZAPI_INCLUDE_DIR}/zapi/std/internal/FunctionalPrivate.h
    ${ZAPI_INCLUDE_DIR}/zapi/protocol/AbstractIterator.h
    ${ZAPI_INCLUDE_DIR}/zapi/protocol/ArrayAccess.h
    ${ZAPI_INCLUDE_DIR}/zapi/protocol/Countable.h
