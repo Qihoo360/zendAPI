@@ -17,6 +17,8 @@
 #ifndef ZAPI_STD_FUNCTIONAL_H
 #define ZAPI_STD_FUNCTIONAL_H
 
+namespace langstd = std;
+
 namespace zapi
 {
 namespace std

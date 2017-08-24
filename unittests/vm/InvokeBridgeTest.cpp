@@ -10,6 +10,7 @@
 #include <iostream>
 #include <tuple>
 #include <type_traits>
+#include "zapi/std/TypeTraits.h"
 
 using zapi::ds::Variant;
 using zapi::ds::NumericVariant;

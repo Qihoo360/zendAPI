@@ -19,6 +19,10 @@
 
 #include <type_traits>
 #include <functional>
+#include "zapi/std/TypeTraits.h"
+
+namespace langstd = std;
+
 namespace zapi
 {
 namespace std
@@ -46,7 +50,28 @@ struct enable_invoke_impl<RetType, T1, true, false>
 template <typename RetType, typename T1>
 struct enable_invoke_impl<RetType, T1, false, true>
 {
-   
+   using Bullet3 = typename langstd::add_lvalue_reference<
+      zapi::std::apply_cv<T1, RetType>::type
+   >::type;
+   using type = Bullet3;
+};
+
+template <typename RetType, typename T1>
+struct enable_invoke_impl<RetType, T1, false, false>
+{
+   using Bullet4 = typename langstd::add_lvalue_reference<
+      zapi::std::apply_cv<decltype(*langstd::declval<T1>()), RetType>::type
+   >::type;
+   using type = Bullet4;
+};
+
+template <typename RetType, typename T1>
+struct enable_invoke_impl<RetType, T1 *, false, false>
+{
+   using Bullet4 = typename langstd::add_lvalue_reference<
+      zapi::std::apply_cv<T1, RetType>::type
+   >::type;
+   using type = Bullet4;
 };
 
 } // internal

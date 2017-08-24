@@ -19,17 +19,19 @@
 
 #include <type_traits>
 
+namespace langstd = std;
+
 namespace zapi
 {
 namespace std
 {
 
 template <typename SourceType, typename TargetType, 
-          bool = std::is_const<typename std::remove_reference<TargetType>::type>::value,
-          bool = std::is_volatile<typename std::remove_reference<TargetType>::type>::value>
+          bool = langstd::is_const<typename langstd::remove_reference<TargetType>::type>::value,
+          bool = langstd::is_volatile<typename langstd::remove_reference<TargetType>::type>::value>
 struct apply_cv
 {
-   using type = SourceType;
+   using type = TargetType;
 };
 
 template <typename SourceType, typename TargetType>
@@ -67,6 +69,219 @@ struct apply_cv<SourceType &, TargetType, false, true>
 {
    using type = volatile TargetType &;
 };
+
+template <typename MemberPointerType, bool IsMemberFunctionPtr, bool IsMemberObjectPtr>
+struct member_pointer_traits_imp
+{  // forward declaration; specializations later
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct member_pointer_traits_imp<RetType (Class::*)(ParamTypes... args), true, false>
+{
+   using ClassType = Class;
+   using ReturnType = RetType;
+   using FuncType = RetType (&) (ParamTypes... args);
+   // TODO equal ?
+   // typedef RetType (FuncType) (ParamTypes...);
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct member_pointer_traits_imp<RetType (Class::*)(ParamTypes... args, ...), true, false>
+{
+   using ClassType = Class;
+   using ReturnType = RetType;
+   using FuncType = RetType (&) (ParamTypes... args, ...);
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct member_pointer_traits_imp<RetType (Class::*)(ParamTypes... args) const, true, false>
+{
+   using ClassType = Class const;
+   using ReturnType = RetType;
+   using FuncType = RetType (&) (ParamTypes... args);
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct member_pointer_traits_imp<RetType (Class::*)(ParamTypes... args, ...) const, true, false>
+{
+   using ClassType = Class const;
+   using ReturnType = RetType;
+   using FuncType = RetType (&) (ParamTypes... args, ...);
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct member_pointer_traits_imp<RetType (Class::*)(ParamTypes... args) volatile, true, false>
+{
+   using ClassType = Class volatile;
+   using ReturnType = RetType;
+   using FuncType = RetType (&) (ParamTypes... args);
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct member_pointer_traits_imp<RetType (Class::*)(ParamTypes... args, ...) volatile, true, false>
+{
+   using ClassType = Class volatile;
+   using ReturnType = RetType;
+   using FuncType = RetType (&) (ParamTypes... args, ...);
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct member_pointer_traits_imp<RetType (Class::*)(ParamTypes... args) const volatile, true, false>
+{
+   using ClassType = Class const volatile;
+   using ReturnType = RetType;
+   using FuncType = RetType (&) (ParamTypes... args);
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct member_pointer_traits_imp<RetType (Class::*)(ParamTypes... args, ...) const volatile, true, false>
+{
+   using ClassType = Class const volatile;
+   using ReturnType = RetType;
+   using FuncType = RetType (&) (ParamTypes... args, ...);
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct member_pointer_traits_imp<RetType (Class::*)(ParamTypes... args) &, true, false>
+{
+   using ClassType = Class &;
+   using ReturnType = RetType;
+   using FuncType = RetType (&) (ParamTypes... args);
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct member_pointer_traits_imp<RetType (Class::*)(ParamTypes... args, ...) &, true, false>
+{
+   using ClassType = Class &;
+   using ReturnType = RetType;
+   using FuncType = RetType (&) (ParamTypes... args, ...);
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct member_pointer_traits_imp<RetType (Class::*)(ParamTypes... args) const&, true, false>
+{
+   using ClassType = Class const&;
+   using ReturnType = RetType;
+   using FuncType = RetType (&) (ParamTypes... args);
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct member_pointer_traits_imp<RetType (Class::*)(ParamTypes... args, ...) const&, true, false>
+{
+   using ClassType = Class const&;
+   using ReturnType = RetType;
+   using FuncType = RetType (&) (ParamTypes... args, ...);
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct member_pointer_traits_imp<RetType (Class::*)(ParamTypes... args) volatile&, true, false>
+{
+   using ClassType = Class volatile&;
+   using ReturnType = RetType;
+   using FuncType = RetType (&) (ParamTypes... args);
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct member_pointer_traits_imp<RetType (Class::*)(ParamTypes... args, ...) volatile&, true, false>
+{
+   using ClassType = Class volatile&;
+   using ReturnType = RetType;
+   using FuncType = RetType (&) (ParamTypes... args, ...);
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct member_pointer_traits_imp<RetType (Class::*)(ParamTypes... args) const volatile&, true, false>
+{
+   using ClassType = Class const volatile&;
+   using ReturnType = RetType;
+   using FuncType = RetType (&) (ParamTypes... args);
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct member_pointer_traits_imp<RetType (Class::*)(ParamTypes... args, ...) const volatile&, true, false>
+{
+   using ClassType = Class const volatile&;
+   using ReturnType = RetType;
+   using FuncType = RetType (&) (ParamTypes... args, ...);
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct member_pointer_traits_imp<RetType (Class::*)(ParamTypes... args) &&, true, false>
+{
+   using ClassType = Class &&;
+   using ReturnType = RetType;
+   using FuncType = RetType (&) (ParamTypes... args);
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct member_pointer_traits_imp<RetType (Class::*)(ParamTypes... args, ...) &&, true, false>
+{
+   using ClassType = Class &&;
+   using ReturnType = RetType;
+   using FuncType = RetType (&) (ParamTypes... args, ...);
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct member_pointer_traits_imp<RetType (Class::*)(ParamTypes... args) const&&, true, false>
+{
+   using ClassType = Class const&&;
+   using ReturnType = RetType;
+   using FuncType = RetType (&) (ParamTypes... args);
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct member_pointer_traits_imp<RetType (Class::*)(ParamTypes... args, ...) const&&, true, false>
+{
+   using ClassType = Class const&&;
+   using ReturnType = RetType;
+   using FuncType = RetType (&) (ParamTypes... args, ...);
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct member_pointer_traits_imp<RetType (Class::*)(ParamTypes... args) volatile&&, true, false>
+{
+   using ClassType = Class volatile&&;
+   using ReturnType = RetType;
+   using FuncType = RetType (&) (ParamTypes... args);
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct member_pointer_traits_imp<RetType (Class::*)(ParamTypes... args, ...) volatile&&, true, false>
+{
+   using ClassType = Class volatile&&;
+   using ReturnType = RetType;
+   using FuncType = RetType (&) (ParamTypes... args, ...);
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct member_pointer_traits_imp<RetType (Class::*)(ParamTypes... args) const volatile&&, true, false>
+{
+   using ClassType = Class const volatile&&;
+   using ReturnType = RetType;
+   using FuncType = RetType (&) (ParamTypes... args);
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct member_pointer_traits_imp<RetType (Class::*)(ParamTypes... args, ...) const volatile&&, true, false>
+{
+   using ClassType = Class const volatile&&;
+   using ReturnType = RetType;
+   using FuncType = RetType (&) (ParamTypes... args, ...);
+};
+
+template <typename UnderType, typename Class>
+struct member_pointer_traits_imp<UnderType Class::*, false, true>
+{
+   using ClassType = Class;
+   using ReturnType = UnderType;
+};
+
+template <typename MemberPointer>
+struct member_pointer_traits 
+      : public member_pointer_traits_imp<typename langstd::remove_cv<MemberPointer>::type,
+      langstd::is_member_function_pointer<MemberPointer>::value,
+      langstd::is_member_object_pointer<MemberPointer>::value>
+{};
 
 } // std
 } // zapi
