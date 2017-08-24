@@ -72,6 +72,7 @@ void register_ns_zapi(Namespace &zapi)
 {
    zapi.registerFunction<dummyext::get_name>("get_name");
    zapi.registerConstant(Constant("SYS_VERSION", "0.1.1-alpha"));
+   zapi.registerFunction<dummyext::show_something>("show_something");
 }
 
 

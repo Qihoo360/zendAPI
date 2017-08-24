@@ -3,5 +3,11 @@ set(ZAPI_PHP_TESTS
    lang/ConstantTypeTest.phpt
    lang/ConstantExistTest.phpt
    lang/FunctionExistTest.phpt
+   lang/FunctionDefaultTest.phpt
+   lang/FunctionArgsTest.phpt
+   lang/FunctionDefaultArgTest.phpt
+   lang/FunctionRefArgTest.phpt
+   lang/FunctionReturnTest.phpt
+   lang/FunctionVarArgsTest.phpt
    lang/ClassExistTest.phpt
    PARENT_SCOPE)
