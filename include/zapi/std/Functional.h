@@ -17,6 +17,8 @@
 #ifndef ZAPI_STD_FUNCTIONAL_H
 #define ZAPI_STD_FUNCTIONAL_H
 
+#include "zapi/std/internal/FunctionalPrivate.h"
+
 namespace langstd = std;
 
 namespace zapi

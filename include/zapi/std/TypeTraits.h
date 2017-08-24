@@ -75,6 +75,7 @@ struct member_pointer_traits_imp
 {  // forward declaration; specializations later
 };
 
+
 template <typename RetType, typename Class, typename ...ParamTypes>
 struct member_pointer_traits_imp<RetType (Class::*)(ParamTypes... args), true, false>
 {
@@ -282,6 +283,24 @@ struct member_pointer_traits
       langstd::is_member_function_pointer<MemberPointer>::value,
       langstd::is_member_object_pointer<MemberPointer>::value>
 {};
+
+namespace internal
+{
+
+struct any
+{
+   any(...);
+};
+
+struct nat
+{
+   nat() = delete;
+   nat(const nat&) = delete;
+   nat& operator=(const nat&) = delete;
+   ~nat() = delete;
+};
+
+} // internal
 
 } // std
 } // zapi

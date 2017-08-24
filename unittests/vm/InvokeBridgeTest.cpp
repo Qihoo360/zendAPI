@@ -11,6 +11,7 @@
 #include <tuple>
 #include <type_traits>
 #include "zapi/std/TypeTraits.h"
+#include "zapi/std/Functional.h"
 
 using zapi::ds::Variant;
 using zapi::ds::NumericVariant;
@@ -34,6 +35,11 @@ struct ArgNums<R(ArgTypes... args)>
 {
    constexpr static int value = sizeof...(ArgTypes);
 };
+template <typename R, typename ...ArgTypes>
+struct ArgNums<R(ArgTypes... args, ...)>
+{
+   constexpr static int value = sizeof...(ArgTypes) + 1;
+};
 template <typename R, typename T, typename ...ArgTypes>
 struct ArgNums<R(T::*)(ArgTypes... args)>
 {
@@ -48,6 +54,10 @@ public:
       std::cout << arg1 + arg2 + arg3 << std::endl;
    }
 };
+void ddd(int a, int b = 1, ...)
+{
+   
+}
 
 class Invoker
 {
@@ -63,6 +73,7 @@ public:
       //      auto args1 = std::tuple_cat(args, std::make_tuple(12));
       //      std::apply(f, args1);
       //      std::cout << ArgNums<T>::value << std::endl;
+      std::cout << ArgNums<decltype(ddd)>::value << std::endl;
       std::cout << "xiuxiux" << std::endl;
    }
    template <typename T,
@@ -76,9 +87,9 @@ public:
       //      std::tuple<int> args(1);
       //      auto args1 = std::tuple_cat(args, std::make_tuple(12));
       //      std::apply(f, args1);
-            std::cout << ArgNums<T>::value << std::endl;
-      std::cout << "xiuxiux class" << std::endl;
-      ((new Person())->*f)(1, 2, 3);
+//            std::cout << ArgNums<T>::value << std::endl;
+//      std::cout << "xiuxiux class" << std::endl;
+//      ((new Person())->*f)(1, 2, 3);
    }
    
 };
