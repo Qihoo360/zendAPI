@@ -40,6 +40,11 @@ Variant add_two_number(Parameters &params)
    return number1 + number2;
 }
 
+Variant return_arg(Parameters &params)
+{
+   return params.at(0);
+}
+
 void register_funcs(Extension &extension)
 {
    extension.registerFunction<dummyext::show_something>("show_something");
@@ -55,6 +60,9 @@ void register_funcs(Extension &extension)
                                                            ValueArgument("number1", zapi::lang::Type::Long),
                                                            ValueArgument("number2", zapi::lang::Type::Long)
                                                         });
+   extension.registerFunction<dummyext::return_arg>("return_arg", {
+                                                       ValueArgument("number1"),
+                                                    });
 }
 
 void register_ns_io(Namespace &io)
