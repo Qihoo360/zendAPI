@@ -361,7 +361,7 @@ public:
 protected:
    zend_string *getZendStringPtr();
    char *getRawStrPtr() const ZAPI_DECL_NOEXCEPT;
-   constexpr size_t calculateNewStrSize(size_t length) ZAPI_DECL_NOEXCEPT;
+   size_t calculateNewStrSize(size_t length) ZAPI_DECL_NOEXCEPT;
    void strStdRealloc(zend_string *&str, size_t length);
    void strPersistentRealloc(zend_string *&str, size_t length);
    size_t strAlloc(zend_string *&str, size_t length, bool persistent);

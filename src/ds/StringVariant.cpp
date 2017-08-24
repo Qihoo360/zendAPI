@@ -28,17 +28,17 @@ namespace ds
 
 using zapi::ds::internal::VariantPrivate;
 
-constexpr size_t STR_VARIANT_OVERHEAD = ZEND_MM_OVERHEAD + _ZSTR_HEADER_SIZE;
+const size_t STR_VARIANT_OVERHEAD = ZEND_MM_OVERHEAD + _ZSTR_HEADER_SIZE;
 #ifdef SMART_STR_PAGE
-constexpr size_t STR_VARIAMT_PAGE_SIZE = SMART_STR_PAGE; // just use zend default now
+const size_t STR_VARIAMT_PAGE_SIZE = SMART_STR_PAGE; // just use zend default now
 #else
-constexpr size_t STR_VARIAMT_PAGE_SIZE = 4096;
+const size_t STR_VARIAMT_PAGE_SIZE = 4096;
 #endif
 
 #ifdef SMART_STR_START_SIZE
-constexpr size_t STR_VARIANT_START_SIZE SMART_STR_START_SIZE;
+const size_t STR_VARIANT_START_SIZE SMART_STR_START_SIZE;
 #else
-constexpr size_t STR_VARIANT_START_SIZE (256 - STR_VARIANT_OVERHEAD - 1);
+const size_t STR_VARIANT_START_SIZE (256 - STR_VARIANT_OVERHEAD - 1);
 #endif
 
 StringVariant::StringVariant()
@@ -1248,7 +1248,7 @@ zend_string *StringVariant::getZendStringPtr()
    return Z_STR_P(getZvalPtr());
 }
 
-constexpr size_t StringVariant::calculateNewStrSize(size_t length) ZAPI_DECL_NOEXCEPT
+size_t StringVariant::calculateNewStrSize(size_t length) ZAPI_DECL_NOEXCEPT
 {
    return ((length + STR_VARIANT_OVERHEAD + STR_VARIAMT_PAGE_SIZE) & ~(STR_VARIAMT_PAGE_SIZE - 1)) - STR_VARIANT_OVERHEAD - 1;
 }
