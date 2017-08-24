@@ -42,7 +42,7 @@ function run_test($filename)
         }
     }catch (\Exception $exception) {
         $failedTests++;
-        echo render_red_msg("error:") . $exception->getMessage();
+        echo render_red_msg("error:") . $exception->getMessage() . "\n";
     }
 }
 
