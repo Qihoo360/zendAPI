@@ -25,7 +25,8 @@ namespace zapi
 {
 namespace std
 {
-
+namespace internal
+{
 template <typename SourceType, typename TargetType, 
           bool = langstd::is_const<typename langstd::remove_reference<TargetType>::type>::value,
           bool = langstd::is_volatile<typename langstd::remove_reference<TargetType>::type>::value>
@@ -74,7 +75,6 @@ template <typename MemberPointerType, bool IsMemberFunctionPtr, bool IsMemberObj
 struct member_pointer_traits_imp
 {  // forward declaration; specializations later
 };
-
 
 template <typename RetType, typename Class, typename ...ParamTypes>
 struct member_pointer_traits_imp<RetType (Class::*)(ParamTypes... args), true, false>
@@ -284,8 +284,15 @@ struct member_pointer_traits
       langstd::is_member_object_pointer<MemberPointer>::value>
 {};
 
-namespace internal
+template <typename DecayedFuncType>
+struct member_pointer_class_type 
+{};
+
+template <typename ReturnType, typename ClassType>
+struct member_pointer_class_type<ReturnType ClassType::*>
 {
+   using type = ClassType;
+};
 
 struct any
 {
@@ -299,6 +306,18 @@ struct nat
    nat& operator=(const nat&) = delete;
    ~nat() = delete;
 };
+
+#define ZAPI_INVOKE_RETURN(...) \
+   noexcept(noexcept(__VA_ARGS__)) -> decltype(__VA_ARGS__) \
+{ return __VA_ARGS__; }
+
+template <typename ...ArgTypes>
+auto invoke(any, ArgTypes&&... args) -> nat;
+
+template <typename ...ArgTypes>
+auto invoke_constexpr(any, ArgTypes&&... args) -> nat;
+
+// bullets 1, 2 and 3
 
 } // internal
 
