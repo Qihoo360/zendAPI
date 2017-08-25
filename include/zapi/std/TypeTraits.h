@@ -294,6 +294,38 @@ struct member_pointer_class_type<ReturnType ClassType::*>
    using type = ClassType;
 };
 
+template <typename TargetType>
+struct is_reference_wrapper_impl : public langstd::false_type 
+{};
+
+template <typename TargetType>
+struct is_reference_wrapper_impl<langstd::reference_wrapper<TargetType>> : public langstd::true_type
+{};
+
+template <typename TargetType>
+struct is_reference_wrapper
+      : public is_reference_wrapper_impl<typename langstd::remove_cv<TargetType>::type>
+{};
+
+template <typename FuncType, typename A0,
+          typename DecayFuncType = typename langstd::decay<FuncType>::type,
+          typename DecayA0 = typename langstd::decay<A0>::type,
+          typename ClassType = typename member_pointer_class_type<DecayFuncType>::type>
+using enable_if_bullet1 = typename langstd::enable_if
+<
+   langstd::is_member_function_pointer<DecayFuncType>::value &&
+   langstd::is_base_of<ClassType, DecayA0>::value
+>::type;
+
+//template <typename FuncType, typename A0,
+//          typename DecayFuncType = typename langstd::decay<FuncType>::type,
+//          typename DecayA0 = typename langstd::decay<A0>::type>
+//using enable_if_bullet2 = typename langstd::enable_if
+//<
+//   langstd::is_member_function_pointer<DecayFuncType>::value &&
+//   langstd::is_base_of<ClassType, DecayA0>::value
+//>::type;
+
 struct any
 {
    any(...);
@@ -318,6 +350,7 @@ template <typename ...ArgTypes>
 auto invoke_constexpr(any, ArgTypes&&... args) -> nat;
 
 // bullets 1, 2 and 3
+//template <typename FuncType, typename A0, typename ...ArgTypes>
 
 } // internal
 
