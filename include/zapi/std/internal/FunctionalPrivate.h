@@ -46,6 +46,62 @@ public:
    static const bool value = sizeof(test<TypePointer>(nullptr)) == 1;
 };
 
+// for weak_result_type
+template <typename TypePointer>
+struct derives_from_unary_function
+{
+private:
+   struct TwoMark {
+      char c;
+      char c2;
+   };
+   static TwoMark test(...);
+   template <typename ArgumentType, typename ReturnType>
+   static langstd::unary_function<ArgumentType, ReturnType>
+   test(const volatile langstd::unary_function<ArgumentType, ReturnType> *);
+public:
+   static const bool value = !langstd::is_same<decltype(test(reinterpret_cast<TypePointer *>(0))), TwoMark>::value;
+   using type = decltype(test(reinterpret_cast<TypePointer *>(0)));
+};
+
+template <typename TypePointer>
+struct derives_from_binary_function
+{
+private:
+   struct TwoMark {
+      char c;
+      char c2;
+   };
+   static TwoMark test(...);
+   template <typename Arg1Type, typename Arg2Type, class ReturnType>
+   static langstd::binary_function<Arg1Type, Arg2Type, ReturnType> 
+   test(const volatile langstd::binary_function<Arg1Type, Arg2Type, ReturnType> *);
+public:
+   static const bool value = !langstd::is_same<decltype(test(reinterpret_cast<TypePointer *>(0))), TwoMark>::value;
+   using type = decltype(test(reinterpret_cast<TypePointer *>(0)));
+};
+
+template <typename TypePointer, bool = derives_from_unary_function<TypePointer>::value>
+struct maybe_derive_from_unary_function // bool is true
+      : public derives_from_unary_function<TypePointer>::type
+{};
+
+template <typename TypePointer>
+struct maybe_derive_from_unary_function<TypePointer, false> 
+{};
+
+template <typename TypePointer, bool = derives_from_binary_function<TypePointer>::value>
+struct maybe_derive_from_binary_function // bool is true
+      : public derives_from_binary_function<TypePointer>::type
+{};
+
+template <typename TypePointer>
+struct maybe_derive_from_binary_function<TypePointer, false> 
+{};
+
+//template <typename TypePointer, bool = has_result_type<TypePointer>::value>
+
+
 template <typename RetType, typename T1, bool IsFuncPointer, bool IsBase>
 struct enable_invoke_impl;
 
@@ -67,7 +123,7 @@ template <typename RetType, typename T1>
 struct enable_invoke_impl<RetType, T1, false, true>
 {
    using Bullet3 = typename langstd::add_lvalue_reference<
-      typename zapi::std::apply_cv<T1, RetType>::type
+   typename zapi::std::apply_cv<T1, RetType>::type
    >::type;
    using type = Bullet3;
 };
@@ -76,7 +132,7 @@ template <typename RetType, typename T1>
 struct enable_invoke_impl<RetType, T1, false, false>
 {
    using Bullet4 = typename langstd::add_lvalue_reference<
-      typename zapi::std::apply_cv<decltype(*langstd::declval<T1>()), RetType>::type
+   typename zapi::std::apply_cv<decltype(*langstd::declval<T1>()), RetType>::type
    >::type;
    using type = Bullet4;
 };
@@ -85,7 +141,7 @@ template <typename RetType, typename T1>
 struct enable_invoke_impl<RetType, T1 *, false, false>
 {
    using Bullet4 = typename langstd::add_lvalue_reference<
-      typename zapi::std::apply_cv<T1, RetType>::type
+   typename zapi::std::apply_cv<T1, RetType>::type
    >::type;
    using type = Bullet4;
 };
