@@ -313,18 +313,59 @@ template <typename FuncType, typename A0,
           typename ClassType = typename member_pointer_class_type<DecayFuncType>::type>
 using enable_if_bullet1 = typename langstd::enable_if
 <
-   langstd::is_member_function_pointer<DecayFuncType>::value &&
-   langstd::is_base_of<ClassType, DecayA0>::value
+langstd::is_member_function_pointer<DecayFuncType>::value &&
+langstd::is_base_of<ClassType, DecayA0>::value
 >::type;
 
-//template <typename FuncType, typename A0,
-//          typename DecayFuncType = typename langstd::decay<FuncType>::type,
-//          typename DecayA0 = typename langstd::decay<A0>::type>
-//using enable_if_bullet2 = typename langstd::enable_if
-//<
-//   langstd::is_member_function_pointer<DecayFuncType>::value &&
-//   langstd::is_base_of<ClassType, DecayA0>::value
-//>::type;
+template <typename FuncType, typename A0,
+          typename DecayFuncType = typename langstd::decay<FuncType>::type,
+          typename DecayA0 = typename langstd::decay<A0>::type>
+using enable_if_bullet2 = typename langstd::enable_if
+<
+langstd::is_member_function_pointer<DecayFuncType>::value &&
+is_reference_wrapper<DecayA0>::value
+>::type;
+
+template <typename FuncType, typename A0,
+          typename DecayFuncType = typename langstd::decay<FuncType>::type,
+          typename DecayA0 = typename langstd::decay<A0>::type,
+          typename ClassType = typename member_pointer_class_type<DecayFuncType>::type>
+using enable_if_bullet3 = typename langstd::enable_if
+<
+langstd::is_member_function_pointer<DecayFuncType>::value &&
+!langstd::is_base_of<ClassType, DecayA0>::value &&
+!is_reference_wrapper<DecayA0>::value
+>::type;
+
+template <typename FuncType, typename A0,
+          typename DecayFuncType = typename langstd::decay<FuncType>::type,
+          typename DecayA0 = typename langstd::decay<A0>::type,
+          typename ClassType = typename member_pointer_class_type<DecayFuncType>::type>
+using enable_if_bullet4 = typename langstd::enable_if
+<
+langstd::is_member_object_pointer<DecayFuncType>::value &&
+langstd::is_base_of<ClassType, DecayA0>::value
+>::type;
+
+template <typename FuncType, typename A0,
+          typename DecayFuncType = typename langstd::decay<FuncType>::type,
+          typename DecayA0 = typename langstd::decay<A0>::type>
+using enable_if_bullet5 = typename langstd::enable_if
+<
+langstd::is_member_object_pointer<DecayFuncType>::value &&
+is_reference_wrapper<DecayA0>::value
+>::type;
+
+template <typename FuncType, typename A0,
+          typename DecayFuncType = typename langstd::decay<FuncType>::type,
+          typename DecayA0 = typename langstd::decay<A0>::type,
+          typename ClassType = typename member_pointer_class_type<DecayFuncType>::type>
+using enable_if_bullet6 = typename langstd::enable_if
+<
+langstd::is_member_object_pointer<DecayFuncType>::value &&
+!langstd::is_base_of<ClassType, DecayA0>::value &&
+!is_reference_wrapper<DecayA0>::value
+>::type;
 
 struct any
 {
@@ -350,7 +391,130 @@ template <typename ...ArgTypes>
 auto invoke_constexpr(any, ArgTypes&&... args) -> nat;
 
 // bullets 1, 2 and 3
-//template <typename FuncType, typename A0, typename ...ArgTypes>
+template <typename FuncType, typename A0, typename ...ArgTypes,
+          typename = enable_if_bullet1<FuncType, A0>>
+inline auto invoke(FuncType &&func, A0 &&a0, ArgTypes && ...args)
+noexcept(noexcept((langstd::forward<A0>(a0).*func)(langstd::forward<ArgTypes>(args)...)))
+-> decltype((langstd::forward<A0>(a0).*func)(langstd::forward<ArgTypes>(args)...))
+{
+   return (langstd::forward<A0>(a0).*func)(langstd::forward<ArgTypes>(args)...);
+}
+
+template <typename FuncType, typename A0, typename ...ArgTypes, 
+          typename = enable_if_bullet1<FuncType, A0>>
+inline constexpr auto invoke_constexpr(FuncType &&func, A0 &&a0, ArgTypes && ...args)
+noexcept(noexcept((langstd::forward<A0>(a0).*func)(langstd::forward<ArgTypes>(args)...)))
+-> decltype((langstd::forward<A0>(a0).*func)(langstd::forward<ArgTypes>(args)...))
+{
+   return (langstd::forward<A0>(a0).*func)(langstd::forward<ArgTypes>(args)...);
+}
+
+template <typename FuncType, typename A0, typename ...ArgTypes,
+          typename = enable_if_bullet2<FuncType, A0>>
+inline auto invoke(FuncType &&func, A0 &&a0, ArgTypes && ...args)
+noexcept(noexcept((a0.get().*func)(langstd::forward<ArgTypes>(args)...)))
+-> decltype((a0.get().*func)(langstd::forward<ArgTypes>(args)...))
+{
+   return (a0.get().*func)(langstd::forward<ArgTypes>(args)...);
+}
+
+template <typename FuncType, typename A0, typename ...ArgTypes,
+          typename = enable_if_bullet2<FuncType, A0>>
+inline constexpr auto invoke_constexpr(FuncType &&func, A0 &&a0, ArgTypes && ...args)
+noexcept(noexcept((a0.get().*func)(langstd::forward<ArgTypes>(args)...)))
+-> decltype((a0.get().*func)(langstd::forward<ArgTypes>(args)...))
+{
+   return (a0.get().*func)(langstd::forward<ArgTypes>(args)...);
+}
+
+template <typename FuncType, typename A0, typename ...ArgTypes,
+          typename = enable_if_bullet3<FuncType, A0>>
+inline auto invoke(FuncType &&func, A0 &&a0, ArgTypes && ...args)
+noexcept(noexcept(((*langstd::forward<A0>(a0)).*func)(langstd::forward<ArgTypes>(args)...)))
+-> decltype(((*langstd::forward<A0>(a0)).*func)(langstd::forward<ArgTypes>(args)...))
+{
+   return ((*langstd::forward<A0>(a0)).*func)(langstd::forward<ArgTypes>(args)...);
+}
+
+template <typename FuncType, typename A0, typename ...ArgTypes,
+          typename = enable_if_bullet3<FuncType, A0>>
+inline constexpr auto invoke_constexpr(FuncType &&func, A0 &&a0, ArgTypes && ...args)
+noexcept(noexcept(((*langstd::forward<A0>(a0)).*func)(langstd::forward<ArgTypes>(args)...)))
+-> decltype(((*langstd::forward<A0>(a0)).*func)(langstd::forward<ArgTypes>(args)...))
+{
+   return ((*langstd::forward<A0>(a0)).*func)(langstd::forward<ArgTypes>(args)...);
+}
+
+// bullets 4, 5 and 6
+template <typename FuncType, typename A0,
+          typename = enable_if_bullet4<FuncType, A0>>
+inline auto invoke(FuncType &&func, A0 &&a0)
+noexcept(noexcept(langstd::forward<A0>(a0).*func))
+-> decltype(langstd::forward<A0>(a0).*func)
+{
+   return langstd::forward<A0>(a0).*func;
+}
+
+template <typename FuncType, typename A0,
+          typename = enable_if_bullet4<FuncType, A0>>
+inline constexpr auto invoke_constexpr(FuncType &&func, A0 &&a0)
+noexcept(noexcept(langstd::forward<A0>(a0).*func))
+-> decltype(langstd::forward<A0>(a0).*func)
+{
+   return langstd::forward<A0>(a0).*func;
+}
+
+template <typename FuncType, typename A0,
+          typename = enable_if_bullet5<FuncType, A0>>
+inline auto invoke(FuncType &&func, A0 &&a0)
+noexcept(noexcept(a0.get().*func))
+-> decltype(a0.get().*func)
+{
+   return a0.get().*func;
+}
+
+template <typename FuncType, typename A0,
+          typename = enable_if_bullet5<FuncType, A0>>
+inline constexpr auto invoke_constexpr(FuncType &&func, A0 &&a0)
+noexcept(noexcept(a0.get().*func))
+-> decltype(a0.get().*func)
+{
+   return a0.get().*func;
+}
+
+template <typename FuncType, typename A0,
+          typename = enable_if_bullet6<FuncType, A0>>
+inline auto invoke(FuncType &&func, A0 &&a0)
+noexcept(noexcept((*langstd::forward<A0>(a0)).*func))
+-> decltype((*langstd::forward<A0>(a0)).*func)
+{
+   return (*langstd::forward<A0>(a0)).*func;
+}
+
+template <typename FuncType, typename A0,
+          typename = enable_if_bullet6<FuncType, A0>>
+inline constexpr auto invoke_constexpr(FuncType &&func, A0 &&a0)
+noexcept(noexcept((*langstd::forward<A0>(a0)).*func))
+-> decltype((*langstd::forward<A0>(a0)).*func)
+{
+   return (*langstd::forward<A0>(a0)).*func;
+}
+
+template <typename FuncType, typename ...Args>
+inline auto invoke(FuncType &&func, Args && ...args)
+noexcept(noexcept(langstd::forward<FuncType>(func)(langstd::forward(args)...)))
+-> decltype(langstd::forward<FuncType>(func)(langstd::forward(args)...))
+{
+   return langstd::forward<FuncType>(func)(langstd::forward(args)...);
+}
+
+template <typename FuncType, typename ...Args>
+inline constexpr auto invoke_constexpr(FuncType &&func, Args && ...args)
+noexcept(noexcept(langstd::forward<FuncType>(func)(langstd::forward(args)...)))
+-> decltype(langstd::forward<FuncType>(func)(langstd::forward(args)...))
+{
+   return langstd::forward<FuncType>(func)(langstd::forward(args)...);
+}
 
 } // internal
 
