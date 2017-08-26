@@ -84,7 +84,7 @@ endif()
 #else ()
 #   set(CMAKE_CXX_STANDARD 14)
 #endif ()
-add_compile_options("--std=c++1z")
+add_compile_options("--std=c++11")
 
 # prepare for installation
 set(ZAPI_INSTALL_LIB_DIR lib CACHE PATH "Installation directory for libraries")

@@ -380,10 +380,6 @@ struct nat
    ~nat() = delete;
 };
 
-#define ZAPI_INVOKE_RETURN(...) \
-   noexcept(noexcept(__VA_ARGS__)) -> decltype(__VA_ARGS__) \
-{ return __VA_ARGS__; }
-
 template <typename ...ArgTypes>
 auto invoke(any, ArgTypes&&... args) -> nat;
 
@@ -502,18 +498,18 @@ noexcept(noexcept((*langstd::forward<A0>(a0)).*func))
 
 template <typename FuncType, typename ...Args>
 inline auto invoke(FuncType &&func, Args && ...args)
-noexcept(noexcept(langstd::forward<FuncType>(func)(langstd::forward(args)...)))
--> decltype(langstd::forward<FuncType>(func)(langstd::forward(args)...))
+noexcept(noexcept(langstd::forward<FuncType>(func)(langstd::forward<Args>(args)...)))
+-> decltype(langstd::forward<FuncType>(func)(langstd::forward<Args>(args)...))
 {
-   return langstd::forward<FuncType>(func)(langstd::forward(args)...);
+   return langstd::forward<FuncType>(func)(langstd::forward<Args>(args)...);
 }
 
 template <typename FuncType, typename ...Args>
 inline constexpr auto invoke_constexpr(FuncType &&func, Args && ...args)
-noexcept(noexcept(langstd::forward<FuncType>(func)(langstd::forward(args)...)))
--> decltype(langstd::forward<FuncType>(func)(langstd::forward(args)...))
+noexcept(noexcept(langstd::forward<FuncType>(func)(langstd::forward<Args>(args)...)))
+-> decltype(langstd::forward<FuncType>(func)(langstd::forward<Args>(args)...))
 {
-   return langstd::forward<FuncType>(func)(langstd::forward(args)...);
+   return langstd::forward<FuncType>(func)(langstd::forward<Args>(args)...);
 }
 
 } // internal

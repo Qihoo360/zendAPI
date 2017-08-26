@@ -26,7 +26,13 @@ namespace zapi
 namespace std
 {
 
-
+template<typename FuncType, typename ...ArgTypes>
+typename langstd::result_of<FuncType&& (ArgTypes&&...)>::type
+invoke(FuncType&& func, ArgTypes&& ...args)
+noexcept(noexcept(internal::invoke(langstd::forward<FuncType>(func), langstd::forward<ArgTypes>(args)...)))
+{
+   return internal::invoke(langstd::forward<FuncType>(func), langstd::forward<ArgTypes>(args)...);
+}
 
 } // std
 } // zapi
