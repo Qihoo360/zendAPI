@@ -14,8 +14,8 @@
 // Created by softboy on 2017/08/24.
 //
 
-#ifndef ZAPI_STD_TYPETRAITS_H
-#define ZAPI_STD_TYPETRAITS_H
+#ifndef ZAPI_STDEXT_TYPETRAITS_H
+#define ZAPI_STDEXT_TYPETRAITS_H
 
 #include <type_traits>
 
@@ -23,8 +23,9 @@ namespace langstd = std;
 
 namespace zapi
 {
-namespace std
+namespace stdext
 {
+
 namespace internal
 {
 template <typename SourceType, typename TargetType, 
@@ -514,7 +515,69 @@ noexcept(noexcept(langstd::forward<FuncType>(func)(langstd::forward<Args>(args).
 
 } // internal
 
-} // std
+template <typename FuncType>
+struct function_return_type
+{};
+
+template <typename ReturnType, typename ...ArgTypes>
+struct function_return_type<ReturnType (&)(ArgTypes ...args)>
+{
+   using type = ReturnType;
+};
+
+template <typename ReturnType, typename ...ArgTypes>
+struct function_return_type<ReturnType (*)(ArgTypes ...args)>
+{
+   using type = ReturnType;
+};
+
+template <typename ReturnType, typename ...ArgTypes>
+struct function_return_type<ReturnType (ArgTypes ...args)>
+{
+   using type = ReturnType;
+};
+
+template <typename ReturnType, typename ...ArgTypes>
+struct function_return_type<ReturnType (&)(ArgTypes ...args, ...)>
+{
+   using type = ReturnType;
+};
+
+template <typename ReturnType, typename ...ArgTypes>
+struct function_return_type<ReturnType (*)(ArgTypes ...args, ...)>
+{
+   using type = ReturnType;
+};
+
+template <typename ReturnType, typename ...ArgTypes>
+struct function_return_type<ReturnType (ArgTypes ...args, ...)>
+{
+   using type = ReturnType;
+};
+
+template <typename CallableType, bool IsMember>
+struct callable_return_type_impl
+{};
+
+template <typename CallableType>
+struct callable_return_type_impl<CallableType, true>
+{
+   using type = typename internal::member_pointer_traits<CallableType>::ReturnType;
+};
+
+template <typename CallableType>
+struct callable_return_type_impl<CallableType, false>
+{
+   using type = typename function_return_type<CallableType>::type;
+};
+
+template <typename CallableType>
+struct callable_return_type 
+      : public callable_return_type_impl<CallableType, 
+      std::is_member_function_pointer<typename std::decay<CallableType>::type>::value>
+{};
+
+} // stdext
 } // zapi
 
-#endif // ZAPI_STD_TYPETRAITS_H
+#endif // ZAPI_STDEXT_TYPETRAITS_H

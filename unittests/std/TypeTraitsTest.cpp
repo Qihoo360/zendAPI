@@ -11,30 +11,38 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by softboy on 2017/08/24.
-//
+// Created by softboy on 2017/08/25.
 
-#ifndef ZAPI_STD_FUNCTIONAL_H
-#define ZAPI_STD_FUNCTIONAL_H
+#include "php/sapi/embed/php_embed.h"
+#include "gtest/gtest.h"
 
-#include "zapi/std/internal/FunctionalPrivate.h"
+#include "zapi/stdext/TypeTraits.h"
+#include <type_traits>
 
-namespace langstd = std;
-
-namespace zapi
+int func1() 
 {
-namespace std
+   return 1;
+}
+int func2(int arg1, char arg2)
 {
-
-template<typename FuncType, typename ...ArgTypes>
-typename langstd::result_of<FuncType&& (ArgTypes&&...)>::type
-invoke(FuncType&& func, ArgTypes&& ...args)
-noexcept(noexcept(internal::invoke(langstd::forward<FuncType>(func), langstd::forward<ArgTypes>(args)...)))
-{
-   return internal::invoke(langstd::forward<FuncType>(func), langstd::forward<ArgTypes>(args)...);
+   return 1;
 }
 
-} // std
-} // zapi
+struct O
+{
+   char method1(int arg1, char arg2)
+   {
+      return 'a';
+   }
+};
 
-#endif // ZAPI_STD_FUNCTIONAL_H
+TEST(TypeTraitTest, test)
+{
+   bool ret = std::is_same<zapi::stdext::function_return_type<decltype(func2)>::type, int>::value;
+   ASSERT_TRUE(ret);
+   auto func3 = []()->int{};
+   ret = std::is_same<zapi::stdext::callable_return_type<decltype(func2)>::type, int>::value;
+   ASSERT_TRUE(ret);
+   ret = std::is_same<zapi::stdext::callable_return_type<decltype(&O::method1)>::type, char>::value;
+   ASSERT_TRUE(ret);
+}

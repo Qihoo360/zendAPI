@@ -13,15 +13,15 @@
 //
 // Created by softboy on 2017/08/25.
 
-#ifndef ZAPI_STD_INTERNAL_TUPLE_PRIVATE_H
-#define ZAPI_STD_INTERNAL_TUPLE_PRIVATE_H
+#ifndef ZAPI_STDEXT_INTERNAL_TUPLE_PRIVATE_H
+#define ZAPI_STDEXT_INTERNAL_TUPLE_PRIVATE_H
 
-#include "zapi/std/TypeTraits.h"
+#include "zapi/stdext/TypeTraits.h"
 #include <tuple>
 
 namespace zapi
 {
-namespace std
+namespace stdext
 {
 namespace internal
 {
@@ -195,7 +195,7 @@ noexcept(noexcept(invoke_constexpr(langstd::forward<FuncType>(func),
 }
 
 } // internal
-} // std
+} // stdext
 } // zapi
 
-#endif // ZAPI_STD_INTERNAL_TUPLE_PRIVATE_H
+#endif // ZAPI_STDEXT_INTERNAL_TUPLE_PRIVATE_H

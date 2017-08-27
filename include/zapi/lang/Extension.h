@@ -83,13 +83,7 @@ public:
    Extension(Extension &&extension) = delete;
    virtual ~Extension();
 public:
-   template <void (*func)()>
-   Extension &registerFunction(const char *name, const Arguments &args = {});
-   template <void (*func)(Parameters &parameters)>
-   Extension &registerFunction(const char *name, const Arguments &args = {});
-   template <Variant (*func)()>
-   Extension &registerFunction(const char *name, const Arguments &args = {});
-   template <Variant (*func)(Parameters &parameters)>
+   template <typename T, typename std::decay<T>::type callable>
    Extension &registerFunction(const char *name, const Arguments &args = {});
    
    Extension &registerIni(const Ini &entry);
@@ -215,28 +209,10 @@ Extension &Extension::registerClass(Class<T> &&nativeClass)
    return *this;
 }
 
-template <void (*func)()>
+template <typename T, typename std::decay<T>::type callable>
 Extension &Extension::registerFunction(const char *name, const Arguments &args)
 {
-   return registerFunction(name, &zapi::vm::InvokeBridge::invoke<func>, args);
-}
-
-template <void (*func)(Parameters &parameters)>
-Extension &Extension::registerFunction(const char *name, const Arguments &args)
-{
-   return registerFunction(name, &zapi::vm::InvokeBridge::invoke<func>, args);
-}
-
-template <Variant (*func)()>
-Extension &Extension::registerFunction(const char *name, const Arguments &args)
-{
-   return registerFunction(name, &zapi::vm::InvokeBridge::invoke<func>, args);
-}
-
-template <Variant (*func)(Parameters &parameters)>
-Extension &Extension::registerFunction(const char *name, const Arguments &args)
-{
-   return registerFunction(name, &zapi::vm::InvokeBridge::invoke<func>, args);
+   return registerFunction(name, &zapi::vm::InvokeBridge<T, callable>::invoke, args);
 }
 
 } // lang

@@ -49,57 +49,29 @@ public:
    Class<T> &operator=(const Class<T> &other);
    Class<T> &operator=(Class<T> &&other);
 public:
-   template <void (T::*method)()>
+   template <typename FuncType, typename std::decay<FuncType>::type callable>
    Class<T> &registerMethod(const char *name, Modifier flags, const Arguments &args = {});
-   template <void (T::*method)(Parameters &params)>
-   Class<T> &registerMethod(const char *name, Modifier flags, const Arguments &args = {});
-   template <Variant (T::*method)()>
-   Class<T> &registerMethod(const char *name, Modifier flags, const Arguments &args = {});
-   template <Variant (T::*method)(Parameters &params)>
-   Class<T> &registerMethod(const char *name, Modifier flags, const Arguments &args = {});
-   template <void (T::*method)()>
-   Class<T> &registerMethod(const char *name, const Arguments &args = {});
-   template <void (T::*method)(Parameters &params)>
-   Class<T> &registerMethod(const char *name, const Arguments &args = {});
-   template <Variant (T::*method)()>
-   Class<T> &registerMethod(const char *name, const Arguments &args = {});
-   template <Variant (T::*method)(Parameters &params)>
+   template <typename FuncType, typename std::decay<FuncType>::type callable>
    Class<T> &registerMethod(const char *name, const Arguments &args = {});
    
-   template <void (T::*method)() const>
-   Class<T> &registerMethod(const char *name, Modifier flags, const Arguments &args = {});
-   template <void (T::*method)(Parameters &params) const>
-   Class<T> &registerMethod(const char *name, Modifier flags, const Arguments &args = {});
-   template <Variant (T::*method)() const>
-   Class<T> &registerMethod(const char *name, Modifier flags, const Arguments &args = {});
-   template <Variant (T::*method)(Parameters &params) const>
-   Class<T> &registerMethod(const char *name, Modifier flags, const Arguments &args = {});
-   template <void (T::*method)() const>
-   Class<T> &registerMethod(const char *name, const Arguments &args = {});
-   template <void (T::*method)(Parameters &params) const>
-   Class<T> &registerMethod(const char *name, const Arguments &args = {});
-   template <Variant (T::*method)() const>
-   Class<T> &registerMethod(const char *name, const Arguments &args = {});
-   template <Variant (T::*method)(Parameters &params) const>
-   Class<T> &registerMethod(const char *name, const Arguments &args = {});
    
-   // static methods register
-   template <void (*method)()>
-   Class<T> &registerMethod(const char *name, Modifier flags, const Arguments &args = {});
-   template <void (*method)(Parameters &params)>
-   Class<T> &registerMethod(const char *name, Modifier flags, const Arguments &args = {});
-   template <Variant (*method)()>
-   Class<T> &registerMethod(const char *name, Modifier flags, const Arguments &args = {});
-   template <Variant (*method)(Parameters &params)>
-   Class<T> &registerMethod(const char *name, Modifier flags, const Arguments &args = {});
-   template <void (*method)()>
-   Class<T> &registerMethod(const char *name, const Arguments &args = {});
-   template <void (*method)(Parameters &params)>
-   Class<T> &registerMethod(const char *name, const Arguments &args = {});
-   template <Variant (*method)()>
-   Class<T> &registerMethod(const char *name, const Arguments &args = {});
-   template <Variant (*method)(Parameters &params)>
-   Class<T> &registerMethod(const char *name, const Arguments &args = {});
+//   // static methods register
+//   template <void (*method)()>
+//   Class<T> &registerMethod(const char *name, Modifier flags, const Arguments &args = {});
+//   template <void (*method)(Parameters &params)>
+//   Class<T> &registerMethod(const char *name, Modifier flags, const Arguments &args = {});
+//   template <Variant (*method)()>
+//   Class<T> &registerMethod(const char *name, Modifier flags, const Arguments &args = {});
+//   template <Variant (*method)(Parameters &params)>
+//   Class<T> &registerMethod(const char *name, Modifier flags, const Arguments &args = {});
+//   template <void (*method)()>
+//   Class<T> &registerMethod(const char *name, const Arguments &args = {});
+//   template <void (*method)(Parameters &params)>
+//   Class<T> &registerMethod(const char *name, const Arguments &args = {});
+//   template <Variant (*method)()>
+//   Class<T> &registerMethod(const char *name, const Arguments &args = {});
+//   template <Variant (*method)(Parameters &params)>
+//   Class<T> &registerMethod(const char *name, const Arguments &args = {});
    
    Class<T> &registerMethod(const char *name, Modifier flags, const Arguments &args = {});
    Class<T> &registerMethod(const char *name, const Arguments &args = {});
@@ -218,197 +190,86 @@ Class<T> &Class<T>::registerInterface(Interface &&interface)
 }
 
 template <typename T>
-template <void (T::*method)()>
+template <typename FuncType, typename std::decay<FuncType>::type callable>
 Class<T> &Class<T>::registerMethod(const char *name, Modifier flags, const Arguments &args)
 {
-   AbstractClass::registerMethod(name, &InvokeBridge::invoke<T, method>, flags, args);
+   AbstractClass::registerMethod(name, &InvokeBridge<FuncType, callable>::invoke, flags, args);
    return *this;
 }
 
-template <typename T>
-template <void (T::*method)(Parameters &params)>
-Class<T> &Class<T>::registerMethod(const char *name, Modifier flags, const Arguments &args)
-{
-   AbstractClass::registerMethod(name, &InvokeBridge::invoke<T, method>, flags, args);
-   return *this;
-}
 
 template <typename T>
-template <Variant (T::*method)()>
-Class<T> &Class<T>::registerMethod(const char *name, Modifier flags, const Arguments &args)
-{
-   AbstractClass::registerMethod(name, &InvokeBridge::invoke<T, method>, flags, args);
-   return *this;
-}
-
-template <typename T>
-template <Variant (T::*method)(Parameters &params)>
-Class<T> &Class<T>::registerMethod(const char *name, Modifier flags, const Arguments &args)
-{
-   AbstractClass::registerMethod(name, &InvokeBridge::invoke<T, method>, flags, args);
-   return *this;
-}
-
-template <typename T>
-template <void (T::*method)()>
+template <typename FuncType, typename std::decay<FuncType>::type callable>
 Class<T> &Class<T>::registerMethod(const char *name, const Arguments &args)
 {
-   AbstractClass::registerMethod(name, &InvokeBridge::invoke<T, method>, Modifier::Public, args);
-   return *this;
-}
-
-template <typename T>
-template <void (T::*method)(Parameters &params)>
-Class<T> &Class<T>::registerMethod(const char *name, const Arguments &args)
-{
-   AbstractClass::registerMethod(name, &InvokeBridge::invoke<T, method>, Modifier::Public, args);
-   return *this;
-}
-
-template <typename T>
-template <Variant (T::*method)()>
-Class<T> &Class<T>::registerMethod(const char *name, const Arguments &args)
-{
-   AbstractClass::registerMethod(name, &InvokeBridge::invoke<T, method>, Modifier::Public, args);
-   return *this;
-}
-
-template <typename T>
-template <Variant (T::*method)(Parameters &params)>
-Class<T> &Class<T>::registerMethod(const char *name, const Arguments &args)
-{
-   AbstractClass::registerMethod(name, &InvokeBridge::invoke<T, method>, Modifier::Public, args);
-   return *this;
-}
-
-template <typename T>
-template <void (T::*method)() const>
-Class<T> &Class<T>::registerMethod(const char *name, Modifier flags, const Arguments &args)
-{
-   AbstractClass::registerMethod(name, &InvokeBridge::invoke<T, method>, flags, args);
-   return *this;
-}
-
-template <typename T>
-template <void (T::*method)(Parameters &params) const>
-Class<T> &Class<T>::registerMethod(const char *name, Modifier flags, const Arguments &args)
-{
-   AbstractClass::registerMethod(name, &InvokeBridge::invoke<T, method>, flags, args);
-   return *this;
-}
-
-template <typename T>
-template <Variant (T::*method)() const>
-Class<T> &Class<T>::registerMethod(const char *name, Modifier flags, const Arguments &args)
-{
-   AbstractClass::registerMethod(name, &InvokeBridge::invoke<T, method>, flags, args);
-   return *this;
-}
-
-template <typename T>
-template <Variant (T::*method)(Parameters &params) const>
-Class<T> &Class<T>::registerMethod(const char *name, Modifier flags, const Arguments &args)
-{
-   AbstractClass::registerMethod(name, &InvokeBridge::invoke<T, method>, flags, args);
-   return *this;
-}
-
-template <typename T>
-template <void (T::*method)() const>
-Class<T> &Class<T>::registerMethod(const char *name, const Arguments &args)
-{
-   AbstractClass::registerMethod(name, &InvokeBridge::invoke<T, method>, Modifier::Public, args);
-   return *this;
-}
-
-template <typename T>
-template <void (T::*method)(Parameters &params) const>
-Class<T> &Class<T>::registerMethod(const char *name, const Arguments &args)
-{
-   AbstractClass::registerMethod(name, &InvokeBridge::invoke<T, method>, Modifier::Public, args);
-   return *this;
-}
-
-template <typename T>
-template <Variant (T::*method)() const>
-Class<T> &Class<T>::registerMethod(const char *name, const Arguments &args)
-{
-   AbstractClass::registerMethod(name, &InvokeBridge::invoke<T, method>, Modifier::Public, args);
-   return *this;
-}
-
-template <typename T>
-template <Variant (T::*method)(Parameters &params) const>
-Class<T> &Class<T>::registerMethod(const char *name, const Arguments &args)
-{
-   AbstractClass::registerMethod(name, &InvokeBridge::invoke<T, method>, Modifier::Public, args);
+   AbstractClass::registerMethod(name, &InvokeBridge<FuncType, callable>::invoke, Modifier::Public, args);
    return *this;
 }
 
 // static methods register
-template <typename T>
-template <void (*method)()>
-Class<T> &Class<T>::registerMethod(const char *name, Modifier flags, const Arguments &args)
-{
-   AbstractClass::registerMethod(name, &InvokeBridge::invoke<method>, flags | Modifier::Static, args);
-   return *this;
-}
+//template <typename T>
+//template <void (*method)()>
+//Class<T> &Class<T>::registerMethod(const char *name, Modifier flags, const Arguments &args)
+//{
+//   AbstractClass::registerMethod(name, &InvokeBridge::invoke<method>, flags | Modifier::Static, args);
+//   return *this;
+//}
 
-template <typename T>
-template <void (*method)(Parameters &params)>
-Class<T> &Class<T>::registerMethod(const char *name, Modifier flags, const Arguments &args)
-{
-   AbstractClass::registerMethod(name, &InvokeBridge::invoke<method>, flags | Modifier::Static, args);
-   return *this;
-}
+//template <typename T>
+//template <void (*method)(Parameters &params)>
+//Class<T> &Class<T>::registerMethod(const char *name, Modifier flags, const Arguments &args)
+//{
+//   AbstractClass::registerMethod(name, &InvokeBridge::invoke<method>, flags | Modifier::Static, args);
+//   return *this;
+//}
 
-template <typename T>
-template <Variant (*method)()>
-Class<T> &Class<T>::registerMethod(const char *name, Modifier flags, const Arguments &args)
-{
-   AbstractClass::registerMethod(name, &InvokeBridge::invoke<method>, flags | Modifier::Static, args);
-   return *this;
-}
+//template <typename T>
+//template <Variant (*method)()>
+//Class<T> &Class<T>::registerMethod(const char *name, Modifier flags, const Arguments &args)
+//{
+//   AbstractClass::registerMethod(name, &InvokeBridge::invoke<method>, flags | Modifier::Static, args);
+//   return *this;
+//}
 
-template <typename T>
-template <Variant (*method)(Parameters &params)>
-Class<T> &Class<T>::registerMethod(const char *name, Modifier flags, const Arguments &args)
-{
-   AbstractClass::registerMethod(name, &InvokeBridge::invoke<method>, flags | Modifier::Static, args);
-   return *this;
-}
+//template <typename T>
+//template <Variant (*method)(Parameters &params)>
+//Class<T> &Class<T>::registerMethod(const char *name, Modifier flags, const Arguments &args)
+//{
+//   AbstractClass::registerMethod(name, &InvokeBridge::invoke<method>, flags | Modifier::Static, args);
+//   return *this;
+//}
 
-template <typename T>
-template <void (*method)()>
-Class<T> &Class<T>::registerMethod(const char *name, const Arguments &args)
-{
-   AbstractClass::registerMethod(name, &InvokeBridge::invoke<method>, Modifier::Public | Modifier::Static, args);
-   return *this;
-}
+//template <typename T>
+//template <void (*method)()>
+//Class<T> &Class<T>::registerMethod(const char *name, const Arguments &args)
+//{
+//   AbstractClass::registerMethod(name, &InvokeBridge::invoke<method>, Modifier::Public | Modifier::Static, args);
+//   return *this;
+//}
 
-template <typename T>
-template <void (*method)(Parameters &params)>
-Class<T> &Class<T>::registerMethod(const char *name, const Arguments &args)
-{
-   AbstractClass::registerMethod(name, &InvokeBridge::invoke<method>, Modifier::Public | Modifier::Static, args);
-   return *this;
-}
+//template <typename T>
+//template <void (*method)(Parameters &params)>
+//Class<T> &Class<T>::registerMethod(const char *name, const Arguments &args)
+//{
+//   AbstractClass::registerMethod(name, &InvokeBridge::invoke<method>, Modifier::Public | Modifier::Static, args);
+//   return *this;
+//}
 
-template <typename T>
-template <Variant (*method)()>
-Class<T> &Class<T>::registerMethod(const char *name, const Arguments &args)
-{
-   AbstractClass::registerMethod(name, &InvokeBridge::invoke<method>, Modifier::Public | Modifier::Static, args);
-   return *this;
-}
+//template <typename T>
+//template <Variant (*method)()>
+//Class<T> &Class<T>::registerMethod(const char *name, const Arguments &args)
+//{
+//   AbstractClass::registerMethod(name, &InvokeBridge::invoke<method>, Modifier::Public | Modifier::Static, args);
+//   return *this;
+//}
 
-template <typename T>
-template <Variant (*method)(Parameters &params)>
-Class<T> &Class<T>::registerMethod(const char *name, const Arguments &args)
-{
-   AbstractClass::registerMethod(name, &InvokeBridge::invoke<method>, Modifier::Public | Modifier::Static, args);
-   return *this;
-}
+//template <typename T>
+//template <Variant (*method)(Parameters &params)>
+//Class<T> &Class<T>::registerMethod(const char *name, const Arguments &args)
+//{
+//   AbstractClass::registerMethod(name, &InvokeBridge::invoke<method>, Modifier::Public | Modifier::Static, args);
+//   return *this;
+//}
 
 template <typename T>
 Class<T> &Class<T>::registerMethod(const char *name, Modifier flags, const Arguments &args)

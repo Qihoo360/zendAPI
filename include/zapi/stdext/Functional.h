@@ -11,18 +11,30 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by zzu_softboy on 2017/07/26.
+// Created by softboy on 2017/08/24.
+//
 
-#include <ostream>
-#include "zapi/vm/InvokeBridge.h"
-#include "zapi/kernel/OrigException.h"
-#include "zapi/vm/ObjectBinder.h"
+#ifndef ZAPI_STDEXT_FUNCTIONAL_H
+#define ZAPI_STDEXT_FUNCTIONAL_H
+
+#include "zapi/stdext/internal/FunctionalPrivate.h"
+
+namespace langstd = std;
 
 namespace zapi
 {
-namespace vm
+namespace stdext
 {
 
-} // vm
+template<typename FuncType, typename ...ArgTypes>
+typename langstd::result_of<FuncType&& (ArgTypes&&...)>::type
+invoke(FuncType&& func, ArgTypes&& ...args)
+noexcept(noexcept(internal::invoke(langstd::forward<FuncType>(func), langstd::forward<ArgTypes>(args)...)))
+{
+   return internal::invoke(langstd::forward<FuncType>(func), langstd::forward<ArgTypes>(args)...);
+}
+
+} // stdext
 } // zapi
 
+#endif // ZAPI_STDEXT_FUNCTIONAL_H

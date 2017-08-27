@@ -14,18 +14,18 @@
 // Created by softboy on 2017/08/24.
 //
 
-#ifndef ZAPI_STD_INTERNAL_FUNCTIONAL_PRIVATE_H
-#define ZAPI_STD_INTERNAL_FUNCTIONAL_PRIVATE_H
+#ifndef ZAPI_STDEXT_INTERNAL_FUNCTIONAL_PRIVATE_H
+#define ZAPI_STDEXT_INTERNAL_FUNCTIONAL_PRIVATE_H
 
 #include <type_traits>
 #include <functional>
-#include "zapi/std/TypeTraits.h"
+#include "zapi/stdext/TypeTraits.h"
 
 namespace langstd = std;
 
 namespace zapi
 {
-namespace std
+namespace stdext
 {
 namespace internal
 {
@@ -47,7 +47,7 @@ public:
 };
 
 } // internal
-} // std
+} // stdext
 } // zapi
 
-#endif // ZAPI_STD_INTERNAL_FUNCTIONAL_PRIVATE_H
+#endif // ZAPI_STDEXT_INTERNAL_FUNCTIONAL_PRIVATE_H

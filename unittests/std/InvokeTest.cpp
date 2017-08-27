@@ -15,13 +15,13 @@
 
 #include "php/sapi/embed/php_embed.h"
 #include "gtest/gtest.h"
-#include "zapi/std/Functional.h"
+#include "zapi/stdext/Functional.h"
 #include <iostream>
 #include <functional>
-#include "zapi/std/Tuple.h"
+#include "zapi/stdext/Tuple.h"
 #include <tuple>
-using zapi::std::invoke;
-using zapi::std::apply;
+using zapi::stdext::invoke;
+using zapi::stdext::apply;
 
 struct Foo {
    Foo(int num) : num_(num) {}
@@ -50,10 +50,21 @@ struct PrintNum {
    }
 };
 
+int add(int first, int second)
+{
+   return first + second;    
+}
+
+template<typename T>
+T add_generic(T first, T second)
+{
+   return first + second;    
+}
+
 TEST(InvokeTest, testInvoke)
 {
-   ASSERT_EQ(zapi::std::invoke(print_num, -9), -9);
-   ASSERT_EQ(zapi::std::invoke(print_num, 222), 222);
+   ASSERT_EQ(zapi::stdext::invoke(print_num, -9), -9);
+   ASSERT_EQ(zapi::stdext::invoke(print_num, 222), 222);
    // invoke a lambda
    invoke([]() { 
       ASSERT_EQ(print_num(42), 42);
@@ -62,16 +73,18 @@ TEST(InvokeTest, testInvoke)
    // invoke (access) a data member
    //   std::cout << "num_: " << zapi::std::invoke(&Foo::num_, foo) << '\n';
    // invoke a function object
-   ASSERT_EQ(zapi::std::invoke(&Foo::num_, foo), 314159);
-   ASSERT_EQ(zapi::std::invoke(PrintNum(), 18), 18);
-   ASSERT_EQ(zapi::std::invoke(&Foo::print_add, foo, 1), 314160);
-   ASSERT_EQ(zapi::std::apply(get_sum, std::make_tuple(1, 2, 3)), 6);
+   ASSERT_EQ(zapi::stdext::invoke(&Foo::num_, foo), 314159);
+   ASSERT_EQ(zapi::stdext::invoke(PrintNum(), 18), 18);
+   ASSERT_EQ(zapi::stdext::invoke(&Foo::print_add, foo, 1), 314160);
    //std::cout << zapi::std::apply(get_sum, std::make_tuple(1, 2, 3));
 }
 
 TEST(InvokeTest, testApply)
 {
-   
+   ASSERT_EQ(zapi::stdext::apply(get_sum, std::make_tuple(1, 2, 3)), 6);
+   ASSERT_EQ(zapi::stdext::apply(add, std::make_tuple(1,2)), 3);
+   // template argument deduction/substitution fails
+//    std::cout << zapi::std::apply(add_generic, std::make_tuple(2.0f,3.0f)) << '\n'; 
 }
 
 int main(int argc, char **argv)

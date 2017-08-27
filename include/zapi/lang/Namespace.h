@@ -59,13 +59,7 @@ public:
    Namespace &operator=(Namespace &&other) ZAPI_DECL_NOEXCEPT;
    virtual ~Namespace();
 public:
-   template <void (*func)()>
-   Namespace &registerFunction(const char *name, const Arguments &args = {});
-   template <void (*func)(Parameters &parameters)>
-   Namespace &registerFunction(const char *name, const Arguments &args = {});
-   template <Variant (*func)()>
-   Namespace &registerFunction(const char *name, const Arguments &args = {});
-   template <Variant (*func)(Parameters &parameters)>
+   template <typename CallableType, typename std::decay<CallableType>::type callable>
    Namespace &registerFunction(const char *name, const Arguments &args = {});
    
    Namespace &registerNamespace(const Namespace &ns);
@@ -108,28 +102,10 @@ Namespace &Namespace::registerClass(Class<T> &&nativeClass)
    return *this;
 }
 
-template <void (*func)()>
+template <typename CallableType, typename std::decay<CallableType>::type callable>
 Namespace &Namespace::registerFunction(const char *name, const Arguments &args)
 {
-   return registerFunction(name, &InvokeBridge::invoke<func>, args);
-}
-
-template <void (*func)(Parameters &parameters)>
-Namespace &Namespace::registerFunction(const char *name, const Arguments &args)
-{
-   return registerFunction(name, &InvokeBridge::invoke<func>, args);
-}
-
-template <Variant (*func)()>
-Namespace &Namespace::registerFunction(const char *name, const Arguments &args)
-{
-   return registerFunction(name, &InvokeBridge::invoke<func>, args);
-}
-
-template <Variant (*func)(Parameters &parameters)>
-Namespace &Namespace::registerFunction(const char *name, const Arguments &args)
-{
-   return registerFunction(name, &InvokeBridge::invoke<func>, args);
+   return registerFunction(name, &InvokeBridge<CallableType, callable>::invoke, args);
 }
 
 } // lang

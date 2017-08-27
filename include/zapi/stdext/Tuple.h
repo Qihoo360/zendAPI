@@ -13,15 +13,15 @@
 //
 // Created by softboy on 2017/08/25.
 
-#ifndef ZAPI_STD_TUPLE_PRIVATE_H
-#define ZAPI_STD_TUPLE_PRIVATE_H
+#ifndef ZAPI_STDEXT_TUPLE_PRIVATE_H
+#define ZAPI_STDEXT_TUPLE_PRIVATE_H
 
-#include "zapi/std/internal/TuplePrivate.h"
+#include "zapi/stdext/internal/TuplePrivate.h"
 #include <tuple>
 
 namespace zapi
 {
-namespace std
+namespace stdext
 {
 
 template <typename FuncType, class Tuple>
@@ -38,7 +38,7 @@ noexcept(noexcept(internal::apply_tuple_impl(
             typename internal::make_tuple_indices<langstd::tuple_size<typename langstd::decay<Tuple>::type>::value>::type {});
 }
 
-} // std
+} // stdext
 } // zapi
 
-#endif // ZAPI_STD_TUPLE_PRIVATE_H
+#endif // ZAPI_STDEXT_TUPLE_PRIVATE_H
