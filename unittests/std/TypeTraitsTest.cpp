@@ -36,6 +36,16 @@ struct O
    }
 };
 
+namespace dummyext
+{
+
+void print_name()
+{
+   
+}
+
+} // dummyext
+
 TEST(TypeTraitTest, test)
 {
    bool ret = std::is_same<zapi::stdext::function_return_type<decltype(func2)>::type, int>::value;
@@ -44,5 +54,7 @@ TEST(TypeTraitTest, test)
    ret = std::is_same<zapi::stdext::callable_return_type<decltype(func2)>::type, int>::value;
    ASSERT_TRUE(ret);
    ret = std::is_same<zapi::stdext::callable_return_type<decltype(&O::method1)>::type, char>::value;
+   ASSERT_TRUE(ret);
+   ret = std::is_same<zapi::stdext::callable_return_type<decltype(&dummyext::print_name)>::type, void>::value;
    ASSERT_TRUE(ret);
 }

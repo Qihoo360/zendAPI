@@ -577,6 +577,12 @@ struct callable_return_type
       std::is_member_function_pointer<typename std::decay<CallableType>::type>::value>
 {};
 
+template <typename CallableType>
+struct callable_has_return
+{
+   const static bool value = !std::is_same<typename callable_return_type<CallableType>::type, void>::value;
+};
+
 } // stdext
 } // zapi
 

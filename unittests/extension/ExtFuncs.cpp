@@ -23,9 +23,9 @@ Variant get_name()
    return "zzu_softboy";
 }
 
-void print_name(Parameters &params)
+void print_name()
 {
-   zapi::out << params.at(0).toString() << std::flush;
+   zapi::out << "zapi" << std::flush;
 }
 
 void print_name_and_age(Parameters &params)
@@ -90,10 +90,10 @@ void register_funcs(Extension &extension)
 
 void register_ns_io(Namespace &io)
 {
-//   io.registerFunction<decltype(dummyext::print_name), &dummyext::print_name>
-//         ("print_name", {
-//             ValueArgument("name", zapi::lang::Type::String)
-//          });
+   io.registerFunction<decltype(&dummyext::print_name), &dummyext::print_name>
+         ("print_name", {
+             ValueArgument("name", zapi::lang::Type::String)
+          });
    //   io.registerFunction<dummyext::show_something>("show_something");
    io.registerConstant(Constant("IO_TYPE", "ASYNC"));
    io.registerConstant(Constant("NATIVE_STREAM", true));

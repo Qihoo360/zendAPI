@@ -25,6 +25,7 @@
 #include "zapi/vm/InvokeBridge.h"
 #include "zapi/vm/ObjectBinder.h"
 #include "zapi/stdext/TypeTraits.h"
+#include "php/Zend/zend_exceptions.h"
 
 #include <ostream>
 #include <type_traits>
@@ -49,16 +50,31 @@ class StdClass;
 } // zapi
 // end forward declare 
 
-namespace zapi
-{
-namespace vm
-{
-
 using zapi::kernel::Exception;
 using zapi::lang::Parameters;
 using zapi::lang::Arguments;
 using zapi::lang::StdClass;
 using zapi::ds::Variant;
+
+namespace
+{
+
+void yield(_zval_struct *return_value, const Variant &value)
+{
+   RETVAL_ZVAL(static_cast<zval *>(value), 1, 0);
+}
+
+void yield(_zval_struct *return_value, std::nullptr_t value)
+{
+   RETVAL_NULL();
+}
+
+}
+
+namespace zapi
+{
+namespace vm
+{
 
 template <typename T, typename ::std::decay<T>::type callable, 
           bool HasReturn, bool isMemberFunc>
@@ -70,9 +86,6 @@ private:
    static StdClass *instance(zend_execute_data *execute_data);
    static bool checkInvokeArguments(zend_execute_data *execute_data, zval *return_value);
    static Parameters retrieveParameters(zend_execute_data *execute_data);
-   static void handle(Exception &exception);
-   static void yield(_zval_struct *return_value, std::nullptr_t value);
-   static void yield(_zval_struct *return_value, const Variant &value);
    
 public:
    //   template <typename T, void(T::*method)()> 
@@ -266,21 +279,6 @@ InvokeBridgePrivate<T, callable, HasReturn, isMemberFunc>::checkInvokeArguments(
    return false;
 }
 
-template <typename T, typename std::decay<T>::type callable, 
-          bool HasReturn, bool isMemberFunc>
-void 
-InvokeBridgePrivate<T, callable, HasReturn, isMemberFunc>::yield(_zval_struct *return_value, const lang::Variant &value)
-{
-   RETVAL_ZVAL(static_cast<zval *>(value), 1, 0);
-}
-
-template <typename T, typename std::decay<T>::type callable, 
-          bool HasReturn, bool isMemberFunc>
-void 
-InvokeBridgePrivate<T, callable, HasReturn, isMemberFunc>::yield(_zval_struct *return_value, std::nullptr_t value)
-{
-   RETVAL_NULL();
-}
 
 template <typename T, typename std::decay<T>::type callable, 
           bool HasReturn, bool isMemberFunc>
@@ -290,31 +288,18 @@ InvokeBridgePrivate<T, callable, HasReturn, isMemberFunc>::retrieveParameters(_z
    return Parameters(getThis(), ZEND_NUM_ARGS());
 }
 
-template <typename T, typename std::decay<T>::type callable, 
-          bool HasReturn, bool isMemberFunc>
-void 
-InvokeBridgePrivate<T, callable, HasReturn, isMemberFunc>::handle(Exception &exception)
-{
-   zapi::kernel::process_exception(exception);
-}
-
 template <typename T, typename std::decay<T>::type callable>
 class InvokeBridgePrivate <T, callable, false, false>
 {
 public:
    static void invoke(zend_execute_data *execute_data, zval *return_value)
    {
-      //      try {
-      //         // check invoke arguments
-      //         if (!checkInvokeArguments(execute_data, return_value)) {
-      //            return;
-      //         }
-      //         Parameters params = retrieveParameters(execute_data);
-      //         callable(params);
-      //         yield(return_value, nullptr);
-      //      } catch (Exception &exception) {
-      //         handle(exception);
-      //      }
+      try {
+         callable();
+         yield(return_value, nullptr);
+      } catch (Exception &exception) {
+         zapi::kernel::process_exception(exception);
+      }
    }
 };
 
@@ -347,7 +332,7 @@ public:
    }
 };
 
-template <typename CallableType, typename ::std::decay<CallableType>::type callable>
+template <typename CallableType, typename std::decay<CallableType>::type callable>
 class InvokeBridgePrivate <CallableType, callable, true, true>
 {
 public:
@@ -356,10 +341,13 @@ public:
    }
 };
 
-template <typename CallableType, typename std::decay<CallableType>::type callable>
-class InvokeBridge : public InvokeBridgePrivate<CallableType, callable, true, true>
+template <typename CallableType, 
+          typename std::decay<CallableType>::type callable,
+          typename DecayCallableType = typename std::decay<CallableType>::type>
+class InvokeBridge : public InvokeBridgePrivate<DecayCallableType, callable, 
+      zapi::stdext::callable_has_return<DecayCallableType>::value, 
+      std::is_member_function_pointer<DecayCallableType>::value>
 {
-   
 };
 
 

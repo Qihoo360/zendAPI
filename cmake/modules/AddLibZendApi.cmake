@@ -20,10 +20,10 @@
 #   )
 function(zapi_add_library name)
    cmake_parse_arguments(ZAPI_ARG
-                         "MODULE;SHARED;STATIC;OBJECT"
-                         "OUTPUT_NAME"
-                         "ADDITIONAL_HEADERS;DEPENDS;LINK_COMPONENTS;LINK_LIBS;OBJLIBS"
-                         ${ARGN})
+      "MODULE;SHARED;STATIC;OBJECT"
+      "OUTPUT_NAME"
+      "ADDITIONAL_HEADERS;DEPENDS;LINK_COMPONENTS;LINK_LIBS;OBJLIBS"
+      ${ARGN})
    list(APPEND ZAPI_COMMON_DEPENDS ${ZAPI_ARG_DEPENDS})
    if(ZAPI_ARG_ADDITIONAL_HEADERS)
       # Pass through ADDITIONAL_HEADERS.
@@ -52,7 +52,7 @@ function(zapi_add_library name)
       # Generate an obj library for both targets.
       set(obj_name "obj.${name}")
       add_library(${obj_name} OBJECT EXCLUDE_FROM_ALL
-                  ${ALL_FILES})
+         ${ALL_FILES})
       set(ALL_FILES "$<TARGET_OBJECTS:${obj_name}>")
       # Do add_dependencies(obj) later due to CMake issue 14747.
       set_target_properties(${obj_name} PROPERTIES FOLDER "Object Libraries")
@@ -66,10 +66,10 @@ function(zapi_add_library name)
       endif()
       # DEPENDS has been appended to ZAPI_COMMON_LIBS.
       zapi_add_library(${name_static} STATIC
-                         ${output_name}
-                         OBJLIBS ${ALL_FILES} # objlib
-                         LINK_LIBS ${ZAPI_ARG_LINK_LIBS}
-                         LINK_COMPONENTS ${ZAPI_ARG_LINK_COMPONENTS})
+         ${output_name}
+         OBJLIBS ${ALL_FILES} # objlib
+         LINK_LIBS ${ZAPI_ARG_LINK_LIBS}
+         LINK_COMPONENTS ${ZAPI_ARG_LINK_COMPONENTS})
       # FIXME: Add name_static to anywhere in TARGET ${name}'s PROPERTY.
       set(ZAPI_ARG_STATIC)
    endif()
@@ -84,47 +84,48 @@ function(zapi_add_library name)
       add_library(${name} STATIC ${ALL_FILES})
    endif()
    zapi_set_output_directory(${name}
-                        BINARY_DIR ${ZAPI_RUNTIME_OUTPUT_INTDIR}
-                        LIBRARY_DIR ${ZAPI_LIBRARY_OUTPUT_INTDIR})
+      BINARY_DIR ${ZAPI_RUNTIME_OUTPUT_INTDIR}
+      LIBRARY_DIR ${ZAPI_LIBRARY_OUTPUT_INTDIR})
    # $<TARGET_OBJECTS> doesn't require compile flags.
    if(ZAPI_ARG_OUTPUT_NAME)
       set_target_properties(${name}
-                            PROPERTIES
-                            OUTPUT_NAME ${ZAPI_ARG_OUTPUT_NAME})
+         PROPERTIES
+         OUTPUT_NAME ${ZAPI_ARG_OUTPUT_NAME})
    endif()
    
    if(ZAPI_ARG_MODULE)
       set_target_properties(${name}
-                            PROPERTIES
-                            PREFIX ""
-                            SUFFIX ${ZAPI_PLUGIN_EXT})
+         PROPERTIES
+         PREFIX ""
+         SUFFIX ${ZAPI_PLUGIN_EXT})
    endif()
    
    if(ZAPI_ARG_SHARED)
       if(WIN32)
          set_target_properties(${name} PROPERTIES
-                               PREFIX "")
+            PREFIX "")
       endif()
       # Set SOVERSION on shared libraries that lack explicit SONAME
       # specifier, on *nix systems that are not Darwin.
       if(UNIX)
          set_target_properties(${name}
-                               PROPERTIES
-                               # Since 1.0.0, the ABI version is indicated by the major version
-                               SOVERSION ${ZAPI_VERSION_MAJOR}
-                               VERSION ${ZAPI_VERSION_MAJOR}.${ZAPI_VERSION_MINOR}.${ZAPI_VERSION_PATCH})
+            PROPERTIES
+            # Since 1.0.0, the ABI version is indicated by the major version
+            SOVERSION ${ZAPI_VERSION_MAJOR}
+            VERSION ${ZAPI_VERSION_MAJOR}.${ZAPI_VERSION_MINOR}.${ZAPI_VERSION_PATCH})
       endif()
    endif()
    if (APPLE)
       # here when we compile zapi on osx, we do extra with linker flags -undefined dynamic_lookup
       set_property(TARGET ${name} APPEND_STRING PROPERTY
-                   LINK_FLAGS " -undefined dynamic_lookup ")
+         LINK_FLAGS " -undefined dynamic_lookup ")
+      target_link_libraries(${name} INTERFACE "-undefined dynamic_lookup")
    endif()
 endfunction()
 
 macro(zapi_add_executable name)
    cmake_parse_arguments(ZAPI_ARG "NO_INSTALL_RPATH" ""
-                         "DEPENDS" ${ARGN})
+      "DEPENDS" ${ARGN})
    set(ALL_FILES ${ZAPI_ARG_UNPARSED_ARGUMENTS})
    if(EXCLUDE_FROM_ALL)
       add_executable(${name} EXCLUDE_FROM_ALL ${ALL_FILES})
@@ -141,8 +142,8 @@ macro(zapi_add_executable name)
    set_target_properties( ${name} PROPERTIES DEFINE_SYMBOL "" )
    set(EXCLUDE_FROM_ALL OFF)
    zapi_set_output_directory(${name}
-                        BINARY_DIR ${ZAPI_RUNTIME_OUTPUT_INTDIR}
-                        LIBRARY_DIR ${ZAPI_LIBRARY_OUTPUT_INTDIR})
+      BINARY_DIR ${ZAPI_RUNTIME_OUTPUT_INTDIR}
+      LIBRARY_DIR ${ZAPI_LIBRARY_OUTPUT_INTDIR})
    
    if(ZAPI_COMMON_DEPENDS)
       add_dependencies(${name} ${ZAPI_COMMON_DEPENDS})
@@ -166,7 +167,7 @@ function(zapi_add_unittest test_suite test_name)
    # executable must be linked with it in order to provide consistent
    # API for all shared libaries loaded by this executable.
    target_link_libraries(${test_name} gtest_main gtest ${PTHREAD_LIB} ${CMAKE_PROJECT_NAME}
-                         zapi_php_lib)
+      zapi_php_lib)
    add_dependencies(${test_suite} ${test_name})
    get_target_property(test_suite_folder ${test_suite} FOLDER)
    if (NOT ${test_suite_folder} STREQUAL "NOTFOUND")
@@ -190,18 +191,18 @@ function(zapi_setup_rpath name)
       set(_install_rpath "\$ORIGIN/../lib${ZAPI_OPT_LIBDIR_SUFFIX}" ${extra_libdir})
       if(${CMAKE_SYSTEM_NAME} MATCHES "(FreeBSD|DragonFly)")
          set_property(TARGET ${name} APPEND_STRING PROPERTY
-                      LINK_FLAGS " -Wl,-z,origin ")
+            LINK_FLAGS " -Wl,-z,origin ")
       elseif(${CMAKE_SYSTEM_NAME} STREQUAL "Linux")
          set_property(TARGET ${name} APPEND_STRING PROPERTY
-                      LINK_FLAGS " -Wl,-rpath-link,${ZAPI_LIBRARY_OUTPUT_INTDIR} ")
+            LINK_FLAGS " -Wl,-rpath-link,${ZAPI_LIBRARY_OUTPUT_INTDIR} ")
       endif()
    else()
       return()
    endif()
    set_target_properties(${name} PROPERTIES
-                         BUILD_WITH_INSTALL_RPATH ON
-                         INSTALL_RPATH "${_install_rpath}"
-                         ${_install_name_dir})
+      BUILD_WITH_INSTALL_RPATH ON
+      INSTALL_RPATH "${_install_rpath}"
+      ${_install_name_dir})
 endfunction()
 
 # Set each output directory according to ${CMAKE_CONFIGURATION_TYPES}.

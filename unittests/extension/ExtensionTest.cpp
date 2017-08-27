@@ -108,10 +108,10 @@ TEST(ExtensionTest, testFuncRegister)
 //   Engine::eval(code);
 //   ASSERT_EQ(phpOutput, "name: zzu_softboy age: 27");
 //   phpOutput.clear();
-   code = "var_dump(function_exists('show_something'));";
+   code = "zapi\\io\\print_name();";
    Engine::eval(code);
-   ASSERT_EQ(phpOutput, "bool(true)\n");
-//   std::cout << phpOutput << std::endl;
+//   ASSERT_EQ(phpOutput, "bool(true)\n");
+   std::cout << phpOutput << std::endl;
 }
 
 //TEST(ExtensionTest, testClassRegister)
