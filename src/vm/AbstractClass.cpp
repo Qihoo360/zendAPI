@@ -199,6 +199,8 @@ std::unique_ptr<zend_function_entry[]>& AbstractClassPrivate::getMethodEntries()
       zend_function_entry *entry = &m_methodEntries[i++];
       method->initialize(entry, m_name.c_str());
    }
+   // the last item must be set to 0
+   // let zend engine know where to stop
    zend_function_entry *last = &m_methodEntries[i];
    memset(last, 0, sizeof(*last));
    return m_methodEntries;

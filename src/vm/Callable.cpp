@@ -41,7 +41,8 @@ CallablePrivate::CallablePrivate(const char *name, ZendCallable callable, const 
       }
       setupCallableArgInfo(&m_argv[i++], argument);
    }
-   // last entry, we save extra infomation about class
+   // last entry, we save extra infomation about self
+   // this just for m_callable = nullptr and self::invoke been set for entry->handler
    m_argv[i].class_name = nullptr;
    m_argv[i].name = nullptr;
 }
@@ -201,7 +202,7 @@ void Callable::invoke(INTERNAL_FUNCTION_PARAMETERS)
 {
    uint32_t argc       = EX(func)->common.num_args;
    zend_arg_info *info = EX(func)->common.arg_info;
-   assert(info[argc].class_name != nullptr && info[argc].name != nullptr);
+   assert(info[argc].class_name != nullptr && info[argc].name == nullptr);
    Callable *callable = reinterpret_cast<Callable *>(info[argc].class_name);
    
    // check if sufficient parameters were passed (for some reason this check
