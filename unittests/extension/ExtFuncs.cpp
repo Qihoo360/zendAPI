@@ -29,13 +29,13 @@ void print_name(const StringVariant &name)
    zapi::out << name << std::flush;
 }
 
-void print_sum(const NumericVariant &argQuantity, ...)
+void print_sum(NumericVariant argQuantity, ...)
 {
    va_list args;
    va_start(args, argQuantity);
    NumericVariant result;
    for (int i = 0; i < argQuantity; ++i) {
-      result += va_arg(args, NumericVariant);
+       result += NumericVariant(va_arg(args, zapi_varidic_item_type));
    }
    zapi::out << result << std::flush;
 }

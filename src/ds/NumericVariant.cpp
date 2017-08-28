@@ -45,6 +45,10 @@ NumericVariant::NumericVariant(std::int64_t value)
 {}
 #endif
 
+NumericVariant::NumericVariant(const zval &value)
+   : NumericVariant(Variant(value))
+{}
+
 NumericVariant::NumericVariant(const NumericVariant &other)
    : Variant(other)
 {}

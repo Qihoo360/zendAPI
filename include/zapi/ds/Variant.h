@@ -105,7 +105,8 @@ public:
     * @param  zval Zval to wrap
     * @param  ref Force this to be a reference
     */
-   Variant(_zval_struct *zval, bool isRef = false);
+   Variant(zval *value, bool isRef = false);
+   Variant(const zval &value, bool isRef = false);
    
    /**
     * Copy constructor

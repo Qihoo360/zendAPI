@@ -36,6 +36,7 @@ public:
 #if SIZEOF_ZEND_LONG == 8
    NumericVariant(std::int64_t value);
 #endif
+   NumericVariant(const zval &value);
    NumericVariant(const NumericVariant &other);
    NumericVariant(NumericVariant &&other) ZAPI_DECL_NOEXCEPT;
    NumericVariant(const Variant &other);

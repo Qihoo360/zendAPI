@@ -341,14 +341,18 @@ public:
          zval arguments[argNumber];
          zend_get_parameters_array_ex(argNumber, arguments);
          // 15 arguments is enough ?
-         auto tuple = zapi::stdext::gen_tuple<15>(
+         auto tuple = zapi::stdext::gen_tuple<16>(
                   [&arguments, argNumber](size_t index){
             if (index == 0) {
-               return Variant(static_cast<int32_t>(argNumber));
+               zval temp;
+               ZVAL_LONG(&temp, static_cast<int32_t>(argNumber));
+               return temp;
             } else if (index <= argNumber + 1){
-               return Variant(&arguments[index - 1]);
+               return Variant(&arguments[index - 1]).detach(false);
             } else {
-               return Variant(nullptr);
+                zval temp;
+                ZVAL_NULL(&temp);
+               return temp;
             }
          });
          zapi::stdext::apply(callable, tuple);

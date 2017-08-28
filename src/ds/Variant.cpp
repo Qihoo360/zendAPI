@@ -263,6 +263,11 @@ Variant::Variant(zval *value, bool isRef)
    }
 }
 
+Variant::Variant(const zval &value, bool isRef)
+   :Variant(const_cast<zval *>(&value), isRef)
+{
+}
+
 Variant::Variant(const BoolVariant &value)
    : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
