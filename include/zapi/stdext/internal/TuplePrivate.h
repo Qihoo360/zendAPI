@@ -194,6 +194,38 @@ noexcept(noexcept(invoke_constexpr(langstd::forward<FuncType>(func),
                            langstd::get<Seq>(langstd::forward<Tuple>(tuple))...);
 }
 
+template <typename SeqItemType, SeqItemType Np>
+using make_integer_sequence_unchecked = 
+typename make<Np>::type::template convert<integer_sequence, SeqItemType>;
+
+template <typename SeqItemType, SeqItemType Ep>
+struct make_integer_sequence_checked
+{
+   static_assert(langstd::is_integral<SeqItemType>::value,
+                 "zapi::stdext::make_integer_sequence can only be instantiated with an integral type" );
+   static_assert(0 <= Ep, "zapi::stdext::make_integer_sequence must have a non-negative sequence length");
+   // Workaround GCC bug by preventing bad installations when 0 <= _Ep
+   // https://gcc.gnu.org/bugzilla/show_bug.cgi?id=68929
+   using type = make_integer_sequence_unchecked<SeqItemType, 0 <= Ep ? Ep : 0>;
+};
+
+template <typename SeqItemType, SeqItemType Ep>
+using make_integer_sequence = typename make_integer_sequence_checked<SeqItemType, Ep>::type;
+
+template<size_t... ItemSeq>
+    using index_sequence = integer_sequence<size_t, ItemSeq...>;
+
+template<size_t EndMark>
+    using make_index_sequence = make_integer_sequence<size_t, EndMark>;
+
+
+template <typename FuncType, size_t... Is>
+auto gen_tuple_impl(FuncType func, index_sequence<Is...> )
+-> decltype(langstd::make_tuple(func(Is)...))
+{
+   return langstd::make_tuple(func(Is)...);
+}
+
 } // internal
 } // stdext
 } // zapi

@@ -38,6 +38,19 @@ noexcept(noexcept(internal::apply_tuple_impl(
             typename internal::make_tuple_indices<langstd::tuple_size<typename langstd::decay<Tuple>::type>::value>::type {});
 }
 
+template<size_t... ItemSeq>
+    using index_sequence = internal::index_sequence<ItemSeq...>;
+
+template<size_t EndMark>
+    using make_index_sequence = internal::make_index_sequence<EndMark>;
+
+template <size_t N, typename Generator>
+auto gen_tuple(Generator func)
+-> decltype(internal::gen_tuple_impl(func, make_index_sequence<N>{}))
+{
+    return internal::gen_tuple_impl(func, make_index_sequence<N>{});
+}
+
 } // stdext
 } // zapi
 

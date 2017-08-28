@@ -23,9 +23,9 @@ Variant get_name()
    return "zzu_softboy";
 }
 
-void print_name()
+void print_name(const StringVariant &name)
 {
-   zapi::out << "zapi" << std::flush;
+   zapi::out << name << std::flush;
 }
 
 void print_name_and_age(Parameters &params)

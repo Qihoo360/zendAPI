@@ -57,4 +57,8 @@ TEST(TypeTraitTest, test)
    ASSERT_TRUE(ret);
    ret = std::is_same<zapi::stdext::callable_return_type<decltype(&dummyext::print_name)>::type, void>::value;
    ASSERT_TRUE(ret);
+   int paramNumber = zapi::stdext::callable_params_number<decltype(&func1)>::value;
+   ASSERT_EQ(paramNumber, 0);
+   paramNumber = zapi::stdext::callable_params_number<decltype(&func2)>::value;
+   ASSERT_EQ(paramNumber, 2);
 }

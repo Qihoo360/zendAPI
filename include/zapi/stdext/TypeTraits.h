@@ -583,6 +583,108 @@ struct callable_has_return
    const static bool value = !std::is_same<typename callable_return_type<CallableType>::type, void>::value;
 };
 
+template <typename>
+struct callable_params_number;
+
+template <typename R, typename ...ArgTypes>
+struct callable_params_number<R(ArgTypes... args)>
+{
+   constexpr static int value = sizeof...(ArgTypes);
+};
+
+template <typename R, typename ...ArgTypes>
+struct callable_params_number<R(*)(ArgTypes... args)>
+{
+   constexpr static int value = sizeof...(ArgTypes);
+};
+
+template <typename R, typename ...ArgTypes>
+struct callable_params_number<R(&)(ArgTypes... args)>
+{
+   constexpr static int value = sizeof...(ArgTypes);
+};
+
+template <typename R, typename ...ArgTypes>
+struct callable_params_number<R(ArgTypes... args, ...)>
+{
+   constexpr static int value = sizeof...(ArgTypes);
+};
+
+template <typename R, typename ...ArgTypes>
+struct callable_params_number<R(*)(ArgTypes... args, ...)>
+{
+   constexpr static int value = sizeof...(ArgTypes);
+};
+
+template <typename R, typename ...ArgTypes>
+struct callable_params_number<R(&)(ArgTypes... args, ...)>
+{
+   constexpr static int value = sizeof...(ArgTypes);
+};
+
+template <typename R, typename T, typename ...ArgTypes>
+struct callable_params_number<R(T::*)(ArgTypes... args)>
+{
+   constexpr static int value = sizeof...(ArgTypes);
+};
+
+template <typename R, typename T, typename ...ArgTypes>
+struct callable_params_number<R(T::*)(ArgTypes... args, ...)>
+{
+   constexpr static int value = sizeof...(ArgTypes);
+};
+
+template <typename>
+struct callable_has_variable_param;
+
+template <typename R, typename ...ArgTypes>
+struct callable_has_variable_param<R(ArgTypes... args)>
+{
+   constexpr static bool value = false;
+};
+
+template <typename R, typename ...ArgTypes>
+struct callable_has_variable_param<R(*)(ArgTypes... args)>
+{
+   constexpr static bool value = false;
+};
+
+template <typename R, typename ...ArgTypes>
+struct callable_has_variable_param<R(&)(ArgTypes... args)>
+{
+   constexpr static bool value = false;
+};
+
+template <typename R, typename ...ArgTypes>
+struct callable_has_variable_param<R(ArgTypes... args, ...)>
+{
+   constexpr static bool value = true;
+};
+
+template <typename R, typename ...ArgTypes>
+struct callable_has_variable_param<R(*)(ArgTypes... args, ...)>
+{
+   constexpr static bool value = true;
+};
+
+template <typename R, typename ...ArgTypes>
+struct callable_has_variable_param<R(&)(ArgTypes... args, ...)>
+{
+   constexpr static bool value = true;
+};
+
+template <typename R, typename T, typename ...ArgTypes>
+struct callable_has_variable_param<R(T::*)(ArgTypes... args)>
+{
+   constexpr static bool value = false;
+};
+
+template <typename R, typename T, typename ...ArgTypes>
+struct callable_has_variable_param<R(T::*)(ArgTypes... args, ...)>
+{
+   constexpr static bool value = true;
+};
+
 } // stdext
 } // zapi
 
