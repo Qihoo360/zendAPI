@@ -139,7 +139,7 @@ void CallablePrivate::setupCallableArgInfo(zend_internal_arg_info *info, const l
    // specifies whether this argument is the first argument that specifies
    // the type for a variable length list of arguments. For now we only
    // support methods and functions with a fixed number of arguments.
-   info->is_variadic       = false; // we will support this when first edition come out
+   info->is_variadic       = arg.isVariadic(); // we will support this when first edition come out
    info->allow_null        = arg.isNullable();
    info->pass_by_reference = arg.isReference();
 }

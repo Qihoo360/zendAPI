@@ -115,7 +115,7 @@ Variant::Variant()
  *
  * @param value
  */
-Variant::Variant(std::nullptr_t value) : Variant()
+Variant::Variant(const std::nullptr_t value) : Variant()
 {}
 
 /**
@@ -123,7 +123,7 @@ Variant::Variant(std::nullptr_t value) : Variant()
  * 
  * @param  value
  */
-Variant::Variant(std::int8_t value)
+Variant::Variant(const std::int8_t value)
    : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
    ZVAL_LONG(getZvalPtr(), value);
@@ -134,7 +134,7 @@ Variant::Variant(std::int8_t value)
  * 
  * @param  value
  */
-Variant::Variant(std::int16_t value)
+Variant::Variant(const std::int16_t value)
    : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
    ZVAL_LONG(getZvalPtr(), value);
@@ -145,7 +145,7 @@ Variant::Variant(std::int16_t value)
  * 
  * @param  value
  */
-Variant::Variant(std::int32_t value)
+Variant::Variant(const std::int32_t value)
    : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
    ZVAL_LONG(getZvalPtr(), value);
@@ -157,20 +157,19 @@ Variant::Variant(std::int32_t value)
  * 
  * @param  value
  */
-Variant::Variant(std::int64_t value)
+Variant::Variant(const std::int64_t value)
    : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
    ZVAL_LONG(getZvalPtr(), value);
 }
 #endif
 
-
 /**
  * Constructor based on boolean value
  * 
  * @param  value
  */
-Variant::Variant(bool value)
+Variant::Variant(const bool value)
    : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
    ZVAL_BOOL(getZvalPtr(), value);
@@ -181,10 +180,21 @@ Variant::Variant(bool value)
  * 
  * @param  value
  */
-Variant::Variant(char value)
+Variant::Variant(const char value)
    : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
    ZVAL_STRINGL(getZvalPtr(), &value, 1);
+}
+
+/**
+ * Constructor based on decimal value
+ * 
+ * @param  value
+ */
+Variant::Variant(const double value)
+   : m_implPtr(new VariantPrivate, std_zval_deleter)
+{
+   ZVAL_DOUBLE(getZvalPtr(), value);
 }
 
 /**
@@ -217,17 +227,6 @@ Variant::Variant(const char *value, size_t size)
 Variant::Variant(const char *value)
    : Variant(value, std::strlen(value))
 {}
-
-/**
- * Constructor based on decimal value
- * 
- * @param  value
- */
-Variant::Variant(double value)
-   : m_implPtr(new VariantPrivate, std_zval_deleter)
-{
-   ZVAL_DOUBLE(getZvalPtr(), value);
-}
 
 Variant::Variant(const StdClass &stdClass)
 {

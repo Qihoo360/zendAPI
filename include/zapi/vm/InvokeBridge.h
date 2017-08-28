@@ -315,7 +315,41 @@ public:
          zval arguments[argNumber];
          zend_get_parameters_array_ex(argNumber, arguments);
          auto tuple = zapi::stdext::gen_tuple<paramNumber>([&arguments](size_t index){
-            return Variant(&arguments[index]);
+               return Variant(&arguments[index]);
+      });
+         zapi::stdext::apply(callable, tuple);
+         yield(return_value, nullptr);
+      } catch (Exception &exception) {
+         zapi::kernel::process_exception(exception);
+      }
+   }
+};
+
+template <typename T, typename std::decay<T>::type callable>
+class InvokeBridgePrivate <T, callable, false, false, true>
+{
+public:
+   static void invoke(zend_execute_data *execute_data, zval *return_value)
+   {
+      try {
+         // variadic params
+         constexpr size_t paramNumber = zapi::stdext::callable_params_number<T>::value;
+         if (!check_invoke_arguments(execute_data, return_value, paramNumber)) {
+            return;
+         }
+         const size_t argNumber = ZEND_NUM_ARGS();
+         zval arguments[argNumber];
+         zend_get_parameters_array_ex(argNumber, arguments);
+         // 15 arguments is enough ?
+         auto tuple = zapi::stdext::gen_tuple<15>(
+                  [&arguments, argNumber](size_t index){
+            if (index == 0) {
+               return Variant(static_cast<int32_t>(argNumber));
+            } else if (index <= argNumber + 1){
+               return Variant(&arguments[index - 1]);
+            } else {
+               return Variant(nullptr);
+            }
          });
          zapi::stdext::apply(callable, tuple);
          yield(return_value, nullptr);
@@ -324,6 +358,7 @@ public:
       }
    }
 };
+
 
 //template <typename T, typename std::decay<T>::type callable>
 //class InvokeBridgePrivate <T, callable, false, true>

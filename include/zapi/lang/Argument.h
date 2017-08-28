@@ -44,6 +44,7 @@ public:
    bool isNullable() const;
    bool isReference() const;
    bool isRequired() const;
+   bool isVariadic() const;
    const char *getName() const;
    Type getType() const;
    const char *getClassName() const;
@@ -109,6 +110,29 @@ public:
    {}
    
    virtual ~ValueArgument();
+};
+
+class ZAPI_DECL_EXPORT VariadicArgument : public Argument
+{
+public:
+   VariadicArgument(const char *name, Type type = Type::Null, bool isReference = false)
+      : Argument(name, type, false, isReference, true)
+   {}
+   
+   VariadicArgument(const char *name, const char *className, bool nullable = false,
+                    bool isReference = false)
+      : Argument(name, className, nullable, false, isReference, true)
+   {}
+   
+   VariadicArgument(const ValueArgument &argument)
+      : Argument(argument)
+   {}
+   
+   VariadicArgument(ValueArgument &&argument) ZAPI_DECL_NOEXCEPT
+      : Argument(std::move(argument))
+   {}
+   
+   virtual ~VariadicArgument();
 };
 
 } // lang

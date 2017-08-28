@@ -48,7 +48,7 @@ ZAPI_DECL_EXPORT void *get_module()
    personClass.registerProperty("name", "zzu_softboy");
    personClass.registerProperty("staticProp", "beijing", Modifier::Public | Modifier::Static);
    Interface infoInterface("InfoProvider");
-   infoInterface.registerMethod("getName");
+//   infoInterface.registerMethod("getName");
    personClass.registerInterface(infoInterface);
    extension.registerInterface(infoInterface);
    extension.registerClass(personClass);

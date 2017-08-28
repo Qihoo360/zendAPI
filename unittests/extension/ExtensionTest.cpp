@@ -97,20 +97,23 @@ static std::string phpOutput;
 TEST(ExtensionTest, testFuncRegister)
 {
    std::string code("show_something();");
-//   Engine::eval(code);
-//   ASSERT_EQ(phpOutput, "hello world, zapi");
-//   phpOutput.clear();
-//   code = "print_name(\"zapi\");";
-//   Engine::eval(code);
-//   ASSERT_EQ(phpOutput, "zapi");
-//   phpOutput.clear();
-//   code = "print_name_and_age(\"zzu_softboy\", 27);";
-//   Engine::eval(code);
-//   ASSERT_EQ(phpOutput, "name: zzu_softboy age: 27");
-//   phpOutput.clear();
-   code = "zapi\\io\\print_name(\"zapi\");";
+   //   Engine::eval(code);
+   //   ASSERT_EQ(phpOutput, "hello world, zapi");
+   //   phpOutput.clear();
+   //   code = "print_name(\"zapi\");";
+   //   Engine::eval(code);
+   //   ASSERT_EQ(phpOutput, "zapi");
+   //   phpOutput.clear();
+   //   code = "print_name_and_age(\"zzu_softboy\", 27);";
+   //   Engine::eval(code);
+   //   ASSERT_EQ(phpOutput, "name: zzu_softboy age: 27");
+   //   phpOutput.clear();
+   // code = "zapi\\io\\print_name(\"zapi\");";
+   //Engine::eval(code);
+   //   ASSERT_EQ(phpOutput, "bool(true)\n");
+   
+   code = "zapi\\io\\print_sum(1, 2, 3, 4, 5, 9, 10, 11, 12);";
    Engine::eval(code);
-//   ASSERT_EQ(phpOutput, "bool(true)\n");
    std::cout << phpOutput << std::endl;
 }
 

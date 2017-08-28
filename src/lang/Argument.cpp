@@ -63,11 +63,13 @@ ArgumentPrivate::ArgumentPrivate(const ArgumentPrivate &other)
    : m_nullable(other.m_nullable), 
      m_required(other.m_required), 
      m_byReference(other.m_byReference),
+     m_variadic(other.m_variadic),
      m_name(other.m_name), 
      m_className(other.m_className)
 {}
 
 } // internal
+
 
 Argument::Argument(const char *name, Type type, bool required, 
                    bool byReference, bool isVariadic)
@@ -125,6 +127,12 @@ bool Argument::isRequired() const
    return implPtr->m_required;
 }
 
+bool Argument::isVariadic() const
+{
+   ZAPI_D(const Argument);
+   return implPtr->m_variadic;
+}
+
 const char *Argument::getName() const
 {
    ZAPI_D(const Argument);
@@ -147,6 +155,9 @@ ValueArgument::~ValueArgument()
 {}
 
 RefArgument::~RefArgument()
+{}
+
+VariadicArgument::~VariadicArgument()
 {}
 
 } // lang

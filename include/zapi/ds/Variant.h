@@ -70,19 +70,19 @@ public:
    /**
     * Constructor for various types
     */
-   Variant(std::nullptr_t value);
-   Variant(std::int8_t value);
-   Variant(std::int16_t value);
-   Variant(std::int32_t value);
+   Variant(const std::nullptr_t value);
+   Variant(const std::int8_t value);
+   Variant(const std::int16_t value);
+   Variant(const std::int32_t value);
 #if SIZEOF_ZEND_LONG == 8
-   Variant(std::int64_t value);
+   Variant(const std::int64_t value);
 #endif
-   Variant(bool value);
-   Variant(char value);
+   Variant(const double value);
+   Variant(const bool value);
+   Variant(const char value);
    Variant(const std::string &value);
    Variant(const char *value, size_t length);
    Variant(const char *value);
-   Variant(double value);
    Variant(const StdClass &stdClass);
    Variant(const BoolVariant &value);
    Variant(const NumericVariant &value);
@@ -255,7 +255,7 @@ template <typename T,
           typename Selector>
 Variant::Variant(char (&value)[arrayLength], T length)
    : Variant(reinterpret_cast<char *>(value),
-           length < 0 ? arrayLength : static_cast<size_t>(length))
+             length < 0 ? arrayLength : static_cast<size_t>(length))
 {}
 
 template <size_t arrayLength>
