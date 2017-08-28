@@ -26,30 +26,35 @@ namespace internal
 class ArgumentPrivate
 {
 public:
-   ArgumentPrivate(const char *name, Type type, bool required = true, bool byReference = false);
+   ArgumentPrivate(const char *name, Type type, bool required = true, bool byReference = false, 
+                   bool variadic = false);
    ArgumentPrivate(const char *name, const char *className, bool nullable = true, 
-                   bool required = true, bool byReference = false);
+                   bool required = true, bool byReference = false, bool variadic = false);
    ArgumentPrivate(const ArgumentPrivate &other);
    Type m_type = Type::Null;
    bool m_nullable = false;
    bool m_required = true;
    bool m_byReference = false;
+   bool m_variadic = false;
    const char *m_name = nullptr;
    const char *m_className = nullptr;
 };
 
-ArgumentPrivate::ArgumentPrivate(const char *name, Type type, bool required, bool byReference)
+ArgumentPrivate::ArgumentPrivate(const char *name, Type type, bool required, 
+                                 bool byReference, bool isVariadic)
    : m_type(type), 
      m_required(required), 
      m_byReference(byReference),
+     m_variadic(isVariadic),
      m_name(name)
 {}
 
 ArgumentPrivate::ArgumentPrivate(const char *name, const char *className, bool nullable, 
-                                 bool required, bool byReference)
+                                 bool required, bool byReference, bool isVariadic)
    : m_nullable(nullable), 
      m_required(required), 
      m_byReference(byReference),
+     m_variadic(isVariadic),
      m_name(name), 
      m_className(className)
 {}
@@ -64,12 +69,14 @@ ArgumentPrivate::ArgumentPrivate(const ArgumentPrivate &other)
 
 } // internal
 
-Argument::Argument(const char *name, Type type, bool required, bool byReference)
-   : m_implPtr(new ArgumentPrivate(name, type, required, byReference))
+Argument::Argument(const char *name, Type type, bool required, 
+                   bool byReference, bool isVariadic)
+   : m_implPtr(new ArgumentPrivate(name, type, required, byReference, isVariadic))
 {}
 
-Argument::Argument(const char *name, const char *className, bool nullable, bool required, bool byReference)
-   : m_implPtr(new ArgumentPrivate(name, className, nullable, required, byReference))
+Argument::Argument(const char *name, const char *className, bool nullable, 
+                   bool required, bool byReference, bool isVariadic)
+   : m_implPtr(new ArgumentPrivate(name, className, nullable, required, byReference, isVariadic))
 {}
 
 Argument::Argument(const Argument &other)

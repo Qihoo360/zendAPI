@@ -49,9 +49,10 @@ public:
    const char *getClassName() const;
    
 protected:
-   Argument(const char *name, Type type, bool required = true, bool byReference = false);
+   Argument(const char *name, Type type, bool required = true, 
+            bool byReference = false, bool isVariadic = false);
    Argument(const char *name, const char *className, bool nullable = true, 
-            bool required = true, bool byReference = false);
+            bool required = true, bool byReference = false, bool isVariadic = false);
    ZAPI_DECLARE_PRIVATE(Argument)
    std::unique_ptr<ArgumentPrivate> m_implPtr;
 };
@@ -65,12 +66,14 @@ using Arguments = std::initializer_list<Argument>;
 class ZAPI_DECL_EXPORT RefArgument : public Argument
 {
 public:
-   RefArgument(const char *name, Type type = Type::Null, bool required = true)
-      : Argument(name, type, required, true)
+   RefArgument(const char *name, Type type = Type::Null, bool required = true,
+               bool isVariadic = false)
+      : Argument(name, type, required, true, isVariadic)
    {}
    
-   RefArgument(const char *name, const char *className, bool nullable = false, bool required = true)
-      : Argument(name, className, nullable, required, true)
+   RefArgument(const char *name, const char *className, bool nullable = false, 
+               bool required = true, bool isVariadic = false)
+      : Argument(name, className, nullable, required, true, isVariadic)
    {}
    
    RefArgument(const RefArgument &argument) 
@@ -87,12 +90,14 @@ public:
 class ZAPI_DECL_EXPORT ValueArgument : public Argument
 {
 public:
-   ValueArgument(const char *name, Type type = Type::Null, bool required = true)
-      : Argument(name, type, required, false)
+   ValueArgument(const char *name, Type type = Type::Null, 
+                 bool required = true, bool isVariadic = false)
+      : Argument(name, type, required, false, isVariadic)
    {}
    
-   ValueArgument(const char *name, const char *className, bool nullable = false, bool required = true)
-      : Argument(name, className, nullable, required, false)
+   ValueArgument(const char *name, const char *className, bool nullable = false, 
+                 bool required = true, bool isVariadic = false)
+      : Argument(name, className, nullable, required, false, isVariadic)
    {}
    
    ValueArgument(const ValueArgument &argument)
