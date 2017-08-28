@@ -35,9 +35,20 @@ void print_sum(NumericVariant argQuantity, ...)
    va_start(args, argQuantity);
    NumericVariant result;
    for (int i = 0; i < argQuantity; ++i) {
-       result += NumericVariant(va_arg(args, zapi_varidic_item_type));
+      result += NumericVariant(va_arg(args, zapi_varidic_item_type));
    }
    zapi::out << result << std::flush;
+}
+
+Variant calculate_sum(NumericVariant argQuantity, ...)
+{
+   va_list args;
+   va_start(args, argQuantity);
+   NumericVariant result;
+   for (int i = 0; i < argQuantity; ++i) {
+      result += NumericVariant(va_arg(args, zapi_varidic_item_type));
+   }
+   return result;
 }
 
 void print_name_and_age(Parameters &params)
@@ -47,11 +58,9 @@ void print_name_and_age(Parameters &params)
    zapi::out << "name: " << name << " age: " << age << std::flush;
 }
 
-Variant add_two_number(Parameters &params)
+Variant add_two_number(const NumericVariant &num1, const NumericVariant &num2)
 {
-   int number1 = NumericVariant(params.at(0)).toLong();
-   int number2 = NumericVariant(params.at(1)).toLong();
-   return number1 + number2;
+   return num1 + num2;
 }
 
 Variant return_arg(Parameters &params)
@@ -83,7 +92,7 @@ void register_funcs(Extension &extension)
 {
    //std::result_of<int()>::type d = 12;
    //   extension.registerFunction<dummyext::show_something>("show_something");
-   //   extension.registerFunction<dummyext::get_name>("get_name");
+   //extension.registerFunction<decltype(&dummyext::get_name), &dummyext::get_name>("get_name");
    //   extension.registerFunction<dummyext::print_name>("print_name", {
    //                                                       ValueArgument("name", zapi::lang::Type::String)
    //                                                    });
@@ -91,10 +100,11 @@ void register_funcs(Extension &extension)
    //                                                               ValueArgument("name", zapi::lang::Type::String),
    //                                                               ValueArgument("age", zapi::lang::Type::Long)
    //                                                            });
-   //   extension.registerFunction<dummyext::add_two_number>("add_two_number", {
-   //                                                           ValueArgument("number1", zapi::lang::Type::Long),
-   //                                                           ValueArgument("number2", zapi::lang::Type::Long)
-   //                                                        });
+   extension.registerFunction<decltype(&dummyext::add_two_number), &dummyext::add_two_number>
+         ("add_two_number", {
+             ValueArgument("num1", zapi::lang::Type::Long),
+             ValueArgument("num2", zapi::lang::Type::Long)
+          });
    //   extension.registerFunction<dummyext::return_arg>("return_arg", {
    //                                                       ValueArgument("number1"),
    //                                                    });
@@ -102,15 +112,18 @@ void register_funcs(Extension &extension)
 
 void register_ns_io(Namespace &io)
 {
+      io.registerFunction<decltype(&dummyext::calculate_sum), &dummyext::calculate_sum>
+            ("calculate_sum", {
+                VariadicArgument("numbers")
+             });
    //   io.registerFunction<decltype(&dummyext::print_name), &dummyext::print_name>
    //         ("print_name", {
    //             ValueArgument("name", zapi::lang::Type::String)
    //          });
-   io.registerFunction<decltype(&dummyext::print_sum), &dummyext::print_sum>
-         ("print_sum", {
-             ValueArgument("count", zapi::lang::Type::Numeric),
-             VariadicArgument("numbers")
-          });
+   //   io.registerFunction<decltype(&dummyext::print_sum), &dummyext::print_sum>
+   //         ("print_sum", {
+   //             VariadicArgument("numbers")
+   //          });
    //   io.registerFunction<dummyext::show_something>("show_something");
    io.registerConstant(Constant("IO_TYPE", "ASYNC"));
    io.registerConstant(Constant("NATIVE_STREAM", true));

@@ -112,7 +112,10 @@ TEST(ExtensionTest, testFuncRegister)
    //Engine::eval(code);
    //   ASSERT_EQ(phpOutput, "bool(true)\n");
    
-   code = "zapi\\io\\print_sum(1, 2, 3, 4, 5, 9, 10, 11, 12);";
+   /// code = "zapi\\io\\print_sum(1, 2, 3, 4, 5, 9, 10, 11, 12);";
+   //   code = "echo \\get_name();";
+//   code = "echo \\add_two_number(1, 2);";
+   code = "echo \\zapi\\io\\calculate_sum(1, 2, 3, 4, 5);";
    Engine::eval(code);
    std::cout << phpOutput << std::endl;
 }
