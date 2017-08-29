@@ -5,7 +5,8 @@
 #include <string>
 
 using zapi::lang::StdClass;
-using zapi::lang::Variant;
+using zapi::ds::Variant;
+using zapi::ds::NumericVariant;
 
 class Person : public StdClass
 {
@@ -16,6 +17,7 @@ public:
    void __destruct();
    void showName();
    static void staticShowName();
+   void print_sum(NumericVariant argQuantity, ...);
 private:
    /**
      *  The initial value

@@ -29,6 +29,17 @@ void Person::staticShowName()
    zapi::out << "static my name is zapi" << std::endl;   
 }
 
+void Person::print_sum(zapi::ds::NumericVariant argQuantity, ...)
+{
+   va_list args;
+   va_start(args, argQuantity);
+   NumericVariant result;
+   for (int i = 0; i < argQuantity; ++i) {
+      result += NumericVariant(va_arg(args, zapi_varidic_item_type));
+   }
+   zapi::out << "the sum is " << result << std::endl;   
+}
+
 Address::Address()
    : address("beijing")
 {}

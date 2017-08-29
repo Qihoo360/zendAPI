@@ -43,7 +43,8 @@ ZAPI_DECL_EXPORT void *get_module()
    zapi::lang::Class<Person> personClass("Person");
    //personClass.registerMethod<decltype(&Person::__construct), &Person::__construct>("__construct");
    //personClass.registerMethod<decltype(&Person::showName), &Person::showName>("showName");
-   personClass.registerMethod<decltype(&Person::staticShowName), &Person::staticShowName>("staticShowName");
+//   personClass.registerMethod<decltype(&Person::staticShowName), &Person::staticShowName>("staticShowName");
+   personClass.registerMethod<decltype(&Person::print_sum), &Person::print_sum>("print_sum");
    personClass.registerConstant("QIHOO", "beijing qihoo asdasd");
    personClass.registerConstant("MY_CONST", "MY_CONST_VALUE");
    personClass.registerConstant(Constant("PI", 3.1415926));
