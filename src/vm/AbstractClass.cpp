@@ -595,24 +595,26 @@ void AbstractClassPrivate::unsetProperty(zval *object, zval *name, void **cacheS
    }
 }
 
-zend_function *AbstractClassPrivate::getMethod(zend_object **object, zend_string *method, const zval *key)
+zend_function *AbstractClassPrivate::getMethod(zend_object **object, zend_string *methodName, const zval *key)
 {
-   zend_function *defaultFuncInfo = std_object_handlers.get_method(object, method, key);
+   zend_function *defaultFuncInfo = std_object_handlers.get_method(object, methodName, key);
    if (defaultFuncInfo) {
       return defaultFuncInfo;
    }
+   // if exception throw before delete the memory will be relase after request cycle
    zend_class_entry *entry = (*object)->ce;
    CallContext *callContext = reinterpret_cast<CallContext *>(emalloc(sizeof(CallContext)));
+   std::memset(callContext, 0, sizeof(CallContext));
    zend_internal_function *func = &callContext->m_func;
    func->type = ZEND_INTERNAL_FUNCTION;
    func->module = nullptr;
-   func->handler = &AbstractClassPrivate::magicCallForwarder;
+   func->handler = AbstractClassPrivate::magicCallForwarder;
    func->arg_info = nullptr;
    func->num_args = 0;
    func->required_num_args = 0;
    func->scope = entry;
    func->fn_flags = ZEND_ACC_CALL_VIA_HANDLER;
-   func->function_name = method;
+   func->function_name = methodName;
    callContext->m_selfPtr = retrieve_acp_ptr_from_cls_entry(entry);
    return reinterpret_cast<zend_function *>(callContext);
 }
@@ -623,9 +625,9 @@ zend_function *AbstractClassPrivate::getStaticMethod(zend_class_entry *entry, ze
    if (defaultFuncInfo) {
       return defaultFuncInfo;
    }
-   // TODO here maybe have memory leak
-   // but after request cycle the memory will release finally
+   // if exception throw before delete the memory will be relase after request cycle
    CallContext *callContext = reinterpret_cast<CallContext *>(emalloc(sizeof(CallContext)));
+   std::memset(callContext, 0, sizeof(CallContext));
    zend_internal_function *func = &callContext->m_func;
    func->type = ZEND_INTERNAL_FUNCTION;
    func->module = nullptr;

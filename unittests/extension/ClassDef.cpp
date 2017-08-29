@@ -37,7 +37,18 @@ void Person::print_sum(zapi::ds::NumericVariant argQuantity, ...)
    for (int i = 0; i < argQuantity; ++i) {
       result += NumericVariant(va_arg(args, zapi_varidic_item_type));
    }
-   zapi::out << "the sum is " << result << std::endl;   
+   zapi::out << "the sum is " << result << std::endl;
+}
+
+int Person::addSum(NumericVariant argQuantity, ...)
+{
+   va_list args;
+   va_start(args, argQuantity);
+   NumericVariant result;
+   for (int i = 0; i < argQuantity; ++i) {
+      result += NumericVariant(va_arg(args, zapi_varidic_item_type));
+   }
+   return result;
 }
 
 int Person::addTwoNum(const NumericVariant &num1, const NumericVariant &num2)
