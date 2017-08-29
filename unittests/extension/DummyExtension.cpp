@@ -40,8 +40,9 @@ ZAPI_DECL_EXPORT void *get_module()
    extension.registerConstant(Constant("ZAPI_VERSION", "v0.0.1"));
    extension.registerConstant(Constant("QIHOO", "beijing qihoo"));
    dummyext::register_funcs(extension);
-   zapi::lang::Class<Person> personClass("Person1");
+   zapi::lang::Class<Person> personClass("Person");
    //personClass.registerMethod<decltype(&Person::__construct), &Person::__construct>("__construct");
+   personClass.registerMethod<decltype(&Person::showName), &Person::showName>("showName");
    personClass.registerConstant("QIHOO", "beijing qihoo asdasd");
    personClass.registerConstant("MY_CONST", "MY_CONST_VALUE");
    personClass.registerConstant(Constant("PI", 3.1415926));

@@ -19,6 +19,10 @@ void Person::__destruct()
    // zapi::out << "Person destruct" << std::endl;
 }
 
+void Person::showName()
+{
+   zapi::out << "my name is zapi" << std::endl;   
+}
 
 Address::Address()
    : address("beijing")

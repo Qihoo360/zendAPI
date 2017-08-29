@@ -14,6 +14,7 @@ public:
 //   Variant __get(const std::string &name);
    void __construct();
    void __destruct();
+   void showName();
 private:
    /**
      *  The initial value

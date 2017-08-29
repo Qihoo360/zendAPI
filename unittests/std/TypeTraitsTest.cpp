@@ -46,6 +46,19 @@ void print_name()
 
 } // dummyext
 
+class TestClass
+{
+public:
+   void getName()
+   {
+      
+   }
+   void static getVersion()
+   {
+      
+   }
+};
+
 TEST(TypeTraitTest, test)
 {
    bool ret = std::is_same<zapi::stdext::function_return_type<decltype(func2)>::type, int>::value;
@@ -61,4 +74,8 @@ TEST(TypeTraitTest, test)
    ASSERT_EQ(paramNumber, 0);
    paramNumber = zapi::stdext::callable_params_number<decltype(&func2)>::value;
    ASSERT_EQ(paramNumber, 2);
+//   ret = std::is_member_function_pointer<std::decay<decltype(&TestClass::getVersion)>::type>::value;
+//   ASSERT_TRUE(ret);
+   ret = std::is_function<std::decay<decltype(&TestClass::getName)>::type>::value;
+   ASSERT_TRUE(ret);
 }

@@ -24,6 +24,7 @@
 #include "zapi/ds/NumericVariant.h"
 #include "zapi/protocol/Serializable.h"
 #include "zapi/protocol/Traversable.h"
+#include "zapi/stdext/TypeTraits.h"
 
 namespace zapi
 {
@@ -34,9 +35,91 @@ using zapi::vm::AbstractClass;
 using zapi::vm::InvokeBridge;
 using zapi::protocol::Serializable;
 using zapi::protocol::Traversable;
+using zapi::stdext::member_pointer_traits;
 
 class Constant;
 class Interface;
+
+// forward declare for internal::ClassMethodRegister
+template <typename T>
+class Class;
+
+namespace internal 
+{
+
+template <typename TargetClassType,
+          typename CallalbleType,
+          CallalbleType callable,
+          bool IsCallable,
+          bool IsMemberCallable>
+struct ClassMethodRegisterImpl
+{};
+
+template <typename TargetClassType,
+          typename CallalbleType,
+          CallalbleType callable>
+struct ClassMethodRegisterImpl<TargetClassType, CallalbleType, callable, false, false>
+{
+   // is member pointer but class type of the pointer is not same with
+   // register class type
+public:
+   static void registerMethod(Class<TargetClassType> &meta, const char *name, Modifier flags, const Arguments &args)
+   {
+      
+   }
+};
+
+template <typename TargetClassType,
+          typename CallalbleType,
+          CallalbleType callable>
+struct ClassMethodRegisterImpl<TargetClassType, CallalbleType, callable, true, false>
+{
+   // for static method register
+public:
+   static void registerMethod(Class<TargetClassType> &meta, const char *name, Modifier flags, const Arguments &args)
+   {
+      
+      
+   }
+};
+
+template <typename TargetClassType,
+          typename CallalbleType,
+          CallalbleType callable>
+struct ClassMethodRegisterImpl<TargetClassType, CallalbleType, callable, false, true>
+{
+   using ForwardCallableType = CallalbleType;
+   // for instance method register
+public:
+   inline static void registerMethod(Class<TargetClassType> &meta, const char *name, Modifier flags, const Arguments &args)
+   {
+      meta.registerMethod(name, &InvokeBridge<ForwardCallableType, callable>::invoke, flags, args);
+   }
+};
+
+template <typename TargetClassType,
+          typename CallalbleType,
+          CallalbleType callable>
+struct ClassMethodRegisterImpl<TargetClassType, CallalbleType, callable, true, true>
+{
+   // error situation
+};
+
+template <typename TargetClassType,
+          typename CallalbleType,
+          CallalbleType callable>
+struct ClassMethodRegister 
+      : public ClassMethodRegisterImpl<
+      TargetClassType, 
+      CallalbleType, 
+      callable, 
+      std::is_function<CallalbleType>::value, 
+      std::is_member_function_pointer<CallalbleType>::value &&
+      std::is_same<typename std::decay<typename member_pointer_traits<CallalbleType>::ClassType>::type,
+      typename std::decay<TargetClassType>::type>::value>
+{};
+
+} // internal
 
 template <typename T>
 class ZAPI_DECL_EXPORT Class final : public AbstractClass
@@ -49,29 +132,29 @@ public:
    Class<T> &operator=(const Class<T> &other);
    Class<T> &operator=(Class<T> &&other);
 public:
-   template <typename FuncType, typename std::decay<FuncType>::type callable>
+   template <typename CallableType, CallableType callable>
    Class<T> &registerMethod(const char *name, Modifier flags, const Arguments &args = {});
-   template <typename FuncType, typename std::decay<FuncType>::type callable>
+   template <typename CallableType, CallableType callable>
    Class<T> &registerMethod(const char *name, const Arguments &args = {});
    
    
-//   // static methods register
-//   template <void (*method)()>
-//   Class<T> &registerMethod(const char *name, Modifier flags, const Arguments &args = {});
-//   template <void (*method)(Parameters &params)>
-//   Class<T> &registerMethod(const char *name, Modifier flags, const Arguments &args = {});
-//   template <Variant (*method)()>
-//   Class<T> &registerMethod(const char *name, Modifier flags, const Arguments &args = {});
-//   template <Variant (*method)(Parameters &params)>
-//   Class<T> &registerMethod(const char *name, Modifier flags, const Arguments &args = {});
-//   template <void (*method)()>
-//   Class<T> &registerMethod(const char *name, const Arguments &args = {});
-//   template <void (*method)(Parameters &params)>
-//   Class<T> &registerMethod(const char *name, const Arguments &args = {});
-//   template <Variant (*method)()>
-//   Class<T> &registerMethod(const char *name, const Arguments &args = {});
-//   template <Variant (*method)(Parameters &params)>
-//   Class<T> &registerMethod(const char *name, const Arguments &args = {});
+   //   // static methods register
+   //   template <void (*method)()>
+   //   Class<T> &registerMethod(const char *name, Modifier flags, const Arguments &args = {});
+   //   template <void (*method)(Parameters &params)>
+   //   Class<T> &registerMethod(const char *name, Modifier flags, const Arguments &args = {});
+   //   template <Variant (*method)()>
+   //   Class<T> &registerMethod(const char *name, Modifier flags, const Arguments &args = {});
+   //   template <Variant (*method)(Parameters &params)>
+   //   Class<T> &registerMethod(const char *name, Modifier flags, const Arguments &args = {});
+   //   template <void (*method)()>
+   //   Class<T> &registerMethod(const char *name, const Arguments &args = {});
+   //   template <void (*method)(Parameters &params)>
+   //   Class<T> &registerMethod(const char *name, const Arguments &args = {});
+   //   template <Variant (*method)()>
+   //   Class<T> &registerMethod(const char *name, const Arguments &args = {});
+   //   template <Variant (*method)(Parameters &params)>
+   //   Class<T> &registerMethod(const char *name, const Arguments &args = {});
    
    Class<T> &registerMethod(const char *name, Modifier flags, const Arguments &args = {});
    Class<T> &registerMethod(const char *name, const Arguments &args = {});
@@ -99,6 +182,7 @@ public:
    
    Class<T> &registerInterface(const Interface &interface);
    Class<T> &registerInterface(Interface &&interface);
+   
 private:
    virtual StdClass *construct() const override;
    virtual StdClass *clone(StdClass *orig) const override;
@@ -158,6 +242,11 @@ private:
    template <typename X>
    typename std::enable_if<!HasCallStatic<X>::value, Variant>::type
    static doCallStatic(const char *name, Parameters &params);
+   using AbstractClass::registerMethod;
+   
+   template <typename TargetClassType, typename CallalbleType,
+             CallalbleType callable, bool IsCallable, bool IsMemberCallable>
+   friend class internal::ClassMethodRegisterImpl;
 };
 
 template <typename T>
@@ -190,19 +279,19 @@ Class<T> &Class<T>::registerInterface(Interface &&interface)
 }
 
 template <typename T>
-template <typename FuncType, typename std::decay<FuncType>::type callable>
+template <typename CallableType, CallableType callable>
 Class<T> &Class<T>::registerMethod(const char *name, Modifier flags, const Arguments &args)
 {
-   AbstractClass::registerMethod(name, &InvokeBridge<FuncType, callable>::invoke, flags, args);
+   internal::ClassMethodRegister<T, typename std::decay<CallableType>::type, callable>::registerMethod(*this, name, flags, args);
    return *this;
 }
 
-
 template <typename T>
-template <typename FuncType, typename std::decay<FuncType>::type callable>
+template <typename CallableType, CallableType callable>
 Class<T> &Class<T>::registerMethod(const char *name, const Arguments &args)
 {
-   AbstractClass::registerMethod(name, &InvokeBridge<FuncType, callable>::invoke, Modifier::Public, args);
+   // we must ensure the T is same with ClassType in CallableType
+   internal::ClassMethodRegister<T, typename std::decay<CallableType>::type, callable>::registerMethod(*this, name, Modifier::Public, args);
    return *this;
 }
 

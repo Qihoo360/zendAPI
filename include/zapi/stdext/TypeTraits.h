@@ -685,6 +685,9 @@ struct callable_has_variable_param<R(T::*)(ArgTypes... args, ...)>
    constexpr static bool value = true;
 };
 
+template <typename MemberPointer>
+using member_pointer_traits = internal::member_pointer_traits<MemberPointer>;
+
 } // stdext
 } // zapi
 

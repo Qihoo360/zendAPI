@@ -106,7 +106,7 @@ namespace zapi
 namespace vm
 {
 
-template <typename T, typename ::std::decay<T>::type callable, 
+template <typename CallableType, CallableType callable, 
           bool isMemberFunc, bool HasReturn, bool HasVariableParam>
 class InvokeBridgePrivate
 {
@@ -282,7 +282,7 @@ public:
 };
 
 
-//template <typename T, typename std::decay<T>::type callable, 
+//template <typename T, typename std::decay<CallableType>::type callable, 
 //          bool HasReturn, bool isMemberFunc>
 //StdClass *
 //InvokeBridgePrivate<T, callable, isMemberFunc, HasReturn, HasVariableParam>::instance(zend_execute_data *execute_data)
@@ -291,7 +291,7 @@ public:
 //}
 
 
-//template <typename T, typename std::decay<T>::type callable, 
+//template <typename T, typename std::decay<CallableType>::type callable, 
 //          bool HasReturn, bool isMemberFunc>
 //Parameters 
 //InvokeBridgePrivate<T, isMemberFunc, HasReturn, HasVariableParam>::retrieveParameters(_zend_execute_data *execute_data)
@@ -299,15 +299,15 @@ public:
 //   return Parameters(getThis(), ZEND_NUM_ARGS());
 //}
 
-template <typename T, typename std::decay<T>::type callable>
-class InvokeBridgePrivate <T, callable, false, false, false>
+template <typename CallableType, CallableType callable>
+class InvokeBridgePrivate <CallableType, callable, false, false, false>
 {
 public:
    static void invoke(zend_execute_data *execute_data, zval *return_value)
    {
       try {
          // no variable param
-         constexpr size_t paramNumber = zapi::stdext::callable_params_number<T>::value;
+         constexpr size_t paramNumber = zapi::stdext::callable_params_number<CallableType>::value;
          if (!check_invoke_arguments(execute_data, return_value, paramNumber)) {
             return;
          }
@@ -316,7 +316,7 @@ public:
          zend_get_parameters_array_ex(argNumber, arguments);
          auto tuple = zapi::stdext::gen_tuple<paramNumber>([&arguments](size_t index){
                return Variant(&arguments[index]);
-      });
+         });
          zapi::stdext::apply(callable, tuple);
          yield(return_value, nullptr);
       } catch (Exception &exception) {
@@ -325,15 +325,15 @@ public:
    }
 };
 
-template <typename T, typename std::decay<T>::type callable>
-class InvokeBridgePrivate <T, callable, false, false, true>
+template <typename CallableType, CallableType callable>
+class InvokeBridgePrivate <CallableType, callable, false, false, true>
 {
 public:
    static void invoke(zend_execute_data *execute_data, zval *return_value)
    {
       try {
          // variadic params
-         constexpr size_t paramNumber = zapi::stdext::callable_params_number<T>::value;
+         constexpr size_t paramNumber = zapi::stdext::callable_params_number<CallableType>::value;
          if (!check_invoke_arguments(execute_data, return_value, paramNumber - 1)) {
             return;
          }
@@ -363,15 +363,15 @@ public:
    }
 };
 
-template <typename T, typename std::decay<T>::type callable>
-class InvokeBridgePrivate <T, callable, false, true, false>
+template <typename CallableType, CallableType callable>
+class InvokeBridgePrivate <CallableType, callable, false, true, false>
 {
 public:
    static void invoke(zend_execute_data *execute_data, zval *return_value)
    {
       try {
          // no variable param
-         constexpr size_t paramNumber = zapi::stdext::callable_params_number<T>::value;
+         constexpr size_t paramNumber = zapi::stdext::callable_params_number<CallableType>::value;
          if (!check_invoke_arguments(execute_data, return_value, paramNumber)) {
             return;
          }
@@ -389,15 +389,15 @@ public:
    }
 };
 
-template <typename T, typename std::decay<T>::type callable>
-class InvokeBridgePrivate <T, callable, false, true, true>
+template <typename CallableType, CallableType callable>
+class InvokeBridgePrivate <CallableType, callable, false, true, true>
 {
 public:
    static void invoke(zend_execute_data *execute_data, zval *return_value)
    {
       try {
          // variadic params
-         constexpr size_t paramNumber = zapi::stdext::callable_params_number<T>::value;
+         constexpr size_t paramNumber = zapi::stdext::callable_params_number<CallableType>::value;
          // for the first marker param
          if (!check_invoke_arguments(execute_data, return_value, paramNumber - 1)) {
             return;
@@ -427,54 +427,72 @@ public:
    }
 };
 
-//template <typename T, typename std::decay<T>::type callable>
-//class InvokeBridgePrivate <T, callable, false, true>
-//{
-//public:
-//   static void invoke(zend_execute_data *execute_data, zval *return_value)
-//   {
-//   }
-//};
+template <typename CallableType, CallableType callable>
+class InvokeBridgePrivate <CallableType, callable, true, false, false>
+{
+public:
+   static void invoke(zend_execute_data *execute_data, zval *return_value)
+   {  
+      try {
+         // no variable param
+         constexpr size_t paramNumber = zapi::stdext::callable_params_number<CallableType>::value;
+         if (!check_invoke_arguments(execute_data, return_value, paramNumber)) {
+            return;
+         }
+         using ClassType = typename std::decay<typename zapi::stdext::member_pointer_traits<CallableType>::ClassType>::type;
+         StdClass *nativeObject = ObjectBinder::retrieveSelfPtr(getThis())->getNativeObject();
+         const size_t argNumber = ZEND_NUM_ARGS();
+         zval arguments[argNumber];
+         zend_get_parameters_array_ex(argNumber, arguments);
+         auto objectTuple = std::make_tuple(static_cast<ClassType *>(nativeObject));
+         // for class object
+         auto tuple = std::tuple_cat(objectTuple, zapi::stdext::gen_tuple<paramNumber>([&arguments](size_t index){
+               return Variant(&arguments[index]);
+         }));
+         zapi::stdext::apply(callable, tuple);
+         yield(return_value, nullptr);
+      } catch (Exception &exception) {
+         zapi::kernel::process_exception(exception);
+      }
+   }
+};
 
-//template <typename T, typename std::decay<T>::type callable>
-//class InvokeBridgePrivate <T, callable, true, false>
-//{
-//public:
-//   static void invoke(zend_execute_data *execute_data, zval *return_value)
-//   {
-//      //      try {
-//      //         // check invoke arguments
-//      //         if (!checkInvokeArguments(execute_data, return_value)) {
-//      //            return;
-//      //         }
-//      //         Parameters params = retrieveParameters(execute_data);
-//      //         (static_cast<T *>(instance(execute_data))->*method)(params);
-//      //         yield(return_value, nullptr);
-//      //      } catch (Exception &exception) {
-//      //         handle(exception);
-//      //      }
-//   }
-//};
+template <typename CallableType, CallableType callable>
+class InvokeBridgePrivate <CallableType, callable, true, false, true>
+{
+public:
+   static void invoke(zend_execute_data *execute_data, zval *return_value)
+   {
+   }
+};
 
-//template <typename CallableType, typename std::decay<CallableType>::type callable>
-//class InvokeBridgePrivate <CallableType, callable, true, true>
-//{
-//public:
-//   static void invoke(zend_execute_data *execute_data, zval *return_value)
-//   {
-//   }
-//};
+template <typename CallableType, CallableType callable>
+class InvokeBridgePrivate <CallableType, callable, true, true, false>
+{
+public:
+   static void invoke(zend_execute_data *execute_data, zval *return_value)
+   {
+   }
+};
 
-template <typename CallableType, 
+template <typename CallableType, CallableType callable>
+class InvokeBridgePrivate <CallableType, callable, true, true, true>
+{
+public:
+   static void invoke(zend_execute_data *execute_data, zval *return_value)
+   {
+   }
+};
+
+// for normal function and static method
+template <typename CallableType,
           typename std::decay<CallableType>::type callable,
           typename DecayCallableType = typename std::decay<CallableType>::type>
 class InvokeBridge : public InvokeBridgePrivate<DecayCallableType, callable,
       std::is_member_function_pointer<DecayCallableType>::value,
       zapi::stdext::callable_has_return<DecayCallableType>::value,
       zapi::stdext::callable_has_variable_param<DecayCallableType>::value>
-{
-};
-
+{};
 
 } // vm
 } // zapi
