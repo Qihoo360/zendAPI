@@ -18,6 +18,7 @@ public:
    void showName();
    static void staticShowName();
    void print_sum(NumericVariant argQuantity, ...);
+   int addTwoNum(const NumericVariant &num1, const NumericVariant &num2);
 private:
    /**
      *  The initial value

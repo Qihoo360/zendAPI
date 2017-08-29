@@ -40,6 +40,11 @@ void Person::print_sum(zapi::ds::NumericVariant argQuantity, ...)
    zapi::out << "the sum is " << result << std::endl;   
 }
 
+int Person::addTwoNum(const NumericVariant &num1, const NumericVariant &num2)
+{
+   return num1 + num2;
+}
+
 Address::Address()
    : address("beijing")
 {}
