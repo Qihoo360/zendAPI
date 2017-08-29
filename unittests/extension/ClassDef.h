@@ -7,6 +7,7 @@
 using zapi::lang::StdClass;
 using zapi::ds::Variant;
 using zapi::ds::NumericVariant;
+using zapi::ds::StringVariant;
 
 class Person : public StdClass
 {
@@ -16,8 +17,9 @@ public:
    void __construct();
    void __destruct();
    void showName();
-   Variant __call(const std::string &method, Parameters &params) const;
+   //Variant __call(const std::string &method, Parameters &params) const;
    static void staticShowName();
+   static StringVariant concatStr(const StringVariant &lhs, const StringVariant &rhs);
    void print_sum(NumericVariant argQuantity, ...);
    int addSum(NumericVariant argQuantity, ...);
    int addTwoNum(const NumericVariant &num1, const NumericVariant &num2);

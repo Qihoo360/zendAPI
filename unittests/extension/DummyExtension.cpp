@@ -45,10 +45,15 @@ ZAPI_DECL_EXPORT void *get_module()
    //personClass.registerMethod<decltype(&Person::showName), &Person::showName>("showName");
    //   personClass.registerMethod<decltype(&Person::staticShowName), &Person::staticShowName>("staticShowName");
    //   personClass.registerMethod<decltype(&Person::print_sum), &Person::print_sum>("print_sum");
-   personClass.registerMethod<decltype(&Person::addTwoNum), &Person::addTwoNum>
-         ("addTwoNum", {
-             ValueArgument("num1", zapi::lang::Type::Numeric),
-             ValueArgument("num2", zapi::lang::Type::Numeric)
+//   personClass.registerMethod<decltype(&Person::addTwoNum), &Person::addTwoNum>
+//         ("addTwoNum", {
+//             ValueArgument("num1", zapi::lang::Type::Numeric),
+//             ValueArgument("num2", zapi::lang::Type::Numeric)
+//          });
+   personClass.registerMethod<decltype(&Person::concatStr), &Person::concatStr>
+         ("concatStr", {
+             ValueArgument("lhs", zapi::lang::Type::String),
+             ValueArgument("rhs", zapi::lang::Type::String)
           });
    //personClass.registerMethod<decltype(&Person::addSum), &Person::addSum>("addSum");
    personClass.registerConstant("QIHOO", "beijing qihoo asdasd");

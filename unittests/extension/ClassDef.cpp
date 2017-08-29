@@ -24,14 +24,18 @@ void Person::showName()
    zapi::out << "my name is zapi" << std::endl;   
 }
 
-Variant Person::__call(const std::string &method, Parameters &params) const
-{
-   return true;
-}
+//Variant Person::__call(const std::string &method, Parameters &params) const
+//{
+//}
 
 void Person::staticShowName()
 {
    zapi::out << "static my name is zapi" << std::endl;   
+}
+
+StringVariant Person::concatStr(const StringVariant &lhs, const StringVariant &rhs)
+{
+   return lhs + rhs;
 }
 
 void Person::print_sum(zapi::ds::NumericVariant argQuantity, ...)
