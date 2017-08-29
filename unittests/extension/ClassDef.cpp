@@ -24,6 +24,11 @@ void Person::showName()
    zapi::out << "my name is zapi" << std::endl;   
 }
 
+Variant Person::__call(const std::string &method, Parameters &params) const
+{
+   return true;
+}
+
 void Person::staticShowName()
 {
    zapi::out << "static my name is zapi" << std::endl;   

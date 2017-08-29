@@ -671,13 +671,12 @@ void AbstractClassPrivate::magicCallForwarder(INTERNAL_FUNCTION_PARAMETERS)
    ScopedFree scopeFree(callContext);
    try {
       AbstractClass *meta = callContext->m_selfPtr->m_apiPtr;
-      Variant result(return_value, true);
       Parameters params(getThis(), ZEND_NUM_ARGS());
       StdClass *nativeObject = params.getObject();
       if (nativeObject) {
-         result = meta->callMagicCall(nativeObject, name, params);
+         ZVAL_COPY(return_value, meta->callMagicCall(nativeObject, name, params).getZvalPtr());
       } else {
-         result = meta->callMagicStaticCall(name, params);
+         ZVAL_COPY(return_value, meta->callMagicStaticCall(name, params).getZvalPtr());
       }
    } catch (const NotImplemented &exception) {
       zend_error(E_ERROR, "Undefined method %s", name);
@@ -693,10 +692,9 @@ void AbstractClassPrivate::magicInvokeForwarder(INTERNAL_FUNCTION_PARAMETERS)
    AbstractClass *meta = callContext->m_selfPtr->m_apiPtr;
    ScopedFree scopeFree(callContext);
    try {
-      Variant result(return_value, true);
       Parameters params(getThis(), ZEND_NUM_ARGS());
       StdClass *nativeObject = params.getObject();
-      result = meta->callMagicInvoke(nativeObject, params);
+      ZVAL_COPY(return_value, meta->callMagicInvoke(nativeObject, params).getZvalPtr());
    } catch (const NotImplemented &exception) {
       zend_error(E_ERROR, "Function name must be a string");
    } catch (Exception &exception) {
@@ -746,7 +744,6 @@ int AbstractClassPrivate::compare(zval *left, zval *right)
       if (entry != Z_OBJCE_P(right)) {
          throw NotImplemented();
       }
-      
       AbstractClassPrivate *selfPtr = retrieve_acp_ptr_from_cls_entry(entry);
       AbstractClass *meta = selfPtr->m_apiPtr;
       StdClass *leftNativeObject = ObjectBinder::retrieveSelfPtr(left)->getNativeObject();

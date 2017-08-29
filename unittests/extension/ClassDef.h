@@ -16,6 +16,7 @@ public:
    void __construct();
    void __destruct();
    void showName();
+   Variant __call(const std::string &method, Parameters &params) const;
    static void staticShowName();
    void print_sum(NumericVariant argQuantity, ...);
    int addSum(NumericVariant argQuantity, ...);
