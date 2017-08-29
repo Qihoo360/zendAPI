@@ -24,6 +24,11 @@ void Person::showName()
    zapi::out << "my name is zapi" << std::endl;   
 }
 
+void Person::staticShowName()
+{
+   zapi::out << "static my name is zapi" << std::endl;   
+}
+
 Address::Address()
    : address("beijing")
 {}

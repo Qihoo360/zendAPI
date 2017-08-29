@@ -75,6 +75,7 @@ struct apply_cv<SourceType &, TargetType, false, true>
 template <typename MemberPointerType, bool IsMemberFunctionPtr, bool IsMemberObjectPtr>
 struct member_pointer_traits_imp
 {  // forward declaration; specializations later
+   using ClassType = void; // ? is this ok ?
 };
 
 template <typename RetType, typename Class, typename ...ParamTypes>
@@ -687,6 +688,14 @@ struct callable_has_variable_param<R(T::*)(ArgTypes... args, ...)>
 
 template <typename MemberPointer>
 using member_pointer_traits = internal::member_pointer_traits<MemberPointer>;
+
+template<typename TargetType>
+struct is_function_pointer
+{
+   static const bool value = std::is_pointer<TargetType>::value ?
+            std::is_function<typename std::remove_pointer<TargetType>::type>::value :
+            false;
+};
 
 } // stdext
 } // zapi

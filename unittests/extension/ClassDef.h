@@ -15,6 +15,7 @@ public:
    void __construct();
    void __destruct();
    void showName();
+   static void staticShowName();
 private:
    /**
      *  The initial value

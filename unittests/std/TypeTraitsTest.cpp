@@ -76,6 +76,6 @@ TEST(TypeTraitTest, test)
    ASSERT_EQ(paramNumber, 2);
 //   ret = std::is_member_function_pointer<std::decay<decltype(&TestClass::getVersion)>::type>::value;
 //   ASSERT_TRUE(ret);
-   ret = std::is_function<std::decay<decltype(&TestClass::getName)>::type>::value;
+   ret = std::is_function<std::decay<decltype(&TestClass::getVersion)>::type>::value;
    ASSERT_TRUE(ret);
 }

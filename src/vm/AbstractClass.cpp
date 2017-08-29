@@ -624,6 +624,7 @@ zend_function *AbstractClassPrivate::getStaticMethod(zend_class_entry *entry, ze
       return defaultFuncInfo;
    }
    // TODO here maybe have memory leak
+   // but after request cycle the memory will release finally
    CallContext *callContext = reinterpret_cast<CallContext *>(emalloc(sizeof(CallContext)));
    zend_internal_function *func = &callContext->m_func;
    func->type = ZEND_INTERNAL_FUNCTION;
@@ -633,7 +634,7 @@ zend_function *AbstractClassPrivate::getStaticMethod(zend_class_entry *entry, ze
    func->num_args = 0;
    func->required_num_args = 0;
    func->scope = nullptr;
-   func->fn_flags = ZEND_ACC_CALL_VIA_HANDLER;
+   func->fn_flags = ZEND_ACC_CALL_VIA_HANDLER | ZEND_ACC_STATIC;
    func->function_name = methodName;
    callContext->m_selfPtr = retrieve_acp_ptr_from_cls_entry(entry);
    return reinterpret_cast<zend_function *>(callContext);

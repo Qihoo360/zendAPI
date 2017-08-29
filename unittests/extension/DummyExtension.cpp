@@ -42,14 +42,15 @@ ZAPI_DECL_EXPORT void *get_module()
    dummyext::register_funcs(extension);
    zapi::lang::Class<Person> personClass("Person");
    //personClass.registerMethod<decltype(&Person::__construct), &Person::__construct>("__construct");
-   personClass.registerMethod<decltype(&Person::showName), &Person::showName>("showName");
+   //personClass.registerMethod<decltype(&Person::showName), &Person::showName>("showName");
+   personClass.registerMethod<decltype(&Person::staticShowName), &Person::staticShowName>("staticShowName");
    personClass.registerConstant("QIHOO", "beijing qihoo asdasd");
    personClass.registerConstant("MY_CONST", "MY_CONST_VALUE");
    personClass.registerConstant(Constant("PI", 3.1415926));
    personClass.registerProperty("name", "zzu_softboy");
    personClass.registerProperty("staticProp", "beijing", Modifier::Public | Modifier::Static);
    Interface infoInterface("InfoProvider");
-//   infoInterface.registerMethod("getName");
+   //   infoInterface.registerMethod("getName");
    personClass.registerInterface(infoInterface);
    extension.registerInterface(infoInterface);
    extension.registerClass(personClass);
