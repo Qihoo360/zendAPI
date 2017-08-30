@@ -99,6 +99,22 @@ bool check_invoke_arguments(_zend_execute_data *execute_data, _zval_struct *retu
    return false;
 }
 
+class InvokeParamGenerator
+{
+public:
+   InvokeParamGenerator(zval *arguments)
+      : m_arguments(arguments)
+   {}
+   template <typename ParamType>
+   ParamType generate(size_t index)
+   {
+      
+   }
+   
+private:
+   zval *m_arguments;
+};
+
 }
 
 namespace zapi
@@ -123,17 +139,17 @@ public:
    {
       try {
          // no variable param
-         constexpr size_t paramNumber = zapi::stdext::callable_params_number<CallableType>::value;
+         constexpr size_t paramNumber = zapi::stdext::CallableInfoTrait<CallableType>::argNum;
          if (!check_invoke_arguments(execute_data, return_value, paramNumber)) {
             return;
          }
          const size_t argNumber = ZEND_NUM_ARGS();
          zval arguments[argNumber];
          zend_get_parameters_array_ex(argNumber, arguments);
-         auto tuple = zapi::stdext::gen_tuple<paramNumber>([&arguments](size_t index){
-               return Variant(&arguments[index]);
+         auto tuple = zapi::stdext::gen_tuple<paramNumber>(
+                  [&arguments](size_t index) {
+               return Variant(&arguments[index]); 
          });
-         zapi::stdext::apply(callable, tuple);
          yield(return_value, nullptr);
       } catch (Exception &exception) {
          zapi::kernel::process_exception(exception);
@@ -149,7 +165,7 @@ public:
    {
       try {
          // variadic params
-         constexpr size_t paramNumber = zapi::stdext::callable_params_number<CallableType>::value;
+         constexpr size_t paramNumber = zapi::stdext::CallableInfoTrait<CallableType>::argNum;
          if (!check_invoke_arguments(execute_data, return_value, paramNumber - 1)) {
             return;
          }
@@ -187,7 +203,7 @@ public:
    {
       try {
          // no variable param
-         constexpr size_t paramNumber = zapi::stdext::callable_params_number<CallableType>::value;
+         constexpr size_t paramNumber = zapi::stdext::CallableInfoTrait<CallableType>::argNum;
          if (!check_invoke_arguments(execute_data, return_value, paramNumber)) {
             return;
          }
@@ -197,7 +213,7 @@ public:
          auto tuple = zapi::stdext::gen_tuple<paramNumber>(
                   [&arguments](size_t index) {
                return Variant(&arguments[index]); 
-         });
+      });
          yield(return_value, zapi::stdext::apply(callable, tuple));
       } catch (Exception &exception) {
          zapi::kernel::process_exception(exception);
@@ -213,7 +229,7 @@ public:
    {
       try {
          // variadic params
-         constexpr size_t paramNumber = zapi::stdext::callable_params_number<CallableType>::value;
+         constexpr size_t paramNumber = zapi::stdext::CallableInfoTrait<CallableType>::argNum;
          // for the first marker param
          if (!check_invoke_arguments(execute_data, return_value, paramNumber - 1)) {
             return;
@@ -251,7 +267,7 @@ public:
    {  
       try {
          // no variable param
-         constexpr size_t paramNumber = zapi::stdext::callable_params_number<CallableType>::value;
+         constexpr size_t paramNumber = zapi::stdext::CallableInfoTrait<CallableType>::argNum;
          if (!check_invoke_arguments(execute_data, return_value, paramNumber)) {
             return;
          }
@@ -281,7 +297,7 @@ public:
    {
       try {
          // variable params
-         constexpr size_t paramNumber = zapi::stdext::callable_params_number<CallableType>::value;
+         constexpr size_t paramNumber = zapi::stdext::CallableInfoTrait<CallableType>::argNum;
          if (!check_invoke_arguments(execute_data, return_value, paramNumber - 1)) {
             return;
          }
@@ -323,7 +339,7 @@ public:
    {
       try {
          // no variable param
-         constexpr size_t paramNumber = zapi::stdext::callable_params_number<CallableType>::value;
+         constexpr size_t paramNumber = zapi::stdext::CallableInfoTrait<CallableType>::argNum;
          if (!check_invoke_arguments(execute_data, return_value, paramNumber)) {
             return;
          }
@@ -352,7 +368,7 @@ public:
    {
       try {
          // variable params
-         constexpr size_t paramNumber = zapi::stdext::callable_params_number<CallableType>::value;
+         constexpr size_t paramNumber = zapi::stdext::CallableInfoTrait<CallableType>::argNum;
          if (!check_invoke_arguments(execute_data, return_value, paramNumber - 1)) {
             return;
          }

@@ -18,6 +18,27 @@
 
 #include "zapi/stdext/TypeTraits.h"
 #include <type_traits>
+#include "zapi/ds/NumericVariant.h"
+#include <tuple>
+
+template<typename T> 
+struct function_traits;  
+
+template<typename R, typename ...Args> 
+struct function_traits<std::function<R(Args...)>>
+{
+    static const size_t nargs = sizeof...(Args);
+
+    typedef R result_type;
+
+    template <size_t i>
+    struct arg
+    {
+        typedef typename std::tuple_element<i, std::tuple<Args...>>::type type;
+    };
+};
+
+using zapi::ds::NumericVariant;
 
 int func1() 
 {
@@ -40,6 +61,11 @@ namespace dummyext
 {
 
 void print_name()
+{
+   
+}
+
+void get_value_ref(NumericVariant number)
 {
    
 }
@@ -70,12 +96,15 @@ TEST(TypeTraitTest, test)
    ASSERT_TRUE(ret);
    ret = std::is_same<zapi::stdext::callable_return_type<decltype(&dummyext::print_name)>::type, void>::value;
    ASSERT_TRUE(ret);
-   int paramNumber = zapi::stdext::callable_params_number<decltype(&func1)>::value;
+   int paramNumber = zapi::stdext::CallableInfoTrait<decltype(&func1)>::argNum;
    ASSERT_EQ(paramNumber, 0);
-   paramNumber = zapi::stdext::callable_params_number<decltype(&func2)>::value;
+   paramNumber = zapi::stdext::CallableInfoTrait<decltype(&func2)>::argNum;
    ASSERT_EQ(paramNumber, 2);
 //   ret = std::is_member_function_pointer<std::decay<decltype(&TestClass::getVersion)>::type>::value;
 //   ASSERT_TRUE(ret);
    ret = std::is_function<std::decay<decltype(&TestClass::getVersion)>::type>::value;
-   ASSERT_TRUE(ret);
+   //ASSERT_TRUE(ret);
+   ///int xx = zapi::stdext::function_traits<void(NumericVariant)>::nargs;
+   //ret = std::is_same<zapi::stdext::function_traits<typename std::remove_pointer<decltype(&dummyext::get_value_ref)>::type>::arg<0>::type, NumericVariant>::value;
+   std::cout << std::is_same<NumericVariant, function_traits<std::function<decltype(dummyext::get_value_ref)>>::arg<0>::type>::value << std::endl;
 }

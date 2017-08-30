@@ -19,19 +19,17 @@
 
 #include "zapi/stdext/internal/FunctionalPrivate.h"
 
-namespace langstd = std;
-
 namespace zapi
 {
 namespace stdext
 {
 
 template<typename FuncType, typename ...ArgTypes>
-typename langstd::result_of<FuncType&& (ArgTypes&&...)>::type
+typename std::result_of<FuncType&& (ArgTypes&&...)>::type
 invoke(FuncType&& func, ArgTypes&& ...args)
-noexcept(noexcept(internal::invoke(langstd::forward<FuncType>(func), langstd::forward<ArgTypes>(args)...)))
+noexcept(noexcept(internal::invoke(std::forward<FuncType>(func), std::forward<ArgTypes>(args)...)))
 {
-   return internal::invoke(langstd::forward<FuncType>(func), langstd::forward<ArgTypes>(args)...);
+   return internal::invoke(std::forward<FuncType>(func), std::forward<ArgTypes>(args)...);
 }
 
 } // stdext

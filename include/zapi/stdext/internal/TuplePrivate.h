@@ -185,13 +185,13 @@ struct make_tuple_indices
 
 template <typename FuncType, typename Tuple, size_t ...Seq>
 inline constexpr auto apply_tuple_impl(FuncType &&func, Tuple &&tuple, tuple_indices<Seq...>)
-noexcept(noexcept(invoke_constexpr(langstd::forward<FuncType>(func),
-                                   langstd::get<Seq>(langstd::forward<Tuple>(tuple))...)))
--> decltype(invoke_constexpr(langstd::forward<FuncType>(func),
-                             langstd::get<Seq>(langstd::forward<Tuple>(tuple))...))
+noexcept(noexcept(invoke_constexpr(std::forward<FuncType>(func),
+                                   std::get<Seq>(std::forward<Tuple>(tuple))...)))
+-> decltype(invoke_constexpr(std::forward<FuncType>(func),
+                             std::get<Seq>(std::forward<Tuple>(tuple))...))
 {
-   return invoke_constexpr(langstd::forward<FuncType>(func),
-                           langstd::get<Seq>(langstd::forward<Tuple>(tuple))...);
+   return invoke_constexpr(std::forward<FuncType>(func),
+                           std::get<Seq>(std::forward<Tuple>(tuple))...);
 }
 
 template <typename SeqItemType, SeqItemType Np>
@@ -201,7 +201,7 @@ typename make<Np>::type::template convert<integer_sequence, SeqItemType>;
 template <typename SeqItemType, SeqItemType Ep>
 struct make_integer_sequence_checked
 {
-   static_assert(langstd::is_integral<SeqItemType>::value,
+   static_assert(std::is_integral<SeqItemType>::value,
                  "zapi::stdext::make_integer_sequence can only be instantiated with an integral type" );
    static_assert(0 <= Ep, "zapi::stdext::make_integer_sequence must have a non-negative sequence length");
    // Workaround GCC bug by preventing bad installations when 0 <= _Ep
@@ -221,9 +221,18 @@ template<size_t EndMark>
 
 template <typename FuncType, size_t... Is>
 auto gen_tuple_impl(FuncType func, index_sequence<Is...> )
--> decltype(langstd::make_tuple(func(Is)...))
+-> decltype(std::make_tuple(func(Is)...))
 {
-   return langstd::make_tuple(func(Is)...);
+   return std::make_tuple(func(Is)...);
+}
+
+template <typename CallableType, typename FuncType, size_t... Is>
+auto gen_tuple_with_type_impl(FuncType func, index_sequence<Is...> )
+-> decltype(std::make_tuple(func.template generate<int>(Is)...))
+//-> decltype(std::make_tuple(func.template generate<typename zapi::stdext::function_traits<typename std::remove_pointer<CallableType>::type>::template arg<Is>::type>(Is)...))
+{
+   return std::make_tuple(func.template generate<int>(Is)...);
+   //return std::make_tuple(func.template generate<typename zapi::stdext::function_traits<typename std::remove_pointer<CallableType>::type>::template arg<Is>::type>(Is)...);
 }
 
 } // internal

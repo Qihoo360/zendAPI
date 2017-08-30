@@ -21,8 +21,6 @@
 #include <functional>
 #include "zapi/stdext/TypeTraits.h"
 
-namespace langstd = std;
-
 namespace zapi
 {
 namespace stdext

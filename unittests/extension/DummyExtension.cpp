@@ -50,11 +50,11 @@ ZAPI_DECL_EXPORT void *get_module()
 //             ValueArgument("num1", zapi::lang::Type::Numeric),
 //             ValueArgument("num2", zapi::lang::Type::Numeric)
 //          });
-   personClass.registerMethod<decltype(&Person::concatStr), &Person::concatStr>
-         ("concatStr", {
-             ValueArgument("lhs", zapi::lang::Type::String),
-             ValueArgument("rhs", zapi::lang::Type::String)
-          });
+//   personClass.registerMethod<decltype(&Person::concatStr), &Person::concatStr>
+//         ("concatStr", {
+//             ValueArgument("lhs", zapi::lang::Type::String),
+//             ValueArgument("rhs", zapi::lang::Type::String)
+//          });
    //personClass.registerMethod<decltype(&Person::addSum), &Person::addSum>("addSum");
    personClass.registerConstant("QIHOO", "beijing qihoo asdasd");
    personClass.registerConstant("MY_CONST", "MY_CONST_VALUE");

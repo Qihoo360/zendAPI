@@ -27,28 +27,35 @@ namespace stdext
 template <typename FuncType, class Tuple>
 inline constexpr auto apply(FuncType &&func, Tuple &&tuple)
 noexcept(noexcept(internal::apply_tuple_impl(
-                     langstd::forward<FuncType>(func), langstd::forward<Tuple>(tuple),
-                     typename internal::make_tuple_indices<langstd::tuple_size<typename langstd::decay<Tuple>::type>::value>::type {})))
+                     std::forward<FuncType>(func), std::forward<Tuple>(tuple),
+                     typename internal::make_tuple_indices<std::tuple_size<typename std::decay<Tuple>::type>::value>::type {})))
 -> decltype(internal::apply_tuple_impl(
-               langstd::forward<FuncType>(func), langstd::forward<Tuple>(tuple),
-               typename internal::make_tuple_indices<langstd::tuple_size<typename langstd::decay<Tuple>::type>::value>::type {}))
+               std::forward<FuncType>(func), std::forward<Tuple>(tuple),
+               typename internal::make_tuple_indices<std::tuple_size<typename std::decay<Tuple>::type>::value>::type {}))
 {
    return internal::apply_tuple_impl(
-            langstd::forward<FuncType>(func), langstd::forward<Tuple>(tuple),
-            typename internal::make_tuple_indices<langstd::tuple_size<typename langstd::decay<Tuple>::type>::value>::type {});
+            std::forward<FuncType>(func), std::forward<Tuple>(tuple),
+            typename internal::make_tuple_indices<std::tuple_size<typename std::decay<Tuple>::type>::value>::type {});
 }
 
 template<size_t... ItemSeq>
-    using index_sequence = internal::index_sequence<ItemSeq...>;
+using index_sequence = internal::index_sequence<ItemSeq...>;
 
 template<size_t EndMark>
-    using make_index_sequence = internal::make_index_sequence<EndMark>;
+using make_index_sequence = internal::make_index_sequence<EndMark>;
 
 template <size_t N, typename Generator>
 auto gen_tuple(Generator func)
 -> decltype(internal::gen_tuple_impl(func, make_index_sequence<N>{}))
 {
-    return internal::gen_tuple_impl(func, make_index_sequence<N>{});
+   return internal::gen_tuple_impl(func, make_index_sequence<N>{});
+}
+
+template <size_t N, typename CallableType, typename Generator>
+auto gen_tuple_with_type(Generator func)
+-> decltype(internal::gen_tuple_with_type_impl<CallableType>(func, make_index_sequence<N>{}))
+{
+   return internal::gen_tuple_with_type_impl<CallableType>(func, make_index_sequence<N>{});
 }
 
 } // stdext
