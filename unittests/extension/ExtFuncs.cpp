@@ -20,9 +20,9 @@ void show_something()
    zapi::out << "hello world, zapi" << std::flush;
 }
 
-void get_value_ref(NumericVariant number)
+void get_value_ref(NumericVariant &number)
 {
-   
+   //zapi::out << "xxx"<< std::endl;
 }
 
 Variant get_name()
@@ -123,10 +123,10 @@ void register_funcs(Extension &extension)
 
 void register_ns_io(Namespace &io)
 {
-   io.registerFunction<decltype(&dummyext::calculate_sum), &dummyext::calculate_sum>
-         ("calculate_sum", {
-             VariadicArgument("numbers")
-          });
+//   io.registerFunction<decltype(&dummyext::calculate_sum), &dummyext::calculate_sum>
+//         ("calculate_sum", {
+//             VariadicArgument("numbers")
+//          });
    //   io.registerFunction<decltype(&dummyext::print_name), &dummyext::print_name>
    //         ("print_name", {
    //             ValueArgument("name", zapi::lang::Type::String)
@@ -146,6 +146,5 @@ void register_ns_zapi(Namespace &zapi)
    zapi.registerConstant(Constant("SYS_VERSION", "0.1.1-alpha"));
    //   zapi.registerFunction<dummyext::show_something>("show_something");
 }
-
 
 } // dummyext

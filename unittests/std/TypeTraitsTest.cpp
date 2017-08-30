@@ -19,26 +19,11 @@
 #include "zapi/stdext/TypeTraits.h"
 #include <type_traits>
 #include "zapi/ds/NumericVariant.h"
+#include "zapi/ds/StringVariant.h"
 #include <tuple>
 
-template<typename T> 
-struct function_traits;  
-
-template<typename R, typename ...Args> 
-struct function_traits<std::function<R(Args...)>>
-{
-    static const size_t nargs = sizeof...(Args);
-
-    typedef R result_type;
-
-    template <size_t i>
-    struct arg
-    {
-        typedef typename std::tuple_element<i, std::tuple<Args...>>::type type;
-    };
-};
-
 using zapi::ds::NumericVariant;
+using zapi::ds::StringVariant;
 
 int func1() 
 {
@@ -65,7 +50,7 @@ void print_name()
    
 }
 
-void get_value_ref(NumericVariant number)
+void get_value_ref(NumericVariant number, StringVariant text)
 {
    
 }
@@ -100,11 +85,14 @@ TEST(TypeTraitTest, test)
    ASSERT_EQ(paramNumber, 0);
    paramNumber = zapi::stdext::CallableInfoTrait<decltype(&func2)>::argNum;
    ASSERT_EQ(paramNumber, 2);
-//   ret = std::is_member_function_pointer<std::decay<decltype(&TestClass::getVersion)>::type>::value;
-//   ASSERT_TRUE(ret);
+   //   ret = std::is_member_function_pointer<std::decay<decltype(&TestClass::getVersion)>::type>::value;
+   //   ASSERT_TRUE(ret);
    ret = std::is_function<std::decay<decltype(&TestClass::getVersion)>::type>::value;
-   //ASSERT_TRUE(ret);
-   ///int xx = zapi::stdext::function_traits<void(NumericVariant)>::nargs;
-   //ret = std::is_same<zapi::stdext::function_traits<typename std::remove_pointer<decltype(&dummyext::get_value_ref)>::type>::arg<0>::type, NumericVariant>::value;
-   std::cout << std::is_same<NumericVariant, function_traits<std::function<decltype(dummyext::get_value_ref)>>::arg<0>::type>::value << std::endl;
+   ASSERT_FALSE(ret);
+   ret = std::is_same<NumericVariant, zapi::stdext::CallableInfoTrait<decltype(dummyext::get_value_ref)>::arg<0>::type>::value;
+   ASSERT_TRUE(ret);
+   ret = std::is_same<NumericVariant, zapi::stdext::CallableInfoTrait<decltype(dummyext::get_value_ref)>::arg<1>::type>::value;
+   ASSERT_FALSE(ret);
+   ret = std::is_same<StringVariant, zapi::stdext::CallableInfoTrait<decltype(dummyext::get_value_ref)>::arg<1>::type>::value;
+   ASSERT_TRUE(ret);
 }

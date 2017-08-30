@@ -526,6 +526,11 @@ struct CallableInfoTrait<RetType (&)(ParamTypes ...args)>
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = false;
    const static bool isMemberCallable = false;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
 };
 
 template <typename RetType, typename ...ParamTypes>
@@ -535,6 +540,11 @@ struct CallableInfoTrait<RetType (*)(ParamTypes ...args)>
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = false;
    const static bool isMemberCallable = false;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
 };
 
 template <typename RetType, typename ...ParamTypes>
@@ -544,6 +554,11 @@ struct CallableInfoTrait<RetType (ParamTypes ...args)>
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = false;
    const static bool isMemberCallable = false;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
 };
 
 template <typename RetType, typename ...ParamTypes>
@@ -553,6 +568,11 @@ struct CallableInfoTrait<RetType (&)(ParamTypes ...args, ...)>
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = true;
    const static bool isMemberCallable = false;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
 };
 
 template <typename RetType, typename ...ParamTypes>
@@ -562,6 +582,11 @@ struct CallableInfoTrait<RetType (*)(ParamTypes ...args, ...)>
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = true;
    const static bool isMemberCallable = false;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
 };
 
 template <typename RetType, typename ...ParamTypes>
@@ -571,6 +596,11 @@ struct CallableInfoTrait<RetType (ParamTypes ...args, ...)>
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = true;
    const static bool isMemberCallable = false;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
 };
 
 template <typename RetType, typename Class, typename ...ParamTypes>
@@ -580,6 +610,11 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args)>
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = false;
    const static bool isMemberCallable = true;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
 };
 
 template <typename RetType, typename Class, typename ...ParamTypes>
@@ -589,6 +624,11 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...)>
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = true;
    const static bool isMemberCallable = true;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
 };
 
 template <typename RetType, typename Class, typename ...ParamTypes>
@@ -598,6 +638,11 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) const>
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = false;
    const static bool isMemberCallable = true;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
 };
 
 template <typename RetType, typename Class, typename ...ParamTypes>
@@ -607,6 +652,11 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) const>
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = true;
    const static bool isMemberCallable = true;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
 };
 
 template <typename RetType, typename Class, typename ...ParamTypes>
@@ -616,6 +666,11 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) volatile>
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = false;
    const static bool isMemberCallable = true;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
 };
 
 template <typename RetType, typename Class, typename ...ParamTypes>
@@ -625,6 +680,11 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) volatile>
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = true;
    const static bool isMemberCallable = true;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
 };
 
 template <typename RetType, typename Class, typename ...ParamTypes>
@@ -634,6 +694,11 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) const volatile>
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = false;
    const static bool isMemberCallable = true;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
 };
 
 template <typename RetType, typename Class, typename ...ParamTypes>
@@ -643,6 +708,11 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) const volat
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = true;
    const static bool isMemberCallable = true;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
 };
 
 template <typename RetType, typename Class, typename ...ParamTypes>
@@ -652,6 +722,11 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) &>
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = false;
    const static bool isMemberCallable = true;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
 };
 
 template <typename RetType, typename Class, typename ...ParamTypes>
@@ -661,6 +736,11 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) &>
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = true;
    const static bool isMemberCallable = true;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
 };
 
 template <typename RetType, typename Class, typename ...ParamTypes>
@@ -670,6 +750,11 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) const&>
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = false;
    const static bool isMemberCallable = true;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
 };
 
 template <typename RetType, typename Class, typename ...ParamTypes>
@@ -679,6 +764,11 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) const&>
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = true;
    const static bool isMemberCallable = true;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
 };
 
 template <typename RetType, typename Class, typename ...ParamTypes>
@@ -688,6 +778,11 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) volatile&>
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = false;
    const static bool isMemberCallable = true;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
 };
 
 template <typename RetType, typename Class, typename ...ParamTypes>
@@ -697,6 +792,11 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) volatile&>
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = true;
    const static bool isMemberCallable = true;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
 };
 
 template <typename RetType, typename Class, typename ...ParamTypes>
@@ -706,6 +806,11 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) const volatile&>
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = false;
    const static bool isMemberCallable = true;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
 };
 
 template <typename RetType, typename Class, typename ...ParamTypes>
@@ -715,6 +820,11 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) const volat
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = true;
    const static bool isMemberCallable = true;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
 };
 
 template <typename RetType, typename Class, typename ...ParamTypes>
@@ -724,6 +834,11 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) &&>
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = false;
    const static bool isMemberCallable = true;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
 };
 
 template <typename RetType, typename Class, typename ...ParamTypes>
@@ -733,6 +848,11 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) &&>
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = true;
    const static bool isMemberCallable = true;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
 };
 
 template <typename RetType, typename Class, typename ...ParamTypes>
@@ -742,6 +862,11 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) const&&>
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = false;
    const static bool isMemberCallable = true;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
 };
 
 template <typename RetType, typename Class, typename ...ParamTypes>
@@ -751,6 +876,11 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) const&&>
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = true;
    const static bool isMemberCallable = true;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
 };
 
 template <typename RetType, typename Class, typename ...ParamTypes>
@@ -760,6 +890,11 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) volatile&&>
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = false;
    const static bool isMemberCallable = true;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
 };
 
 template <typename RetType, typename Class, typename ...ParamTypes>
@@ -769,6 +904,11 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) volatile&&>
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = true;
    const static bool isMemberCallable = true;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
 };
 
 template <typename RetType, typename Class, typename ...ParamTypes>
@@ -778,6 +918,11 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) const volatile&&
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = false;
    const static bool isMemberCallable = true;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
 };
 
 template <typename RetType, typename Class, typename ...ParamTypes>
@@ -787,6 +932,11 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) const volat
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = true;
    const static bool isMemberCallable = true;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
 };
 
 template <typename CallableType>
@@ -807,7 +957,7 @@ struct is_function_pointer
 };
 
 template<typename T> 
-struct FunctionTraits;
+struct function_traits;
 
 template<typename R, typename ...Args> 
 struct function_traits<std::function<R(Args...)> >

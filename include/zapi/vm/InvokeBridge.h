@@ -106,9 +106,9 @@ public:
       : m_arguments(arguments)
    {}
    template <typename ParamType>
-   ParamType generate(size_t index)
+   typename std::remove_reference<ParamType>::type generate(size_t index)
    {
-      
+      return typename std::remove_reference<ParamType>::type(&m_arguments[index]);
    }
    
 private:
@@ -146,10 +146,9 @@ public:
          const size_t argNumber = ZEND_NUM_ARGS();
          zval arguments[argNumber];
          zend_get_parameters_array_ex(argNumber, arguments);
-         auto tuple = zapi::stdext::gen_tuple<paramNumber>(
-                  [&arguments](size_t index) {
-               return Variant(&arguments[index]); 
-         });
+         InvokeParamGenerator generator(arguments);
+         auto tuple = zapi::stdext::gen_tuple_with_type<paramNumber, CallableType>(generator);
+         zapi::stdext::apply(callable, tuple);
          yield(return_value, nullptr);
       } catch (Exception &exception) {
          zapi::kernel::process_exception(exception);

@@ -72,7 +72,11 @@ BoolVariant &BoolVariant::operator=(const BoolVariant &other)
 BoolVariant &BoolVariant::operator=(BoolVariant &&other) ZAPI_DECL_NOEXCEPT
 {
    assert(this != &other);
-   m_implPtr = std::move(other.m_implPtr);
+   if (getUnDerefType() != Type::Reference) {
+      m_implPtr = std::move(other.m_implPtr);
+   } else {
+      ZVAL_BOOL(getZvalPtr(), other.toBool());
+   }
    return *this;
 }
 
@@ -84,9 +88,13 @@ BoolVariant &BoolVariant::operator=(const Variant &other)
 
 BoolVariant &BoolVariant::operator=(Variant &&other)
 {
-   m_implPtr = std::move(other.m_implPtr);
-   if (getType() != Type::Boolean) {
-      convert_to_boolean(getZvalPtr());
+   if (getUnDerefType() != Type::Reference) {
+      m_implPtr = std::move(other.m_implPtr);
+      if (getType() != Type::Boolean) {
+         convert_to_boolean(getZvalPtr());
+      }
+   } else {
+      ZVAL_BOOL(getZvalPtr(), other.toBool());
    }
    return *this;
 }

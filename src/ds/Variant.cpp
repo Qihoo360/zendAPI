@@ -444,6 +444,13 @@ Variant &Variant::operator =(Variant &&value) ZAPI_DECL_NOEXCEPT
    assert(this != &value);
    if (getUnDerefType() != Type::Reference) {
       m_implPtr = std::move(value.m_implPtr);
+      zval *orig = getUnDerefZvalPtr();
+      zval *realPtr = orig;
+      ZVAL_DEREF(realPtr);
+      zval temp;
+      ZVAL_COPY(&temp, realPtr);
+      zval_dtor(orig);
+      ZVAL_COPY_VALUE(getUnDerefZvalPtr(), &temp);
    } else {
       operator =(const_cast<zval *>(value.getZvalPtr()));
    }

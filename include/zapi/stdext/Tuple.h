@@ -52,10 +52,10 @@ auto gen_tuple(Generator func)
 }
 
 template <size_t N, typename CallableType, typename Generator>
-auto gen_tuple_with_type(Generator func)
--> decltype(internal::gen_tuple_with_type_impl<CallableType>(func, make_index_sequence<N>{}))
+auto gen_tuple_with_type(Generator generator)
+-> decltype(internal::gen_tuple_with_type_impl<CallableType>(generator, make_index_sequence<N>{}))
 {
-   return internal::gen_tuple_with_type_impl<CallableType>(func, make_index_sequence<N>{});
+   return internal::gen_tuple_with_type_impl<CallableType>(generator, make_index_sequence<N>{});
 }
 
 } // stdext

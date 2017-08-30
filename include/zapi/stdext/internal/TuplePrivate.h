@@ -226,13 +226,11 @@ auto gen_tuple_impl(FuncType func, index_sequence<Is...> )
    return std::make_tuple(func(Is)...);
 }
 
-template <typename CallableType, typename FuncType, size_t... Is>
-auto gen_tuple_with_type_impl(FuncType func, index_sequence<Is...> )
--> decltype(std::make_tuple(func.template generate<int>(Is)...))
-//-> decltype(std::make_tuple(func.template generate<typename zapi::stdext::function_traits<typename std::remove_pointer<CallableType>::type>::template arg<Is>::type>(Is)...))
+template <typename CallableType, typename GeneratorType, size_t... Is>
+auto gen_tuple_with_type_impl(GeneratorType generator, index_sequence<Is...> )
+-> decltype(std::make_tuple(generator.template generate<typename zapi::stdext::CallableInfoTrait<CallableType>::template arg<Is>::type>(Is)...))
 {
-   return std::make_tuple(func.template generate<int>(Is)...);
-   //return std::make_tuple(func.template generate<typename zapi::stdext::function_traits<typename std::remove_pointer<CallableType>::type>::template arg<Is>::type>(Is)...);
+   return std::make_tuple(generator.template generate<typename zapi::stdext::CallableInfoTrait<CallableType>::template arg<Is>::type>(Is)...);
 }
 
 } // internal
