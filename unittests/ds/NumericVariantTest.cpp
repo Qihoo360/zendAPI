@@ -22,6 +22,7 @@
 using zapi::ds::NumericVariant;
 using zapi::ds::DoubleVariant;
 using zapi::ds::Variant;
+using zapi::lang::Type;
 
 TEST(NumericVarintTest, testBaseFuncs)
 {
@@ -113,4 +114,58 @@ TEST(NumericVariantTest, testAssignOperators)
    DoubleVariant dval(2.2);
    num2 = dval;
    ASSERT_EQ(num2, 2);
+}
+
+TEST(NumericVariantTest, testRefConstruct)
+{
+   {
+      NumericVariant num1(123);
+      NumericVariant num2(num1, false);
+      ASSERT_EQ(num1.getUnDerefType(), Type::Numeric);
+      ASSERT_EQ(num2.getUnDerefType(), Type::Numeric);
+      ASSERT_EQ(num1.toLong(), 123);
+      ASSERT_EQ(num2.toLong(), 123);
+   }
+   {
+      NumericVariant num1(123);
+      NumericVariant num2(num1, true);
+      ASSERT_EQ(num1.getUnDerefType(), Type::Reference);
+      ASSERT_EQ(num2.getUnDerefType(), Type::Reference);
+      ASSERT_EQ(num1.toLong(), 123);
+      ASSERT_EQ(num2.toLong(), 123);
+      NumericVariant num3(num2, false);
+      NumericVariant num4(num1);
+      ASSERT_EQ(num3.toLong(), 123);
+      ASSERT_EQ(num4.toLong(), 123);
+      num1 = 321;
+      ASSERT_EQ(num1.toLong(), 321);
+      ASSERT_EQ(num2.toLong(), 321);
+      ASSERT_EQ(num3.toLong(), 123);
+      ASSERT_EQ(num4.toLong(), 123);
+      num3 = num1;
+      ASSERT_EQ(num3.toLong(), 321);
+      ASSERT_EQ(num3.getUnDerefType(), Type::Numeric);
+   }
+   {
+      zval numVar;
+      ZVAL_LONG(&numVar, 123);
+      NumericVariant num2(numVar, false);
+      ASSERT_EQ(num2.getUnDerefType(), Type::Numeric);
+      ASSERT_EQ(num2.toLong(), 123);
+      ASSERT_EQ(Z_TYPE(numVar), IS_LONG);
+   }
+   {
+      zval numVar;
+      ZVAL_LONG(&numVar, 123);
+      NumericVariant num2(numVar, true);
+      ASSERT_EQ(num2.getUnDerefType(), Type::Reference);
+      ASSERT_EQ(num2.getType(), Type::Numeric);
+      ASSERT_EQ(num2.toLong(), 123);
+      zval *rval = &numVar;
+      ZVAL_DEREF(rval);
+      ASSERT_EQ(Z_TYPE_P(rval), IS_LONG);
+      num2 = 321;
+      ASSERT_EQ(num2.toLong(), 321);
+      ASSERT_EQ(Z_LVAL_P(rval), 321);
+   }
 }

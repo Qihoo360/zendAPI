@@ -41,7 +41,7 @@ void print_sum(NumericVariant argQuantity, ...)
    va_start(args, argQuantity);
    NumericVariant result;
    for (int i = 0; i < argQuantity; ++i) {
-      result += NumericVariant(va_arg(args, zapi_varidic_item_type));
+      result += NumericVariant(va_arg(args, zapi_varidic_item_type), false);
    }
    zapi::out << result << std::flush;
 }
@@ -52,7 +52,7 @@ Variant calculate_sum(NumericVariant argQuantity, ...)
    va_start(args, argQuantity);
    NumericVariant result;
    for (int i = 0; i < argQuantity; ++i) {
-      result += NumericVariant(va_arg(args, zapi_varidic_item_type));
+      result += NumericVariant(va_arg(args, zapi_varidic_item_type), false);
    }
    return result;
 }

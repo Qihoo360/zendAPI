@@ -45,13 +45,47 @@ NumericVariant::NumericVariant(std::int64_t value)
 {}
 #endif
 
-NumericVariant::NumericVariant(const zval &value)
-   : NumericVariant(Variant(value))
+NumericVariant::NumericVariant(zval &other, bool isRef)
+   : NumericVariant(&other, isRef)
 {}
+
+NumericVariant::NumericVariant(zval &&other, bool isRef)
+   : NumericVariant(&other, isRef)
+{}
+
+NumericVariant::NumericVariant(zval *other, bool isRef)
+{
+   zval *self = getZvalPtr();
+   if (nullptr != other) {
+      if (isRef && Z_TYPE_P(other) == IS_LONG) {
+         ZVAL_MAKE_REF(other);
+         zend_reference *ref = Z_REF_P(other);
+         ++GC_REFCOUNT(ref);
+         ZVAL_REF(self, ref);
+      } else {
+         ZVAL_DUP(self, other);
+         convert_to_long(self);
+      }
+   } else {
+      ZVAL_LONG(self, 0);
+   }
+}
 
 NumericVariant::NumericVariant(const NumericVariant &other)
    : Variant(other)
 {}
+
+NumericVariant::NumericVariant(NumericVariant &other, bool isRef)
+{
+   zval *self = getZvalPtr();
+   if (!isRef) {
+      ZVAL_LONG(self, other.toLong());
+   } else {
+      zval *source = other.getUnDerefZvalPtr();
+      ZVAL_MAKE_REF(source);
+      ZVAL_COPY(self, source);
+   }
+}
 
 NumericVariant::NumericVariant(NumericVariant &&other) ZAPI_DECL_NOEXCEPT
    : Variant(std::move(other))

@@ -35,6 +35,10 @@ BoolVariant::BoolVariant(zval &other, bool isRef)
    : BoolVariant(&other, isRef)
 {}
 
+BoolVariant::BoolVariant(zval &&other, bool isRef)
+   : BoolVariant(&other, isRef)
+{}
+
 BoolVariant::BoolVariant(zval *other, bool isRef)
 {
    zval *self = getZvalPtr();
@@ -45,7 +49,7 @@ BoolVariant::BoolVariant(zval *other, bool isRef)
          ++GC_REFCOUNT(ref);
          ZVAL_REF(self, ref);
       } else {
-         ZVAL_COPY(self, other);
+         ZVAL_DUP(self, other);
          convert_to_boolean(self);
       }
    } else {
