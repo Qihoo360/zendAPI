@@ -167,5 +167,6 @@ TEST(NumericVariantTest, testRefConstruct)
       num2 = 321;
       ASSERT_EQ(num2.toLong(), 321);
       ASSERT_EQ(Z_LVAL_P(rval), 321);
+      zval_dtor(&numVar);
    }
 }

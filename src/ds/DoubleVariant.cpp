@@ -27,24 +27,50 @@ DoubleVariant::DoubleVariant()
 {}
 
 DoubleVariant::DoubleVariant(std::int8_t value)
-   : Variant(value)
+   : Variant(static_cast<double>(value))
 {}
 
 DoubleVariant::DoubleVariant(std::int16_t value)
-   : Variant(value)
+   : Variant(static_cast<double>(value))
 {}
 
 DoubleVariant::DoubleVariant(std::int32_t value)
-   : Variant(value)
+   : Variant(static_cast<double>(value))
 {}
 
 DoubleVariant::DoubleVariant(std::int64_t value)
-   : Variant(value)
+   : Variant(static_cast<double>(value))
 {}
 
 DoubleVariant::DoubleVariant(double value)
    : Variant(value)
 {}
+
+DoubleVariant::DoubleVariant(zval &other, bool isRef)
+   : DoubleVariant(&other, isRef)
+{}
+
+DoubleVariant::DoubleVariant(zval &&other, bool isRef)
+   : DoubleVariant(&other, isRef)
+{}
+
+DoubleVariant::DoubleVariant(zval *other, bool isRef)
+{
+   zval *self = getZvalPtr();
+   if (nullptr != other) {
+      if (isRef && Z_TYPE_P(other) == IS_DOUBLE) {
+         ZVAL_MAKE_REF(other);
+         zend_reference *ref = Z_REF_P(other);
+         ++GC_REFCOUNT(ref);
+         ZVAL_REF(self, ref);
+      } else {
+         ZVAL_DUP(self, other);
+         convert_to_double(self);
+      }
+   } else {
+      ZVAL_DOUBLE(self, 0);
+   }
+}
 
 DoubleVariant::DoubleVariant(const DoubleVariant &other)
    : Variant(other)
@@ -128,12 +154,16 @@ DoubleVariant &DoubleVariant::operator =(const DoubleVariant &other)
    return *this;
 }
 
-DoubleVariant &DoubleVariant::operator =(DoubleVariant &&other) ZAPI_DECL_NOEXCEPT
+DoubleVariant::DoubleVariant(DoubleVariant &other, bool isRef)
 {
-   if (this != &other) {
-      m_implPtr = std::move(other.m_implPtr);
+   zval *self = getZvalPtr();
+   if (!isRef) {
+      ZVAL_DOUBLE(self, other.toDouble());
+   } else {
+      zval *source = other.getUnDerefZvalPtr();
+      ZVAL_MAKE_REF(source);
+      ZVAL_COPY(self, source);
    }
-   return *this;
 }
 
 DoubleVariant &DoubleVariant::operator =(const Variant &other)
@@ -147,15 +177,6 @@ DoubleVariant &DoubleVariant::operator =(const Variant &other)
       ZVAL_DUP(&temp, from);
       convert_to_double(&temp);
       ZVAL_COPY_VALUE(self, &temp);
-   }
-   return *this;
-}
-
-DoubleVariant &DoubleVariant::operator =(Variant &&other)
-{
-   m_implPtr = std::move(other.m_implPtr);
-   if (getType() != Type::Double) {
-      convert_to_double(getZvalPtr());
    }
    return *this;
 }

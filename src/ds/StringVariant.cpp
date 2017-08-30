@@ -117,11 +117,40 @@ StringVariant::StringVariant(const char *value)
    : StringVariant(value, std::strlen(value))
 {}
 
+StringVariant::StringVariant(zval &other, bool isRef)
+   : StringVariant(&other, isRef)
+{}
+
+StringVariant::StringVariant(zval &&other, bool isRef)
+   : StringVariant(&other, isRef)
+{}
+
+StringVariant::StringVariant(zval *other, bool isRef)
+{
+   zval *self = getZvalPtr();
+   if (nullptr != other) {
+      if (isRef && Z_TYPE_P(other) == IS_STRING) {
+         ZVAL_MAKE_REF(other);
+         zend_reference *ref = Z_REF_P(other);
+         ++GC_REFCOUNT(ref);
+         ZVAL_REF(self, ref);
+      } else {
+         ZVAL_DUP(self, other);
+         convert_to_string(self);
+      }
+      m_implPtr->m_strCapacity = ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(Z_STRLEN_P(getZvalPtr())));
+   } else {
+      Z_STR_P(self) = nullptr;
+      Z_TYPE_INFO_P(self) = IS_STRING_EX;
+   }
+}
+
 StringVariant &StringVariant::operator =(const StringVariant &other)
 {
    if (this != &other) {
       zval *from = const_cast<zval *>(other.getZvalPtr());
       if (nullptr != getZendStringPtr()) {
+         zval *self = getZvalPtr();
          SEPARATE_ZVAL_NOREF(getZvalPtr());
       }
       Variant::operator =(from);

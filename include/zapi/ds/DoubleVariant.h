@@ -37,7 +37,11 @@ public:
    DoubleVariant(std::int32_t value);
    DoubleVariant(std::int64_t value);
    DoubleVariant(double value);
+   DoubleVariant(zval &other, bool isRef);
+   DoubleVariant(zval &&other, bool isRef);
+   DoubleVariant(zval *other, bool isRef);
    DoubleVariant(const DoubleVariant &other);
+   DoubleVariant(DoubleVariant &other, bool isRef);
    DoubleVariant(DoubleVariant &&other) ZAPI_DECL_NOEXCEPT;
    DoubleVariant(const Variant &other);
    DoubleVariant(Variant &&other);
@@ -50,9 +54,7 @@ public:
    DoubleVariant &operator =(std::int64_t other);
    DoubleVariant &operator =(double other);
    DoubleVariant &operator =(const DoubleVariant &other);
-   DoubleVariant &operator =(DoubleVariant &&other) ZAPI_DECL_NOEXCEPT;
    DoubleVariant &operator =(const Variant &other);
-   DoubleVariant &operator =(Variant &&other);
    DoubleVariant &operator =(const NumericVariant &other);
    DoubleVariant &operator =(ArrayItemProxy &&other);
    template <typename T, typename Selector = typename std::enable_if<std::is_arithmetic<T>::value>::type>

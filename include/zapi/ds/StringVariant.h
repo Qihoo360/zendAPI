@@ -57,6 +57,11 @@ public:
    StringVariant(const std::string &value);
    StringVariant(const char *value, size_t length);
    StringVariant(const char *value);
+   
+   StringVariant(zval &other, bool isRef);
+   StringVariant(zval &&other, bool isRef);
+   StringVariant(zval *other, bool isRef);
+   
    StringVariant &operator =(const StringVariant &other);
    StringVariant &operator =(StringVariant &&other) ZAPI_DECL_NOEXCEPT;
    StringVariant &operator =(const Variant &other);

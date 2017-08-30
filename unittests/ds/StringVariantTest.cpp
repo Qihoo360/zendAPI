@@ -59,6 +59,26 @@ TEST(StringVariantTest, testConstructors)
    ASSERT_EQ(emptyStr.getRefCount(), 2);
 }
 
+TEST(StringVariantTest, testRefConstruct)
+{
+   zval rawStrVar;
+   ZVAL_STRING(&rawStrVar, "zapi");
+   ASSERT_STREQ(Z_STRVAL_P(&rawStrVar), "zapi");
+   StringVariant strVariant(rawStrVar, false);
+   ASSERT_EQ(strVariant.getLength(), 4);
+   ASSERT_EQ(strVariant.getRefCount(), 1);
+   StringVariant refStrVariant(rawStrVar, true);
+   zval *rval = &rawStrVar;
+   ZVAL_DEREF(rval);
+   ASSERT_TRUE(Z_TYPE_P(rval) == IS_STRING);
+   ASSERT_TRUE(Z_TYPE_P(&rawStrVar) == IS_REFERENCE);
+   ASSERT_EQ(refStrVariant.getRefCount(), 2);
+   ASSERT_STREQ(refStrVariant.getCStr(), "zapi");
+   ASSERT_EQ(refStrVariant.getCapacity(), 32);
+   ASSERT_EQ(refStrVariant.getSize(), 4);
+   zval_dtor(&rawStrVar);
+}
+
 TEST(StringVariantTest, testConstructFromVariant)
 {
    Variant strVariant("zapi is the best!");
