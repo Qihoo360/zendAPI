@@ -58,7 +58,6 @@ NumericVariant::NumericVariant(NumericVariant &&other) ZAPI_DECL_NOEXCEPT
 {}
 
 NumericVariant::NumericVariant(const Variant &other)
-   : NumericVariant()
 {
    zval *from = const_cast<zval *>(other.getZvalPtr());
    zval *self = getZvalPtr();
@@ -133,13 +132,6 @@ NumericVariant &NumericVariant::operator =(const NumericVariant &other)
    return *this;
 }
 
-NumericVariant &NumericVariant::operator =(NumericVariant &&other) ZAPI_DECL_NOEXCEPT
-{
-   assert(this != &other);
-   m_implPtr = std::move(other.m_implPtr);
-   return *this;
-}
-
 NumericVariant &NumericVariant::operator =(const DoubleVariant &other)
 {
    ZVAL_LONG(getZvalPtr(), static_cast<zapi_long>(other.toDouble()));
@@ -162,15 +154,6 @@ NumericVariant &NumericVariant::operator =(const Variant &other)
       ZVAL_DUP(&temp, from);
       convert_to_long(&temp);
       ZVAL_COPY_VALUE(self, &temp);
-   }
-   return *this;
-}
-
-NumericVariant &NumericVariant::operator =(Variant &&other)
-{
-   m_implPtr = std::move(other.m_implPtr);
-   if (getType() != Type::Long) {
-      convert_to_long(getZvalPtr());
    }
    return *this;
 }

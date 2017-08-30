@@ -31,6 +31,28 @@ BoolVariant::BoolVariant(bool value)
    : Variant(value)
 {}
 
+BoolVariant::BoolVariant(zval &other, bool isRef)
+   : BoolVariant(&other, isRef)
+{}
+
+BoolVariant::BoolVariant(zval *other, bool isRef)
+{
+   zval *self = getZvalPtr();
+   if (nullptr != other) {
+      if (isRef && (Z_TYPE_P(other) == IS_TRUE || Z_TYPE_P(other) == IS_FALSE)) {
+         ZVAL_MAKE_REF(other);
+         zend_reference *ref = Z_REF_P(other);
+         ++GC_REFCOUNT(ref);
+         ZVAL_REF(self, ref);
+      } else {
+         ZVAL_COPY(self, other);
+         convert_to_boolean(self);
+      }
+   } else {
+      ZVAL_BOOL(self, false);
+   }
+}
+
 BoolVariant::BoolVariant(const BoolVariant &other)
    : Variant(other)
 {}

@@ -47,9 +47,7 @@ public:
    NumericVariant &operator =(std::int64_t other);
    NumericVariant &operator =(double other);
    NumericVariant &operator =(const NumericVariant &other);
-   NumericVariant &operator =(NumericVariant &&other) ZAPI_DECL_NOEXCEPT;
    NumericVariant &operator =(const Variant &other);
-   NumericVariant &operator =(Variant &&other);
    NumericVariant &operator =(const DoubleVariant &other);
    NumericVariant &operator =(ArrayItemProxy &&other);
    operator zapi_long () const;

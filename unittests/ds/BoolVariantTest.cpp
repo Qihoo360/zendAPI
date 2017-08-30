@@ -122,4 +122,20 @@ TEST(BoolVariantTest, testRefConstruct)
       ASSERT_FALSE(bool3.toBool());
       ASSERT_EQ(bool3.getType(), Type::False);
    }
+   {
+      zval var1;
+      ZVAL_BOOL(&var1, true);
+      BoolVariant bool1(var1, false);
+      ASSERT_EQ(bool1.getUnDerefType(), Type::True);
+      ASSERT_EQ(Z_TYPE_P(&var1), IS_TRUE);
+      BoolVariant bool2(var1, true);
+      ASSERT_EQ(bool2.getUnDerefType(), Type::Reference);
+      ASSERT_EQ(Z_TYPE_P(&var1), IS_REFERENCE);
+      zval_dtor(&var1);
+      bool2 = false;
+      ASSERT_FALSE(bool2.toBool());
+      zval *rval = &var1;
+      ZVAL_DEREF(rval);
+      ASSERT_TRUE(Z_TYPE_P(rval) == IS_FALSE);
+   }
 }
