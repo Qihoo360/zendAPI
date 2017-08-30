@@ -93,6 +93,17 @@ TEST(BoolVariantTest, testMoveConstuctorAndAssign)
    }
 }
 
+TEST(BoolVariantTest, testMoveConstruct)
+{
+   // test move construct
+   BoolVariant bool1(true);
+   BoolVariant bool2(bool1, true);
+   ASSERT_EQ(bool1.getUnDerefType(), Type::Reference);
+   ASSERT_EQ(bool2.getUnDerefType(), Type::Reference);
+   BoolVariant bool3(std::move(bool1));
+   ASSERT_EQ(bool3.getUnDerefType(), Type::True);
+}
+
 TEST(BoolVariantTest, testRefConstruct)
 {
    {
@@ -127,10 +138,10 @@ TEST(BoolVariantTest, testRefConstruct)
       ZVAL_BOOL(&var1, true);
       BoolVariant bool1(var1, false);
       ASSERT_EQ(bool1.getUnDerefType(), Type::True);
-      ASSERT_EQ(Z_TYPE_P(&var1), IS_TRUE);
+      ASSERT_TRUE(Z_TYPE_P(&var1) == IS_TRUE);
       BoolVariant bool2(var1, true);
       ASSERT_EQ(bool2.getUnDerefType(), Type::Reference);
-      ASSERT_EQ(Z_TYPE_P(&var1), IS_REFERENCE);
+      ASSERT_TRUE(Z_TYPE_P(&var1) == IS_REFERENCE);
       zval_dtor(&var1);
       bool2 = false;
       ASSERT_FALSE(bool2.toBool());

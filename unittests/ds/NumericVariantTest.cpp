@@ -97,6 +97,15 @@ TEST(NumericVariantTest, testConstructors)
    ASSERT_EQ(Z_LVAL_P(num5.getZvalPtr()), 5);
    num2 = std::move(num5);
    ASSERT_EQ(num2.toLong(), 5);
+   {
+      // test move construct
+      NumericVariant num1(123);
+      NumericVariant num2(num1, true);
+      ASSERT_EQ(num1.getUnDerefType(), Type::Reference);
+      ASSERT_EQ(num2.getUnDerefType(), Type::Reference);
+      NumericVariant num3(std::move(num1));
+      ASSERT_EQ(num3.getUnDerefType(), Type::Numeric);
+   }
 }
 
 TEST(NumericVariantTest, testAssignOperators)
