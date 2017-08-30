@@ -408,7 +408,7 @@ template <typename CallableType,
 class InvokeBridge : public InvokeBridgePrivate<DecayCallableType, callable,
       std::is_member_function_pointer<DecayCallableType>::value,
       zapi::stdext::callable_has_return<DecayCallableType>::value,
-      zapi::stdext::callable_has_variable_param<DecayCallableType>::value>
+      zapi::stdext::CallableInfoTrait<DecayCallableType>::hasVaridicParams>
 {};
 
 } // vm

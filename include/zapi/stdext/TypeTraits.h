@@ -857,57 +857,6 @@ struct callable_has_return
    const static bool value = !std::is_same<typename callable_return_type<CallableType>::type, void>::value;
 };
 
-template <typename>
-struct callable_has_variable_param;
-
-template <typename R, typename ...ArgTypes>
-struct callable_has_variable_param<R(ArgTypes... args)>
-{
-   constexpr static bool value = false;
-};
-
-template <typename R, typename ...ArgTypes>
-struct callable_has_variable_param<R(*)(ArgTypes... args)>
-{
-   constexpr static bool value = false;
-};
-
-template <typename R, typename ...ArgTypes>
-struct callable_has_variable_param<R(&)(ArgTypes... args)>
-{
-   constexpr static bool value = false;
-};
-
-template <typename R, typename ...ArgTypes>
-struct callable_has_variable_param<R(ArgTypes... args, ...)>
-{
-   constexpr static bool value = true;
-};
-
-template <typename R, typename ...ArgTypes>
-struct callable_has_variable_param<R(*)(ArgTypes... args, ...)>
-{
-   constexpr static bool value = true;
-};
-
-template <typename R, typename ...ArgTypes>
-struct callable_has_variable_param<R(&)(ArgTypes... args, ...)>
-{
-   constexpr static bool value = true;
-};
-
-template <typename R, typename T, typename ...ArgTypes>
-struct callable_has_variable_param<R(T::*)(ArgTypes... args)>
-{
-   constexpr static bool value = false;
-};
-
-template <typename R, typename T, typename ...ArgTypes>
-struct callable_has_variable_param<R(T::*)(ArgTypes... args, ...)>
-{
-   constexpr static bool value = true;
-};
-
 template <typename MemberPointer>
 using member_pointer_traits = internal::member_pointer_traits<MemberPointer>;
 
@@ -930,7 +879,7 @@ struct function_traits<std::function<R(Args...)> >
    template <size_t i>
    struct arg
    {
-      typedef typename std::tuple_element<i, std::tuple<Args...>>::type type;
+      using type = typename std::tuple_element<i, std::tuple<Args...>>::type;
    };
 };
 
