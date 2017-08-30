@@ -349,19 +349,6 @@ Variant &Variant::operator =(zval *value)
 }
 
 /**
- * Move operator
- * 
- * @param  value
- * @return Variant
- */
-Variant &Variant::operator =(Variant &&value) ZAPI_DECL_NOEXCEPT
-{
-   assert(this != &value);
-   m_implPtr = std::move(value.m_implPtr);
-   return *this;
-}
-
-/**
  * Assignment operator
  * 
  * @param  value
@@ -595,31 +582,43 @@ void Variant::stdAssignZval(zval *dest, zval *source)
 
 zval &Variant::getZval() const ZAPI_DECL_NOEXCEPT
 {
+   zval *ret = nullptr;
    if (m_implPtr->m_ref) {
-      return *static_cast<zval *>(*m_implPtr->m_ref);
+      ret = static_cast<zval *>(*m_implPtr->m_ref);
+   } else {
+      ret = static_cast<zval *>(*m_implPtr);
    }
-   return *static_cast<zval *>(*m_implPtr);
+   ZVAL_DEREF(ret);
+   return *ret;
 }
 
 zval *Variant::getZvalPtr() ZAPI_DECL_NOEXCEPT
 {
+   zval *ret = nullptr;
    if (m_implPtr->m_ref) {
-      return static_cast<zval *>(*m_implPtr->m_ref);
+      ret = static_cast<zval *>(*m_implPtr->m_ref);
+   } else {
+      ret = static_cast<zval *>(*m_implPtr);
    }
-   return static_cast<zval *>(*m_implPtr);
+   ZVAL_DEREF(ret);
+   return ret;
 }
 
 const zval *Variant::getZvalPtr() const ZAPI_DECL_NOEXCEPT
 {
+   zval *ret = nullptr;
    if (m_implPtr->m_ref) {
-      return static_cast<zval *>(*m_implPtr->m_ref);
+      ret = static_cast<zval *>(*m_implPtr->m_ref);
+   } else {
+      ret = static_cast<zval *>(*m_implPtr);
    }
-   return static_cast<zval *>(*m_implPtr);
+   ZVAL_DEREF(ret);
+   return ret;
 }
 
 Variant::operator zval * () const
 {
-   return const_cast<zval *>(static_cast<const zval *>(*m_implPtr));
+   return const_cast<zval *>(getZvalPtr());
 }
 
 uint32_t Variant::getRefCount() const ZAPI_DECL_NOEXCEPT

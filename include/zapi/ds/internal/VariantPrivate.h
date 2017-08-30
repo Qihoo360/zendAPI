@@ -32,6 +32,10 @@ namespace internal
 class VariantPrivate
 {
 public:
+   VariantPrivate()
+   {
+      std::memset(&m_buffer, 0, sizeof(m_buffer));
+   }
    operator _zval_struct *() const &;
    operator const _zval_struct *() const &;
    _zval_struct &operator*() const &;

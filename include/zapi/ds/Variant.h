@@ -130,7 +130,6 @@ public:
     * @param  value
     * @return Value
     */
-   Variant &operator =(Variant &&value) ZAPI_DECL_NOEXCEPT;
    Variant &operator =(const Variant &value);
    /**
     * Assignment operator for various types
