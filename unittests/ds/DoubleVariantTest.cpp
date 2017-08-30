@@ -62,7 +62,7 @@ TEST(DoubleVariantTest, testRefConstruct)
    }
    {
       zval numVar;
-      ZVAL_LONG(&numVar, 123);
+      ZVAL_DOUBLE(&numVar, 123);
       DoubleVariant num1(numVar, true);
       ASSERT_EQ(num1.getUnDerefType(), Type::Reference);
       ASSERT_EQ(num1.getType(), Type::Double);
@@ -72,7 +72,7 @@ TEST(DoubleVariantTest, testRefConstruct)
       ASSERT_TRUE(Z_TYPE_P(rval) == IS_DOUBLE);
       num1 = 321;
       ASSERT_EQ(num1.toDouble(), 321);
-      ASSERT_EQ(Z_LVAL_P(rval), 321);
+      ASSERT_EQ(Z_DVAL_P(rval), 321);
       zval_dtor(&numVar);
    }
 }

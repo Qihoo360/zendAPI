@@ -69,6 +69,30 @@ StringVariant::StringVariant(const Variant &other)
    m_implPtr->m_strCapacity = ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(Z_STRLEN_P(self)));
 }
 
+StringVariant::StringVariant(StringVariant &other, bool isRef)
+{
+//   if (ref) {
+//      m_implPtr->m_ref = other.m_implPtr;
+//   } else {
+//      const zval *from = other.getZvalPtr();
+//      zval *self = getZvalPtr();
+//      ZVAL_COPY(self, from);
+//      m_implPtr->m_strCapacity = ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(Z_STRLEN_P(self)));
+//   }
+   
+//   if (!isRef) {
+//      const zval *from = other.getZvalPtr();
+//      zval *self = getZvalPtr();
+      
+//   } else {
+//      zval *self = getUnDerefZvalPtr();
+//      zval *source = other.getUnDerefZvalPtr();
+//      ZVAL_MAKE_REF(source);
+//      ZVAL_COPY(self, source);
+//      m_implPtr->m_strCapacity = other.m_implPtr.m_strCapacity;
+//   }
+}
+
 StringVariant::StringVariant(Variant &&other)
    : Variant(std::move(other))
 {
@@ -83,18 +107,6 @@ StringVariant::StringVariant(Variant &&other)
 StringVariant::StringVariant(StringVariant &&other) ZAPI_DECL_NOEXCEPT
    : Variant(std::move(other))
 {}
-
-StringVariant::StringVariant(const StringVariant &other, bool ref)
-{
-   if (ref) {
-      m_implPtr->m_ref = other.m_implPtr;
-   } else {
-      const zval *from = other.getZvalPtr();
-      zval *self = getZvalPtr();
-      ZVAL_COPY(self, from);
-      m_implPtr->m_strCapacity = ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(Z_STRLEN_P(self)));
-   }
-}
 
 StringVariant::StringVariant(const std::string &value)
    : StringVariant(value.c_str(), value.size())
@@ -159,14 +171,6 @@ StringVariant &StringVariant::operator =(const StringVariant &other)
    return *this;
 }
 
-StringVariant &StringVariant::operator =(StringVariant &&other) ZAPI_DECL_NOEXCEPT
-{
-   assert(this != &other);
-   // here object been slice, but no problem
-   m_implPtr = std::move(other.m_implPtr);
-   return *this;
-}
-
 StringVariant &StringVariant::operator =(const Variant &other)
 {
    zval *self = getZvalPtr();
@@ -187,17 +191,6 @@ StringVariant &StringVariant::operator =(const Variant &other)
       // we need free original zend_string memory
       zend_string_free(Z_STR_P(self));
       ZVAL_COPY_VALUE(self, &temp);
-   }
-   m_implPtr->m_strCapacity = ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(Z_STRLEN_P(self)));
-   return *this;
-}
-
-StringVariant &StringVariant::operator =(Variant &&other)
-{
-   m_implPtr = std::move(other.m_implPtr);
-   zval *self = getZvalPtr();
-   if (getType() != Type::String) {
-      convert_to_string(self);
    }
    m_implPtr->m_strCapacity = ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(Z_STRLEN_P(self)));
    return *this;

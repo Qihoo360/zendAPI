@@ -51,8 +51,8 @@ protected:
 public:
    StringVariant();
    StringVariant(const Variant &other);
+   StringVariant(StringVariant &other, bool isRef);
    StringVariant(Variant &&other);
-   StringVariant(const StringVariant &other, bool ref = false);
    StringVariant(StringVariant &&other) ZAPI_DECL_NOEXCEPT;
    StringVariant(const std::string &value);
    StringVariant(const char *value, size_t length);
@@ -63,9 +63,7 @@ public:
    StringVariant(zval *other, bool isRef);
    
    StringVariant &operator =(const StringVariant &other);
-   StringVariant &operator =(StringVariant &&other) ZAPI_DECL_NOEXCEPT;
    StringVariant &operator =(const Variant &other);
-   StringVariant &operator =(Variant &&other);
    StringVariant &operator =(ArrayItemProxy &&other);
    StringVariant &operator =(char value);
    StringVariant &operator =(const std::string &value);

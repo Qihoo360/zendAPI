@@ -55,7 +55,7 @@ NumericVariant::NumericVariant(zval &&other, bool isRef)
 
 NumericVariant::NumericVariant(zval *other, bool isRef)
 {
-   zval *self = getZvalPtr();
+   zval *self = getUnDerefZvalPtr();
    if (nullptr != other) {
       if (isRef && Z_TYPE_P(other) == IS_LONG) {
          ZVAL_MAKE_REF(other);
@@ -77,7 +77,7 @@ NumericVariant::NumericVariant(const NumericVariant &other)
 
 NumericVariant::NumericVariant(NumericVariant &other, bool isRef)
 {
-   zval *self = getZvalPtr();
+   zval *self = getUnDerefZvalPtr();
    if (!isRef) {
       ZVAL_LONG(self, other.toLong());
    } else {

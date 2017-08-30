@@ -56,7 +56,7 @@ DoubleVariant::DoubleVariant(zval &&other, bool isRef)
 
 DoubleVariant::DoubleVariant(zval *other, bool isRef)
 {
-   zval *self = getZvalPtr();
+   zval *self = getUnDerefZvalPtr();
    if (nullptr != other) {
       if (isRef && Z_TYPE_P(other) == IS_DOUBLE) {
          ZVAL_MAKE_REF(other);
@@ -75,6 +75,18 @@ DoubleVariant::DoubleVariant(zval *other, bool isRef)
 DoubleVariant::DoubleVariant(const DoubleVariant &other)
    : Variant(other)
 {}
+
+DoubleVariant::DoubleVariant(DoubleVariant &other, bool isRef)
+{
+   zval *self = getUnDerefZvalPtr();
+   if (!isRef) {
+      ZVAL_DOUBLE(self, other.toDouble());
+   } else {
+      zval *source = other.getUnDerefZvalPtr();
+      ZVAL_MAKE_REF(source);
+      ZVAL_COPY(self, source);
+   }
+}
 
 DoubleVariant::DoubleVariant(DoubleVariant &&other) ZAPI_DECL_NOEXCEPT
    : Variant(std::move(other))
@@ -152,18 +164,6 @@ DoubleVariant &DoubleVariant::operator =(const DoubleVariant &other)
    assert(this != &other);
    ZVAL_DOUBLE(getZvalPtr(), other.toDouble());
    return *this;
-}
-
-DoubleVariant::DoubleVariant(DoubleVariant &other, bool isRef)
-{
-   zval *self = getZvalPtr();
-   if (!isRef) {
-      ZVAL_DOUBLE(self, other.toDouble());
-   } else {
-      zval *source = other.getUnDerefZvalPtr();
-      ZVAL_MAKE_REF(source);
-      ZVAL_COPY(self, source);
-   }
 }
 
 DoubleVariant &DoubleVariant::operator =(const Variant &other)

@@ -41,7 +41,7 @@ BoolVariant::BoolVariant(zval &&other, bool isRef)
 
 BoolVariant::BoolVariant(zval *other, bool isRef)
 {
-   zval *self = getZvalPtr();
+   zval *self = getUnDerefZvalPtr();
    if (nullptr != other) {
       if (isRef && (Z_TYPE_P(other) == IS_TRUE || Z_TYPE_P(other) == IS_FALSE)) {
          ZVAL_MAKE_REF(other);
@@ -63,7 +63,7 @@ BoolVariant::BoolVariant(const BoolVariant &other)
 
 BoolVariant::BoolVariant(BoolVariant &other, bool isRef)
 {
-   zval *self = getZvalPtr();
+   zval *self = getUnDerefZvalPtr();
    if (!isRef) {
       ZVAL_BOOL(self, Z_TYPE_INFO_P(other.getZvalPtr()) == IS_TRUE);
    } else {
