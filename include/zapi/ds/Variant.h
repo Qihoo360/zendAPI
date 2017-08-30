@@ -139,6 +139,7 @@ public:
     * @return Value
     */
    Variant &operator =(const Variant &value);
+   Variant &operator =(Variant &&value) ZAPI_DECL_NOEXCEPT;
    /**
     * Assignment operator for various types
     * @param  value
@@ -159,7 +160,6 @@ public:
    Variant &operator =(zval *value);
    bool operator ==(const Variant &other) const;
    bool operator !=(const Variant &other) const;
-   
    bool strictEqual(const Variant &other) const;
    bool strictNotEqual(const Variant &other) const;
    /**

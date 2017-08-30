@@ -439,6 +439,17 @@ Variant &Variant::operator =(const Variant &value)
    return *this;
 }
 
+Variant &Variant::operator =(Variant &&value) ZAPI_DECL_NOEXCEPT
+{
+   assert(this != &value);
+   if (getUnDerefType() != Type::Reference) {
+      m_implPtr = std::move(value.m_implPtr);
+   } else {
+      operator =(const_cast<zval *>(value.getZvalPtr()));
+   }
+   return *this;
+}
+
 /**
  * Assignment operator
  * 
