@@ -87,14 +87,14 @@ public:
 
 TEST(TypeTraitTest, test)
 {
-   bool ret = std::is_same<zapi::stdext::function_return_type<decltype(func2)>::type, int>::value;
+   bool ret = std::is_same<zapi::stdext::CallableInfoTrait<decltype(func2)>::ReturnType, int>::value;
    ASSERT_TRUE(ret);
    auto func3 = []()->int{};
-   ret = std::is_same<zapi::stdext::callable_return_type<decltype(func2)>::type, int>::value;
+   ret = std::is_same<zapi::stdext::CallableInfoTrait<decltype(func2)>::ReturnType, int>::value;
    ASSERT_TRUE(ret);
-   ret = std::is_same<zapi::stdext::callable_return_type<decltype(&O::method1)>::type, char>::value;
+   ret = std::is_same<zapi::stdext::CallableInfoTrait<decltype(&O::method1)>::ReturnType, char>::value;
    ASSERT_TRUE(ret);
-   ret = std::is_same<zapi::stdext::callable_return_type<decltype(&dummyext::print_name)>::type, void>::value;
+   ret = std::is_same<zapi::stdext::CallableInfoTrait<decltype(&dummyext::print_name)>::ReturnType, void>::value;
    ASSERT_TRUE(ret);
    int paramNumber = zapi::stdext::CallableInfoTrait<decltype(&func1)>::argNum;
    ASSERT_EQ(paramNumber, 0);

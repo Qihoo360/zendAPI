@@ -789,72 +789,10 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) const volat
    const static bool isMemberCallable = true;
 };
 
-template <typename FuncType>
-struct function_return_type
-{};
-
-template <typename ReturnType, typename ...ArgTypes>
-struct function_return_type<ReturnType (&)(ArgTypes ...args)>
-{
-   using type = ReturnType;
-};
-
-template <typename ReturnType, typename ...ArgTypes>
-struct function_return_type<ReturnType (*)(ArgTypes ...args)>
-{
-   using type = ReturnType;
-};
-
-template <typename ReturnType, typename ...ArgTypes>
-struct function_return_type<ReturnType (ArgTypes ...args)>
-{
-   using type = ReturnType;
-};
-
-template <typename ReturnType, typename ...ArgTypes>
-struct function_return_type<ReturnType (&)(ArgTypes ...args, ...)>
-{
-   using type = ReturnType;
-};
-
-template <typename ReturnType, typename ...ArgTypes>
-struct function_return_type<ReturnType (*)(ArgTypes ...args, ...)>
-{
-   using type = ReturnType;
-};
-
-template <typename ReturnType, typename ...ArgTypes>
-struct function_return_type<ReturnType (ArgTypes ...args, ...)>
-{
-   using type = ReturnType;
-};
-
-template <typename CallableType, bool IsMember>
-struct callable_return_type_impl
-{};
-
-template <typename CallableType>
-struct callable_return_type_impl<CallableType, true>
-{
-   using type = typename internal::member_pointer_traits<CallableType>::ReturnType;
-};
-
-template <typename CallableType>
-struct callable_return_type_impl<CallableType, false>
-{
-   using type = typename function_return_type<CallableType>::type;
-};
-
-template <typename CallableType>
-struct callable_return_type 
-      : public callable_return_type_impl<CallableType, 
-      std::is_member_function_pointer<typename std::decay<CallableType>::type>::value>
-{};
-
 template <typename CallableType>
 struct callable_has_return
 {
-   const static bool value = !std::is_same<typename callable_return_type<CallableType>::type, void>::value;
+   const static bool value = !std::is_same<typename CallableInfoTrait<CallableType>::ReturnType, void>::value;
 };
 
 template <typename MemberPointer>
@@ -869,7 +807,7 @@ struct is_function_pointer
 };
 
 template<typename T> 
-struct function_traits;
+struct FunctionTraits;
 
 template<typename R, typename ...Args> 
 struct function_traits<std::function<R(Args...)> >
