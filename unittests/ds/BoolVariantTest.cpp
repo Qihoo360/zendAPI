@@ -19,6 +19,7 @@
 
 using zapi::ds::BoolVariant;
 using zapi::ds::Variant;
+using zapi::lang::Type;
 
 TEST(BoolVariantTest, testBoolVaraint)
 {
@@ -72,4 +73,53 @@ TEST(BoolVariantTest, testMoveConstuctorAndAssign)
    ASSERT_TRUE(nullptr != str.getZvalPtr());
    bool4 = std::move(str);
    ASSERT_TRUE(bool4);
+   {
+      // test ref
+      Variant variant1(true);
+      Variant variant2(variant1, true);
+      BoolVariant boolVariant(variant2);
+      ASSERT_EQ(boolVariant.getUnDerefType(), Type::True);
+      BoolVariant boolVariant1(std::move(variant2));
+      ASSERT_EQ(boolVariant1.getUnDerefType(), Type::True);
+   }
+   {
+      // test ref
+      Variant variant1(123);
+      Variant variant2(variant1, true);
+      BoolVariant boolVariant(variant2);
+      ASSERT_EQ(boolVariant.getUnDerefType(), Type::True);
+      BoolVariant boolVariant1(std::move(variant2));
+      ASSERT_EQ(boolVariant1.getUnDerefType(), Type::True);
+   }
+}
+
+TEST(BoolVariantTest, testRefConstruct)
+{
+   {
+      BoolVariant bool1(true);
+      ASSERT_EQ(bool1.getUnDerefType(), Type::True);
+      BoolVariant bool2(bool1, false);
+      ASSERT_EQ(bool2.getUnDerefType(), Type::True);
+   }
+   {
+      BoolVariant bool1(true);
+      ASSERT_EQ(bool1.getUnDerefType(), Type::True);
+      BoolVariant bool2(bool1, true);
+      ASSERT_EQ(bool2.getUnDerefType(), Type::Reference);
+      ASSERT_EQ(bool2.getType(), Type::True);
+      BoolVariant bool3 = bool2;
+      ASSERT_EQ(bool3.getUnDerefType(), Type::True);
+      ASSERT_EQ(bool3.getType(), Type::True);
+      ASSERT_TRUE(bool1.toBool());
+      ASSERT_TRUE(bool2.toBool());
+      bool2 = false;
+      ASSERT_FALSE(bool1.toBool());
+      ASSERT_FALSE(bool2.toBool());
+      ASSERT_TRUE(bool3.toBool());
+      bool3 = bool2;
+      ASSERT_FALSE(bool1.toBool());
+      ASSERT_FALSE(bool2.toBool());
+      ASSERT_FALSE(bool3.toBool());
+      ASSERT_EQ(bool3.getType(), Type::False);
+   }
 }

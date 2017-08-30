@@ -106,6 +106,14 @@ TEST(VariantTest, testMoveAssignOperator)
       ASSERT_EQ(variant3.getUnDerefType(), Type::Numeric);
       variant3 = std::move(variant2);
       ASSERT_EQ(Z_LVAL(variant3.getZval()), 123);
-      //ASSERT_EQ(variant3.getUnDerefType(), Type::Numeric);
+      ASSERT_EQ(variant3.getUnDerefType(), Type::Numeric);
    }
+}
+
+TEST(VariantTest, testVariantMoveConstruct)
+{
+   Variant variant1(123);
+   Variant variant2(variant1, true);
+   Variant variant3(std::move(variant1));
+   ASSERT_EQ(variant3.getUnDerefType(), Type::Numeric);
 }

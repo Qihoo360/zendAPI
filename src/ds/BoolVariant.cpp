@@ -35,6 +35,18 @@ BoolVariant::BoolVariant(const BoolVariant &other)
    : Variant(other)
 {}
 
+BoolVariant::BoolVariant(BoolVariant &other, bool isRef)
+{
+   zval *self = getZvalPtr();
+   if (!isRef) {
+      ZVAL_BOOL(self, Z_TYPE_INFO_P(other.getZvalPtr()) == IS_TRUE);
+   } else {
+      zval *source = other.getUnDerefZvalPtr();
+      ZVAL_MAKE_REF(source);
+      ZVAL_COPY(self, source);
+   }
+}
+
 BoolVariant::BoolVariant(BoolVariant &&other) ZAPI_DECL_NOEXCEPT
    : Variant(std::move(other))
 {}
@@ -43,7 +55,7 @@ BoolVariant::BoolVariant(const Variant &other)
 {
    zval *self = getZvalPtr();
    zval *from = const_cast<zval *>(other.getZvalPtr());
-   if (getType() == Type::Boolean) {
+   if (other.getType() == Type::True || other.getType() == Type::False) {
       ZVAL_BOOL(self, Z_TYPE_INFO_P(from) == IS_TRUE);
    } else {
       zval temp;
@@ -69,33 +81,9 @@ BoolVariant &BoolVariant::operator=(const BoolVariant &other)
    return *this;
 }
 
-BoolVariant &BoolVariant::operator=(BoolVariant &&other) ZAPI_DECL_NOEXCEPT
-{
-   assert(this != &other);
-   if (getUnDerefType() != Type::Reference) {
-      m_implPtr = std::move(other.m_implPtr);
-   } else {
-      ZVAL_BOOL(getZvalPtr(), other.toBool());
-   }
-   return *this;
-}
-
 BoolVariant &BoolVariant::operator=(const Variant &other)
 {
    ZVAL_BOOL(getZvalPtr(), other.toBool());
-   return *this;
-}
-
-BoolVariant &BoolVariant::operator=(Variant &&other)
-{
-   if (getUnDerefType() != Type::Reference) {
-      m_implPtr = std::move(other.m_implPtr);
-      if (getType() != Type::Boolean) {
-         convert_to_boolean(getZvalPtr());
-      }
-   } else {
-      ZVAL_BOOL(getZvalPtr(), other.toBool());
-   }
    return *this;
 }
 

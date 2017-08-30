@@ -247,6 +247,7 @@ public:
 protected:
    static void stdCopyZval(zval *dest, zval *source);
    static void stdAssignZval(zval *dest, zval *source);
+   static void selfDeref(zval *self);
 protected: 
    friend class StringVariant;
    friend class NumericVariant;

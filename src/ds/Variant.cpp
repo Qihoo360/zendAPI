@@ -389,31 +389,49 @@ Variant::Variant(const ArrayVariant &value)
 Variant::Variant(Variant &&other) ZAPI_DECL_NOEXCEPT
 {
    m_implPtr = std::move(other.m_implPtr);
+   if (getUnDerefType() == Type::Reference) {
+      selfDeref(getUnDerefZvalPtr());
+   }
 }
 
 Variant::Variant(BoolVariant &&value)
 {
    m_implPtr = std::move(value.m_implPtr);
+   if (getUnDerefType() == Type::Reference) {
+      selfDeref(getUnDerefZvalPtr());
+   }
 }
 
 Variant::Variant(NumericVariant &&value)
 {
    m_implPtr = std::move(value.m_implPtr);
+   if (getUnDerefType() == Type::Reference) {
+      selfDeref(getUnDerefZvalPtr());
+   }
 }
 
 Variant::Variant(StringVariant &&value)
 {
    m_implPtr = std::move(value.m_implPtr);
+   if (getUnDerefType() == Type::Reference) {
+      selfDeref(getUnDerefZvalPtr());
+   }
 }
 
 Variant::Variant(DoubleVariant &&value)
 {
    m_implPtr = std::move(value.m_implPtr);
+   if (getUnDerefType() == Type::Reference) {
+      selfDeref(getUnDerefZvalPtr());
+   }
 }
 
 Variant::Variant(ArrayVariant &&value)
 {
    m_implPtr = std::move(value.m_implPtr);
+   if (getUnDerefType() == Type::Reference) {
+      selfDeref(getUnDerefZvalPtr());
+   }
 }
 
 Variant::~Variant() ZAPI_DECL_NOEXCEPT
@@ -444,13 +462,9 @@ Variant &Variant::operator =(Variant &&value) ZAPI_DECL_NOEXCEPT
    assert(this != &value);
    if (getUnDerefType() != Type::Reference) {
       m_implPtr = std::move(value.m_implPtr);
-      zval *orig = getUnDerefZvalPtr();
-      zval *realPtr = orig;
-      ZVAL_DEREF(realPtr);
-      zval temp;
-      ZVAL_COPY(&temp, realPtr);
-      zval_dtor(orig);
-      ZVAL_COPY_VALUE(getUnDerefZvalPtr(), &temp);
+      if (getUnDerefType() == Type::Reference) {
+         selfDeref(getUnDerefZvalPtr());
+      }
    } else {
       operator =(const_cast<zval *>(value.getZvalPtr()));
    }
@@ -673,6 +687,17 @@ void Variant::stdAssignZval(zval *dest, zval *source)
    }
    // Copy the source of b dest a and increment the reference count if necessary
    ZVAL_COPY(dest, source);
+}
+
+void Variant::selfDeref(zval *self)
+{
+   zval *orig = self;
+   zval *realPtr = orig;
+   ZVAL_DEREF(realPtr);
+   zval temp;
+   ZVAL_COPY(&temp, realPtr);
+   zval_dtor(orig);
+   ZVAL_COPY_VALUE(orig, &temp);
 }
 
 zval &Variant::getZval() const ZAPI_DECL_NOEXCEPT
