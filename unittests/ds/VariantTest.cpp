@@ -18,6 +18,7 @@
 #include "zapi/ds/Variant.h"
 
 using zapi::ds::Variant;
+using zapi::lang::Type;
 
 TEST(VariantTest, testRefConstruct)
 {
@@ -51,4 +52,20 @@ TEST(VariantTest, testCompareOperators)
    ASSERT_TRUE(variant1 == variant3);
    zval_dtor(&var1);
    zval_dtor(&var2);
+}
+
+TEST(VariantTest, testRefVariantConstruct) 
+{
+   Variant variant1(123);
+   ASSERT_EQ(variant1.getRefCount(), 0);
+   ASSERT_FALSE(variant1.isReference());
+   Variant variant2(variant1, true);
+   ASSERT_EQ(variant1.getRefCount(), 2);
+   ASSERT_EQ(variant2.getRefCount(), 2);
+   ASSERT_EQ(variant1.getType(), Type::Numeric);
+   ASSERT_EQ(variant2.getType(), Type::Numeric);
+   ASSERT_EQ(variant1.getUnDerefType(), Type::Reference);
+   ASSERT_EQ(variant2.getUnDerefType(), Type::Reference);
+   ASSERT_TRUE(variant1.isReference());
+   ASSERT_TRUE(variant2.isReference());
 }

@@ -84,11 +84,25 @@ public:
    Variant(const char *value, size_t length);
    Variant(const char *value);
    Variant(const StdClass &stdClass);
+   
+   /**
+    * Copy constructor
+    * @param  value
+    */
+   Variant(const Variant &other);
+   Variant(Variant &other, bool isRef);
+   Variant(BoolVariant &value, bool isRef);
+   Variant(NumericVariant &value, bool isRef);
+   Variant(DoubleVariant &value, bool isRef);
+   Variant(StringVariant &value, bool isRef);
+   Variant(ArrayVariant &value, bool isRef);
+   
    Variant(const BoolVariant &value);
    Variant(const NumericVariant &value);
    Variant(const StringVariant &value);
    Variant(const DoubleVariant &value);
    Variant(const ArrayVariant &value);
+
    Variant(BoolVariant &&value);
    Variant(NumericVariant &&value);
    Variant(StringVariant &&value);
@@ -106,13 +120,7 @@ public:
     * @param  ref Force this to be a reference
     */
    Variant(zval *value, bool isRef = false);
-   Variant(const zval &value, bool isRef = false);
-   
-   /**
-    * Copy constructor
-    * @param  value
-    */
-   Variant(const Variant &other);
+   Variant(zval &value, bool isRef = false);
    
    /**
     * Move constructor
@@ -180,6 +188,12 @@ public:
     */
    Type getType() const ZAPI_DECL_NOEXCEPT;
    
+   /**
+    * The type of object
+    * @return Type
+    */
+   Type getUnDerefType() const ZAPI_DECL_NOEXCEPT;
+   
    std::string getTypeStr() const ZAPI_DECL_NOEXCEPT;
    
    /**
@@ -223,6 +237,8 @@ public:
    zval &getZval() const ZAPI_DECL_NOEXCEPT;
    zval *getZvalPtr() ZAPI_DECL_NOEXCEPT;
    const zval *getZvalPtr() const ZAPI_DECL_NOEXCEPT;
+   zval *getUnDerefZvalPtr() ZAPI_DECL_NOEXCEPT;
+   const zval *getUnDerefZvalPtr() const ZAPI_DECL_NOEXCEPT;
    uint32_t getRefCount() const ZAPI_DECL_NOEXCEPT;
    zval detach(bool keeprefcount);
    Variant makeReferenceByZval();
