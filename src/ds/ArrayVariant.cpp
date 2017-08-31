@@ -94,17 +94,62 @@ using ConstArrayIterator = ArrayVariant::ConstIterator;
 
 ArrayVariant::ArrayVariant()
 {
-   // constructor null array
-   zval *self = getZvalPtr();
-   array_init(self);
+   // constructor empty array
+   array_init(getUnDerefZvalPtr());
 }
 
 ArrayVariant::ArrayVariant(const ArrayVariant &other)
+   : Variant(other)
 {
-   // here we just need copy array zval
-   zval *self = getZvalPtr();
-   zval *from = const_cast<zval *>(other.getZvalPtr());
-   ZVAL_COPY(self, from);
+   if (other.getUnDerefType() == Type::Reference) {
+      SEPARATE_ARRAY(getUnDerefZvalPtr());
+   }
+}
+
+ArrayVariant::ArrayVariant(ArrayVariant &other, bool isRef)
+{
+   zval *self = getUnDerefZvalPtr();
+   if (!isRef) {
+      zval *otherPtr = other.getUnDerefZvalPtr();
+      stdCopyZval(self, const_cast<zval *>(otherPtr));
+      if (Z_TYPE_P(otherPtr) == IS_REFERENCE) {
+         SEPARATE_ARRAY(self);
+      }
+   } else {
+      zval *source = other.getUnDerefZvalPtr();
+      ZVAL_MAKE_REF(source);
+      ZVAL_COPY(self, source);
+      // if the reference array reference count > 1
+      // separate here
+      SEPARATE_ARRAY(getZvalPtr());
+   }
+}
+
+ArrayVariant::ArrayVariant(zval &other, bool isRef)
+   : ArrayVariant(&other, isRef)
+{}
+
+ArrayVariant::ArrayVariant(zval &&other, bool isRef)
+   : ArrayVariant(&other, isRef)
+{}
+
+ArrayVariant::ArrayVariant(zval *other, bool isRef)
+{
+   zval *self = getUnDerefZvalPtr();
+   if (nullptr != other) {
+      if (isRef && Z_TYPE_P(other) == IS_ARRAY) {
+         SEPARATE_STRING(other);
+         ZVAL_MAKE_REF(other);
+         zend_reference *ref = Z_REF_P(other);
+         ++GC_REFCOUNT(ref);
+         ZVAL_REF(self, ref);
+      } else {
+         ZVAL_DUP(self, other);
+         convert_to_array(self);
+      }
+   } else {
+      array_init(self);
+   }
 }
 
 ArrayVariant::ArrayVariant(ArrayVariant &&other) ZAPI_DECL_NOEXCEPT
@@ -114,7 +159,7 @@ ArrayVariant::ArrayVariant(ArrayVariant &&other) ZAPI_DECL_NOEXCEPT
 ArrayVariant::ArrayVariant(const Variant &other)
 {
    zval *from = const_cast<zval *>(other.getZvalPtr());
-   zval *self = getZvalPtr();
+   zval *self = getUnDerefZvalPtr();
    if (other.getType() == Type::Array) {
       ZVAL_COPY(self, from);
    } else {
@@ -202,15 +247,11 @@ bool ArrayVariant::operator !=(const ArrayVariant &other) const
 ArrayVariant &ArrayVariant::operator =(const ArrayVariant &other)
 {
    if (this != &other) {
+      if (getUnDerefType() != Type::Reference) {
+         SEPARATE_ZVAL_NOREF(getUnDerefZvalPtr());
+      }
       Variant::operator =(other);
    }
-   return *this;
-}
-
-ArrayVariant &ArrayVariant::operator =(ArrayVariant &&other) ZAPI_DECL_NOEXCEPT
-{
-   assert(this != &other);
-   m_implPtr = std::move(other.m_implPtr);
    return *this;
 }
 
@@ -218,12 +259,14 @@ ArrayVariant &ArrayVariant::operator =(const Variant &other)
 {
    zval *self = getZvalPtr();
    zval *from = const_cast<zval *>(other.getZvalPtr());
+   if (getUnDerefType() != Type::Reference) {
+      SEPARATE_ZVAL_NOREF(self);
+   }
    // need set gc info
    if (other.getType() == Type::Array) {
       // standard copy
       Variant::operator =(from);
    } else {
-      SEPARATE_ZVAL_NOREF(self);
       zval temp;
       // will increase 1 to gc refcount
       ZVAL_DUP(&temp, from);
@@ -232,16 +275,6 @@ ArrayVariant &ArrayVariant::operator =(const Variant &other)
       // we need free original zend_array memory
       zend_array_destroy(Z_ARR_P(self));
       ZVAL_COPY_VALUE(self, &temp);
-   }
-   return *this;
-}
-
-ArrayVariant &ArrayVariant::operator =(Variant &&other)
-{
-   m_implPtr = std::move(other.m_implPtr);
-   zval *self = getZvalPtr();
-   if (getType() != Type::Array) {
-      convert_to_array(self);
    }
    return *this;
 }
@@ -262,10 +295,11 @@ bool ArrayVariant::strictNotEqual(const ArrayVariant &other) const
 
 ArrayIterator ArrayVariant::insert(zapi_ulong index, const Variant &value)
 {
-   SEPARATE_ZVAL_NOREF(getZvalPtr());
+   if (getUnDerefType() != Type::Reference) {
+      SEPARATE_ZVAL_NOREF(getUnDerefZvalPtr());
+   }
    zval *zvalPtr = const_cast<zval *>(value.getZvalPtr());
    zval temp;
-   ZVAL_DEREF(zvalPtr);
    ZVAL_COPY(&temp, zvalPtr);
    zend_array *selfArrPtr = getZendArrayPtr();
    zval *valPtr = zend_hash_index_update(selfArrPtr, index, &temp);
@@ -279,10 +313,11 @@ ArrayIterator ArrayVariant::insert(zapi_ulong index, const Variant &value)
 
 ArrayIterator ArrayVariant::insert(zapi_ulong index, Variant &&value)
 {
-   SEPARATE_ZVAL_NOREF(getZvalPtr());
+   if (getUnDerefType() != Type::Reference) {
+      SEPARATE_ZVAL_NOREF(getUnDerefZvalPtr());
+   }
    zval *zvalPtr = value.getZvalPtr();
    zval temp;
-   ZVAL_DEREF(zvalPtr);
    ZVAL_COPY_VALUE(&temp, zvalPtr);
    std::memset(&value.m_implPtr->m_buffer, 0, sizeof(value.m_implPtr->m_buffer));
    zend_array *selfArrPtr = getZendArrayPtr();
@@ -297,10 +332,11 @@ ArrayIterator ArrayVariant::insert(zapi_ulong index, Variant &&value)
 
 ArrayIterator ArrayVariant::insert(const std::string &key, const Variant &value)
 {
-   SEPARATE_ZVAL_NOREF(getZvalPtr());
+   if (getUnDerefType() != Type::Reference) {
+      SEPARATE_ZVAL_NOREF(getUnDerefZvalPtr());
+   }
    zval *zvalPtr = const_cast<zval *>(value.getZvalPtr());
    zval temp;
-   ZVAL_DEREF(zvalPtr);
    ZVAL_COPY(&temp, zvalPtr);
    zend_array *selfArrPtr = getZendArrayPtr();
    zval *valPtr = zend_hash_str_update(selfArrPtr, key.c_str(), key.length(), &temp);
@@ -314,10 +350,11 @@ ArrayIterator ArrayVariant::insert(const std::string &key, const Variant &value)
 
 ArrayIterator ArrayVariant::insert(const std::string &key, Variant &&value)
 {
-   SEPARATE_ZVAL_NOREF(getZvalPtr());
+   if (getUnDerefType() != Type::Reference) {
+      SEPARATE_ZVAL_NOREF(getUnDerefZvalPtr());
+   }
    zval *zvalPtr = value.getZvalPtr();
    zval temp;
-   ZVAL_DEREF(zvalPtr);
    ZVAL_COPY_VALUE(&temp, zvalPtr);
    std::memset(&value.m_implPtr->m_buffer, 0, sizeof(value.m_implPtr->m_buffer));
    zend_array *selfArrPtr = getZendArrayPtr();
@@ -332,10 +369,11 @@ ArrayIterator ArrayVariant::insert(const std::string &key, Variant &&value)
 
 ArrayIterator ArrayVariant::append(const Variant &value)
 {
-   SEPARATE_ZVAL_NOREF(getZvalPtr());
+   if (getUnDerefType() != Type::Reference) {
+      SEPARATE_ZVAL_NOREF(getUnDerefZvalPtr());
+   }
    zval *zvalPtr = const_cast<zval *>(value.getZvalPtr());
    zval temp;
-   ZVAL_DEREF(zvalPtr);
    ZVAL_COPY(&temp, zvalPtr);
    zend_array *selfArrPtr = getZendArrayPtr();
    zapi_long cindex = selfArrPtr->nNextFreeElement;
@@ -350,10 +388,11 @@ ArrayIterator ArrayVariant::append(const Variant &value)
 
 ArrayIterator ArrayVariant::append(Variant &&value)
 {
-   SEPARATE_ZVAL_NOREF(getZvalPtr());
+   if (getUnDerefType() != Type::Reference) {
+      SEPARATE_ZVAL_NOREF(getUnDerefZvalPtr());
+   }
    zval *zvalPtr = value.getZvalPtr();
    zval temp;
-   ZVAL_DEREF(zvalPtr);
    ZVAL_COPY_VALUE(&temp, zvalPtr);
    std::memset(&value.m_implPtr->m_buffer, 0, sizeof(value.m_implPtr->m_buffer));
    zend_array *selfArrPtr = getZendArrayPtr();
@@ -369,21 +408,33 @@ ArrayIterator ArrayVariant::append(Variant &&value)
 
 void ArrayVariant::clear() ZAPI_DECL_NOEXCEPT
 {
+   if (getUnDerefType() != Type::Reference) {
+      SEPARATE_ZVAL_NOREF(getUnDerefZvalPtr());
+   }
    zend_hash_clean(getZendArrayPtr());
 }
 
 bool ArrayVariant::remove(zapi_ulong index) ZAPI_DECL_NOEXCEPT
 {
+   if (getUnDerefType() != Type::Reference) {
+      SEPARATE_ZVAL_NOREF(getUnDerefZvalPtr());
+   }
    return zend_hash_index_del(getZendArrayPtr(), index) == ZAPI_SUCCESS;
 }
 
 bool ArrayVariant::remove(const std::string &key) ZAPI_DECL_NOEXCEPT
 {
+   if (getUnDerefType() != Type::Reference) {
+      SEPARATE_ZVAL_NOREF(getUnDerefZvalPtr());
+   }
    return zend_hash_str_del(getZendArrayPtr(), key.c_str(), key.length()) == ZAPI_SUCCESS;
 }
 
 ArrayVariant::Iterator ArrayVariant::erase(ConstIterator &iter)
 {
+   if (getUnDerefType() != Type::Reference) {
+      SEPARATE_ZVAL_NOREF(getUnDerefZvalPtr());
+   }
    zend_array *array = getZendArrayPtr();
    // here we need check the iter check whether iter pointer this array
    if (iter == cend() || array != iter.m_array) {

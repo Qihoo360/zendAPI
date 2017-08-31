@@ -53,6 +53,10 @@ public:
 public:
    ArrayVariant();
    ArrayVariant(const ArrayVariant &other);
+   ArrayVariant(ArrayVariant &other, bool isRef);
+   ArrayVariant(zval &other, bool isRef);
+   ArrayVariant(zval &&other, bool isRef);
+   ArrayVariant(zval *other, bool isRef);
    ArrayVariant(ArrayVariant &&other) ZAPI_DECL_NOEXCEPT;
    ArrayVariant(const Variant &other);
    ArrayVariant(Variant &&other);
@@ -69,9 +73,7 @@ public:
    bool operator ==(const ArrayVariant &other) const;
    bool operator !=(const ArrayVariant &other) const;
    ArrayVariant &operator =(const ArrayVariant &other);
-   ArrayVariant &operator =(ArrayVariant &&other) ZAPI_DECL_NOEXCEPT;
    ArrayVariant &operator =(const Variant &other);
-   ArrayVariant &operator =(Variant &&other);
    
    bool strictEqual(const ArrayVariant &other) const;
    bool strictNotEqual(const ArrayVariant &other) const;

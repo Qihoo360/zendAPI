@@ -41,6 +41,44 @@ TEST(ArrayVariantTest, testConstructor)
    ASSERT_EQ(array.getCapacity(), 8);
 }
 
+TEST(ArrayVariantTest, testRefConstruct)
+{
+   {
+      zval arrVar;
+      array_init(&arrVar);
+      ArrayVariant arr1(arrVar);
+      ArrayVariant arr2(arr1);
+      ArrayVariant arr3(arr2);
+      ASSERT_EQ(arr1.getRefCount(), 4);
+      ASSERT_EQ(arr2.getRefCount(), 4);
+      ASSERT_EQ(arr3.getRefCount(), 4);
+      ASSERT_EQ(Z_REFCOUNT_P(&arrVar), 4);
+      zval_dtor(&arrVar);
+   }
+   {
+      zval arrVar;
+      array_init(&arrVar);
+      ArrayVariant arr1(arrVar, true);
+      ArrayVariant arr2(arr1, true);
+      ArrayVariant arr3(arr2, false);
+      ASSERT_EQ(arr1.getRefCount(), 3);
+      ASSERT_EQ(arr2.getRefCount(), 3);
+      ASSERT_EQ(arr3.getRefCount(), 1);
+      zval *rval = &arrVar;
+      ZVAL_DEREF(rval);
+      ASSERT_EQ(Z_REFCOUNT_P(rval), 1);
+      
+      ASSERT_EQ(arr1.getSize(), 0);
+      ASSERT_EQ(arr2.getSize(), 0);
+      ASSERT_EQ(arr3.getSize(), 0);
+      arr1.append(1);
+      ASSERT_EQ(arr1.getSize(), 1);
+      ASSERT_EQ(arr2.getSize(), 1);
+      ASSERT_EQ(arr3.getSize(), 0);
+      zval_dtor(&arrVar);
+   }
+}
+
 TEST(ArrayVariantTest, testCopyConstructor)
 {
    ArrayVariant array;
@@ -249,7 +287,7 @@ TEST(ArrayVariantTest, testAssignOperators)
    array1 = std::move(array2);
    ASSERT_TRUE(array1.contains(1));
    ASSERT_TRUE(array1.contains(2));
-   ASSERT_EQ(array1.getRefCount(), 1);
+   ASSERT_EQ(array1.getRefCount(), 2);
    
 }
 
@@ -318,7 +356,7 @@ TEST(ArrayVariantTest, testMoveAssignOperators)
    
    array1 = std::move(val4);
    // can't do anything about val4
-   ASSERT_EQ(array1.getRefCount(), 2);
+   ASSERT_EQ(array1.getRefCount(), 3);
    ASSERT_STREQ((array1[1]).toStringVariant().getCStr(), "zapi");
    ASSERT_EQ((array1[2]).toBoolVariant().toBool(), true);
    ASSERT_EQ((array1[3]).toDoubleVariant().toDouble(), 3.14);
@@ -438,6 +476,25 @@ TEST(ArrayVariantTest, testAppend)
    ASSERT_STREQ(str.getCStr(), "zapi");
    ASSERT_EQ(str.getRefCount(), 2);
    // std::cout << str << std::endl;
+   {
+      // test for reference
+      ArrayVariant arr1{1, 2};
+      ArrayVariant arr2(arr1);
+      ArrayVariant arr3 = arr2;
+      ASSERT_EQ(arr1.getSize(), 2);
+      ASSERT_EQ(arr2.getSize(), 2);
+      ASSERT_EQ(arr3.getSize(), 2);
+      ASSERT_EQ(arr1.getRefCount(), 3);
+      ASSERT_EQ(arr2.getRefCount(), 3);
+      ASSERT_EQ(arr3.getRefCount(), 3);
+      arr1.append(3);
+      ASSERT_EQ(arr1.getSize(), 3);
+      ASSERT_EQ(arr2.getSize(), 2);
+      ASSERT_EQ(arr3.getSize(), 2);
+      ASSERT_EQ(arr1.getRefCount(), 1);
+      ASSERT_EQ(arr2.getRefCount(), 2);
+      ASSERT_EQ(arr3.getRefCount(), 2);
+   }
 }
 
 TEST(ArrayVariantTest, testClear)
