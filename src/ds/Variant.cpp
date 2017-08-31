@@ -107,7 +107,7 @@ void std_zval_deleter(VariantPrivate *ptr)
 Variant::Variant()
    : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
-   ZVAL_NULL(getZvalPtr());
+   ZVAL_NULL(getUnDerefZvalPtr());
 }
 
 /**
@@ -126,7 +126,7 @@ Variant::Variant(const std::nullptr_t value) : Variant()
 Variant::Variant(const std::int8_t value)
    : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
-   ZVAL_LONG(getZvalPtr(), value);
+   ZVAL_LONG(getUnDerefZvalPtr(), value);
 }
 
 /**
@@ -137,7 +137,7 @@ Variant::Variant(const std::int8_t value)
 Variant::Variant(const std::int16_t value)
    : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
-   ZVAL_LONG(getZvalPtr(), value);
+   ZVAL_LONG(getUnDerefZvalPtr(), value);
 }
 
 /**
@@ -148,7 +148,7 @@ Variant::Variant(const std::int16_t value)
 Variant::Variant(const std::int32_t value)
    : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
-   ZVAL_LONG(getZvalPtr(), value);
+   ZVAL_LONG(getUnDerefZvalPtr(), value);
 }
 
 #if SIZEOF_ZEND_LONG == 8
@@ -160,7 +160,7 @@ Variant::Variant(const std::int32_t value)
 Variant::Variant(const std::int64_t value)
    : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
-   ZVAL_LONG(getZvalPtr(), value);
+   ZVAL_LONG(getUnDerefZvalPtr(), value);
 }
 #endif
 
@@ -172,7 +172,7 @@ Variant::Variant(const std::int64_t value)
 Variant::Variant(const bool value)
    : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
-   ZVAL_BOOL(getZvalPtr(), value);
+   ZVAL_BOOL(getUnDerefZvalPtr(), value);
 }
 
 /**
@@ -183,7 +183,7 @@ Variant::Variant(const bool value)
 Variant::Variant(const char value)
    : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
-   ZVAL_STRINGL(getZvalPtr(), &value, 1);
+   ZVAL_STRINGL(getUnDerefZvalPtr(), &value, 1);
 }
 
 /**
@@ -194,7 +194,7 @@ Variant::Variant(const char value)
 Variant::Variant(const double value)
    : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
-   ZVAL_DOUBLE(getZvalPtr(), value);
+   ZVAL_DOUBLE(getUnDerefZvalPtr(), value);
 }
 
 /**
@@ -205,7 +205,7 @@ Variant::Variant(const double value)
 Variant::Variant(const std::string &value)
    : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
-   ZVAL_STRINGL(getZvalPtr(), value.c_str(), value.size());
+   ZVAL_STRINGL(getUnDerefZvalPtr(), value.c_str(), value.size());
 }
 
 /**
@@ -218,9 +218,9 @@ Variant::Variant(const char *value, size_t size)
    : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
    if (value != nullptr) {
-      ZVAL_STRINGL(getZvalPtr(), value, size);
+      ZVAL_STRINGL(getUnDerefZvalPtr(), value, size);
    } else {
-      ZVAL_NULL(getZvalPtr());
+      ZVAL_NULL(getUnDerefZvalPtr());
    }
 }
 
@@ -234,7 +234,7 @@ Variant::Variant(const StdClass &stdClass)
    if (nullptr == zobject) {
       throw FatalError("Can't construct from an unregister StdClass Object");
    }
-   zval *self = getZvalPtr();
+   zval *self = getUnDerefZvalPtr();
    ZVAL_OBJ(self, zobject);
    Z_ADDREF_P(self);
 }
@@ -242,7 +242,7 @@ Variant::Variant(const StdClass &stdClass)
 Variant::Variant(const Variant &other)
    : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
-   stdCopyZval(getZvalPtr(), const_cast<zval *>(other.getZvalPtr()));
+   stdCopyZval(getUnDerefZvalPtr(), const_cast<zval *>(other.getZvalPtr()));
 }
 
 /**
@@ -254,7 +254,7 @@ Variant::Variant(const Variant &other)
 Variant::Variant(zval *value, bool isRef)
    : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
-   zval *self = getZvalPtr();
+   zval *self = getUnDerefZvalPtr();
    if (nullptr != value) {
       if (!isRef) {
          ZVAL_COPY(self, value);
@@ -276,7 +276,7 @@ Variant::Variant(zval &value, bool isRef)
 Variant::Variant(Variant &other, bool isRef)
    : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
-   zval *self = getZvalPtr();
+   zval *self = getUnDerefZvalPtr();
    if (!isRef) {
       stdCopyZval(self, const_cast<zval *>(other.getZvalPtr()));
    } else {
@@ -289,9 +289,9 @@ Variant::Variant(Variant &other, bool isRef)
 Variant::Variant(BoolVariant &value, bool isRef)
    : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
-   zval *self = getZvalPtr();
+   zval *self = getUnDerefZvalPtr();
    if (!isRef) {
-      ZVAL_BOOL(getZvalPtr(), value.toBool());
+      ZVAL_BOOL(self, value.toBool());
    } else {
       zval *source = value.getUnDerefZvalPtr();
       ZVAL_MAKE_REF(source);
@@ -302,9 +302,9 @@ Variant::Variant(BoolVariant &value, bool isRef)
 Variant::Variant(NumericVariant &value, bool isRef)
    : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
-   zval *self = getZvalPtr();
+   zval *self = getUnDerefZvalPtr();
    if (!isRef) {
-      ZVAL_LONG(getZvalPtr(), value.toLong());
+      ZVAL_LONG(self, value.toLong());
    } else {
       zval *source = value.getUnDerefZvalPtr();
       ZVAL_MAKE_REF(source);
@@ -315,9 +315,9 @@ Variant::Variant(NumericVariant &value, bool isRef)
 Variant::Variant(DoubleVariant &value, bool isRef)
    : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
-   zval *self = getZvalPtr();
+   zval *self = getUnDerefZvalPtr();
    if (!isRef) {
-      ZVAL_DOUBLE(getZvalPtr(), value.toDouble());
+      ZVAL_DOUBLE(self, value.toDouble());
    } else {
       zval *source = value.getUnDerefZvalPtr();
       ZVAL_MAKE_REF(source);
@@ -328,9 +328,9 @@ Variant::Variant(DoubleVariant &value, bool isRef)
 Variant::Variant(StringVariant &value, bool isRef)
    : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
-   zval *self = getZvalPtr();
+   zval *self = getUnDerefZvalPtr();
    if (!isRef) {
-      stdCopyZval(getZvalPtr(), const_cast<zval *>(value.getZvalPtr()));
+      stdCopyZval(self, const_cast<zval *>(value.getZvalPtr()));
    } else {
       zval *source = value.getUnDerefZvalPtr();
       ZVAL_MAKE_REF(source);
@@ -341,9 +341,9 @@ Variant::Variant(StringVariant &value, bool isRef)
 Variant::Variant(ArrayVariant &value, bool isRef)
    : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
-   zval *self = getZvalPtr();
+   zval *self = getUnDerefZvalPtr();
    if (!isRef) {
-      stdCopyZval(getZvalPtr(), const_cast<zval *>(value.getZvalPtr()));
+      stdCopyZval(self, const_cast<zval *>(value.getZvalPtr()));
    } else {
       zval *source = value.getUnDerefZvalPtr();
       ZVAL_MAKE_REF(source);
@@ -354,31 +354,31 @@ Variant::Variant(ArrayVariant &value, bool isRef)
 Variant::Variant(const BoolVariant &value)
    : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
-   ZVAL_BOOL(getZvalPtr(), value.toBool());
+   ZVAL_BOOL(getUnDerefZvalPtr(), value.toBool());
 }
 
 Variant::Variant(const NumericVariant &value)
    : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
-   ZVAL_LONG(getZvalPtr(), value.toLong());
+   ZVAL_LONG(getUnDerefZvalPtr(), value.toLong());
 }
 
 Variant::Variant(const DoubleVariant &value)
    : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
-   ZVAL_DOUBLE(getZvalPtr(), value.toDouble());
+   ZVAL_DOUBLE(getUnDerefZvalPtr(), value.toDouble());
 }
 
 Variant::Variant(const StringVariant &value)
    : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
-   stdCopyZval(getZvalPtr(), const_cast<zval *>(value.getZvalPtr()));
+   stdCopyZval(getUnDerefZvalPtr(), const_cast<zval *>(value.getZvalPtr()));
 }
 
 Variant::Variant(const ArrayVariant &value)
    : m_implPtr(new VariantPrivate, std_zval_deleter)
 {
-   stdCopyZval(getZvalPtr(), const_cast<zval *>(value.getZvalPtr()));
+   stdCopyZval(getUnDerefZvalPtr(), const_cast<zval *>(value.getZvalPtr()));
 }
 
 /**
