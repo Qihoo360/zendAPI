@@ -70,13 +70,11 @@ namespace
 {
 void std_zval_deleter(VariantPrivate *ptr)
 {
-   if (ptr->m_ref) {
-      ptr->m_ref.~shared_ptr();
-   }
    zval *v = *ptr;
    if (Z_COUNTED_P(v)) {
       zval_ptr_dtor(v);
    }
+   delete ptr;
 }
 }
 

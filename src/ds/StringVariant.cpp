@@ -43,7 +43,7 @@ const size_t STR_VARIANT_START_SIZE (256 - STR_VARIANT_OVERHEAD - 1);
 
 StringVariant::StringVariant()
 {
-   zval *self = getZvalPtr();
+   zval *self = getUnDerefZvalPtr();
    Z_STR_P(self) = nullptr;
    Z_TYPE_INFO_P(self) = IS_STRING_EX;
 }
@@ -53,7 +53,7 @@ StringVariant::StringVariant(const Variant &other)
    // chech the type, if the type is not the string, we just try to convert
    // if the type is string we deploy copy on write idiom
    zval *from = const_cast<zval *>(other.getZvalPtr());
-   zval *self = getZvalPtr();
+   zval *self = getUnDerefZvalPtr();
    if (other.getType() == Type::String) {
       ZVAL_COPY(self, from);
    } else {
@@ -86,6 +86,7 @@ StringVariant::StringVariant(StringVariant &other, bool isRef)
       ZVAL_COPY(self, source);
    }
    m_implPtr->m_strCapacity = other.m_implPtr->m_strCapacity;
+   m_implPtr->m_ref = other.m_implPtr;
 }
 
 StringVariant::StringVariant(Variant &&other)
@@ -100,7 +101,9 @@ StringVariant::StringVariant(Variant &&other)
 
 StringVariant::StringVariant(StringVariant &&other) ZAPI_DECL_NOEXCEPT
    : Variant(std::move(other))
-{}
+{
+   m_implPtr->m_strCapacity = other.m_implPtr->m_strCapacity;
+}
 
 StringVariant::StringVariant(const std::string &value)
    : StringVariant(value.c_str(), value.size())
@@ -112,7 +115,7 @@ StringVariant::StringVariant(const char *value, size_t length)
    // we don't use default ZVAL_STRINGL to setup ourser zval
    zend_string *strPtr = nullptr;
    strAlloc(strPtr, length, false);
-   ZVAL_NEW_STR(getZvalPtr(), strPtr);
+   ZVAL_NEW_STR(getUnDerefZvalPtr(), strPtr);
    // we need copy memory ourself
    memcpy(ZSTR_VAL(strPtr), value, length);
    ZSTR_VAL(strPtr)[length] = '\0';
@@ -133,7 +136,7 @@ StringVariant::StringVariant(zval &&other, bool isRef)
 
 StringVariant::StringVariant(zval *other, bool isRef)
 {
-   zval *self = getZvalPtr();
+   zval *self = getUnDerefZvalPtr();
    if (nullptr != other) {
       if (isRef && Z_TYPE_P(other) == IS_STRING) {
          ZVAL_MAKE_REF(other);
@@ -156,7 +159,6 @@ StringVariant &StringVariant::operator =(const StringVariant &other)
    if (this != &other) {
       zval *from = const_cast<zval *>(other.getZvalPtr());
       if (nullptr != getZendStringPtr()) {
-         zval *self = getZvalPtr();
          SEPARATE_ZVAL_NOREF(getZvalPtr());
       }
       Variant::operator =(from);
