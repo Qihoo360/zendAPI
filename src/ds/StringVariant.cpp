@@ -72,6 +72,9 @@ StringVariant::StringVariant(const Variant &other)
 StringVariant::StringVariant(const StringVariant &other)
    : Variant(other)
 {
+   if (other.getUnDerefType() == Type::Reference) {
+      SEPARATE_STRING(getZvalPtr());
+   }
    m_implPtr->m_strCapacity = other.m_implPtr->m_strCapacity;
 }
 
@@ -79,14 +82,18 @@ StringVariant::StringVariant(StringVariant &other, bool isRef)
 {
    zval *self = getUnDerefZvalPtr();
    if (!isRef) {
-      stdCopyZval(self, const_cast<zval *>(other.getZvalPtr()));
+      zval *otherPtr = other.getUnDerefZvalPtr();
+      stdCopyZval(self, const_cast<zval *>(otherPtr));
+      if (Z_TYPE_P(otherPtr) == IS_REFERENCE) {
+         SEPARATE_STRING(self);
+      }
    } else {
       zval *source = other.getUnDerefZvalPtr();
       ZVAL_MAKE_REF(source);
       ZVAL_COPY(self, source);
+      m_implPtr->m_ref = other.m_implPtr;
    }
    m_implPtr->m_strCapacity = other.m_implPtr->m_strCapacity;
-   m_implPtr->m_ref = other.m_implPtr;
 }
 
 StringVariant::StringVariant(Variant &&other)
@@ -101,9 +108,7 @@ StringVariant::StringVariant(Variant &&other)
 
 StringVariant::StringVariant(StringVariant &&other) ZAPI_DECL_NOEXCEPT
    : Variant(std::move(other))
-{
-   m_implPtr->m_strCapacity = other.m_implPtr->m_strCapacity;
-}
+{}
 
 StringVariant::StringVariant(const std::string &value)
    : StringVariant(value.c_str(), value.size())
@@ -520,11 +525,6 @@ zapi_long StringVariant::indexOf(const char needle, zapi_long offset,
 {
    ValueType buffer[2] = {needle, '\0'};
    return indexOf(reinterpret_cast<Pointer>(buffer), offset, caseSensitive);
-}
-
-StringVariant StringVariant::makeReference() const
-{
-   return StringVariant(*this, true);
 }
 
 zapi_long StringVariant::lastIndexOf(const char *needle, zapi_long offset, 
@@ -997,9 +997,9 @@ void StringVariant::resize(SizeType size)
    if (size == m_implPtr->m_strCapacity) {
       return;
    }
-   zval *self = getZvalPtr();
+   zval *self = getUnDerefZvalPtr();
    if (nullptr != getZendStringPtr()) {
-      SEPARATE_ZVAL_NOREF(self);
+      SEPARATE_ZVAL_IF_NOT_REF(self);
    }
    // here we use std string alloc 
    zend_string *newStr = zend_string_alloc(size, 0);
@@ -1274,29 +1274,47 @@ size_t StringVariant::calculateNewStrSize(size_t length) ZAPI_DECL_NOEXCEPT
 void StringVariant::strStdRealloc(zend_string *&str, size_t length)
 {
    if (UNEXPECTED(!str)) {
-      m_implPtr->m_strCapacity = length < STR_VARIANT_START_SIZE
+      size_t newCapcity = length < STR_VARIANT_START_SIZE
             ? STR_VARIANT_START_SIZE
             : calculateNewStrSize(length);
-      str = zend_string_alloc(m_implPtr->m_strCapacity, 0);
+      str = zend_string_alloc(newCapcity, 0);
+      m_implPtr->updateCapacity(newCapcity);
       ZSTR_LEN(str) = 0;
    } else {
-      m_implPtr->m_strCapacity = calculateNewStrSize(length);
-      str = static_cast<zend_string *>(erealloc2(str, _ZSTR_HEADER_SIZE + m_implPtr->m_strCapacity + 1, 
-                                                 _ZSTR_HEADER_SIZE + ZSTR_LEN(str) + 1));
+      size_t newCapcity = calculateNewStrSize(length);
+      zend_string *newStr = static_cast<zend_string *>(erealloc2(str, _ZSTR_HEADER_SIZE + newCapcity + 1, 
+                                                                 _ZSTR_HEADER_SIZE + ZSTR_LEN(str) + 1));
+      ZAPI_ASSERT_X(newStr, "StringVariant::strStdRealloc", "realloc memory error");
+      if (!newStr) {
+         // @TODO error process
+         //
+         return;
+      }
+      str = newStr;
+      m_implPtr->updateCapacity(newCapcity);
    }
 }
 
 void StringVariant::strPersistentRealloc(zend_string *&str, size_t length)
 {
    if (UNEXPECTED(!str)) {
-      m_implPtr->m_strCapacity = length < STR_VARIANT_START_SIZE
+      size_t newCapcity = length < STR_VARIANT_START_SIZE
             ? STR_VARIANT_START_SIZE
             : calculateNewStrSize(length);
-      str = zend_string_alloc(m_implPtr->m_strCapacity, 1);
+      str = zend_string_alloc(newCapcity, 1);
+      m_implPtr->updateCapacity(newCapcity);
       ZSTR_LEN(str) = 0;
    } else {
-      m_implPtr->m_strCapacity = calculateNewStrSize(length);
-      str = static_cast<zend_string *>(realloc(str, _ZSTR_HEADER_SIZE + m_implPtr->m_strCapacity + 1));
+      size_t newCapcity = calculateNewStrSize(length);
+      zend_string *newStr = static_cast<zend_string *>(realloc(str, _ZSTR_HEADER_SIZE + newCapcity + 1));
+      ZAPI_ASSERT_X(newStr, "StringVariant::strPersistentRealloc", "realloc memory error");
+      if (!newStr) {
+         // @TODO error process
+         //
+         return;
+      }
+      str = newStr;
+      m_implPtr->updateCapacity(newCapcity);
    }
 }
 

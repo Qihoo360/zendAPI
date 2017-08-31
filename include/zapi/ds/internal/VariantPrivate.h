@@ -36,6 +36,15 @@ public:
    {
       std::memset(&m_buffer, 0, sizeof(m_buffer));
    }
+   
+   void updateCapacity(size_t capacity)
+   {
+      m_strCapacity = capacity;
+      if (m_ref) {
+         m_ref->updateCapacity(capacity);
+      }
+   }
+
    operator _zval_struct *() const &;
    operator const _zval_struct *() const &;
    _zval_struct &operator*() const &;

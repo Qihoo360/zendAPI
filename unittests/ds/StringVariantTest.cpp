@@ -22,117 +22,213 @@
 
 using zapi::ds::StringVariant;
 using zapi::ds::Variant;
+using zapi::lang::Type;
 
-//TEST(StringVariantTest, testConstructors)
-//{
-//   StringVariant str("xiuxiu");
-//   StringVariant emptyStr;
-//   ASSERT_TRUE(emptyStr.isEmpty());
-//   ASSERT_EQ(emptyStr.getCapacity(), 0);
-//   ASSERT_EQ(emptyStr.getSize(), 0);
-//   emptyStr = 1;
-//   //std::cout << emptyStr << std::endl;
-//   emptyStr.append('C');
-//   ASSERT_EQ(emptyStr.getSize(), 2);
-//   ASSERT_EQ(emptyStr.getCapacity(), 199);
-//   ASSERT_EQ(emptyStr.at(0), '1');
-//   emptyStr.clear();
-//   ASSERT_EQ(emptyStr.getSize(), 0);
-//   ASSERT_EQ(emptyStr.getCapacity(), 0);
-//   emptyStr = str;
-//   ASSERT_EQ(emptyStr.getSize(), 6);
-//   ASSERT_EQ(emptyStr.getCapacity(), 199);
-//   ASSERT_EQ(emptyStr.getRefCount(), 2);
-//   ASSERT_EQ(str.getRefCount(), 2);
-//   emptyStr.clear();
-//   ASSERT_EQ(emptyStr.getSize(), 0);
-//   ASSERT_EQ(emptyStr.getCapacity(), 0);
-//   emptyStr = Variant("zapi");
-//   ASSERT_EQ(emptyStr.getSize(), 4);
-//   ASSERT_EQ(emptyStr.getCapacity(), 32);
-//   ASSERT_EQ(emptyStr.getRefCount(), 1);
-//   emptyStr.clear();
-//   Variant gvar("zapi");
-//   emptyStr = gvar;
-//   ASSERT_EQ(emptyStr.getSize(), 4);
-//   ASSERT_EQ(emptyStr.getCapacity(), 32);
-//   ASSERT_EQ(emptyStr.getRefCount(), 2);
-//}
+TEST(StringVariantTest, testConstructors)
+{
+   StringVariant str("xiuxiu");
+   StringVariant emptyStr;
+   ASSERT_TRUE(emptyStr.isEmpty());
+   ASSERT_EQ(emptyStr.getCapacity(), 0);
+   ASSERT_EQ(emptyStr.getSize(), 0);
+   emptyStr = 1;
+   //std::cout << emptyStr << std::endl;
+   emptyStr.append('C');
+   ASSERT_EQ(emptyStr.getSize(), 2);
+   ASSERT_EQ(emptyStr.getCapacity(), 199);
+   ASSERT_EQ(emptyStr.at(0), '1');
+   emptyStr.clear();
+   ASSERT_EQ(emptyStr.getSize(), 0);
+   ASSERT_EQ(emptyStr.getCapacity(), 0);
+   emptyStr = str;
+   ASSERT_EQ(emptyStr.getSize(), 6);
+   ASSERT_EQ(emptyStr.getCapacity(), 199);
+   ASSERT_EQ(emptyStr.getRefCount(), 2);
+   ASSERT_EQ(str.getRefCount(), 2);
+   emptyStr.clear();
+   ASSERT_EQ(emptyStr.getSize(), 0);
+   ASSERT_EQ(emptyStr.getCapacity(), 0);
+   emptyStr = Variant("zapi");
+   ASSERT_EQ(emptyStr.getSize(), 4);
+   ASSERT_EQ(emptyStr.getCapacity(), 32);
+   ASSERT_EQ(emptyStr.getRefCount(), 1);
+   emptyStr.clear();
+   Variant gvar("zapi");
+   emptyStr = gvar;
+   ASSERT_EQ(emptyStr.getSize(), 4);
+   ASSERT_EQ(emptyStr.getCapacity(), 32);
+   ASSERT_EQ(emptyStr.getRefCount(), 2);
+}
 
 TEST(StringVariantTest, testRefConstruct)
 {
-   zval rawStrVar;
-   ZVAL_STRING(&rawStrVar, "zapi");
-   ASSERT_STREQ(Z_STRVAL_P(&rawStrVar), "zapi");
-   StringVariant strVariant(rawStrVar, false);
-   ASSERT_EQ(strVariant.getLength(), 4);
-   ASSERT_EQ(strVariant.getRefCount(), 1);
-   StringVariant refStrVariant(rawStrVar, true);
-   zval *rval = &rawStrVar;
-   ZVAL_DEREF(rval);
-   ASSERT_TRUE(Z_TYPE_P(rval) == IS_STRING);
-   ASSERT_TRUE(Z_TYPE_P(&rawStrVar) == IS_REFERENCE);
-   ASSERT_EQ(refStrVariant.getRefCount(), 2);
-   ASSERT_STREQ(refStrVariant.getCStr(), "zapi");
-   ASSERT_EQ(refStrVariant.getCapacity(), 32);
-   ASSERT_EQ(refStrVariant.getSize(), 4);
-   zval_dtor(&rawStrVar);
+   {
+      zval rawStrVar;
+      ZVAL_STRING(&rawStrVar, "zapi");
+      ASSERT_STREQ(Z_STRVAL_P(&rawStrVar), "zapi");
+      StringVariant strVariant(rawStrVar, false);
+      ASSERT_EQ(strVariant.getLength(), 4);
+      ASSERT_EQ(strVariant.getRefCount(), 1);
+      ASSERT_TRUE(strVariant.getUnDerefType() == Type::String);
+      ASSERT_TRUE(strVariant.getType() == Type::String);
+      StringVariant refStrVariant(rawStrVar, true);
+      zval *rval = &rawStrVar;
+      ZVAL_DEREF(rval);
+      ASSERT_TRUE(Z_TYPE_P(rval) == IS_STRING);
+      ASSERT_TRUE(Z_TYPE_P(&rawStrVar) == IS_REFERENCE);
+      ASSERT_TRUE(refStrVariant.getUnDerefType() == Type::Reference);
+      ASSERT_TRUE(refStrVariant.getType() == Type::String);
+      ASSERT_EQ(refStrVariant.getRefCount(), 2);
+      ASSERT_STREQ(refStrVariant.getCStr(), "zapi");
+      ASSERT_EQ(refStrVariant.getCapacity(), 32);
+      ASSERT_EQ(refStrVariant.getSize(), 4);
+      zval_dtor(&rawStrVar);
+   }
+   {
+      StringVariant str1("zapi");
+      StringVariant str2(str1, false);
+      ASSERT_EQ(str1.getRefCount(), 2);
+      ASSERT_EQ(str2.getRefCount(), 2);
+      ASSERT_TRUE(str1.getUnDerefType() == Type::String);
+      ASSERT_TRUE(str1.getType() == Type::String);
+      ASSERT_TRUE(str2.getUnDerefType() == Type::String);
+      ASSERT_TRUE(str2.getType() == Type::String);
+      ASSERT_STREQ(str1.getCStr(), "zapi");
+      ASSERT_STREQ(str2.getCStr(), "zapi");
+   }
+   {
+      StringVariant str1("zapi");
+      StringVariant str2(str1, true);
+      ASSERT_EQ(str1.getRefCount(), 2);
+      ASSERT_EQ(str2.getRefCount(), 2);
+      ASSERT_TRUE(str1.getUnDerefType() == Type::Reference);
+      ASSERT_TRUE(str1.getType() == Type::String);
+      ASSERT_TRUE(str2.getUnDerefType() == Type::Reference);
+      ASSERT_TRUE(str2.getType() == Type::String);
+      ASSERT_EQ(str1.getSize(), 4);
+      ASSERT_EQ(str2.getSize(), 4);
+      {
+         StringVariant str3(str2, true);
+         ASSERT_EQ(str1.getRefCount(), 3);
+         ASSERT_EQ(str2.getRefCount(), 3);
+         StringVariant str4(str3, false);
+         ASSERT_EQ(str4.getRefCount(), 1);
+         StringVariant str5(str4);
+         ASSERT_EQ(str4.getRefCount(), 2);
+         ASSERT_EQ(str5.getRefCount(), 2);
+         ASSERT_EQ(str3.getSize(), 4);
+         ASSERT_EQ(str4.getSize(), 4);
+         ASSERT_EQ(str5.getSize(), 4);
+         ASSERT_STREQ(str3.getCStr(), "zapi");
+         ASSERT_STREQ(str4.getCStr(), "zapi");
+         ASSERT_STREQ(str5.getCStr(), "zapi");
+      }
+      ASSERT_EQ(str1.getRefCount(), 2);
+      ASSERT_EQ(str2.getRefCount(), 2);
+      ASSERT_TRUE(str1.getUnDerefType() == Type::Reference);
+      ASSERT_TRUE(str1.getType() == Type::String);
+      ASSERT_TRUE(str2.getUnDerefType() == Type::Reference);
+      ASSERT_TRUE(str2.getType() == Type::String);
+   }
+   {
+      // mixed ref and not ref
+      // the ref and not ref will separate
+      StringVariant str1("my name is zzu_Softboy, i think php is the best programming language in the world. php is the best!");
+      StringVariant str2(str1, true);
+      StringVariant str3(str2, true);
+      StringVariant str4(str3, true);
+      ASSERT_EQ(Z_REFCOUNT_P(str1.getZvalPtr()), 1);
+      ASSERT_EQ(Z_REFCOUNT_P(str2.getZvalPtr()), 1);
+      ASSERT_EQ(Z_REFCOUNT_P(str3.getZvalPtr()), 1);
+      ASSERT_EQ(Z_REFCOUNT_P(str4.getZvalPtr()), 1);
+      ASSERT_EQ(str1.getZvalPtr(), str2.getZvalPtr());
+      ASSERT_EQ(str2.getZvalPtr(), str3.getZvalPtr());
+      StringVariant str5(str4, false);
+      StringVariant str6(str5, false);
+      ASSERT_EQ(Z_REFCOUNT_P(str1.getZvalPtr()), 1);
+      ASSERT_EQ(Z_REFCOUNT_P(str2.getZvalPtr()), 1);
+      ASSERT_EQ(Z_REFCOUNT_P(str3.getZvalPtr()), 1);
+      ASSERT_EQ(Z_REFCOUNT_P(str4.getZvalPtr()), 1);
+      ASSERT_EQ(str1.getZvalPtr(), str2.getZvalPtr());
+      ASSERT_EQ(str2.getZvalPtr(), str3.getZvalPtr());
+      ASSERT_EQ(str3.getZvalPtr(), str4.getZvalPtr());
+      
+      ASSERT_NE(str4.getZvalPtr(), str5.getZvalPtr());
+      ASSERT_EQ(Z_REFCOUNT_P(str5.getZvalPtr()), 2);
+      ASSERT_EQ(Z_REFCOUNT_P(str6.getZvalPtr()), 2);
+      ASSERT_NE(str5.getZvalPtr(), str6.getZvalPtr());
+      ASSERT_EQ(str5.getCStr(), str6.getCStr());
+      
+      ASSERT_EQ(str1.getRefCount(), 4);
+      ASSERT_EQ(str2.getRefCount(), 4);
+      ASSERT_EQ(str3.getRefCount(), 4);
+      ASSERT_EQ(str4.getRefCount(), 4);
+      ASSERT_EQ(str1.getUnDerefType(), Type::Reference);
+      ASSERT_EQ(str2.getUnDerefType(), Type::Reference);
+      ASSERT_EQ(str3.getUnDerefType(), Type::Reference);
+      ASSERT_EQ(str4.getUnDerefType(), Type::Reference);
+      ASSERT_EQ(str5.getUnDerefType(), Type::String);
+      ASSERT_EQ(str6.getUnDerefType(), Type::String);
+   }
 }
 
-//TEST(StringVariantTest, testConstructFromVariant)
-//{
-//   Variant strVariant("zapi is the best!");
-//   Variant numericVariant(123);
-//   StringVariant str(strVariant);
-//   StringVariant str1(numericVariant);
-//   ASSERT_EQ(str.getRefCount(), 2);
-//   ASSERT_EQ(strVariant.getRefCount(), 2);
-//   ASSERT_EQ(str1.getRefCount(), 1);
-//   ASSERT_EQ(numericVariant.getRefCount(), 0);
-//}
+TEST(StringVariantTest, testConstructFromVariant)
+{
+   Variant strVariant("zapi is the best!");
+   Variant numericVariant(123);
+   StringVariant str(strVariant);
+   StringVariant str1(numericVariant);
+   ASSERT_EQ(str.getRefCount(), 2);
+   ASSERT_EQ(strVariant.getRefCount(), 2);
+   ASSERT_EQ(str1.getRefCount(), 1);
+   ASSERT_EQ(numericVariant.getRefCount(), 0);
+}
 
-//TEST(StringVariantTest, testConstructFromStringVariant)
-//{
-//   StringVariant str1("hello zapi");
-//   StringVariant strCopy(str1);
-//   StringVariant strRef(str1, true);
-//   ASSERT_FALSE(strCopy.isReference());
-//   ASSERT_TRUE(strRef.isReference());
-//   str1.append(", beijing");
-//   ASSERT_STREQ(str1.getCStr(), "hello zapi, beijing");
-//   ASSERT_STREQ(strCopy.getCStr(), "hello zapi");
-//   ASSERT_STREQ(strRef.getCStr(), "hello zapi, beijing");
-//   strCopy.append('X');
-//   ASSERT_STREQ(strCopy.getCStr(), "hello zapiX");
-//   ASSERT_STREQ(str1.getCStr(), "hello zapi, beijing");
-//   ASSERT_STREQ(strRef.getCStr(), "hello zapi, beijing");
-//   strRef.append("BB");
-//   ASSERT_STREQ(strCopy.getCStr(), "hello zapiX");
-//   ASSERT_STREQ(str1.getCStr(), "hello zapi, beijingBB");
-//   ASSERT_STREQ(strRef.getCStr(), "hello zapi, beijingBB");
-//}
+TEST(StringVariantTest, testConstructFromStringVariant)
+{
+   StringVariant str1("hello zapi");
+   StringVariant strCopy(str1);
+   StringVariant strRef(str1, true);
+   ASSERT_FALSE(strCopy.isReference());
+   ASSERT_TRUE(strRef.isReference());
+   str1.append(", beijing");
+   ASSERT_STREQ(str1.getCStr(), "hello zapi, beijing");
+   ASSERT_STREQ(strCopy.getCStr(), "hello zapi");
+   ASSERT_STREQ(strRef.getCStr(), "hello zapi, beijing");
+   strCopy.append('X');
+   ASSERT_STREQ(strCopy.getCStr(), "hello zapiX");
+   ASSERT_STREQ(str1.getCStr(), "hello zapi, beijing");
+   ASSERT_STREQ(strRef.getCStr(), "hello zapi, beijing");
+   strRef.append("BB");
+   ASSERT_STREQ(strCopy.getCStr(), "hello zapiX");
+   ASSERT_STREQ(str1.getCStr(), "hello zapi, beijingBB");
+   ASSERT_STREQ(strRef.getCStr(), "hello zapi, beijingBB");
+}
 
-//TEST(StringVariantTest, testMoveConstruct)
-//{
-//   StringVariant strVariant(Variant("zapi"));
-//   ASSERT_STREQ(strVariant.getCStr(), "zapi");
-//   Variant gvar("hello zzu_softboy");
-//   StringVariant str1(std::move(gvar));
-//   ASSERT_STREQ(str1.getCStr(), "hello zzu_softboy");
-//   StringVariant str2(std::move(str1));
-//   ASSERT_STREQ(str2.getCStr(), "hello zzu_softboy");
-//   StringVariant str3(str2, true);
-//   StringVariant str4(std::move(str3));
-//   ASSERT_STREQ(str4.getCStr(), "hello zzu_softboy");
-//   str4.append("XX");
-//   ASSERT_STREQ(str4.getCStr(), "hello zzu_softboyXX");
-//   ASSERT_STREQ(str2.getCStr(), "hello zzu_softboyXX");
-//   StringVariant str5 = str2.makeReference();
-//   ASSERT_STREQ(str5.getCStr(), "hello zzu_softboyXX");
-//   str5.append("CC");
-//   ASSERT_STREQ(str5.getCStr(), "hello zzu_softboyXXCC");
-//   ASSERT_STREQ(str2.getCStr(), "hello zzu_softboyXXCC");
-//}
+TEST(StringVariantTest, testMoveConstruct)
+{
+   StringVariant strVariant(Variant("zapi"));
+   ASSERT_STREQ(strVariant.getCStr(), "zapi");
+   Variant gvar("hello zzu_softboy");
+   StringVariant str1(std::move(gvar));
+   ASSERT_STREQ(str1.getCStr(), "hello zzu_softboy");
+   StringVariant str2(std::move(str1));
+   ASSERT_STREQ(str2.getCStr(), "hello zzu_softboy");
+   StringVariant str3(str2, true);
+   ASSERT_EQ(str3.getUnDerefType(), Type::Reference);
+   ASSERT_EQ(str2.getUnDerefType(), Type::Reference);
+   // test for reference 
+   str2.append(", hello unicornteam");
+   ASSERT_STREQ(str2.getCStr(), "hello zzu_softboy, hello unicornteam");
+   ASSERT_STREQ(str3.getCStr(), "hello zzu_softboy, hello unicornteam");
+   ASSERT_EQ(str2.getSize(), str3.getSize());
+   ASSERT_EQ(str2.getCapacity(), str3.getCapacity());
+   StringVariant str4(std::move(str3));
+   ASSERT_STREQ(str4.getCStr(), "hello zzu_softboy, hello unicornteam");
+   str4.append("XX");
+   ASSERT_STREQ(str4.getCStr(), "hello zzu_softboy, hello unicornteamXX");
+   ASSERT_STREQ(str2.getCStr(), "hello zzu_softboy, hello unicornteam");
+}
 
 //TEST(StringVariantTest, testAssignOperators)
 //{
@@ -231,7 +327,7 @@ TEST(StringVariantTest, testRefConstruct)
 //   ASSERT_TRUE(str == buffer);
 //   char buffer1[] = {'z', 'a', 'p', 'i'};
 //   ASSERT_TRUE(str == buffer1);
-   
+
 //   ASSERT_TRUE("zapi" == str);
 //   ASSERT_FALSE("zapi1" == str);
 //   ASSERT_TRUE(std::string("zapi") == str);
@@ -253,7 +349,7 @@ TEST(StringVariantTest, testRefConstruct)
 //   ASSERT_TRUE(str != buffer);
 //   char buffer1[] = {'p', 'h', 'p'};
 //   ASSERT_TRUE(str != buffer1);
-   
+
 //   ASSERT_TRUE("zapiphp" != str);
 //   ASSERT_FALSE("zapi" != str);
 //   ASSERT_TRUE(std::string("php") != str);
@@ -273,7 +369,7 @@ TEST(StringVariantTest, testRefConstruct)
 //   ASSERT_TRUE(str < buffer);
 //   char buffer1[] = {'z', 'b', 'p', 'i'};
 //   ASSERT_TRUE(str < buffer1);
-   
+
 //   ASSERT_TRUE("zbpi" > str);
 //   ASSERT_TRUE("zapix" > str);
 //   ASSERT_FALSE("abc" > str);
@@ -313,7 +409,7 @@ TEST(StringVariantTest, testRefConstruct)
 //   ASSERT_FALSE(str > "zbpi");
 //   char buffer[] = "abc";
 //   ASSERT_TRUE(str > buffer);
-   
+
 //   ASSERT_TRUE("abcbdf" < str);
 //   ASSERT_TRUE(std::string("abc") < str);
 //   ASSERT_TRUE(StringVariant("abc") < str);
@@ -329,7 +425,7 @@ TEST(StringVariantTest, testRefConstruct)
 //   ASSERT_FALSE(str >= "zbpi");
 //   char buffer[] = "abc";
 //   ASSERT_TRUE(str >= buffer);
-   
+
 //   ASSERT_TRUE("abc" <= str);
 //   ASSERT_TRUE(std::string("abc") <= str);
 //   ASSERT_TRUE(StringVariant("abc") <= str);
@@ -361,38 +457,76 @@ TEST(StringVariantTest, testRefConstruct)
 //   ASSERT_EQ(str.getCapacity(), 199);
 //}
 
-//TEST(StringVariantTest, testResize)
-//{
-//   StringVariant str("my name is zzu_Softboy, i think php is the best programming language in the world. php is the best!");
-//   ASSERT_EQ(str.getCapacity(), 199);
-//   ASSERT_EQ(str.getSize(), 99);
-//   str.resize(32);
-//   ASSERT_EQ(str.getCapacity(), 64);
-//   ASSERT_EQ(str.getSize(), 32);
-//   StringVariant str1 = "zapi";
-//   ASSERT_EQ(str1.getRefCount(), 1);
-//   str = str1;
-//   ASSERT_EQ(str.getRefCount(), 2);
-//   ASSERT_EQ(str1.getRefCount(), 2);
-//   str.resize(32);
-//   ASSERT_EQ(str.getRefCount(), 1);
-//   ASSERT_EQ(str1.getRefCount(), 1);
-//   str = "my name is zzu_Softboy, i think php is the best programming language in the world. php is the best!";
-//   str.resize(12);
-//   ASSERT_STREQ(str.getCStr(), "my name is z");
-//   str.clear();
-//   ASSERT_EQ(str.getCapacity(), 0);
-//   ASSERT_EQ(str.getSize(), 0);
-//   str.resize(12);
-//   ASSERT_EQ(str.getCapacity(), 40);
-//   ASSERT_EQ(str.getSize(), 12);
-//   str = "zapi";
-//   ASSERT_EQ(str.getCapacity(), 40);
-//   ASSERT_EQ(str.getSize(), 4);
-//   str.resize(12, '-');
-//   ASSERT_STREQ(str.getCStr(), "zapi--------");
-//   //std::cout << str << std::endl;
-//}
+TEST(StringVariantTest, testResize)
+{
+   {
+      StringVariant str("my name is zzu_Softboy, i think php is the best programming language in the world. php is the best!");
+      ASSERT_EQ(str.getCapacity(), 199);
+      ASSERT_EQ(str.getSize(), 99);
+      str.resize(32);
+      ASSERT_EQ(str.getCapacity(), 64);
+      ASSERT_EQ(str.getSize(), 32);
+      StringVariant str1 = "zapi";
+      ASSERT_EQ(str1.getRefCount(), 1);
+      str = str1;
+      ASSERT_EQ(str.getRefCount(), 2);
+      ASSERT_EQ(str1.getRefCount(), 2);
+      str.resize(32);
+      ASSERT_EQ(str.getRefCount(), 1);
+      ASSERT_EQ(str1.getRefCount(), 1);
+      str = "my name is zzu_Softboy, i think php is the best programming language in the world. php is the best!";
+      str.resize(12);
+      ASSERT_STREQ(str.getCStr(), "my name is z");
+      str.clear();
+      ASSERT_EQ(str.getCapacity(), 0);
+      ASSERT_EQ(str.getSize(), 0);
+      str.resize(12);
+      ASSERT_EQ(str.getCapacity(), 40);
+      ASSERT_EQ(str.getSize(), 12);
+      str = "zapi";
+      ASSERT_EQ(str.getCapacity(), 40);
+      ASSERT_EQ(str.getSize(), 4);
+      str.resize(12, '-');
+      ASSERT_STREQ(str.getCStr(), "zapi--------");
+   }
+   //std::cout << str << std::endl;
+   {
+      // test str reference
+//      StringVariant str1("my name is zzu_Softboy, i think php is the best programming language in the world. php is the best!");
+//      StringVariant str2(str1, true);
+//      StringVariant str3(str2, true);
+//      StringVariant str4(str3, true);
+//      StringVariant str5(str4);
+//      StringVariant str6(str5);
+//      ASSERT_EQ(str1.getRefCount(), 4);
+//      ASSERT_EQ(str2.getRefCount(), 4);
+//      ASSERT_EQ(str3.getRefCount(), 4);
+//      ASSERT_EQ(str4.getRefCount(), 4);
+//      ASSERT_EQ(str1.getUnDerefType(), Type::Reference);
+//      ASSERT_EQ(str2.getUnDerefType(), Type::Reference);
+//      ASSERT_EQ(str3.getUnDerefType(), Type::Reference);
+//      ASSERT_EQ(str4.getUnDerefType(), Type::Reference);
+//      ASSERT_EQ(str5.getUnDerefType(), Type::String);
+//      ASSERT_EQ(str6.getUnDerefType(), Type::String);
+//      ASSERT_EQ(str1.getCapacity(), 199);
+//      ASSERT_EQ(str1.getSize(), 99);
+//      ASSERT_EQ(str2.getCapacity(), 199);
+//      ASSERT_EQ(str2.getSize(), 99);
+//      ASSERT_EQ(str3.getCapacity(), 199);
+//      ASSERT_EQ(str3.getSize(), 99);
+//      ASSERT_EQ(str4.getCapacity(), 199);
+//      ASSERT_EQ(str4.getSize(), 99);
+//      ASSERT_EQ(str5.getCapacity(), 199);
+//      ASSERT_EQ(str5.getSize(), 99);
+//      ASSERT_EQ(str6.getCapacity(), 199);
+//      ASSERT_EQ(str6.getSize(), 99);
+//      str1.resize(32);
+//      ASSERT_EQ(str1.getCapacity(), 64);
+//      ASSERT_EQ(str1.getSize(), 32);
+//      ASSERT_EQ(str2.getCapacity(), 64);
+//      ASSERT_EQ(str2.getSize(), 32);
+   }
+}
 
 //TEST(StringVariantTest, testContains)
 //{
@@ -472,7 +606,7 @@ TEST(StringVariantTest, testRefConstruct)
 //   char search1[7] = {'m', 'y', ' ', 'N', 'a', 'm', 'e'};
 //   ASSERT_FALSE(str.startsWith(search1, 7));
 //   ASSERT_TRUE(str.startsWith(search1, 7, false));
-   
+
 //}
 
 //TEST(StringVariantTest, testEndWiths)
@@ -698,7 +832,7 @@ TEST(StringVariantTest, testRefConstruct)
 //   expected = {"ashgdahsd"};
 //   parts = text.split("||");
 //   ASSERT_EQ(parts, expected);
-   
+
 //   text = "||aaa||bbb||||ccc||ddd||";
 //   expected = {"aaa", "bbb", "ccc", "ddd"};
 //   parts = text.split("||", false);
@@ -707,7 +841,7 @@ TEST(StringVariantTest, testRefConstruct)
 //   expected = {};
 //   parts = text.split("||", false);
 //   ASSERT_EQ(parts, expected);
-   
+
 //   text = "aaaXXbbbxxcccXXdddXXeee";
 //   expected = {"aaa", "bbbxxccc", "ddd", "eee"};
 //   parts = text.split("XX", false, true);

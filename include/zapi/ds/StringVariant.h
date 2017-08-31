@@ -351,7 +351,6 @@ public:
    template<size_t arrayLength>
    bool endsWith(char (&str)[arrayLength], bool caseSensitive = true) const ZAPI_DECL_NOEXCEPT;
    
-   StringVariant makeReference() const;
    Reference at(SizeType pos);
    ConstReference at(SizeType pos) const;
    const char *getCStr() const ZAPI_DECL_NOEXCEPT;
@@ -362,7 +361,7 @@ public:
    bool isEmpty() const ZAPI_DECL_NOEXCEPT;
    SizeType getCapacity() const ZAPI_DECL_NOEXCEPT;
    virtual ~StringVariant() ZAPI_DECL_NOEXCEPT;
-protected:
+private:
    zend_string *getZendStringPtr();
    char *getRawStrPtr() const ZAPI_DECL_NOEXCEPT;
    size_t calculateNewStrSize(size_t length) ZAPI_DECL_NOEXCEPT;
