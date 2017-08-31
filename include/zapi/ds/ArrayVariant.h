@@ -54,9 +54,9 @@ public:
    ArrayVariant();
    ArrayVariant(const ArrayVariant &other);
    ArrayVariant(ArrayVariant &other, bool isRef);
-   ArrayVariant(zval &other, bool isRef);
-   ArrayVariant(zval &&other, bool isRef);
-   ArrayVariant(zval *other, bool isRef);
+   ArrayVariant(zval &other, bool isRef = false);
+   ArrayVariant(zval &&other, bool isRef = false);
+   ArrayVariant(zval *other, bool isRef = false);
    ArrayVariant(ArrayVariant &&other) ZAPI_DECL_NOEXCEPT;
    ArrayVariant(const Variant &other);
    ArrayVariant(Variant &&other);

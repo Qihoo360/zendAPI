@@ -99,9 +99,9 @@ void register_funcs(Extension &extension)
    //std::result_of<int()>::type d = 12;
    //   extension.registerFunction<dummyext::show_something>("show_something");
    //extension.registerFunction<decltype(&dummyext::get_name), &dummyext::get_name>("get_name");
-//   extension.registerFunction<decltype(&dummyext::print_name), &dummyext::print_name>("print_name", {
-//                                                       ValueArgument("name", zapi::lang::Type::String)
-//                                                    });
+   //   extension.registerFunction<decltype(&dummyext::print_name), &dummyext::print_name>("print_name", {
+   //                                                       ValueArgument("name", zapi::lang::Type::String)
+   //                                                    });
    //   extension.registerFunction<dummyext::print_name_and_age>("print_name_and_age", {
    //                                                               ValueArgument("name", zapi::lang::Type::String),
    //                                                               ValueArgument("age", zapi::lang::Type::Long)
@@ -123,18 +123,18 @@ void register_funcs(Extension &extension)
 
 void register_ns_io(Namespace &io)
 {
-//   io.registerFunction<decltype(&dummyext::calculate_sum), &dummyext::calculate_sum>
-//         ("calculate_sum", {
-//             VariadicArgument("numbers")
-//          });
+   //   io.registerFunction<decltype(&dummyext::calculate_sum), &dummyext::calculate_sum>
+   //         ("calculate_sum", {
+   //             VariadicArgument("numbers")
+   //          });
    //   io.registerFunction<decltype(&dummyext::print_name), &dummyext::print_name>
    //         ("print_name", {
    //             ValueArgument("name", zapi::lang::Type::String)
    //          });
-   //   io.registerFunction<decltype(&dummyext::print_sum), &dummyext::print_sum>
-   //         ("print_sum", {
-   //             VariadicArgument("numbers")
-   //          });
+   io.registerFunction<decltype(&dummyext::print_sum), &dummyext::print_sum>
+         ("print_sum", {
+             VariadicArgument("numbers")
+          });
    //   io.registerFunction<dummyext::show_something>("show_something");
    io.registerConstant(Constant("IO_TYPE", "ASYNC"));
    io.registerConstant(Constant("NATIVE_STREAM", true));

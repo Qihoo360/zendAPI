@@ -121,6 +121,7 @@ public:
     */
    Variant(zval *value, bool isRef = false);
    Variant(zval &value, bool isRef = false);
+   Variant(zval &&value, bool isRef = false);
    
    /**
     * Move constructor

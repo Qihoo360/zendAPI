@@ -59,9 +59,9 @@ public:
    StringVariant(const char *value, size_t length);
    StringVariant(const char *value);
    
-   StringVariant(zval &other, bool isRef);
-   StringVariant(zval &&other, bool isRef);
-   StringVariant(zval *other, bool isRef);
+   StringVariant(zval &other, bool isRef = false);
+   StringVariant(zval &&other, bool isRef = false);
+   StringVariant(zval *other, bool isRef = false);
    
    StringVariant &operator =(const StringVariant &other);
    StringVariant &operator =(const Variant &other);

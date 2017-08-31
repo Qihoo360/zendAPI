@@ -37,9 +37,9 @@ public:
    DoubleVariant(std::int32_t value);
    DoubleVariant(std::int64_t value);
    DoubleVariant(double value);
-   DoubleVariant(zval &other, bool isRef);
-   DoubleVariant(zval &&other, bool isRef);
-   DoubleVariant(zval *other, bool isRef);
+   DoubleVariant(zval &other, bool isRef = false);
+   DoubleVariant(zval &&other, bool isRef = false);
+   DoubleVariant(zval *other, bool isRef = false);
    DoubleVariant(const DoubleVariant &other);
    DoubleVariant(DoubleVariant &other, bool isRef);
    DoubleVariant(DoubleVariant &&other) ZAPI_DECL_NOEXCEPT;

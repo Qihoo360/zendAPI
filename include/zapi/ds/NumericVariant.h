@@ -36,9 +36,9 @@ public:
 #if SIZEOF_ZEND_LONG == 8
    NumericVariant(std::int64_t value);
 #endif
-   NumericVariant(zval &other, bool isRef);
-   NumericVariant(zval &&other, bool isRef);
-   NumericVariant(zval *other, bool isRef);
+   NumericVariant(zval &other, bool isRef = false);
+   NumericVariant(zval &&other, bool isRef = false);
+   NumericVariant(zval *other, bool isRef = false);
    NumericVariant(const NumericVariant &other);
    NumericVariant(NumericVariant &other, bool isRef);
    NumericVariant(NumericVariant &&other) ZAPI_DECL_NOEXCEPT;

@@ -35,9 +35,9 @@ public:
    BoolVariant(const Variant &other);
    BoolVariant(Variant &&other);
    BoolVariant(bool value);
-   BoolVariant(zval &other, bool isRef);
-   BoolVariant(zval &&other, bool isRef);
-   BoolVariant(zval *other, bool isRef);
+   BoolVariant(zval &other, bool isRef = false);
+   BoolVariant(zval &&other, bool isRef = false);
+   BoolVariant(zval *other, bool isRef = false);
    virtual bool toBool() const ZAPI_DECL_NOEXCEPT override;
    operator bool () const override;
    BoolVariant &operator=(const BoolVariant &other);

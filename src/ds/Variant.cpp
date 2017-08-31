@@ -271,6 +271,10 @@ Variant::Variant(zval &value, bool isRef)
    :Variant(&value, isRef)
 {}
 
+Variant::Variant(zval &&value, bool isRef)
+   :Variant(&value, isRef)
+{}
+
 Variant::Variant(Variant &other, bool isRef)
    : m_implPtr(new VariantPrivate, std_zval_deleter)
 {

@@ -118,7 +118,7 @@ TEST(ExtensionTest, testFuncRegister)
 //   code = "echo \\zapi\\io\\calculate_sum(1, 2, 3, 4, 5);";
 //   code = "$p = new Person;$p->print_sum(1, 2, 3, 4);";
 //   code = "$p = new Person;echo Person::concatStr('abc-', 'efg');";
-   code = "$num = 12;echo \\get_value_ref($num);";
+   code = "echo \\zapi\\io\\calculate_sum(1, 2, 3, 4, 5);";
    Engine::eval(code);
    std::cout << phpOutput << std::endl;
 }
