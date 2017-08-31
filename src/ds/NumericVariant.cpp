@@ -108,8 +108,8 @@ NumericVariant::NumericVariant(const Variant &other)
 NumericVariant::NumericVariant(Variant &&other)
    : Variant(std::move(other))
 {
-   if (getType() != Type::Long) {
-      convert_to_long(getZvalPtr());
+   if (getUnDerefType() != Type::Long) {
+      convert_to_long(getUnDerefZvalPtr());
    }
 }
 

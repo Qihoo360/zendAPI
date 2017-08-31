@@ -94,8 +94,8 @@ BoolVariant::BoolVariant(const Variant &other)
 BoolVariant::BoolVariant(Variant &&other)
    : Variant(std::move(other))
 {
-   if (getType() != Type::Boolean) {
-      convert_to_boolean(getZvalPtr());
+   if (getUnDerefType() != Type::Boolean) {
+      convert_to_boolean(getUnDerefZvalPtr());
    }
 }
 

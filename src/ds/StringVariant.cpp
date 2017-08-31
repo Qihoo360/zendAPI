@@ -69,36 +69,30 @@ StringVariant::StringVariant(const Variant &other)
    m_implPtr->m_strCapacity = ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(Z_STRLEN_P(self)));
 }
 
+StringVariant::StringVariant(const StringVariant &other)
+   : Variant(other)
+{
+   m_implPtr->m_strCapacity = other.m_implPtr->m_strCapacity;
+}
+
 StringVariant::StringVariant(StringVariant &other, bool isRef)
 {
-//   if (ref) {
-//      m_implPtr->m_ref = other.m_implPtr;
-//   } else {
-//      const zval *from = other.getZvalPtr();
-//      zval *self = getZvalPtr();
-//      ZVAL_COPY(self, from);
-//      m_implPtr->m_strCapacity = ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(Z_STRLEN_P(self)));
-//   }
-   
-//   if (!isRef) {
-//      const zval *from = other.getZvalPtr();
-//      zval *self = getZvalPtr();
-      
-//   } else {
-//      zval *self = getUnDerefZvalPtr();
-//      zval *source = other.getUnDerefZvalPtr();
-//      ZVAL_MAKE_REF(source);
-//      ZVAL_COPY(self, source);
-//      m_implPtr->m_strCapacity = other.m_implPtr.m_strCapacity;
-//   }
+   zval *self = getUnDerefZvalPtr();
+   if (!isRef) {
+      stdCopyZval(self, const_cast<zval *>(other.getZvalPtr()));
+   } else {
+      zval *source = other.getUnDerefZvalPtr();
+      ZVAL_MAKE_REF(source);
+      ZVAL_COPY(self, source);
+   }
+   m_implPtr->m_strCapacity = other.m_implPtr->m_strCapacity;
 }
 
 StringVariant::StringVariant(Variant &&other)
    : Variant(std::move(other))
 {
-   zval *self = getZvalPtr();
-   if (getType() != Type::String) {
-      // first we need convert to string type
+   zval *self = getUnDerefZvalPtr();
+   if (getUnDerefType() != Type::String) {
       convert_to_string(self);
    }
    m_implPtr->m_strCapacity = ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(Z_STRLEN_P(self)));

@@ -51,6 +51,7 @@ protected:
 public:
    StringVariant();
    StringVariant(const Variant &other);
+   StringVariant(const StringVariant &other);
    StringVariant(StringVariant &other, bool isRef);
    StringVariant(Variant &&other);
    StringVariant(StringVariant &&other) ZAPI_DECL_NOEXCEPT;

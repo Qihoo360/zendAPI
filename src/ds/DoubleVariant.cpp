@@ -109,8 +109,8 @@ DoubleVariant::DoubleVariant(const Variant &other)
 DoubleVariant::DoubleVariant(Variant &&other)
    : Variant(std::move(other))
 {
-   if (getType() != Type::Double) {
-      convert_to_double(getZvalPtr());
+   if (getUnDerefType() != Type::Double) {
+      convert_to_double(getUnDerefZvalPtr());
    }
 }
 
