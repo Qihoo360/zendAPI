@@ -106,18 +106,17 @@ void register_funcs(Extension &extension)
    //                                                               ValueArgument("name", zapi::lang::Type::String),
    //                                                               ValueArgument("age", zapi::lang::Type::Long)
    //                                                            });
-   //   extension.registerFunction<decltype(&dummyext::add_two_number), &dummyext::add_two_number>
-   //         ("add_two_number", {
-   //             ValueArgument("num1", zapi::lang::Type::Long),
-   //             ValueArgument("num2", zapi::lang::Type::Long)
-   //          });
+   extension.registerFunction<decltype(&dummyext::add_two_number), &dummyext::add_two_number>("add_two_number", {
+             ValueArgument("num1", zapi::lang::Type::Long),
+             ValueArgument("num2", zapi::lang::Type::Long)
+          });
    //   extension.registerFunction<dummyext::return_arg>("return_arg", {
    //                                                       ValueArgument("number1"),
    //                                                    });
-   extension.registerFunction<decltype(&dummyext::get_value_ref), &dummyext::get_value_ref>
-         ("get_value_ref", {
-             ValueArgument("number", zapi::lang::Type::Numeric),
-          });
+//   extension.registerFunction<decltype(&dummyext::get_value_ref), &dummyext::get_value_ref>
+//         ("get_value_ref", {
+//             ValueArgument("number", zapi::lang::Type::Numeric),
+//          });
    
 }
 

@@ -179,7 +179,7 @@ public:
                ZVAL_LONG(&temp, static_cast<int32_t>(argNumber));
                return temp;
             } else if (index <= argNumber + 1){
-               return Variant(&arguments[index - 1]).detach(false);
+               return arguments[index - 1];
             } else {
                zval temp;
                ZVAL_NULL(&temp);
@@ -209,10 +209,8 @@ public:
          const size_t argNumber = ZEND_NUM_ARGS();
          zval arguments[argNumber];
          zend_get_parameters_array_ex(argNumber, arguments);
-         auto tuple = zapi::stdext::gen_tuple<paramNumber>(
-                  [&arguments](size_t index) {
-               return Variant(&arguments[index]); 
-      });
+         InvokeParamGenerator generator(arguments);
+         auto tuple = zapi::stdext::gen_tuple_with_type<paramNumber, CallableType>(generator);
          yield(return_value, zapi::stdext::apply(callable, tuple));
       } catch (Exception &exception) {
          zapi::kernel::process_exception(exception);
@@ -276,10 +274,9 @@ public:
          zval arguments[argNumber];
          zend_get_parameters_array_ex(argNumber, arguments);
          // for class object
+         InvokeParamGenerator generator(arguments);
          auto objectTuple = std::make_tuple(static_cast<ClassType *>(nativeObject));
-         auto tuple = std::tuple_cat(objectTuple, zapi::stdext::gen_tuple<paramNumber>([&arguments](size_t index){
-                                        return Variant(&arguments[index]);
-                                     }));
+         auto tuple = std::tuple_cat(objectTuple, zapi::stdext::gen_tuple_with_type<paramNumber, CallableType>(generator));
          zapi::stdext::apply(callable, tuple);
          yield(return_value, nullptr);
       } catch (Exception &exception) {
@@ -348,10 +345,9 @@ public:
          zval arguments[argNumber];
          zend_get_parameters_array_ex(argNumber, arguments);
          // for class object
+         InvokeParamGenerator generator(arguments);
          auto objectTuple = std::make_tuple(static_cast<ClassType *>(nativeObject));
-         auto tuple = std::tuple_cat(objectTuple, zapi::stdext::gen_tuple<paramNumber>([&arguments](size_t index){
-                                        return Variant(&arguments[index]);
-                                     }));
+         auto tuple = std::tuple_cat(objectTuple, zapi::stdext::gen_tuple_with_type<paramNumber, CallableType>(generator));
          yield(return_value, zapi::stdext::apply(callable, tuple));
       } catch (Exception &exception) {
          zapi::kernel::process_exception(exception);

@@ -20,7 +20,7 @@ ZAPI_DECL_EXPORT void print_sum(NumericVariant argQuantity, ...);
 ZAPI_DECL_EXPORT void print_name(const StringVariant &name);
 ZAPI_DECL_EXPORT void print_name_and_age(Parameters &params);
 ZAPI_DECL_EXPORT Variant calculate_sum(NumericVariant argQuantity, ...);
-ZAPI_DECL_EXPORT Variant add_two_number(NumericVariant num1, NumericVariant num2);
+ZAPI_DECL_EXPORT Variant add_two_number(const NumericVariant &num1, const NumericVariant &num2);
 ZAPI_DECL_EXPORT void register_funcs(Extension &extension);
 ZAPI_DECL_EXPORT void register_ns_io(Namespace &io);
 ZAPI_DECL_EXPORT void register_ns_zapi(Namespace &zapi);
