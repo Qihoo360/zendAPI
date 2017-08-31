@@ -700,56 +700,33 @@ void Variant::selfDeref(zval *self)
 
 zval &Variant::getZval() const ZAPI_DECL_NOEXCEPT
 {
-   zval *ret = nullptr;
-   if (m_implPtr->m_ref) {
-      ret = static_cast<zval *>(*m_implPtr->m_ref);
-   } else {
-      ret = static_cast<zval *>(*m_implPtr);
-   }
+   zval *ret = static_cast<zval *>(*m_implPtr);
    ZVAL_DEREF(ret);
    return *ret;
 }
 
 zval *Variant::getZvalPtr() ZAPI_DECL_NOEXCEPT
 {
-   zval *ret = nullptr;
-   if (m_implPtr->m_ref) {
-      ret = static_cast<zval *>(*m_implPtr->m_ref);
-   } else {
-      ret = static_cast<zval *>(*m_implPtr);
-   }
+   zval *ret = static_cast<zval *>(*m_implPtr);
    ZVAL_DEREF(ret);
    return ret;
 }
 
 const zval *Variant::getZvalPtr() const ZAPI_DECL_NOEXCEPT
 {
-   zval *ret = nullptr;
-   if (m_implPtr->m_ref) {
-      ret = static_cast<zval *>(*m_implPtr->m_ref);
-   } else {
-      ret = static_cast<zval *>(*m_implPtr);
-   }
+   zval *ret = static_cast<zval *>(*m_implPtr);
    ZVAL_DEREF(ret);
    return ret;
 }
 
 zval *Variant::getUnDerefZvalPtr() ZAPI_DECL_NOEXCEPT
 {
-   if (m_implPtr->m_ref) {
-      return static_cast<zval *>(*m_implPtr->m_ref);
-   } else {
-      return static_cast<zval *>(*m_implPtr);
-   }
+   return static_cast<zval *>(*m_implPtr);
 }
 
 const zval *Variant::getUnDerefZvalPtr() const ZAPI_DECL_NOEXCEPT
 {
-   if (m_implPtr->m_ref) {
-      return static_cast<zval *>(*m_implPtr->m_ref);
-   } else {
-      return static_cast<zval *>(*m_implPtr);
-   }
+   return static_cast<zval *>(*m_implPtr);
 }
 
 Variant::operator zval * () const
@@ -768,27 +745,21 @@ uint32_t Variant::getRefCount() const ZAPI_DECL_NOEXCEPT
 zval Variant::detach(bool keeprefcount)
 {
    zval result;
+   zval *self = getUnDerefZvalPtr();
    // copy the value
-   ZVAL_COPY_VALUE(&result, *m_implPtr);
+   ZVAL_COPY_VALUE(&result, self);
    if (!keeprefcount) {
-      Z_TRY_DELREF_P(*m_implPtr);
+      Z_TRY_DELREF_P(self);
    }
    // we no longer represent a valid value
-   ZVAL_UNDEF(*(m_implPtr.get()));
+   ZVAL_UNDEF(self);
    // done
    return result;
 }
 
 Variant Variant::makeReferenceByZval()
 {
-   Variant ret;
-   zval *from = getZvalPtr();
-   zval *to = ret.getZvalPtr();
-   ZVAL_MAKE_REF(from);
-   zend_reference *ref = Z_REF_P(from);
-   GC_REFCOUNT(ref)++;
-   ZVAL_REF(to, ref);
-   return ret;
+   return Variant(*this, true);
 }
 
 /**
@@ -937,7 +908,7 @@ bool Variant::isReference() const ZAPI_DECL_NOEXCEPT
 
 void Variant::invalidate() ZAPI_DECL_NOEXCEPT
 {
-   zval *self = getZvalPtr();
+   zval *self = getUnDerefZvalPtr();
    if (Z_TYPE_P(self) == IS_UNDEF) {
       return;
    }
