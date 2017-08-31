@@ -101,11 +101,10 @@ StringVariant::StringVariant(StringVariant &other, bool isRef)
 StringVariant::StringVariant(Variant &&other)
    : Variant(std::move(other))
 {
-   zval *self = getUnDerefZvalPtr();
-   if (getUnDerefType() != Type::String) {
-      convert_to_string(self);
+   if (getType() != Type::String) {
+      convert_to_string(getUnDerefZvalPtr());
    }
-   setCapacity(ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(Z_STRLEN_P(self))));
+   setCapacity(ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(Z_STRLEN_P(getZvalPtr()))));
 }
 
 StringVariant::StringVariant(StringVariant &&other) ZAPI_DECL_NOEXCEPT

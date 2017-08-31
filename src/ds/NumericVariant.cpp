@@ -57,7 +57,8 @@ NumericVariant::NumericVariant(zval *other, bool isRef)
 {
    zval *self = getUnDerefZvalPtr();
    if (nullptr != other) {
-      if (isRef && Z_TYPE_P(other) == IS_LONG) {
+      if (isRef && (Z_TYPE_P(other) == IS_LONG || 
+                    (Z_TYPE_P(other) == IS_REFERENCE && Z_TYPE_P(Z_REFVAL_P(other)) == IS_LONG))) {
          ZVAL_MAKE_REF(other);
          zend_reference *ref = Z_REF_P(other);
          ++GC_REFCOUNT(ref);
@@ -108,7 +109,7 @@ NumericVariant::NumericVariant(const Variant &other)
 NumericVariant::NumericVariant(Variant &&other)
    : Variant(std::move(other))
 {
-   if (getUnDerefType() != Type::Long) {
+   if (getType() != Type::Long) {
       convert_to_long(getUnDerefZvalPtr());
    }
 }

@@ -390,50 +390,33 @@ Variant::Variant(const ArrayVariant &value)
  */
 Variant::Variant(Variant &&other) ZAPI_DECL_NOEXCEPT
 {
+   // maybe this is the only way to implement pass argument by ref
    m_implPtr = std::move(other.m_implPtr);
-   if (getUnDerefType() == Type::Reference) {
-      selfDeref(getUnDerefZvalPtr());
-   }
 }
 
 Variant::Variant(BoolVariant &&value)
 {
    m_implPtr = std::move(value.m_implPtr);
-   if (getUnDerefType() == Type::Reference) {
-      selfDeref(getUnDerefZvalPtr());
-   }
 }
 
 Variant::Variant(NumericVariant &&value)
 {
    m_implPtr = std::move(value.m_implPtr);
-   if (getUnDerefType() == Type::Reference) {
-      selfDeref(getUnDerefZvalPtr());
-   }
 }
 
 Variant::Variant(StringVariant &&value)
 {
    m_implPtr = std::move(value.m_implPtr);
-   if (getUnDerefType() == Type::Reference) {
-      selfDeref(getUnDerefZvalPtr());
-   }
 }
 
 Variant::Variant(DoubleVariant &&value)
 {
    m_implPtr = std::move(value.m_implPtr);
-   if (getUnDerefType() == Type::Reference) {
-      selfDeref(getUnDerefZvalPtr());
-   }
 }
 
 Variant::Variant(ArrayVariant &&value)
 {
    m_implPtr = std::move(value.m_implPtr);
-   if (getUnDerefType() == Type::Reference) {
-      selfDeref(getUnDerefZvalPtr());
-   }
 }
 
 Variant::~Variant() ZAPI_DECL_NOEXCEPT

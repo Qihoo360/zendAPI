@@ -214,7 +214,7 @@ ArrayVariant::ArrayVariant(Variant &&other)
    : Variant(std::move(other))
 {
    if (getType() != Type::Array) {
-      convert_to_array(getZvalPtr());
+      convert_to_array(getUnDerefZvalPtr());
    }
 }
 

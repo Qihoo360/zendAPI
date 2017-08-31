@@ -108,7 +108,12 @@ public:
    template <typename ParamType>
    typename std::remove_reference<ParamType>::type generate(size_t index)
    {
-      return typename std::remove_reference<ParamType>::type(&m_arguments[index]);
+      using ClassType = typename std::remove_reference<ParamType>::type;
+      zval *arg = &m_arguments[index];
+      if (Z_TYPE_P(arg) == IS_REFERENCE) {
+         return ClassType(arg, true);
+      }
+      return ClassType(arg);
    }
    
 private:

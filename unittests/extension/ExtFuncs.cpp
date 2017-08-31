@@ -14,6 +14,7 @@ using zapi::lang::ValueArgument;
 using zapi::lang::RefArgument;
 using zapi::lang::VariadicArgument;
 using zapi::lang::Constant;
+using zapi::lang::Type;
 
 void show_something()
 {
@@ -22,7 +23,7 @@ void show_something()
 
 void get_value_ref(NumericVariant &number)
 {
-   //zapi::out << "xxx"<< std::endl;
+   number = 321;
 }
 
 Variant get_name()
@@ -106,17 +107,17 @@ void register_funcs(Extension &extension)
    //                                                               ValueArgument("name", zapi::lang::Type::String),
    //                                                               ValueArgument("age", zapi::lang::Type::Long)
    //                                                            });
-   extension.registerFunction<decltype(&dummyext::add_two_number), &dummyext::add_two_number>("add_two_number", {
-             ValueArgument("num1", zapi::lang::Type::Long),
-             ValueArgument("num2", zapi::lang::Type::Long)
-          });
+   //   extension.registerFunction<decltype(&dummyext::add_two_number), &dummyext::add_two_number>("add_two_number", {
+   //             ValueArgument("num1", zapi::lang::Type::Long),
+   //             ValueArgument("num2", zapi::lang::Type::Long)
+   //          });
    //   extension.registerFunction<dummyext::return_arg>("return_arg", {
    //                                                       ValueArgument("number1"),
    //                                                    });
-//   extension.registerFunction<decltype(&dummyext::get_value_ref), &dummyext::get_value_ref>
-//         ("get_value_ref", {
-//             ValueArgument("number", zapi::lang::Type::Numeric),
-//          });
+   extension.registerFunction<decltype(&dummyext::get_value_ref), &dummyext::get_value_ref>
+         ("get_value_ref", {
+             RefArgument("number", zapi::lang::Type::Numeric),
+          });
    
 }
 
@@ -130,10 +131,10 @@ void register_ns_io(Namespace &io)
    //         ("print_name", {
    //             ValueArgument("name", zapi::lang::Type::String)
    //          });
-   io.registerFunction<decltype(&dummyext::print_sum), &dummyext::print_sum>
-         ("print_sum", {
-             VariadicArgument("numbers")
-          });
+//   io.registerFunction<decltype(&dummyext::print_sum), &dummyext::print_sum>
+//         ("print_sum", {
+//             VariadicArgument("numbers")
+//          });
    //   io.registerFunction<dummyext::show_something>("show_something");
    io.registerConstant(Constant("IO_TYPE", "ASYNC"));
    io.registerConstant(Constant("NATIVE_STREAM", true));
