@@ -36,22 +36,12 @@ public:
    {
       std::memset(&m_buffer, 0, sizeof(m_buffer));
    }
-   
-   void updateCapacity(size_t capacity)
-   {
-      m_strCapacity = capacity;
-      if (m_ref) {
-         m_ref->updateCapacity(capacity);
-      }
-   }
 
    operator _zval_struct *() const &;
    operator const _zval_struct *() const &;
    _zval_struct &operator*() const &;
    _zval_struct *dereference() const;
    std::aligned_storage<16>::type m_buffer;
-   size_t m_strCapacity = 0;
-   std::shared_ptr<VariantPrivate> m_ref;
 };
 
 } // internal

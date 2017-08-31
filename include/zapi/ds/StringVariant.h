@@ -362,13 +362,14 @@ public:
    SizeType getCapacity() const ZAPI_DECL_NOEXCEPT;
    virtual ~StringVariant() ZAPI_DECL_NOEXCEPT;
 private:
-   zend_string *getZendStringPtr();
+   zend_string *getZendStringPtr() const;
    char *getRawStrPtr() const ZAPI_DECL_NOEXCEPT;
-   size_t calculateNewStrSize(size_t length) ZAPI_DECL_NOEXCEPT;
+   SizeType calculateNewStrSize(size_t length) ZAPI_DECL_NOEXCEPT;
    void strStdRealloc(zend_string *&str, size_t length);
    void strPersistentRealloc(zend_string *&str, size_t length);
-   size_t strAlloc(zend_string *&str, size_t length, bool persistent);
-   size_t strReAlloc(zend_string *&str, size_t length, bool persistent);
+   SizeType strAlloc(zend_string *&str, size_t length, bool persistent);
+   SizeType strReAlloc(zend_string *&str, size_t length, bool persistent);
+   void setCapacity(SizeType capacity);
 };
 
 bool operator ==(const char *lhs, const StringVariant &rhs);

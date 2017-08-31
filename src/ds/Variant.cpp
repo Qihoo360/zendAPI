@@ -903,7 +903,7 @@ bool Variant::isArray() const ZAPI_DECL_NOEXCEPT
 
 bool Variant::isReference() const ZAPI_DECL_NOEXCEPT
 {
-   return !!m_implPtr->m_ref || Z_TYPE_P(static_cast<zval *>(*m_implPtr)) == IS_REFERENCE;
+   return Z_TYPE_P(getUnDerefZvalPtr()) == IS_REFERENCE;
 }
 
 void Variant::invalidate() ZAPI_DECL_NOEXCEPT

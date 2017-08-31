@@ -36,9 +36,9 @@ const size_t STR_VARIAMT_PAGE_SIZE = 4096;
 #endif
 
 #ifdef SMART_STR_START_SIZE
-const size_t STR_VARIANT_START_SIZE SMART_STR_START_SIZE;
+const size_t STR_VARIANT_START_SIZE = SMART_STR_START_SIZE;
 #else
-const size_t STR_VARIANT_START_SIZE (256 - STR_VARIANT_OVERHEAD - 1);
+const size_t STR_VARIANT_START_SIZE = (256 - STR_VARIANT_OVERHEAD - 1);
 #endif
 
 StringVariant::StringVariant()
@@ -66,7 +66,7 @@ StringVariant::StringVariant(const Variant &other)
    }
    // we just set the capacity equal to default allocator algorithm
    // ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(len))
-   m_implPtr->m_strCapacity = ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(Z_STRLEN_P(self)));
+   getZendStringPtr()->h = ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(Z_STRLEN_P(self)));
 }
 
 StringVariant::StringVariant(const StringVariant &other)
@@ -75,7 +75,7 @@ StringVariant::StringVariant(const StringVariant &other)
    if (other.getUnDerefType() == Type::Reference) {
       SEPARATE_STRING(getZvalPtr());
    }
-   m_implPtr->m_strCapacity = other.m_implPtr->m_strCapacity;
+   setCapacity(other.getCapacity());
 }
 
 StringVariant::StringVariant(StringVariant &other, bool isRef)
@@ -91,9 +91,8 @@ StringVariant::StringVariant(StringVariant &other, bool isRef)
       zval *source = other.getUnDerefZvalPtr();
       ZVAL_MAKE_REF(source);
       ZVAL_COPY(self, source);
-      m_implPtr->m_ref = other.m_implPtr;
    }
-   m_implPtr->m_strCapacity = other.m_implPtr->m_strCapacity;
+   setCapacity(other.getCapacity());
 }
 
 StringVariant::StringVariant(Variant &&other)
@@ -103,7 +102,7 @@ StringVariant::StringVariant(Variant &&other)
    if (getUnDerefType() != Type::String) {
       convert_to_string(self);
    }
-   m_implPtr->m_strCapacity = ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(Z_STRLEN_P(self)));
+   setCapacity(ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(Z_STRLEN_P(self))));
 }
 
 StringVariant::StringVariant(StringVariant &&other) ZAPI_DECL_NOEXCEPT
@@ -152,7 +151,7 @@ StringVariant::StringVariant(zval *other, bool isRef)
          ZVAL_DUP(self, other);
          convert_to_string(self);
       }
-      m_implPtr->m_strCapacity = ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(Z_STRLEN_P(getZvalPtr())));
+      setCapacity(ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(Z_STRLEN_P(getZvalPtr()))));
    } else {
       Z_STR_P(self) = nullptr;
       Z_TYPE_INFO_P(self) = IS_STRING_EX;
@@ -167,7 +166,7 @@ StringVariant &StringVariant::operator =(const StringVariant &other)
          SEPARATE_ZVAL_NOREF(getZvalPtr());
       }
       Variant::operator =(from);
-      m_implPtr->m_strCapacity = other.m_implPtr->m_strCapacity;
+      setCapacity(getCapacity());
    }
    return *this;
 }
@@ -193,7 +192,7 @@ StringVariant &StringVariant::operator =(const Variant &other)
       zend_string_free(Z_STR_P(self));
       ZVAL_COPY_VALUE(self, &temp);
    }
-   m_implPtr->m_strCapacity = ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(Z_STRLEN_P(self)));
+   setCapacity(ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(Z_STRLEN_P(self))));
    return *this;
 }
 
@@ -986,21 +985,21 @@ StringVariant &StringVariant::clear()
       return *this;
    }
    SEPARATE_ZVAL_NOREF(self);
+   Z_STR_P(self)->h = 0; // for dirty memory
    zend_string_free(Z_STR_P(self));
    Z_STR_P(self) = nullptr;
-   m_implPtr->m_strCapacity = 0;
    return *this;
 }
 
 void StringVariant::resize(SizeType size)
 {
-   if (size == m_implPtr->m_strCapacity) {
+   if (size == getCapacity()) {
       return;
    }
-   zval *self = getUnDerefZvalPtr();
    if (nullptr != getZendStringPtr()) {
-      SEPARATE_ZVAL_IF_NOT_REF(self);
+      SEPARATE_ZVAL_IF_NOT_REF(getUnDerefZvalPtr());
    }
+   zval *self = getZvalPtr();
    // here we use std string alloc 
    zend_string *newStr = zend_string_alloc(size, 0);
    zend_string *oldStr = getZendStringPtr();
@@ -1015,7 +1014,7 @@ void StringVariant::resize(SizeType size)
    }
    ZSTR_VAL(newStr)[size] = '\0';
    Z_STR_P(self) = newStr;
-   m_implPtr->m_strCapacity = ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(Z_STRLEN_P(self)));
+   setCapacity(ZEND_MM_ALIGNED_SIZE(_ZSTR_STRUCT_SIZE(Z_STRLEN_P(self))));
 }
 
 void StringVariant::resize(SizeType size, char fillChar)
@@ -1251,17 +1250,25 @@ StringVariant::SizeType StringVariant::getLength() const ZAPI_DECL_NOEXCEPT
 
 StringVariant::SizeType StringVariant::getCapacity() const ZAPI_DECL_NOEXCEPT
 {
-   return m_implPtr->m_strCapacity;
+   const zend_string *strPtr = getZendStringPtr();
+   if (!strPtr) {
+      return 0;
+   }
+   return static_cast<SizeType>(strPtr->h);
 }
 
 StringVariant::~StringVariant() ZAPI_DECL_NOEXCEPT
 {
-   if (m_implPtr) {
-      m_implPtr->m_strCapacity = 0;
+   // @TODO really need this ?
+   if (nullptr != m_implPtr && getUnDerefType() != Type::Reference) {
+      zend_string *str = getZendStringPtr();
+      if (str) {
+         str->h = 0;
+      }
    }
 }
 
-zend_string *StringVariant::getZendStringPtr()
+zend_string *StringVariant::getZendStringPtr() const
 {
    return Z_STR_P(getZvalPtr());
 }
@@ -1278,7 +1285,7 @@ void StringVariant::strStdRealloc(zend_string *&str, size_t length)
             ? STR_VARIANT_START_SIZE
             : calculateNewStrSize(length);
       str = zend_string_alloc(newCapcity, 0);
-      m_implPtr->updateCapacity(newCapcity);
+      str->h = newCapcity;
       ZSTR_LEN(str) = 0;
    } else {
       size_t newCapcity = calculateNewStrSize(length);
@@ -1291,7 +1298,7 @@ void StringVariant::strStdRealloc(zend_string *&str, size_t length)
          return;
       }
       str = newStr;
-      m_implPtr->updateCapacity(newCapcity);
+      str->h = newCapcity;
    }
 }
 
@@ -1302,7 +1309,7 @@ void StringVariant::strPersistentRealloc(zend_string *&str, size_t length)
             ? STR_VARIANT_START_SIZE
             : calculateNewStrSize(length);
       str = zend_string_alloc(newCapcity, 1);
-      m_implPtr->updateCapacity(newCapcity);
+      str->h = newCapcity;
       ZSTR_LEN(str) = 0;
    } else {
       size_t newCapcity = calculateNewStrSize(length);
@@ -1314,17 +1321,17 @@ void StringVariant::strPersistentRealloc(zend_string *&str, size_t length)
          return;
       }
       str = newStr;
-      m_implPtr->updateCapacity(newCapcity);
+      str->h = newCapcity;
    }
 }
 
-size_t StringVariant::strAlloc(zend_string *&str, size_t length, bool persistent)
+StringVariant::SizeType StringVariant::strAlloc(zend_string *&str, size_t length, bool persistent)
 {
    if (UNEXPECTED(!str)) {
       goto do_smart_str_realloc;
    } else {
       length += ZSTR_LEN(str);
-      if (UNEXPECTED(length >= m_implPtr->m_strCapacity)) {
+      if (UNEXPECTED(length >= str->h)) {
 do_smart_str_realloc:
          if (persistent) {
             strPersistentRealloc(str, length);
@@ -1336,12 +1343,12 @@ do_smart_str_realloc:
    return length;
 }
 
-size_t StringVariant::strReAlloc(zend_string *&str, size_t length, bool persistent)
+StringVariant::SizeType StringVariant::strReAlloc(zend_string *&str, size_t length, bool persistent)
 {
    if (UNEXPECTED(!str)) {
       goto do_smart_str_realloc;
    } else {
-      if (UNEXPECTED(length >= m_implPtr->m_strCapacity)) {
+      if (UNEXPECTED(length >= str->h)) {
 do_smart_str_realloc:
          if (persistent) {
             strPersistentRealloc(str, length);
@@ -1351,6 +1358,13 @@ do_smart_str_realloc:
       }
    }
    return length;
+}
+
+void StringVariant::setCapacity(SizeType capacity)
+{
+   zend_string *strPtr = getZendStringPtr();
+   ZAPI_ASSERT(strPtr);
+   strPtr->h = capacity;
 }
 
 bool operator ==(const char *lhs, const StringVariant &rhs)
