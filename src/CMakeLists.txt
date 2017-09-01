@@ -31,6 +31,7 @@ set(ZAPI_SRC
    ds/ArrayItemProxy.cpp
    vm/AbstractClass.cpp
    vm/AbstractMember.cpp
+   vm/ZValMember.cpp
    vm/StringMember.cpp
    vm/BoolMember.cpp
    vm/FloatMember.cpp

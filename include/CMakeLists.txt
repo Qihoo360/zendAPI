@@ -59,6 +59,7 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/vm/internal/AbstractMemberPrivate.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/Engine.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/AbstractMember.h
+   ${ZAPI_INCLUDE_DIR}/zapi/vm/ZValMember.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/StringMember.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/BoolMember.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/FloatMember.h
