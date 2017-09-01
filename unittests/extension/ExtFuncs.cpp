@@ -76,6 +76,14 @@ Variant add_two_number(const NumericVariant &num1, const NumericVariant &num2)
    return num1 + num2;
 }
 
+void say_hello(StringVariant &name)
+{
+   if (name.getCapacity() == 0) {
+      name = "zapi";
+   }
+   zapi::out << "hello, " << name << std::endl;
+}
+
 Variant return_arg(Parameters &params)
 {
    return params.at(0);
@@ -99,8 +107,6 @@ int f(U u)
    return u;
 }
 
-int gg()
-{}
 void register_funcs(Extension &extension)
 {
    //std::result_of<int()>::type d = 12;
@@ -128,6 +134,12 @@ void register_funcs(Extension &extension)
    extension.registerFunction<decltype(&dummyext::passby_value), &dummyext::passby_value>
          ("passby_value", {
              ValueArgument("number", zapi::lang::Type::Numeric),
+          });
+   
+   // test for default arguments
+   extension.registerFunction<decltype(&dummyext::say_hello), &dummyext::say_hello>
+         ("say_hello", {
+             ValueArgument("name", zapi::lang::Type::String, false)
           });
    
 }

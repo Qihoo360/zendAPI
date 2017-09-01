@@ -44,6 +44,7 @@ ZAPI_DECL_EXPORT char *str_tolower(char *str) ZAPI_DECL_NOEXCEPT;
 ZAPI_DECL_EXPORT char *str_tolower(char *str, size_t length) ZAPI_DECL_NOEXCEPT;
 ZAPI_DECL_EXPORT std::string &str_tolower(std::string &str) ZAPI_DECL_NOEXCEPT;
 ZAPI_DECL_EXPORT std::string get_zval_type_str(const zval *valuePtr) ZAPI_DECL_NOEXCEPT;
+ZAPI_DECL_EXPORT bool zval_type_is_valid(const zval *valuePtr) ZAPI_DECL_NOEXCEPT;
 
 struct ZAPI_DECL_EXPORT VariantKeyLess
 {

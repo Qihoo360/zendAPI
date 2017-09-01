@@ -117,6 +117,29 @@ std::string get_zval_type_str(const zval *valuePtr) ZAPI_DECL_NOEXCEPT
    }
 }
 
+bool zval_type_is_valid(const zval *valuePtr) ZAPI_DECL_NOEXCEPT
+{
+   switch (Z_TYPE_P(valuePtr)) {
+   case IS_UNDEF:
+   case IS_ARRAY:
+   case IS_TRUE:
+   case IS_FALSE:
+   case _IS_BOOL:
+   case IS_CALLABLE:
+   case IS_CONSTANT:
+   case IS_DOUBLE:
+   case IS_LONG:
+   case IS_OBJECT:
+   case IS_REFERENCE:
+   case IS_RESOURCE:
+   case IS_STRING:
+   case IS_PTR:
+      return true;
+   default:
+      return false;
+   }
+}
+
 bool VariantKeyLess::operator ()(const zapi::ds::Variant &lhs, const zapi::ds::Variant &rhs) const
 {
    Type ltype = lhs.getType();

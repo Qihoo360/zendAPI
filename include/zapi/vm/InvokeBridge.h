@@ -26,6 +26,7 @@
 #include "zapi/vm/ObjectBinder.h"
 #include "zapi/stdext/TypeTraits.h"
 #include "zapi/stdext/Tuple.h"
+#include "zapi/utils/CommonFuncs.h"
 
 #include <ostream>
 #include <list>
@@ -110,6 +111,9 @@ public:
    {
       using ClassType = typename std::remove_reference<ParamType>::type;
       zval *arg = &m_arguments[index];
+      if (!zapi::utils::zval_type_is_valid(arg)) {
+         ZVAL_NULL(arg);
+      }
       if (Z_TYPE_P(arg) == IS_REFERENCE) {
          return ClassType(arg, true);
       }

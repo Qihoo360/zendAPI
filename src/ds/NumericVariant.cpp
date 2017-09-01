@@ -64,6 +64,7 @@ NumericVariant::NumericVariant(zval *other, bool isRef)
          ++GC_REFCOUNT(ref);
          ZVAL_REF(self, ref);
       } else {
+         // here the zval of other pointer maybe not initialize
          ZVAL_DUP(self, other);
          convert_to_long(self);
       }

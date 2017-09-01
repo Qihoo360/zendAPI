@@ -143,7 +143,7 @@ StringVariant::StringVariant(zval &&other, bool isRef)
 StringVariant::StringVariant(zval *other, bool isRef)
 {
    zval *self = getUnDerefZvalPtr();
-   if (nullptr != other) {
+   if (nullptr != other && Z_TYPE_P(other) != IS_NULL) {
       if (isRef && Z_TYPE_P(other) == IS_STRING) {
          SEPARATE_STRING(other);
          ZVAL_MAKE_REF(other);
@@ -375,7 +375,11 @@ bool StringVariant::toBool() const ZAPI_DECL_NOEXCEPT
 std::string StringVariant::toString() const ZAPI_DECL_NOEXCEPT
 {
    zval *self = const_cast<zval *>(getZvalPtr());
-   return std::string(Z_STRVAL_P(self), Z_STRLEN_P(self));
+   zend_string *str = getZendStringPtr();
+   if (!str) {
+      return std::string();
+   }
+   return std::string(str->val, str->len);
 }
 
 std::string StringVariant::toLowerCase() const
