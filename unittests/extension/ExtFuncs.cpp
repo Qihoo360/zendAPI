@@ -204,9 +204,11 @@ void register_construct_and_destruct(Extension &extension)
 void register_cls(Extension &extension)
 {
    zapi::lang::Class<Person> personClass("Person");
-   personClass.registerConstant("QIHOO", "beijing qihoo asdasd");
+   personClass.registerConstant("UNICORNTEAM", "beijing unicornteam");
    personClass.registerConstant("MY_CONST", "MY_CONST_VALUE");
    personClass.registerConstant(Constant("PI", 3.1415926));
+   personClass.registerConstant("HEADER_SIZE", 123);
+   personClass.registerConstant("ALLOW_ACL", true);
    personClass.registerProperty("name", "zzu_softboy");
    personClass.registerProperty("staticProp", "beijing", Modifier::Public | Modifier::Static);
    //personClass.registerMethod<decltype(&Person::__construct), &Person::__construct>("__construct");
