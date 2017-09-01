@@ -16,6 +16,7 @@ ZAPI_DECL_EXPORT Variant return_arg(Parameters &params);
 ZAPI_DECL_EXPORT void show_something();
 ZAPI_DECL_EXPORT Variant get_name();
 ZAPI_DECL_EXPORT void get_value_ref(NumericVariant &number);
+ZAPI_DECL_EXPORT void passby_value(NumericVariant &number);
 ZAPI_DECL_EXPORT void print_sum(NumericVariant argQuantity, ...);
 ZAPI_DECL_EXPORT void print_name(const StringVariant &name);
 ZAPI_DECL_EXPORT void print_name_and_age(Parameters &params);

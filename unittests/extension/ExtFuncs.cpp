@@ -26,6 +26,12 @@ void get_value_ref(NumericVariant &number)
    number = 321;
 }
 
+void passby_value(NumericVariant &number)
+{
+   // have no effect
+   number = 321;
+}
+
 Variant get_name()
 {
    return "zzu_softboy";
@@ -114,9 +120,14 @@ void register_funcs(Extension &extension)
    //   extension.registerFunction<dummyext::return_arg>("return_arg", {
    //                                                       ValueArgument("number1"),
    //                                                    });
+   // for passby value and reference test
    extension.registerFunction<decltype(&dummyext::get_value_ref), &dummyext::get_value_ref>
          ("get_value_ref", {
              RefArgument("number", zapi::lang::Type::Numeric),
+          });
+   extension.registerFunction<decltype(&dummyext::passby_value), &dummyext::passby_value>
+         ("passby_value", {
+             ValueArgument("number", zapi::lang::Type::Numeric),
           });
    
 }
