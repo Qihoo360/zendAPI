@@ -135,6 +135,29 @@ Property::Property(const zapi::GetterMethodCallable1 &getter, const zapi::Setter
    : m_implPtr(new PropertyPrivate(getter, setter))
 {}
 
+Property::Property(const Property &other)
+   : m_implPtr(other.m_implPtr)
+{}
+
+Property::Property(Property &&other) ZAPI_DECL_EXPORT
+   : m_implPtr(std::move(other.m_implPtr))
+{}
+
+Property &Property::operator=(const Property &other)
+{
+   if (this != &other) {
+      m_implPtr = other.m_implPtr;
+   }
+   return *this;
+}
+
+Property &Property::operator=(Property &&other) ZAPI_DECL_NOEXCEPT
+{
+   assert(this != &other);
+   m_implPtr = std::move(other.m_implPtr);
+   return *this;
+}
+
 Property::~Property()
 {}
 

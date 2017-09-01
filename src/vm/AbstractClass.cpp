@@ -860,6 +860,8 @@ void AbstractClass::registerProperty(const char *name, int16_t value, Modifier f
 
 void AbstractClass::registerProperty(const char *name, int32_t value, Modifier flags)
 {
+   zend_declare_property_double();
+   zend_declare_property();
    ZAPI_D(AbstractClass);
    implPtr->m_members.push_back(std::make_shared<NumericMember>(name, value, 
                                                                 flags & Modifier::PropertyModifiers));

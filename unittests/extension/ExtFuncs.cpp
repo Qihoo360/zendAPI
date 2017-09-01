@@ -201,6 +201,11 @@ void register_construct_and_destruct(Extension &extension)
    extension.registerClass(ConstructAndDestruct);
 }
 
+void register_props_test_cls(Extension &extension)
+{
+   
+}
+
 void register_cls(Extension &extension)
 {
    zapi::lang::Class<Person> personClass("Person");
@@ -232,6 +237,7 @@ void register_cls(Extension &extension)
 //   extension.registerInterface(infoInterface);
    extension.registerClass(personClass);
    register_construct_and_destruct(extension);
+   register_props_test_cls(extension);
 }
 
 

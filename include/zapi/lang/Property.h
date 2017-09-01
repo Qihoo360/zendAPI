@@ -67,14 +67,17 @@ public:
    Property(const zapi::GetterMethodCallable0 &getter, const zapi::SetterMethodCallable1 &setter);
    Property(const zapi::GetterMethodCallable1 &getter, const zapi::SetterMethodCallable0 &setter);
    Property(const zapi::GetterMethodCallable1 &getter, const zapi::SetterMethodCallable1 &setter);
-   Property(const Property &other) = delete;
+   Property(const Property &other);
+   Property(Property &&other) ZAPI_DECL_EXPORT;
+   Property &operator=(const Property &other);
+   Property &operator=(Property &&other) ZAPI_DECL_NOEXCEPT;
    virtual ~Property();
 private:
    Variant get(StdClass *nativeObject);
    bool set(StdClass *nativeObject, const Variant &value);
 private:
    ZAPI_DECLARE_PRIVATE(Property)
-   std::unique_ptr<PropertyPrivate> m_implPtr;   
+   std::shared_ptr<PropertyPrivate> m_implPtr;
    friend class zapi::vm::internal::AbstractClassPrivate;
 };
 
