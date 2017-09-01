@@ -3,7 +3,6 @@ set(ZAPI_PHP_TESTS
    lang/const/ConstantTypeTest.phpt
    lang/const/ConstantExistTest.phpt
    lang/const/ConstantNsTest.phpt
-   
    lang/func/FunctionExistTest.phpt
    lang/func/FunctionDefaultTest.phpt
    lang/func/FunctionArgsTest.phpt
@@ -11,7 +10,6 @@ set(ZAPI_PHP_TESTS
    lang/func/FunctionRefArgTest.phpt
    lang/func/FunctionReturnTest.phpt
    lang/func/FunctionVarArgsTest.phpt
-   
    lang/class/ClassExistTest.phpt
    lang/class/ClassArrayAccessTest.phpt
    lang/class/ClassCallParentMethodTest.phpt
@@ -26,9 +24,10 @@ set(ZAPI_PHP_TESTS
    lang/class/ClassInvokeTest.phpt
    lang/class/ClassIteratorTest.phpt
    lang/class/ClassMethodTest.phpt
-   lang/class/ClassPropertyTest.phpt
    lang/class/ClassSerializeTest.phpt
    lang/class/ClassStaticMethodTest.phpt
-   lang/class/ClassStaticPropertyTest.phpt
    lang/class/ClassToStringTest.phpt
+   lang/class/ClassPropertyTest.phpt
+   lang/class/ClassStaticPropertyTest.phpt
+   lang/class/ClassPropGeterAndSetterTest.phpt
    PARENT_SCOPE)

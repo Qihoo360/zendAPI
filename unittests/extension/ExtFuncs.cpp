@@ -203,7 +203,23 @@ void register_construct_and_destruct(Extension &extension)
 
 void register_props_test_cls(Extension &extension)
 {
+   zapi::lang::Class<PropsTestClass> propsTestClass("PropsTestClass");
+   propsTestClass.registerProperty("nullProp", nullptr);
+   propsTestClass.registerProperty("trueProp", true);
+   propsTestClass.registerProperty("falseProp", false);
+   propsTestClass.registerProperty("numProp", 2017);
+   propsTestClass.registerProperty("doubleProp", 3.1415);
+   propsTestClass.registerProperty("strProp", "zapi");
+   propsTestClass.registerProperty("str1Prop", std::string("zapi"));
    
+   propsTestClass.registerProperty("staticNullProp", nullptr, Modifier::Static);
+   propsTestClass.registerProperty("staticTrueProp", true, Modifier::Static);
+   propsTestClass.registerProperty("staticFalseProp", false, Modifier::Static);
+   propsTestClass.registerProperty("staticNumProp", 2012, Modifier::Static);
+   propsTestClass.registerProperty("staticDoubleProp", 3.1415, Modifier::Static);
+   propsTestClass.registerProperty("staticStrProp", "static zapi", Modifier::Static);
+   propsTestClass.registerProperty("staticStr1Prop", std::string("static zapi"), Modifier::Static);
+   extension.registerClass(propsTestClass);
 }
 
 void register_cls(Extension &extension)
