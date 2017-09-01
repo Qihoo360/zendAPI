@@ -39,4 +39,14 @@ protected:
    std::string address;
 };
 
+class ConstructAndDestruct : public StdClass
+{
+public:
+   void __construct();
+   void __destruct();
+};
+
+class EmptyClass : public StdClass
+{};
+
 #endif // ZAPI_UNITTEST_BRIDGE_DUMMYEXT_CLASS_DEF_H

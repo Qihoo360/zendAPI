@@ -17,6 +17,12 @@ using zapi::lang::VariadicArgument;
 using zapi::lang::Constant;
 using zapi::lang::Type;
 using zapi::ds::ArrayVariant;
+using zapi::lang::Constant;
+using zapi::lang::Interface;
+using zapi::lang::Modifier;
+using zapi::lang::Namespace;
+using zapi::ds::StringVariant;
+using zapi::lang::Extension;
 
 void show_something()
 {
@@ -118,7 +124,6 @@ void register_const(Extension &extension)
    extension.registerConstant(Constant("ZAPI_VERSION", "v0.0.1"));
    extension.registerConstant(Constant("QIHOO", "beijing qihoo"));
    // php 7.0 support const array
-
 }
 
 void register_funcs(Extension &extension)
@@ -155,7 +160,6 @@ void register_funcs(Extension &extension)
          ("say_hello", {
              ValueArgument("name", zapi::lang::Type::String, false)
           });
-   
 }
 
 void register_ns_io(Namespace &io)
@@ -183,10 +187,28 @@ void register_ns_zapi(Namespace &zapi)
    //zapi.registerFunction<dummyext::get_name>("get_name");
    zapi.registerConstant(Constant("SYS_VERSION", "0.1.1-alpha"));
    //   zapi.registerFunction<dummyext::show_something>("show_something");
+   zapi::lang::Class<EmptyClass> emptyCls("EmptyClass");
+   zapi.registerClass(emptyCls);
 }
 
-void register_person_cls(zapi::lang::Class<Person> &meta)
+void register_construct_and_destruct(Extension &extension)
 {
+   zapi::lang::Class<ConstructAndDestruct> ConstructAndDestruct("ConstructAndDestruct");
+   ConstructAndDestruct.registerMethod
+         <decltype(&ConstructAndDestruct::__construct), &ConstructAndDestruct::__construct>("__construct");
+   ConstructAndDestruct.registerMethod
+         <decltype(&ConstructAndDestruct::__destruct), &ConstructAndDestruct::__construct>("__destruct");
+   extension.registerClass(ConstructAndDestruct);
+}
+
+void register_cls(Extension &extension)
+{
+   zapi::lang::Class<Person> personClass("Person");
+   personClass.registerConstant("QIHOO", "beijing qihoo asdasd");
+   personClass.registerConstant("MY_CONST", "MY_CONST_VALUE");
+   personClass.registerConstant(Constant("PI", 3.1415926));
+   personClass.registerProperty("name", "zzu_softboy");
+   personClass.registerProperty("staticProp", "beijing", Modifier::Public | Modifier::Static);
    //personClass.registerMethod<decltype(&Person::__construct), &Person::__construct>("__construct");
    //personClass.registerMethod<decltype(&Person::showName), &Person::showName>("showName");
    //   personClass.registerMethod<decltype(&Person::staticShowName), &Person::staticShowName>("staticShowName");
@@ -202,6 +224,14 @@ void register_person_cls(zapi::lang::Class<Person> &meta)
    //             ValueArgument("rhs", zapi::lang::Type::String)
    //          });
    //personClass.registerMethod<decltype(&Person::addSum), &Person::addSum>("addSum");
+//   Interface infoInterface("InfoProvider");
+//   //   infoInterface.registerMethod("getName");
+//   personClass.registerInterface(infoInterface);
+//   extension.registerInterface(infoInterface);
+   extension.registerClass(personClass);
+   register_construct_and_destruct(extension);
 }
+
+
 
 } // dummyext

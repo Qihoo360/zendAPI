@@ -29,7 +29,7 @@ ZAPI_DECL_EXPORT void register_funcs(Extension &extension);
 ZAPI_DECL_EXPORT void register_ns_io(Namespace &io);
 ZAPI_DECL_EXPORT void register_ns_zapi(Namespace &zapi);
 ZAPI_DECL_EXPORT void register_const(Extension &extension);
-ZAPI_DECL_EXPORT void register_person_cls(zapi::lang::Class<Person> &meta);
+ZAPI_DECL_EXPORT void register_cls(Extension &extension);
 
 } // dummyext
 

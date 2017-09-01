@@ -11,12 +11,12 @@ Person::Person()
 
 void Person::__construct()
 {
-   zapi::out << "Person construct" << std::endl;
+   //zapi::out << "Person construct" << std::endl;
 }
 
 void Person::__destruct()
 {
-   // zapi::out << "Person destruct" << std::endl;
+   //zapi::out << "Person destruct" << std::endl;
 }
 
 void Person::showName()
@@ -68,3 +68,13 @@ int Person::addTwoNum(const NumericVariant &num1, const NumericVariant &num2)
 Address::Address()
    : address("beijing")
 {}
+
+void ConstructAndDestruct::__construct()
+{
+   
+}
+
+void ConstructAndDestruct::__destruct()
+{
+   
+}

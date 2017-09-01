@@ -20,6 +20,7 @@ set(ZAPI_PHP_TESTS
    lang/class/ClassCloneTest.phpt
    lang/class/ClassCompareTest.phpt
    lang/class/ClassConstantTest.phpt
+   lang/class/ClassConstantTypeTest.phpt
    lang/class/ClassInheritTest.phpt
    lang/class/ClassInterfaceImplementTest.phpt
    lang/class/ClassInvokeTest.phpt
