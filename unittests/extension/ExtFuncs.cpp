@@ -138,10 +138,10 @@ void register_funcs(Extension &extension)
    //                                                               ValueArgument("name", zapi::lang::Type::String),
    //                                                               ValueArgument("age", zapi::lang::Type::Long)
    //                                                            });
-   //   extension.registerFunction<decltype(&dummyext::add_two_number), &dummyext::add_two_number>("add_two_number", {
-   //             ValueArgument("num1", zapi::lang::Type::Long),
-   //             ValueArgument("num2", zapi::lang::Type::Long)
-   //          });
+      extension.registerFunction<decltype(&dummyext::add_two_number), &dummyext::add_two_number>("add_two_number", {
+                ValueArgument("num1", zapi::lang::Type::Long),
+                ValueArgument("num2", zapi::lang::Type::Long)
+             });
    //   extension.registerFunction<dummyext::return_arg>("return_arg", {
    //                                                       ValueArgument("number1"),
    //                                                    });
@@ -219,6 +219,9 @@ void register_props_test_cls(Extension &extension)
    propsTestClass.registerProperty("staticDoubleProp", 3.1415, Modifier::Static);
    propsTestClass.registerProperty("staticStrProp", "static zapi", Modifier::Static);
    propsTestClass.registerProperty("staticStr1Prop", std::string("static zapi"), Modifier::Static);
+   
+   propsTestClass.registerProperty("MATH_PI", 3.14, Modifier::Const);
+   
    extension.registerClass(propsTestClass);
 }
 

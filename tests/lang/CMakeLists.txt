@@ -28,6 +28,7 @@ set(ZAPI_PHP_TESTS
    lang/class/ClassStaticMethodTest.phpt
    lang/class/ClassToStringTest.phpt
    lang/class/ClassPropertyTest.phpt
+   lang/class/ClassPropertyTypeTest.phpt
    lang/class/ClassStaticPropertyTest.phpt
    lang/class/ClassPropGeterAndSetterTest.phpt
    PARENT_SCOPE)
