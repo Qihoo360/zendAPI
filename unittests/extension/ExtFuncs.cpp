@@ -134,18 +134,19 @@ void register_funcs(Extension &extension)
 
 void register_ns_io(Namespace &io)
 {
-   //   io.registerFunction<decltype(&dummyext::calculate_sum), &dummyext::calculate_sum>
-   //         ("calculate_sum", {
-   //             VariadicArgument("numbers")
-   //          });
+   io.registerFunction<decltype(&dummyext::calculate_sum), &dummyext::calculate_sum>
+         ("calculate_sum", {
+             VariadicArgument("numbers")
+          });
    //   io.registerFunction<decltype(&dummyext::print_name), &dummyext::print_name>
    //         ("print_name", {
    //             ValueArgument("name", zapi::lang::Type::String)
    //          });
-//   io.registerFunction<decltype(&dummyext::print_sum), &dummyext::print_sum>
-//         ("print_sum", {
-//             VariadicArgument("numbers")
-//          });
+   // for test varidic
+   io.registerFunction<decltype(&dummyext::print_sum), &dummyext::print_sum>
+         ("print_sum", {
+             VariadicArgument("numbers")
+          });
    //   io.registerFunction<dummyext::show_something>("show_something");
    io.registerConstant(Constant("IO_TYPE", "ASYNC"));
    io.registerConstant(Constant("NATIVE_STREAM", true));

@@ -247,7 +247,7 @@ public:
                ZVAL_LONG(&temp, static_cast<int32_t>(argNumber));
                return temp;
             } else if (index <= argNumber + 1){
-               return Variant(&arguments[index - 1]).detach(false);
+               return arguments[index - 1];
             } else {
                zval temp;
                ZVAL_NULL(&temp);
@@ -317,7 +317,7 @@ public:
                ZVAL_LONG(&temp, static_cast<int32_t>(argNumber));
                return temp;
             } else if (index <= argNumber + 1){
-               return Variant(&arguments[index - 1]).detach(false);
+               return arguments[index - 1];
             } else {
                zval temp;
                ZVAL_NULL(&temp);
@@ -387,7 +387,7 @@ public:
                ZVAL_LONG(&temp, static_cast<int32_t>(argNumber));
                return temp;
             } else if (index <= argNumber + 1){
-               return Variant(&arguments[index - 1]).detach(false);
+               return arguments[index - 1];
             } else {
                zval temp;
                ZVAL_NULL(&temp);
