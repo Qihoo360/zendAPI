@@ -2,6 +2,8 @@
 #define ZAPI_UNITTEST_BRIDGE_DUMMYEXT_FUNCS_H
 #include "zapi/ZendApi.h"
 
+class Person;
+
 namespace dummyext
 {
 
@@ -26,6 +28,8 @@ ZAPI_DECL_EXPORT void say_hello(StringVariant &name);
 ZAPI_DECL_EXPORT void register_funcs(Extension &extension);
 ZAPI_DECL_EXPORT void register_ns_io(Namespace &io);
 ZAPI_DECL_EXPORT void register_ns_zapi(Namespace &zapi);
+ZAPI_DECL_EXPORT void register_const(Extension &extension);
+ZAPI_DECL_EXPORT void register_person_cls(zapi::lang::Class<Person> &meta);
 
 } // dummyext
 

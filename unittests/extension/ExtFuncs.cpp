@@ -1,4 +1,5 @@
 #include "ExtFuncs.h"
+#include "ClassDef.h"
 #include <type_traits>
 #include <iostream>
 
@@ -15,6 +16,7 @@ using zapi::lang::RefArgument;
 using zapi::lang::VariadicArgument;
 using zapi::lang::Constant;
 using zapi::lang::Type;
+using zapi::ds::ArrayVariant;
 
 void show_something()
 {
@@ -107,6 +109,18 @@ int f(U u)
    return u;
 }
 
+void register_const(Extension &extension)
+{
+   extension.registerConstant(Constant("MY_CONST", 12333));
+   extension.registerConstant(Constant("PI", 3.14));
+   Constant nameConst("ZAPI_NAME", "zapi");
+   extension.registerConstant(nameConst);
+   extension.registerConstant(Constant("ZAPI_VERSION", "v0.0.1"));
+   extension.registerConstant(Constant("QIHOO", "beijing qihoo"));
+   // php 7.0 support const array
+
+}
+
 void register_funcs(Extension &extension)
 {
    //std::result_of<int()>::type d = 12;
@@ -169,6 +183,25 @@ void register_ns_zapi(Namespace &zapi)
    //zapi.registerFunction<dummyext::get_name>("get_name");
    zapi.registerConstant(Constant("SYS_VERSION", "0.1.1-alpha"));
    //   zapi.registerFunction<dummyext::show_something>("show_something");
+}
+
+void register_person_cls(zapi::lang::Class<Person> &meta)
+{
+   //personClass.registerMethod<decltype(&Person::__construct), &Person::__construct>("__construct");
+   //personClass.registerMethod<decltype(&Person::showName), &Person::showName>("showName");
+   //   personClass.registerMethod<decltype(&Person::staticShowName), &Person::staticShowName>("staticShowName");
+   //   personClass.registerMethod<decltype(&Person::print_sum), &Person::print_sum>("print_sum");
+   //   personClass.registerMethod<decltype(&Person::addTwoNum), &Person::addTwoNum>
+   //         ("addTwoNum", {
+   //             ValueArgument("num1", zapi::lang::Type::Numeric),
+   //             ValueArgument("num2", zapi::lang::Type::Numeric)
+   //          });
+   //   personClass.registerMethod<decltype(&Person::concatStr), &Person::concatStr>
+   //         ("concatStr", {
+   //             ValueArgument("lhs", zapi::lang::Type::String),
+   //             ValueArgument("rhs", zapi::lang::Type::String)
+   //          });
+   //personClass.registerMethod<decltype(&Person::addSum), &Person::addSum>("addSum");
 }
 
 } // dummyext

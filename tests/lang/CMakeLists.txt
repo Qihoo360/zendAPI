@@ -1,7 +1,8 @@
 set(ZAPI_PHP_TESTS 
    ${ZAPI_PHP_TESTS}
-   lang/ConstantTypeTest.phpt
-   lang/ConstantExistTest.phpt
+   lang/const/ConstantTypeTest.phpt
+   lang/const/ConstantExistTest.phpt
+   lang/const/ConstantNsTest.phpt
    
    lang/func/FunctionExistTest.phpt
    lang/func/FunctionDefaultTest.phpt

@@ -19,7 +19,8 @@ namespace dummyext
 extern void register_funcs(Extension &extension);
 extern void register_ns_io(Namespace &io);
 extern void register_ns_zapi(Namespace &zapi);
-
+extern void register_person_cls(zapi::lang::Class<Person> &meta);
+extern void register_const(Extension &extension);
 } // dummyext
 
 extern "C" {
@@ -33,29 +34,10 @@ ZAPI_DECL_EXPORT void *get_module()
    extension.registerIni(zapi::lang::Ini("zapi_team_address", "beijing"));
    // register but empty value
    extension.registerIni(zapi::lang::Ini("zapi_product", ""));
-   extension.registerConstant(Constant("MY_CONST", 12333));
-   extension.registerConstant(Constant("PI", 3.14));
-   Constant nameConst("ZAPI_NAME", "zapi");
-   extension.registerConstant(nameConst);
-   extension.registerConstant(Constant("ZAPI_VERSION", "v0.0.1"));
-   extension.registerConstant(Constant("QIHOO", "beijing qihoo"));
+   dummyext::register_const(extension);
    dummyext::register_funcs(extension);
    zapi::lang::Class<Person> personClass("Person");
-   //personClass.registerMethod<decltype(&Person::__construct), &Person::__construct>("__construct");
-   //personClass.registerMethod<decltype(&Person::showName), &Person::showName>("showName");
-   //   personClass.registerMethod<decltype(&Person::staticShowName), &Person::staticShowName>("staticShowName");
-   //   personClass.registerMethod<decltype(&Person::print_sum), &Person::print_sum>("print_sum");
-//   personClass.registerMethod<decltype(&Person::addTwoNum), &Person::addTwoNum>
-//         ("addTwoNum", {
-//             ValueArgument("num1", zapi::lang::Type::Numeric),
-//             ValueArgument("num2", zapi::lang::Type::Numeric)
-//          });
-//   personClass.registerMethod<decltype(&Person::concatStr), &Person::concatStr>
-//         ("concatStr", {
-//             ValueArgument("lhs", zapi::lang::Type::String),
-//             ValueArgument("rhs", zapi::lang::Type::String)
-//          });
-   //personClass.registerMethod<decltype(&Person::addSum), &Person::addSum>("addSum");
+   dummyext::register_person_cls(personClass);
    personClass.registerConstant("QIHOO", "beijing qihoo asdasd");
    personClass.registerConstant("MY_CONST", "MY_CONST_VALUE");
    personClass.registerConstant(Constant("PI", 3.1415926));
