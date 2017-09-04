@@ -59,8 +59,6 @@ class ZAPI_DECL_EXPORT Property final
 public:
    Property(const zapi::GetterMethodCallable0 &getter);
    Property(const zapi::GetterMethodCallable1 &getter);
-   Property(const zapi::SetterMethodCallable0 &setter);
-   Property(const zapi::SetterMethodCallable1 &setter);
    Property(const zapi::GetterMethodCallable0 &getter, const zapi::SetterMethodCallable0 &setter);
    Property(const zapi::GetterMethodCallable0 &getter, const zapi::SetterMethodCallable1 &setter);
    Property(const zapi::GetterMethodCallable1 &getter, const zapi::SetterMethodCallable0 &setter);

@@ -50,6 +50,15 @@ class EmptyClass : public StdClass
 {};
 
 class PropsTestClass : public StdClass
-{};
+{
+private:
+   int m_age;
+   std::string m_name;
+public:
+   void setAge(const Variant &age);
+   Variant getAge();
+   void setName(const Variant &name);
+   Variant getName();
+};
 
 #endif // ZAPI_UNITTEST_BRIDGE_DUMMYEXT_CLASS_DEF_H

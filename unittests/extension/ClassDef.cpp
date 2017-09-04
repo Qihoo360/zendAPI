@@ -78,3 +78,27 @@ void ConstructAndDestruct::__destruct()
 {
    
 }
+
+void PropsTestClass::setAge(const Variant &value)
+{
+   NumericVariant age(value);
+   age += 1;
+   m_age = age.toLong();
+}
+
+Variant PropsTestClass::getAge()
+{
+   return m_age;
+}
+
+void PropsTestClass::setName(const Variant &name)
+{
+   StringVariant str(name);
+   str.prepend("zapi:");
+   m_name = str.toString();
+}
+
+Variant PropsTestClass::getName()
+{
+   return m_name;
+}

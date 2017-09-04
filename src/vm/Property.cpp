@@ -112,14 +112,6 @@ Property::Property(const zapi::GetterMethodCallable1 &getter)
    : m_implPtr(new PropertyPrivate(getter))
 {}
 
-Property::Property(const zapi::SetterMethodCallable0 &setter)
-   : m_implPtr(new PropertyPrivate(setter))
-{}
-
-Property::Property(const zapi::SetterMethodCallable1 &setter)
-   : m_implPtr(new PropertyPrivate(setter))
-{}
-
 Property::Property(const zapi::GetterMethodCallable0 &getter, const zapi::SetterMethodCallable0 &setter)
    : m_implPtr(new PropertyPrivate(getter, setter))
 {}
@@ -161,6 +153,30 @@ Property &Property::operator=(Property &&other) ZAPI_DECL_NOEXCEPT
 
 Property::~Property()
 {}
+
+Variant Property::get(StdClass *nativeObject)
+{
+   ZAPI_D(Property);
+   if (0 == implPtr->m_getterType) {
+      return (nativeObject->*(implPtr->m_getter.getter0))();
+   } else {
+      return (nativeObject->*(implPtr->m_getter.getter1))();
+   }
+}
+
+bool Property::set(StdClass *nativeObject, const Variant &value)
+{
+   ZAPI_D(Property);
+   if (0 == implPtr->m_setterType) {
+      (nativeObject->*(implPtr->m_setter.setter0))(value);
+      return true;
+   } else if (1 == implPtr->m_setterType) {
+      (nativeObject->*(implPtr->m_setter.setter1))(value);
+      return true;
+   } else {
+      return false;
+   }
+}
 
 } // lang
 } // zapi

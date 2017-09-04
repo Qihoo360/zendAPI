@@ -546,6 +546,7 @@ int AbstractClassPrivate::hasProperty(zval *object, zval *name, int hasSetExists
       AbstractClass *meta = selfPtr->m_apiPtr;
       StdClass *nativeObject = objectBinder->getNativeObject();
       std::string key(Z_STRVAL_P(name), Z_STRLEN_P(name));
+      // here we need check the hasSetExists
       if (selfPtr->m_properties.find(key) != selfPtr->m_properties.end()) {
          return true;
       }
@@ -905,6 +906,46 @@ void AbstractClass::registerProperty(const char *name, double value, Modifier fl
    ZAPI_D(AbstractClass);
    implPtr->m_members.push_back(std::make_shared<FloatMember>(name, value,
                                                               flags & Modifier::PropertyModifiers));
+}
+
+void AbstractClass::registerProperty(const char *name, const zapi::GetterMethodCallable0 &getter)
+{
+   ZAPI_D(AbstractClass);
+   implPtr->m_properties[name] = std::make_shared<Property>(getter);
+}
+
+void AbstractClass::registerProperty(const char *name, const zapi::GetterMethodCallable1 &getter)
+{
+   ZAPI_D(AbstractClass);
+   implPtr->m_properties[name] = std::make_shared<Property>(getter);
+}
+
+void AbstractClass::registerProperty(const char *name, const zapi::GetterMethodCallable0 &getter, 
+                                     const zapi::SetterMethodCallable0 &setter)
+{
+   ZAPI_D(AbstractClass);
+   implPtr->m_properties[name] = std::make_shared<Property>(getter, setter);
+}
+
+void AbstractClass::registerProperty(const char *name, const zapi::GetterMethodCallable0 &getter, 
+                                     const zapi::SetterMethodCallable1 &setter)
+{
+   ZAPI_D(AbstractClass);
+   implPtr->m_properties[name] = std::make_shared<Property>(getter, setter);
+}
+
+void AbstractClass::registerProperty(const char *name, const zapi::GetterMethodCallable1 &getter, 
+                                     const zapi::SetterMethodCallable0 &setter)
+{
+   ZAPI_D(AbstractClass);
+   implPtr->m_properties[name] = std::make_shared<Property>(getter, setter);
+}
+
+void AbstractClass::registerProperty(const char *name, const zapi::GetterMethodCallable1 &getter, 
+                                     const zapi::SetterMethodCallable1 &setter)
+{
+   ZAPI_D(AbstractClass);
+   implPtr->m_properties[name] = std::make_shared<Property>(getter, setter);
 }
 
 void AbstractClass::registerConstant(const Constant &constant)

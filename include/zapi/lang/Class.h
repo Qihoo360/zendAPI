@@ -151,6 +151,12 @@ public:
    Class<T> &registerProperty(const char *name, const std::string &value, Modifier flags = Modifier::Public);
    Class<T> &registerProperty(const char *name, bool value, Modifier flags = Modifier::Public);
    Class<T> &registerProperty(const char *name, double value, Modifier flags = Modifier::Public);
+   Class<T> &registerProperty(const char *name, Variant (T::*getter)());
+   Class<T> &registerProperty(const char *name, Variant (T::*getter)() const);
+   Class<T> &registerProperty(const char *name, Variant (T::*getter)(), void (T::*setter)(const Variant &value));
+   Class<T> &registerProperty(const char *name, Variant (T::*getter)(), void (T::*setter)(const Variant &value) const);
+   Class<T> &registerProperty(const char *name, Variant (T::*getter)() const, void (T::*setter)(const Variant &value));
+   Class<T> &registerProperty(const char *name, Variant (T::*getter)() const, void (T::*setter)(const Variant &value) const);
    
    Class<T> &registerConstant(const char *name, std::nullptr_t value);
    Class<T> &registerConstant(const char *name, int16_t value);
@@ -351,6 +357,56 @@ template <typename T>
 Class<T> &Class<T>::registerProperty(const char *name, double value, Modifier flags)
 {
    AbstractClass::registerProperty(name, value, flags);
+   return *this;
+}
+
+template <typename T>
+Class<T> &Class<T>::registerProperty(const char *name, Variant (T::*getter)())
+{
+   AbstractClass::registerProperty(name, static_cast<zapi::GetterMethodCallable0>(getter));
+   return *this;
+}
+
+template <typename T>
+Class<T> &Class<T>::registerProperty(const char *name, Variant (T::*getter)() const)
+{
+   AbstractClass::registerProperty(name, static_cast<zapi::GetterMethodCallable1>(getter));
+   return *this;
+}
+
+template <typename T>
+Class<T> &Class<T>::registerProperty(const char *name, Variant (T::*getter)(), 
+                           void (T::*setter)(const Variant &value))
+{
+   AbstractClass::registerProperty(name, static_cast<zapi::GetterMethodCallable0>(getter),
+                                   static_cast<zapi::SetterMethodCallable0>(setter));
+   return *this;
+}
+
+template <typename T>
+Class<T> &Class<T>::registerProperty(const char *name, Variant (T::*getter)(), 
+                           void (T::*setter)(const Variant &value) const)
+{
+   AbstractClass::registerProperty(name, static_cast<zapi::GetterMethodCallable0>(getter),
+                                   static_cast<zapi::SetterMethodCallable1>(setter));
+   return *this;
+}
+
+template <typename T>
+Class<T> &Class<T>::registerProperty(const char *name, Variant (T::*getter)() const, 
+                           void (T::*setter)(const Variant &value))
+{
+   AbstractClass::registerProperty(name, static_cast<zapi::GetterMethodCallable1>(getter),
+                                   static_cast<zapi::SetterMethodCallable0>(setter));
+   return *this;
+}
+
+template <typename T>
+Class<T> &Class<T>::registerProperty(const char *name, Variant (T::*getter)() const, 
+                           void (T::*setter)(const Variant &value) const)
+{
+   AbstractClass::registerProperty(name, static_cast<zapi::GetterMethodCallable1>(getter),
+                                   static_cast<zapi::SetterMethodCallable1>(setter));
    return *this;
 }
 

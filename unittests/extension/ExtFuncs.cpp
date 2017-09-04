@@ -222,6 +222,9 @@ void register_props_test_cls(Extension &extension)
    
    propsTestClass.registerProperty("MATH_PI", 3.14, Modifier::Const);
    
+   propsTestClass.registerProperty("name", &PropsTestClass::getName, &PropsTestClass::setName);
+   propsTestClass.registerProperty("age", &PropsTestClass::getAge, &PropsTestClass::setAge);
+   
    extension.registerClass(propsTestClass);
 }
 

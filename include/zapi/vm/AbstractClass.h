@@ -95,10 +95,10 @@ protected:
    // callback property
    void registerProperty(const char *name, const zapi::GetterMethodCallable0 &getter);
    void registerProperty(const char *name, const zapi::GetterMethodCallable1 &getter);
-   void registerProperty(const char *name, const zapi::GetterMethodCallable0 &getter, const zapi::GetterMethodCallable0 &setter);
-   void registerProperty(const char *name, const zapi::GetterMethodCallable0 &getter, const zapi::GetterMethodCallable1 &setter);
-   void registerProperty(const char *name, const zapi::GetterMethodCallable1 &getter, const zapi::GetterMethodCallable0 &setter);
-   void registerProperty(const char *name, const zapi::GetterMethodCallable1 &getter, const zapi::GetterMethodCallable1 &setter);
+   void registerProperty(const char *name, const zapi::GetterMethodCallable0 &getter, const zapi::SetterMethodCallable0 &setter);
+   void registerProperty(const char *name, const zapi::GetterMethodCallable0 &getter, const zapi::SetterMethodCallable1 &setter);
+   void registerProperty(const char *name, const zapi::GetterMethodCallable1 &getter, const zapi::SetterMethodCallable0 &setter);
+   void registerProperty(const char *name, const zapi::GetterMethodCallable1 &getter, const zapi::SetterMethodCallable1 &setter);
    void registerInterface(const Interface &interface);
    void registerInterface(Interface &&interface);
    void registerBaseClass(const AbstractClass &base);
