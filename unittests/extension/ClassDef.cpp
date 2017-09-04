@@ -71,12 +71,12 @@ Address::Address()
 
 void ConstructAndDestruct::__construct()
 {
-   
+   zapi::out << "constructor been invoked" << std::endl;
 }
 
 void ConstructAndDestruct::__destruct()
 {
-   
+   zapi::out << "destructor been invoked" << std::endl;;
 }
 
 void PropsTestClass::setAge(const Variant &value)
