@@ -670,19 +670,25 @@ void AbstractClassPrivate::magicCallForwarder(INTERNAL_FUNCTION_PARAMETERS)
    zend_internal_function *func = &callContext->m_func;
    const char *name = ZSTR_VAL(func->function_name);
    ScopedFree scopeFree(callContext);
+   bool isStatic = false;
+   AbstractClass *meta = callContext->m_selfPtr->m_apiPtr;
    try {
-      AbstractClass *meta = callContext->m_selfPtr->m_apiPtr;
       Parameters params(getThis(), ZEND_NUM_ARGS());
       StdClass *nativeObject = params.getObject();
       if (nativeObject) {
          zval temp = meta->callMagicCall(nativeObject, name, params).detach(false);
          ZVAL_COPY(return_value, &temp);
       } else {
+         isStatic = true;
          zval temp = meta->callMagicStaticCall(name, params).detach(false);
          ZVAL_COPY(return_value, &temp);
       }
    } catch (const NotImplemented &exception) {
-      zend_error(E_ERROR, "Undefined method %s", name);
+      if (isStatic) {
+         zend_error(E_ERROR, "Undefined static method %s::%s", meta->getClassName().c_str(), name);
+      } else {
+         zend_error(E_ERROR, "Undefined instance method %s of %s", name, meta->getClassName().c_str());
+      }
    } catch (Exception &exception) {
       process_exception(exception);
    }
@@ -829,6 +835,11 @@ AbstractClass &AbstractClass::operator=(const AbstractClass &other)
 
 AbstractClass::~AbstractClass()
 {}
+
+std::string AbstractClass::getClassName() const
+{
+   return m_implPtr->m_name;
+}
 
 AbstractClass &AbstractClass::operator=(AbstractClass &&other) ZAPI_DECL_NOEXCEPT
 {

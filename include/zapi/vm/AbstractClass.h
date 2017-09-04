@@ -78,6 +78,8 @@ public:
    AbstractClass &operator=(AbstractClass &&other) ZAPI_DECL_NOEXCEPT;
    virtual ~AbstractClass();
    
+   std::string getClassName() const;
+   
 protected:
    void registerMethod(const char *name, zapi::ZendCallable callable, Modifier flags = Modifier::None, const Arguments &args = {});
    // abstract

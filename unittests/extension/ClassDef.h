@@ -70,6 +70,7 @@ class MagicMethodClass : public StdClass
 {
 public:
    Variant __call(const std::string &method, Parameters &params) const;
+   static Variant __callStatic(const std::string &method, Parameters &params);
 };
 
 #endif // ZAPI_UNITTEST_BRIDGE_DUMMYEXT_CLASS_DEF_H

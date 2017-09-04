@@ -115,3 +115,16 @@ Variant MagicMethodClass::__call(const std::string &method, Parameters &params) 
       return nullptr;
    }
 }
+
+Variant MagicMethodClass::__callStatic(const std::string &method, Parameters &params)
+{
+   if (method == "staticCalculateSum") {
+      NumericVariant sum;
+      for (int i = 0; i < params.size(); i++) {
+         sum += NumericVariant(params.at(i));
+      }
+      return sum;
+   } else {
+      return nullptr;
+   }
+}
