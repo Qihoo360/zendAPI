@@ -17,7 +17,6 @@ set(ZAPI_SRC
    lang/Constant.cpp
    lang/Namespace.cpp
    lang/Method.cpp
-   lang/Property.cpp
    lang/Type.cpp
    lang/StdClass.cpp
    ds/Variant.cpp
@@ -37,6 +36,7 @@ set(ZAPI_SRC
    vm/FloatMember.cpp
    vm/NumericMember.cpp
    vm/NullMember.cpp
+   vm/Property.cpp
    vm/InvokeBridge.cpp
    vm/Callable.cpp
    vm/Engine.cpp

@@ -33,7 +33,6 @@ namespace lang
 {
 class Method;
 class Interface;
-class Property;
 class StdClass;
 } // lang
 
@@ -41,6 +40,7 @@ namespace vm
 {
 class AbstractMember;
 class AbstractClass;
+class Property;
 } // vm
 
 } // zapi
@@ -55,10 +55,10 @@ namespace internal
 
 using zapi::lang::ClassType;
 using zapi::lang::Method;
-using zapi::lang::Property;
 using zapi::lang::Modifier;
 using zapi::lang::ClassType;
 using zapi::ds::Variant;
+using zapi::vm::Property;
 
 class AbstractClassPrivate
 {

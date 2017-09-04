@@ -25,6 +25,7 @@
 #include "zapi/vm/FloatMember.h"
 #include "zapi/vm/NumericMember.h"
 #include "zapi/vm/NullMember.h"
+#include "zapi/vm/Property.h"
 #include "zapi/ds/Variant.h"
 #include "zapi/ds/StringVariant.h"
 #include "zapi/ds/NumericVariant.h"
@@ -33,7 +34,6 @@
 #include "zapi/lang/Method.h"
 #include "zapi/lang/StdClass.h"
 #include "zapi/lang/Constant.h"
-#include "zapi/lang/Property.h"
 #include "zapi/lang/Method.h"
 #include "zapi/lang/Interface.h"
 #include "zapi/lang/Parameters.h"
@@ -57,11 +57,11 @@ using zapi::ds::DoubleVariant;
 using zapi::ds::NumericVariant;
 using zapi::lang::Constant;
 using zapi::lang::Variant;
-using zapi::lang::Property;
 using zapi::lang::Method;
 using zapi::lang::Interface;
 using zapi::lang::Parameters;
 using zapi::lang::StdClass;
+using zapi::vm::Property;
 using zapi::vm::ObjectBinder;
 using zapi::vm::IteratorBridge;
 using zapi::protocol::Countable;

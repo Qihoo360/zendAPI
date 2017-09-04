@@ -13,11 +13,12 @@
 //
 // Created by zzu_softboy on 2017/08/01.
 
-#include "zapi/lang/Property.h"
+#include "zapi/vm/Property.h"
+#include "zapi/lang/StdClass.h"
 
 namespace zapi
 {
-namespace lang
+namespace vm
 {
 
 namespace internal

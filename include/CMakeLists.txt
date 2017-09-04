@@ -35,7 +35,6 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Namespace.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Argument.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Function.h
-   ${ZAPI_INCLUDE_DIR}/zapi/lang/Property.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/Method.h
    ${ZAPI_INCLUDE_DIR}/zapi/lang/internal/StdClassPrivate.h
    ${ZAPI_INCLUDE_DIR}/zapi/ds/Variant.h
@@ -65,6 +64,7 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/vm/FloatMember.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/NumericMember.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/NullMember.h
+   ${ZAPI_INCLUDE_DIR}/zapi/vm/Property.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/ExecStateGuard.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/IteratorBridge.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/ObjectBinder.h

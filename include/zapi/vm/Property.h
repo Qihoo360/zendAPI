@@ -15,8 +15,8 @@
 //
 // Created by softboy on 2017/08/01.
 
-#ifndef ZAPI_LANG_PROPERTY_H
-#define ZAPI_LANG_PROPERTY_H
+#ifndef ZAPI_VM_PROPERTY_H
+#define ZAPI_VM_PROPERTY_H
 
 #include "zapi/Global.h"
 
@@ -29,32 +29,30 @@ namespace ds
 class Variant;
 } // ds
 
+namespace lang
+{
+class StdClass;
+} // lang
+
 namespace vm
 {
 namespace internal
 {
 class AbstractClassPrivate;
-} // internal
-} // vm
-
-namespace lang
-{
-namespace internal
-{
 class PropertyPrivate;
 } // internal
-} // lang
-
+} // vm
 } // zapi
 // end forward declare
 
 namespace zapi
 {
-namespace lang
+namespace vm
 {
 
 using internal::PropertyPrivate;
 using zapi::ds::Variant;
+using zapi::lang::StdClass;
 
 class ZAPI_DECL_EXPORT Property final
 {
@@ -81,7 +79,7 @@ private:
    friend class zapi::vm::internal::AbstractClassPrivate;
 };
 
-} // lang
+} // vm
 } // zapi
 
-#endif // ZAPI_LANG_PROPERTY_H
+#endif // ZAPI_VM_PROPERTY_H
