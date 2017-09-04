@@ -10,25 +10,38 @@ set(ZAPI_PHP_TESTS
    lang/func/FunctionRefArgTest.phpt
    lang/func/FunctionReturnTest.phpt
    lang/func/FunctionVarArgsTest.phpt
+   
    lang/class/ClassExistTest.phpt
    lang/class/ClassArrayAccessTest.phpt
    lang/class/ClassCallParentMethodTest.phpt
-   lang/class/ClassCallTest.phpt
    lang/class/ClassCastTest.phpt
-   lang/class/ClassCloneTest.phpt
    lang/class/ClassCompareTest.phpt
    lang/class/ClassConstantTest.phpt
    lang/class/ClassConstantTypeTest.phpt
    lang/class/ClassInheritTest.phpt
    lang/class/ClassInterfaceImplementTest.phpt
-   lang/class/ClassInvokeTest.phpt
+   
    lang/class/ClassIteratorTest.phpt
    lang/class/ClassMethodTest.phpt
    lang/class/ClassSerializeTest.phpt
    lang/class/ClassStaticMethodTest.phpt
-   lang/class/ClassToStringTest.phpt
+   
    lang/class/ClassPropertyTest.phpt
    lang/class/ClassPropertyTypeTest.phpt
    lang/class/ClassStaticPropertyTest.phpt
    lang/class/ClassPropGetterAndSetterTest.phpt
+   
+   lang/class/ClassMagicCallTest.phpt
+   lang/class/ClassMagicCallStaticTest.phpt
+   lang/class/ClassMagicCloneTest.phpt
+   lang/class/ClassMagicInvokeTest.phpt
+   lang/class/ClassMagicToStringTest.phpt
+   lang/class/ClassMagicConstructAndDestructTest.phpt
+   lang/class/ClassMagicGetTest.phpt
+   lang/class/ClassMagicIssetTest.phpt
+   lang/class/ClassMagicSetTest.phpt
+   lang/class/ClassMagicUnsetTest.phpt
+   lang/class/ClassMagicSleepTest.phpt
+   lang/class/ClassMethodTest.phpt
+   
    PARENT_SCOPE)
