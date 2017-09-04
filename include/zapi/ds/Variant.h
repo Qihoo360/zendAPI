@@ -238,6 +238,7 @@ public:
    zval &getZval() const ZAPI_DECL_NOEXCEPT;
    zval *getZvalPtr() ZAPI_DECL_NOEXCEPT;
    const zval *getZvalPtr() const ZAPI_DECL_NOEXCEPT;
+   zval &getUnDerefZval() const ZAPI_DECL_NOEXCEPT;
    zval *getUnDerefZvalPtr() ZAPI_DECL_NOEXCEPT;
    const zval *getUnDerefZvalPtr() const ZAPI_DECL_NOEXCEPT;
    uint32_t getRefCount() const ZAPI_DECL_NOEXCEPT;

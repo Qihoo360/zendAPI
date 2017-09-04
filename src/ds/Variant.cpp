@@ -706,6 +706,11 @@ const zval *Variant::getZvalPtr() const ZAPI_DECL_NOEXCEPT
    return ret;
 }
 
+zval &Variant::getUnDerefZval() const ZAPI_DECL_NOEXCEPT
+{
+   return *static_cast<zval *>(*m_implPtr);
+}
+
 zval *Variant::getUnDerefZvalPtr() ZAPI_DECL_NOEXCEPT
 {
    return static_cast<zval *>(*m_implPtr);

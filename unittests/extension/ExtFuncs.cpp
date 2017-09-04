@@ -228,6 +228,14 @@ void register_props_test_cls(Extension &extension)
    extension.registerClass(propsTestClass);
 }
 
+void register_magic_method_cls(Extension &extension)
+{
+   zapi::lang::Class<NonMagicMethodClass> nonMagicMethodClass("NonMagicMethodClass");
+   zapi::lang::Class<MagicMethodClass> magicMethodClass("MagicMethodClass");
+   extension.registerClass(nonMagicMethodClass);
+   extension.registerClass(magicMethodClass);
+}
+
 void register_cls(Extension &extension)
 {
    zapi::lang::Class<Person> personClass("Person");
@@ -260,6 +268,7 @@ void register_cls(Extension &extension)
    extension.registerClass(personClass);
    register_construct_and_destruct(extension);
    register_props_test_cls(extension);
+   register_magic_method_cls(extension);
 }
 
 

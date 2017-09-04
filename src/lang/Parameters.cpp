@@ -46,5 +46,15 @@ Parameters::ConstReference Parameters::at(SizeType pos) const
    return m_data.at(pos);   
 }
 
+bool Parameters::empty() const ZAPI_DECL_NOEXCEPT
+{
+   return m_data.empty();
+}
+
+Parameters::SizeType Parameters::size() const ZAPI_DECL_NOEXCEPT
+{
+   return m_data.size();
+}
+
 } // lang
 } // zapi

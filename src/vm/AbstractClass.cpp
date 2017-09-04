@@ -675,9 +675,11 @@ void AbstractClassPrivate::magicCallForwarder(INTERNAL_FUNCTION_PARAMETERS)
       Parameters params(getThis(), ZEND_NUM_ARGS());
       StdClass *nativeObject = params.getObject();
       if (nativeObject) {
-         ZVAL_COPY(return_value, meta->callMagicCall(nativeObject, name, params).getZvalPtr());
+         zval temp = meta->callMagicCall(nativeObject, name, params).detach(false);
+         ZVAL_COPY(return_value, &temp);
       } else {
-         ZVAL_COPY(return_value, meta->callMagicStaticCall(name, params).getZvalPtr());
+         zval temp = meta->callMagicStaticCall(name, params).detach(false);
+         ZVAL_COPY(return_value, &temp);
       }
    } catch (const NotImplemented &exception) {
       zend_error(E_ERROR, "Undefined method %s", name);
@@ -695,7 +697,8 @@ void AbstractClassPrivate::magicInvokeForwarder(INTERNAL_FUNCTION_PARAMETERS)
    try {
       Parameters params(getThis(), ZEND_NUM_ARGS());
       StdClass *nativeObject = params.getObject();
-      ZVAL_COPY(return_value, meta->callMagicInvoke(nativeObject, params).getZvalPtr());
+      zval temp = meta->callMagicInvoke(nativeObject, params).detach(false);
+      ZVAL_COPY(return_value, &temp);
    } catch (const NotImplemented &exception) {
       zend_error(E_ERROR, "Function name must be a string");
    } catch (Exception &exception) {

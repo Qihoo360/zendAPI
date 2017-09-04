@@ -61,4 +61,15 @@ public:
    Variant getName();
 };
 
+class NonMagicMethodClass : public StdClass
+{
+   
+};
+
+class MagicMethodClass : public StdClass
+{
+public:
+   Variant __call(const std::string &method, Parameters &params) const;
+};
+
 #endif // ZAPI_UNITTEST_BRIDGE_DUMMYEXT_CLASS_DEF_H

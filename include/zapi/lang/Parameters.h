@@ -78,6 +78,8 @@ public:
    
    Reference at(SizeType pos);
    ConstReference at(SizeType pos) const;
+   bool empty() const ZAPI_DECL_NOEXCEPT;
+   SizeType size() const ZAPI_DECL_NOEXCEPT;
 private:
    /**
     *  The base object

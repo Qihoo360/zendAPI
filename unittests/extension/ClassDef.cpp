@@ -102,3 +102,16 @@ Variant PropsTestClass::getName()
 {
    return m_name;
 }
+
+Variant MagicMethodClass::__call(const std::string &method, Parameters &params) const
+{
+   if (method == "calculateSum") {
+      NumericVariant sum;
+      for (int i = 0; i < params.size(); i++) {
+         sum += NumericVariant(params.at(i));
+      }
+      return sum;
+   } else {
+      return nullptr;
+   }
+}
