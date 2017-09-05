@@ -41,7 +41,7 @@ set(ZAPI_PHP_TESTS
    lang/class/ClassMagicIssetTest.phpt
    lang/class/ClassMagicSetTest.phpt
    lang/class/ClassMagicUnsetTest.phpt
-   lang/class/ClassMagicSleepTest.phpt
+   lang/class/ClassMagicSerializeTest.phpt
    lang/class/ClassMethodTest.phpt
    
    PARENT_SCOPE)

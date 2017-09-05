@@ -187,3 +187,20 @@ Variant MagicMethodClass::__callStatic(const std::string &method, Parameters &pa
       return str;
    }
 }
+
+std::string MagicMethodClass::serialize()
+{
+   zapi::out << "MagicMethodClass::serialize is called" << std::endl;
+   return "serialize data";
+}
+
+void MagicMethodClass::unserialize(const char *input, size_t size)
+{
+   zapi::out << "MagicMethodClass::unserialize is called" << std::endl;
+   zapi::out << "serialize data : " << input << std::endl;
+}
+
+MagicMethodClass::~MagicMethodClass() ZAPI_DECL_NOEXCEPT
+{
+   
+}

@@ -66,7 +66,7 @@ class NonMagicMethodClass : public StdClass
    
 };
 
-class MagicMethodClass : public StdClass
+class MagicMethodClass : public StdClass, public zapi::protocol::Serializable
 {
 public:
    Variant __call(const std::string &method, Parameters &params) const;
@@ -76,6 +76,9 @@ public:
    bool __isset(const std::string &key) const;
    void __unset(const std::string &key);
    static Variant __callStatic(const std::string &method, Parameters &params);
+   virtual std::string serialize();
+   virtual void unserialize(const char *input, size_t size);
+   virtual ~MagicMethodClass() ZAPI_DECL_NOEXCEPT;
 private:
    bool m_teamNameUnset = false;
    bool m_teamAddressUnset = true;
