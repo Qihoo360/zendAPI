@@ -17,5 +17,7 @@ if (class_exists("\NonMagicMethodClass") && class_exists("\MagicMethodClass")) {
 
 ?>
 --EXPECT--
+MagicMethodClass::__call is called
 the sum is 7
+MagicMethodClass::__call is called
 magicMethodClass notProcessCase('zapi') return null

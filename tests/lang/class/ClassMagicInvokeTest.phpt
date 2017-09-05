@@ -15,5 +15,7 @@ if (class_exists("\NonMagicMethodClass") && class_exists("\MagicMethodClass")) {
 
 ?>
 --EXPECT--
+MagicMethodClass::__invoke is called
 the sum of $magicMethodClass() is 0
+MagicMethodClass::__invoke is called
 the sum of $magicMethodClass() is 10

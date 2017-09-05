@@ -19,5 +19,7 @@ if (class_exists("\NonMagicMethodClass") && class_exists("\MagicMethodClass")) {
 ?>
 --EXPECT--
 $nonMagicMethodObject->prop1 is not exist
+MagicMethodClass::__isset is called
 $magicMethodObject->prop1 is exist
+MagicMethodClass::__get is called
 the value of $magicMethodObject->prop1 is zapi

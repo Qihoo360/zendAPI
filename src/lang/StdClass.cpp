@@ -78,7 +78,7 @@ bool StdClass::__isset(const std::string &key) const
  * @param key
  * @param value
  */
-void StdClass::__set(const std::string &key, const Variant &value) const
+void StdClass::__set(const std::string &key, const Variant &value)
 {
    throw NotImplemented();
 }

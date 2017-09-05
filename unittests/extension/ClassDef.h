@@ -71,12 +71,15 @@ class MagicMethodClass : public StdClass
 public:
    Variant __call(const std::string &method, Parameters &params) const;
    Variant __invoke(Parameters &params) const;
+   void __set(const std::string &key, const Variant &value);
    Variant __get(const std::string &key) const;
    bool __isset(const std::string &key) const;
    void __unset(const std::string &key);
    static Variant __callStatic(const std::string &method, Parameters &params);
 private:
    bool m_teamNameUnset = false;
+   bool m_teamAddressUnset = true;
+   std::string m_address;
 };
 
 #endif // ZAPI_UNITTEST_BRIDGE_DUMMYEXT_CLASS_DEF_H

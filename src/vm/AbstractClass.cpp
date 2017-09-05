@@ -607,7 +607,7 @@ zend_function *AbstractClassPrivate::getMethod(zend_object **object, zend_string
    CallContext *callContext = reinterpret_cast<CallContext *>(emalloc(sizeof(CallContext)));
    std::memset(callContext, 0, sizeof(CallContext));
    zend_internal_function *func = &callContext->m_func;
-   func->type = ZEND_OVERLOADED_FUNCTION_TEMPORARY;
+   func->type = ZEND_INTERNAL_FUNCTION;
    func->module = nullptr;
    func->handler = AbstractClassPrivate::magicCallForwarder;
    func->arg_info = nullptr;
@@ -630,7 +630,7 @@ zend_function *AbstractClassPrivate::getStaticMethod(zend_class_entry *entry, ze
    CallContext *callContext = reinterpret_cast<CallContext *>(emalloc(sizeof(CallContext)));
    std::memset(callContext, 0, sizeof(CallContext));
    zend_internal_function *func = &callContext->m_func;
-   func->type = ZEND_OVERLOADED_FUNCTION;
+   func->type = ZEND_INTERNAL_FUNCTION;
    func->module = nullptr;
    func->handler = &AbstractClassPrivate::magicCallForwarder;
    func->arg_info = nullptr;

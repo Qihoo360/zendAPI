@@ -15,5 +15,7 @@ if (class_exists("\NonMagicMethodClass") && class_exists("\MagicMethodClass")) {
 
 ?>
 --EXPECT--
+MagicMethodClass::__callStatic is called
 the sum is 84
+MagicMethodClass::__callStatic is called
 MagicMethodClass::notProcessCase('zapi') return hello, zapi

@@ -22,5 +22,8 @@ if (class_exists("\NonMagicMethodClass") && class_exists("\MagicMethodClass")) {
 ?>
 --EXPECT--
 $nonMagicMethodObject->teamName is not exist
+MagicMethodClass::__isset is called
 $magicMethodObject->teamName is exist
+MagicMethodClass::__unset is called
+MagicMethodClass::__isset is called
 $magicMethodObject->teamName is not exist

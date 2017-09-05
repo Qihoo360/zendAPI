@@ -105,6 +105,7 @@ Variant PropsTestClass::getName()
 
 Variant MagicMethodClass::__call(const std::string &method, Parameters &params) const
 {
+   zapi::out << "MagicMethodClass::__call is called" << std::endl;
    if (method == "calculateSum") {
       NumericVariant sum;
       for (int i = 0; i < params.size(); i++) {
@@ -118,6 +119,7 @@ Variant MagicMethodClass::__call(const std::string &method, Parameters &params) 
 
 Variant MagicMethodClass::__invoke(Parameters &params) const
 {
+   zapi::out << "MagicMethodClass::__invoke is called" << std::endl;
    NumericVariant sum;
    for (int i = 0; i < params.size(); i++) {
       sum += NumericVariant(params.at(i));
@@ -125,21 +127,36 @@ Variant MagicMethodClass::__invoke(Parameters &params) const
    return sum;
 }
 
+void MagicMethodClass::__set(const std::string &key, const Variant &value)
+{
+   zapi::out << "MagicMethodClass::__set is called" << std::endl;
+   if (key == "address") {
+      m_address = StringVariant(value).toString();
+      m_teamAddressUnset = false;
+   }
+}
+
 Variant MagicMethodClass::__get(const std::string &key) const
 {
+   zapi::out << "MagicMethodClass::__get is called" << std::endl;
    if (key == "prop1") {
       return "zapi";
    } else if(key == "teamName" && !m_teamNameUnset) {
       return "unicornteam";
+   } else if (key == "address" && !m_teamAddressUnset) {
+      return m_address;
    }
    return nullptr;
 }
 
 bool MagicMethodClass::__isset(const std::string &key) const
 {
+   zapi::out << "MagicMethodClass::__isset is called" << std::endl;
    if (key == "prop1") {
       return true; 
    } else if (key == "teamName" && !m_teamNameUnset) {
+      return true;
+   } else if (key == "address" && !m_teamAddressUnset) {
       return true;
    }
    return false;
@@ -147,13 +164,17 @@ bool MagicMethodClass::__isset(const std::string &key) const
 
 void MagicMethodClass::__unset(const std::string &key)
 {
+   zapi::out << "MagicMethodClass::__unset is called" << std::endl;
    if (key == "teamName") {
       m_teamNameUnset = true;
+   } else if (key == "address") {
+      m_teamAddressUnset = true;
    }
 }
 
 Variant MagicMethodClass::__callStatic(const std::string &method, Parameters &params)
 {
+   zapi::out << "MagicMethodClass::__callStatic is called" << std::endl;
    if (method == "staticCalculateSum") {
       NumericVariant sum;
       for (int i = 0; i < params.size(); i++) {

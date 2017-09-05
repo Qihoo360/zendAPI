@@ -136,7 +136,7 @@ public:
     * @param  key
     * @param  value
     */
-   void __set(const std::string &key, const Variant &value) const;
+   void __set(const std::string &key, const Variant &value);
 
    /**
     * Retrieve a property
