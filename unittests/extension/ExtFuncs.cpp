@@ -256,6 +256,7 @@ void register_cls(Extension &extension)
          ("setAge", {
              ValueArgument("age", zapi::lang::Type::Long)
           });
+   personClass.registerMethod<decltype(&Person::getAge), &Person::getAge>("getAge");
    personClass.registerMethod<decltype(&Person::getName), &Person::getName>("getName");
    personClass.registerMethod<decltype(&Person::addTwoNum), &Person::addTwoNum>
          ("addTwoNum", {

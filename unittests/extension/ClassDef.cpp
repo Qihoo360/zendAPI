@@ -1,7 +1,8 @@
 #include "ClassDef.h"
 #include <string>
 Person::Person()
-   : m_name("zzu_softboy")
+   : m_name("zzu_softboy"),
+     m_age(0)
 {}
 
 void Person::showName()
@@ -11,7 +12,12 @@ void Person::showName()
 
 void Person::setAge(const NumericVariant &age)
 {
-   m_age = age.toBool();
+   m_age = age.toLong();
+}
+
+int Person::getAge()
+{
+   return m_age;
 }
 
 Variant Person::getName()
@@ -58,7 +64,7 @@ int Person::addSum(NumericVariant argQuantity, ...)
    for (int i = 0; i < argQuantity; ++i) {
       result += NumericVariant(va_arg(args, zapi_varidic_item_type), false);
    }
-   return result;
+   return result.toLong();
 }
 
 void Person::protectedMethod()

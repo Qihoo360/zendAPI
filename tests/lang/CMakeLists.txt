@@ -28,6 +28,7 @@ set(ZAPI_PHP_TESTS
     lang/class/ClassStaticPropertyTest.phpt
     lang/class/ClassPropGetterAndSetterTest.phpt
     lang/class/ClassMethodAccessLevelTest.phpt
+    lang/class/ClassMethodInvokeTest.phpt
     
     lang/class/ClassMagicCastTest.phpt
     lang/class/ClassMagicCallTest.phpt

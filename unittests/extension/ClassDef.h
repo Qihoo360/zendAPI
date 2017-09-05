@@ -16,6 +16,7 @@ public:
    void showName();
    void print_sum(NumericVariant argQuantity, ...);
    void setAge(const NumericVariant &age);
+   int getAge();
    
    Variant getName();
    int addTwoNum(const NumericVariant &num1, const NumericVariant &num2);
