@@ -75,6 +75,7 @@ public:
    Variant __get(const std::string &key) const;
    bool __isset(const std::string &key) const;
    void __unset(const std::string &key);
+   void __clone();
    static Variant __callStatic(const std::string &method, Parameters &params);
    virtual std::string serialize();
    virtual void unserialize(const char *input, size_t size);

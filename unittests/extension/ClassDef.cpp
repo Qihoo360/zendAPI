@@ -172,6 +172,11 @@ void MagicMethodClass::__unset(const std::string &key)
    }
 }
 
+void MagicMethodClass::__clone()
+{
+   zapi::out << "MagicMethodClass::__clone is called" << std::endl;
+}
+
 Variant MagicMethodClass::__callStatic(const std::string &method, Parameters &params)
 {
    zapi::out << "MagicMethodClass::__callStatic is called" << std::endl;

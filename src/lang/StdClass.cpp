@@ -52,7 +52,7 @@ void StdClass::__destruct() const
    throw NotImplemented();
 }
 
-void StdClass::__clone() const
+void StdClass::__clone()
 {}
 
 /**

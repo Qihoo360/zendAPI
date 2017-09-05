@@ -114,7 +114,7 @@ public:
     *
     * The default implementation does nothing
     */
-   void __clone() const;
+   void __clone();
 
    /**
     * Overridable method that is called to check if a property is set
