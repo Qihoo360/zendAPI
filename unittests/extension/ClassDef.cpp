@@ -1,32 +1,23 @@
 #include "ClassDef.h"
 #include <string>
 Person::Person()
-   : name("zzu_softboy")
+   : m_name("zzu_softboy")
 {}
-
-//Variant Person::__get(const std::string &name)
-//{
-   
-//}
-
-void Person::__construct()
-{
-   //zapi::out << "Person construct" << std::endl;
-}
-
-void Person::__destruct()
-{
-   //zapi::out << "Person destruct" << std::endl;
-}
 
 void Person::showName()
 {
    zapi::out << "my name is zapi" << std::endl;   
 }
 
-//Variant Person::__call(const std::string &method, Parameters &params) const
-//{
-//}
+void Person::setAge(const NumericVariant &age)
+{
+   m_age = age.toBool();
+}
+
+Variant Person::getName()
+{
+   return m_name;
+}
 
 void Person::staticShowName()
 {
@@ -36,6 +27,16 @@ void Person::staticShowName()
 StringVariant Person::concatStr(const StringVariant &lhs, const StringVariant &rhs)
 {
    return lhs + rhs;
+}
+
+void Person::staticProtectedMethod()
+{
+   
+}
+
+void Person::staticPrivateMethod()
+{
+   
 }
 
 void Person::print_sum(zapi::ds::NumericVariant argQuantity, ...)
@@ -58,6 +59,16 @@ int Person::addSum(NumericVariant argQuantity, ...)
       result += NumericVariant(va_arg(args, zapi_varidic_item_type), false);
    }
    return result;
+}
+
+void Person::protectedMethod()
+{
+   
+}
+
+void Person::privateMethod()
+{
+   
 }
 
 int Person::addTwoNum(const NumericVariant &num1, const NumericVariant &num2)

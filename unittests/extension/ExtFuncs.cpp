@@ -247,21 +247,34 @@ void register_cls(Extension &extension)
    personClass.registerConstant("ALLOW_ACL", true);
    personClass.registerProperty("name", "zzu_softboy");
    personClass.registerProperty("staticProp", "beijing", Modifier::Public | Modifier::Static);
-   //personClass.registerMethod<decltype(&Person::__construct), &Person::__construct>("__construct");
-   //personClass.registerMethod<decltype(&Person::showName), &Person::showName>("showName");
+   personClass.registerMethod<decltype(&Person::showName), &Person::showName>("showName");
+   personClass.registerMethod<decltype(&Person::print_sum), &Person::print_sum>
+         ("print_sum",{
+             VariadicArgument("numbers")
+          });
+   personClass.registerMethod<decltype(&Person::setAge), &Person::setAge>
+         ("setAge", {
+             ValueArgument("age", zapi::lang::Type::Long)
+          });
+   personClass.registerMethod<decltype(&Person::getName), &Person::getName>("getName");
+   personClass.registerMethod<decltype(&Person::addTwoNum), &Person::addTwoNum>
+         ("addTwoNum", {
+             ValueArgument("num1", zapi::lang::Type::Numeric),
+             ValueArgument("num2", zapi::lang::Type::Numeric)
+          });
+   personClass.registerMethod<decltype(&Person::addSum), &Person::addSum>
+         ("addSum",{
+             VariadicArgument("numbers")
+          });
    //   personClass.registerMethod<decltype(&Person::staticShowName), &Person::staticShowName>("staticShowName");
-   //   personClass.registerMethod<decltype(&Person::print_sum), &Person::print_sum>("print_sum");
-   //   personClass.registerMethod<decltype(&Person::addTwoNum), &Person::addTwoNum>
-   //         ("addTwoNum", {
-   //             ValueArgument("num1", zapi::lang::Type::Numeric),
-   //             ValueArgument("num2", zapi::lang::Type::Numeric)
-   //          });
+   
+   
    //   personClass.registerMethod<decltype(&Person::concatStr), &Person::concatStr>
    //         ("concatStr", {
    //             ValueArgument("lhs", zapi::lang::Type::String),
    //             ValueArgument("rhs", zapi::lang::Type::String)
    //          });
-   //personClass.registerMethod<decltype(&Person::addSum), &Person::addSum>("addSum");
+   
    //   Interface infoInterface("InfoProvider");
    //   //   infoInterface.registerMethod("getName");
    //   personClass.registerInterface(infoInterface);

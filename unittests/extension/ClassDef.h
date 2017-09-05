@@ -13,22 +13,30 @@ class Person : public StdClass
 {
 public:
    Person();
-   //   Variant __get(const std::string &name);
-   void __construct();
-   void __destruct();
    void showName();
-   //Variant __call(const std::string &method, Parameters &params) const;
+   void print_sum(NumericVariant argQuantity, ...);
+   void setAge(const NumericVariant &age);
+   
+   Variant getName();
+   int addTwoNum(const NumericVariant &num1, const NumericVariant &num2);
+   int addSum(NumericVariant argQuantity, ...);
+   // access level test method
+   void protectedMethod();
+   void privateMethod();
+   
    static void staticShowName();
    static StringVariant concatStr(const StringVariant &lhs, const StringVariant &rhs);
-   void print_sum(NumericVariant argQuantity, ...);
-   int addSum(NumericVariant argQuantity, ...);
-   int addTwoNum(const NumericVariant &num1, const NumericVariant &num2);
+   static void staticProtectedMethod();
+   static void staticPrivateMethod();
+   
+   
 private:
    /**
      *  The initial value
      *  @var    int
      */
-   std::string name;
+   std::string m_name;
+   int m_age;
 };
 
 class Address : public StdClass

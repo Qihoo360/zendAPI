@@ -20,10 +20,9 @@ set(ZAPI_PHP_TESTS
     lang/class/ClassInterfaceImplementTest.phpt
     
     lang/class/ClassIteratorTest.phpt
-    lang/class/ClassMethodTest.phpt
-    lang/class/ClassStaticMethodTest.phpt
+    lang/class/ClassStaticMethodExistTest.phpt
     
-    lang/class/ClassMethodTest.phpt
+    lang/class/ClassMethodExistTest.phpt
     lang/class/ClassPropertyTest.phpt
     lang/class/ClassPropertyTypeTest.phpt
     lang/class/ClassStaticPropertyTest.phpt
