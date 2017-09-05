@@ -79,6 +79,7 @@ public:
    Variant __toInteger() const;
    Variant __toDouble() const;
    Variant __toBool() const;
+   int __compare(const MagicMethodClass &object) const;
    void __clone();
    static Variant __callStatic(const std::string &method, Parameters &params);
    virtual std::string serialize();
@@ -87,6 +88,7 @@ public:
 private:
    bool m_teamNameUnset = false;
    bool m_teamAddressUnset = true;
+   int m_length = 0;
    std::string m_address;
 };
 

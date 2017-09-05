@@ -74,7 +74,6 @@ TEST(TypeTraitTest, test)
 {
    bool ret = std::is_same<zapi::stdext::CallableInfoTrait<decltype(func2)>::ReturnType, int>::value;
    ASSERT_TRUE(ret);
-   auto func3 = []()->int{};
    ret = std::is_same<zapi::stdext::CallableInfoTrait<decltype(func2)>::ReturnType, int>::value;
    ASSERT_TRUE(ret);
    ret = std::is_same<zapi::stdext::CallableInfoTrait<decltype(&O::method1)>::ReturnType, char>::value;

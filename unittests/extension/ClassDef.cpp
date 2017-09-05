@@ -133,6 +133,8 @@ void MagicMethodClass::__set(const std::string &key, const Variant &value)
    if (key == "address") {
       m_address = StringVariant(value).toString();
       m_teamAddressUnset = false;
+   } else if (key == "length") {
+      m_length = NumericVariant(value).toLong();
    }
 }
 
@@ -145,6 +147,8 @@ Variant MagicMethodClass::__get(const std::string &key) const
       return "unicornteam";
    } else if (key == "address" && !m_teamAddressUnset) {
       return m_address;
+   } else if (key == "length") {
+      return m_length;
    }
    return nullptr;
 }
@@ -157,6 +161,8 @@ bool MagicMethodClass::__isset(const std::string &key) const
    } else if (key == "teamName" && !m_teamNameUnset) {
       return true;
    } else if (key == "address" && !m_teamAddressUnset) {
+      return true;
+   } else if (key == "length") {
       return true;
    }
    return false;
@@ -194,6 +200,18 @@ Variant MagicMethodClass::__toBool() const
 {
    zapi::out << "MagicMethodClass::__toBool is called" << std::endl;
    return true;
+}
+
+int MagicMethodClass::__compare(const MagicMethodClass &object) const
+{
+   zapi::out << "MagicMethodClass::__compare is called" << std::endl;
+   if (m_length < object.m_length) {
+      return -1;
+   } else if (m_length == object.m_length) {
+      return 0;
+   } else {
+      return 1;
+   }
 }
 
 void MagicMethodClass::__clone()
