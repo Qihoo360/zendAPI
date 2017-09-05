@@ -28,4 +28,6 @@ if (class_exists("PropsTestClass")) {
 PropsTestClass::name is exist
 PropsTestClass::name value : 
 PropsTestClass::name value : zapi:unicornteam
-PropsTestClass::name is not exist
+PropsTestClass::notExistsProp is not exist
+PropsTestClass::notExistsProp is exist
+PropsTestClass::notExistsProp value : 123

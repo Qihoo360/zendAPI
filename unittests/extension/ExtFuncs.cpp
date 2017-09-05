@@ -45,7 +45,7 @@ Variant get_name()
    return "zzu_softboy";
 }
 
-void print_name(StringVariant name)
+void print_name(const StringVariant &name)
 {
    zapi::out << name << std::flush;
 }
@@ -72,10 +72,8 @@ Variant calculate_sum(NumericVariant argQuantity, ...)
    return result;
 }
 
-void print_name_and_age(Parameters &params)
+void print_name_and_age(const StringVariant &name, const NumericVariant &age)
 {
-   std::string name = StringVariant(params.at(0)).getCStr();
-   int age = NumericVariant(params.at(1)).toLong();
    zapi::out << "name: " << name << " age: " << age << std::flush;
 }
 
@@ -128,16 +126,17 @@ void register_const(Extension &extension)
 
 void register_funcs(Extension &extension)
 {
-   //std::result_of<int()>::type d = 12;
-   //   extension.registerFunction<dummyext::show_something>("show_something");
+   extension.registerFunction<decltype(&dummyext::show_something), &dummyext::show_something>("show_something");
    extension.registerFunction<decltype(&dummyext::get_name), &dummyext::get_name>("get_name");
-   //   extension.registerFunction<decltype(&dummyext::print_name), &dummyext::print_name>("print_name", {
-   //                                                       ValueArgument("name", zapi::lang::Type::String)
-   //                                                    });
-   //   extension.registerFunction<dummyext::print_name_and_age>("print_name_and_age", {
-   //                                                               ValueArgument("name", zapi::lang::Type::String),
-   //                                                               ValueArgument("age", zapi::lang::Type::Long)
-   //                                                            });
+   extension.registerFunction<decltype(&dummyext::print_name), &dummyext::print_name>
+         ("print_name", {
+             ValueArgument("name", zapi::lang::Type::String)
+          });
+   extension.registerFunction<decltype(&dummyext::print_name_and_age), &dummyext::print_name_and_age>
+         ("print_name_and_age", {
+             ValueArgument("name", zapi::lang::Type::String),
+             ValueArgument("age", zapi::lang::Type::Long)
+          });
    extension.registerFunction<decltype(&dummyext::add_two_number), &dummyext::add_two_number>
          ("add_two_number", {
              ValueArgument("num1", zapi::lang::Type::Long),
@@ -170,16 +169,16 @@ void register_ns_io(Namespace &io)
          ("calculate_sum", {
              VariadicArgument("numbers")
           });
-   //   io.registerFunction<decltype(&dummyext::print_name), &dummyext::print_name>
-   //         ("print_name", {
-   //             ValueArgument("name", zapi::lang::Type::String)
-   //          });
+   io.registerFunction<decltype(&dummyext::print_name), &dummyext::print_name>
+         ("print_name", {
+             ValueArgument("name", zapi::lang::Type::String)
+          });
    // for test varidic
    io.registerFunction<decltype(&dummyext::print_sum), &dummyext::print_sum>
          ("print_sum", {
              VariadicArgument("numbers")
           });
-   //   io.registerFunction<dummyext::show_something>("show_something");
+   io.registerFunction<decltype(&dummyext::show_something), &dummyext::show_something>("show_something");
    io.registerConstant(Constant("IO_TYPE", "ASYNC"));
    io.registerConstant(Constant("NATIVE_STREAM", true));
 }
@@ -188,7 +187,7 @@ void register_ns_zapi(Namespace &zapi)
 {
    zapi.registerFunction<decltype(&dummyext::get_name), &dummyext::get_name>("get_name");
    zapi.registerConstant(Constant("SYS_VERSION", "0.1.1-alpha"));
-   //   zapi.registerFunction<dummyext::show_something>("show_something");
+   zapi.registerFunction<decltype(&dummyext::show_something), &dummyext::show_something>("show_something");
    zapi::lang::Class<EmptyClass> emptyCls("EmptyClass");
    zapi.registerClass(emptyCls);
 }
