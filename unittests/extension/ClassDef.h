@@ -75,6 +75,10 @@ public:
    Variant __get(const std::string &key) const;
    bool __isset(const std::string &key) const;
    void __unset(const std::string &key);
+   Variant __toString() const;
+   Variant __toInteger() const;
+   Variant __toDouble() const;
+   Variant __toBool() const;
    void __clone();
    static Variant __callStatic(const std::string &method, Parameters &params);
    virtual std::string serialize();

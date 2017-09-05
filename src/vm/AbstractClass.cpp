@@ -719,22 +719,25 @@ int AbstractClassPrivate::cast(zval *object, zval *retValue, int type)
    AbstractClass *meta = selfPtr->m_apiPtr;
    StdClass *nativeObject = objectBinder->getNativeObject();
    try {
-      Variant result;
+      zval temp;
       switch (static_cast<Type>(type)) {
       case Type::Numeric:
-         result = meta->castToInteger(nativeObject);
+         temp = meta->castToInteger(nativeObject).detach(false);
          break;
       case Type::Double:
-         result = meta->castToDouble(nativeObject);
+         temp = meta->castToDouble(nativeObject).detach(false);
+         break;
       case Type::Boolean:
-         result = meta->castToBool(nativeObject);
+         temp = meta->castToBool(nativeObject).detach(false);
+         break;
       case Type::String:
-         result = meta->castToString(nativeObject);
+         temp = meta->castToString(nativeObject).detach(false);
+         break;
       default:
          throw NotImplemented();
          break;
       }
-      ZVAL_DUP(retValue, result.getZvalPtr());
+      ZVAL_COPY(retValue, &temp);
       return ZAPI_SUCCESS;
    } catch (const NotImplemented &exception) {
       if (!std_object_handlers.cast_object) {

@@ -172,6 +172,30 @@ void MagicMethodClass::__unset(const std::string &key)
    }
 }
 
+Variant MagicMethodClass::__toString() const
+{
+   zapi::out << "MagicMethodClass::__toString is called" << std::endl;
+   return "hello, zapi";
+}
+
+Variant MagicMethodClass::__toInteger() const
+{
+   zapi::out << "MagicMethodClass::__toInteger is called" << std::endl;
+   return 2017;
+}
+
+Variant MagicMethodClass::__toDouble() const
+{
+   zapi::out << "MagicMethodClass::__toDouble is called" << std::endl;
+   return 3.14;
+}
+
+Variant MagicMethodClass::__toBool() const
+{
+   zapi::out << "MagicMethodClass::__toBool is called" << std::endl;
+   return true;
+}
+
 void MagicMethodClass::__clone()
 {
    zapi::out << "MagicMethodClass::__clone is called" << std::endl;

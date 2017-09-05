@@ -14,7 +14,6 @@ set(ZAPI_PHP_TESTS
    lang/class/ClassExistTest.phpt
    lang/class/ClassArrayAccessTest.phpt
    lang/class/ClassCallParentMethodTest.phpt
-   lang/class/ClassCastTest.phpt
    lang/class/ClassCompareTest.phpt
    lang/class/ClassConstantTest.phpt
    lang/class/ClassConstantTypeTest.phpt
@@ -31,11 +30,11 @@ set(ZAPI_PHP_TESTS
    lang/class/ClassStaticPropertyTest.phpt
    lang/class/ClassPropGetterAndSetterTest.phpt
    
+   lang/class/ClassMagicCastTest.phpt
    lang/class/ClassMagicCallTest.phpt
    lang/class/ClassMagicCallStaticTest.phpt
    lang/class/ClassMagicCloneTest.phpt
    lang/class/ClassMagicInvokeTest.phpt
-   lang/class/ClassMagicToStringTest.phpt
    lang/class/ClassMagicConstructAndDestructTest.phpt
    lang/class/ClassMagicGetTest.phpt
    lang/class/ClassMagicIssetTest.phpt
