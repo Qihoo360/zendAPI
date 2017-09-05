@@ -116,6 +116,15 @@ Variant MagicMethodClass::__call(const std::string &method, Parameters &params) 
    }
 }
 
+Variant MagicMethodClass::__invoke(Parameters &params) const
+{
+   NumericVariant sum;
+   for (int i = 0; i < params.size(); i++) {
+      sum += NumericVariant(params.at(i));
+   }
+   return sum;
+}
+
 Variant MagicMethodClass::__callStatic(const std::string &method, Parameters &params)
 {
    if (method == "staticCalculateSum") {
@@ -125,6 +134,8 @@ Variant MagicMethodClass::__callStatic(const std::string &method, Parameters &pa
       }
       return sum;
    } else {
-      return nullptr;
+      StringVariant str("hello, ");
+      str += StringVariant(params.at(0));
+      return str;
    }
 }

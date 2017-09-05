@@ -13,7 +13,7 @@ class Person : public StdClass
 {
 public:
    Person();
-//   Variant __get(const std::string &name);
+   //   Variant __get(const std::string &name);
    void __construct();
    void __destruct();
    void showName();
@@ -70,6 +70,7 @@ class MagicMethodClass : public StdClass
 {
 public:
    Variant __call(const std::string &method, Parameters &params) const;
+   Variant __invoke(Parameters &params) const;
    static Variant __callStatic(const std::string &method, Parameters &params);
 };
 
