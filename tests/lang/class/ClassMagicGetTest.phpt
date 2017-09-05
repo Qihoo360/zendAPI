@@ -1,5 +1,5 @@
 --TEST--
-Class magic invoke test
+Class magic get test
 --FILE--
 <?php
 
