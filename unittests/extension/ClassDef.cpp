@@ -125,6 +125,22 @@ Variant MagicMethodClass::__invoke(Parameters &params) const
    return sum;
 }
 
+Variant MagicMethodClass::__get(const std::string &key) const
+{
+   if (key == "prop1") {
+      return "zapi";
+   }
+   return nullptr;
+}
+
+bool MagicMethodClass::__isset(const std::string &key) const
+{
+   if (key == "prop1") {
+      return true; 
+   }
+   return false;
+}
+
 Variant MagicMethodClass::__callStatic(const std::string &method, Parameters &params)
 {
    if (method == "staticCalculateSum") {

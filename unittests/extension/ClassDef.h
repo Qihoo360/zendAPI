@@ -71,6 +71,8 @@ class MagicMethodClass : public StdClass
 public:
    Variant __call(const std::string &method, Parameters &params) const;
    Variant __invoke(Parameters &params) const;
+   Variant __get(const std::string &key) const;
+   bool __isset(const std::string &key) const;
    static Variant __callStatic(const std::string &method, Parameters &params);
 };
 
