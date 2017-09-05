@@ -157,7 +157,7 @@ public:
     *
     * @param key
     */
-   void __unset(const std::string &key) const;
+   void __unset(const std::string &key);
 
    /**
     * Call a method

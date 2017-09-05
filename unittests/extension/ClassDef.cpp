@@ -129,6 +129,8 @@ Variant MagicMethodClass::__get(const std::string &key) const
 {
    if (key == "prop1") {
       return "zapi";
+   } else if(key == "teamName" && !m_teamNameUnset) {
+      return "unicornteam";
    }
    return nullptr;
 }
@@ -137,8 +139,17 @@ bool MagicMethodClass::__isset(const std::string &key) const
 {
    if (key == "prop1") {
       return true; 
+   } else if (key == "teamName" && !m_teamNameUnset) {
+      return true;
    }
    return false;
+}
+
+void MagicMethodClass::__unset(const std::string &key)
+{
+   if (key == "teamName") {
+      m_teamNameUnset = true;
+   }
 }
 
 Variant MagicMethodClass::__callStatic(const std::string &method, Parameters &params)

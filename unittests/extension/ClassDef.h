@@ -73,7 +73,10 @@ public:
    Variant __invoke(Parameters &params) const;
    Variant __get(const std::string &key) const;
    bool __isset(const std::string &key) const;
+   void __unset(const std::string &key);
    static Variant __callStatic(const std::string &method, Parameters &params);
+private:
+   bool m_teamNameUnset = false;
 };
 
 #endif // ZAPI_UNITTEST_BRIDGE_DUMMYEXT_CLASS_DEF_H

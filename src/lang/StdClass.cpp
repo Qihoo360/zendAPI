@@ -105,7 +105,7 @@ Variant StdClass::__get(const std::string &key) const
  *
  * @param key
  */
-void StdClass::__unset(const std::string &key) const
+void StdClass::__unset(const std::string &key)
 {
    throw NotImplemented();
 }
