@@ -14,7 +14,7 @@ using zapi::lang::Namespace;
 using zapi::ds::StringVariant;
 using zapi::ds::NumericVariant;
 
-ZAPI_DECL_EXPORT Variant return_arg(Parameters &params);
+ZAPI_DECL_EXPORT Variant return_arg(Variant &value);
 ZAPI_DECL_EXPORT void show_something();
 ZAPI_DECL_EXPORT Variant get_name();
 ZAPI_DECL_EXPORT void get_value_ref(NumericVariant &number);

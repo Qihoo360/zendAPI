@@ -22,7 +22,6 @@ set(ZAPI_PHP_TESTS
    
    lang/class/ClassIteratorTest.phpt
    lang/class/ClassMethodTest.phpt
-   lang/class/ClassSerializeTest.phpt
    lang/class/ClassStaticMethodTest.phpt
    
    lang/class/ClassPropertyTest.phpt

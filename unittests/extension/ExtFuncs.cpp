@@ -92,9 +92,9 @@ void say_hello(StringVariant &name)
    zapi::out << "hello, " << name << std::endl;
 }
 
-Variant return_arg(Parameters &params)
+Variant return_arg(Variant &value)
 {
-   return params.at(0);
+   return value;
 }
 struct S {
    double operator()(char, int&);
@@ -130,7 +130,7 @@ void register_funcs(Extension &extension)
 {
    //std::result_of<int()>::type d = 12;
    //   extension.registerFunction<dummyext::show_something>("show_something");
-   //extension.registerFunction<decltype(&dummyext::get_name), &dummyext::get_name>("get_name");
+   extension.registerFunction<decltype(&dummyext::get_name), &dummyext::get_name>("get_name");
    //   extension.registerFunction<decltype(&dummyext::print_name), &dummyext::print_name>("print_name", {
    //                                                       ValueArgument("name", zapi::lang::Type::String)
    //                                                    });
@@ -138,13 +138,15 @@ void register_funcs(Extension &extension)
    //                                                               ValueArgument("name", zapi::lang::Type::String),
    //                                                               ValueArgument("age", zapi::lang::Type::Long)
    //                                                            });
-      extension.registerFunction<decltype(&dummyext::add_two_number), &dummyext::add_two_number>("add_two_number", {
-                ValueArgument("num1", zapi::lang::Type::Long),
-                ValueArgument("num2", zapi::lang::Type::Long)
-             });
-   //   extension.registerFunction<dummyext::return_arg>("return_arg", {
-   //                                                       ValueArgument("number1"),
-   //                                                    });
+   extension.registerFunction<decltype(&dummyext::add_two_number), &dummyext::add_two_number>
+         ("add_two_number", {
+             ValueArgument("num1", zapi::lang::Type::Long),
+             ValueArgument("num2", zapi::lang::Type::Long)
+          });
+   extension.registerFunction<decltype(&dummyext::return_arg), &dummyext::return_arg>
+         ("return_arg", {
+             ValueArgument("number1"),
+          });
    // for passby value and reference test
    extension.registerFunction<decltype(&dummyext::get_value_ref), &dummyext::get_value_ref>
          ("get_value_ref", {
@@ -184,7 +186,7 @@ void register_ns_io(Namespace &io)
 
 void register_ns_zapi(Namespace &zapi)
 {
-   //zapi.registerFunction<dummyext::get_name>("get_name");
+   zapi.registerFunction<decltype(&dummyext::get_name), &dummyext::get_name>("get_name");
    zapi.registerConstant(Constant("SYS_VERSION", "0.1.1-alpha"));
    //   zapi.registerFunction<dummyext::show_something>("show_something");
    zapi::lang::Class<EmptyClass> emptyCls("EmptyClass");
@@ -261,10 +263,10 @@ void register_cls(Extension &extension)
    //             ValueArgument("rhs", zapi::lang::Type::String)
    //          });
    //personClass.registerMethod<decltype(&Person::addSum), &Person::addSum>("addSum");
-//   Interface infoInterface("InfoProvider");
-//   //   infoInterface.registerMethod("getName");
-//   personClass.registerInterface(infoInterface);
-//   extension.registerInterface(infoInterface);
+   //   Interface infoInterface("InfoProvider");
+   //   //   infoInterface.registerMethod("getName");
+   //   personClass.registerInterface(infoInterface);
+   //   extension.registerInterface(infoInterface);
    extension.registerClass(personClass);
    register_construct_and_destruct(extension);
    register_props_test_cls(extension);
