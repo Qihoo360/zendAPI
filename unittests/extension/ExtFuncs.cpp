@@ -266,6 +266,10 @@ void register_cls(Extension &extension)
          ("addSum",{
              VariadicArgument("numbers")
           });
+   personClass.registerMethod<decltype(&Person::protectedMethod), &Person::protectedMethod>
+         ("protectedMethod", Modifier::Protected);
+   personClass.registerMethod<decltype(&Person::privateMethod), &Person::privateMethod>
+         ("privateMethod", Modifier::Private);
    
    personClass.registerMethod<decltype(&Person::concatStr), &Person::concatStr>
          ("concatStr", {
