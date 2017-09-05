@@ -266,14 +266,17 @@ void register_cls(Extension &extension)
          ("addSum",{
              VariadicArgument("numbers")
           });
-   //   personClass.registerMethod<decltype(&Person::staticShowName), &Person::staticShowName>("staticShowName");
    
-   
-   //   personClass.registerMethod<decltype(&Person::concatStr), &Person::concatStr>
-   //         ("concatStr", {
-   //             ValueArgument("lhs", zapi::lang::Type::String),
-   //             ValueArgument("rhs", zapi::lang::Type::String)
-   //          });
+   personClass.registerMethod<decltype(&Person::concatStr), &Person::concatStr>
+         ("concatStr", {
+             ValueArgument("lhs", zapi::lang::Type::String),
+             ValueArgument("rhs", zapi::lang::Type::String)
+          });
+   personClass.registerMethod<decltype(&Person::staticShowName), &Person::staticShowName>("staticShowName");
+   personClass.registerMethod<decltype(&Person::staticProtectedMethod), &Person::staticProtectedMethod>
+         ("staticProtectedMethod", Modifier::Protected);
+   personClass.registerMethod<decltype(&Person::staticPrivateMethod), &Person::staticPrivateMethod>
+         ("staticPrivateMethod", Modifier::Private);
    
    //   Interface infoInterface("InfoProvider");
    //   //   infoInterface.registerMethod("getName");
