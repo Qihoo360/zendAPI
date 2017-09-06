@@ -25,9 +25,9 @@ namespace vm
 using zapi::lang::StdClass;
 using zapi::lang::internal::StdClassPrivate;
 
-ObjectBinder::ObjectBinder(zend_class_entry *entry, StdClass *nativeObject, 
+ObjectBinder::ObjectBinder(zend_class_entry *entry, std::unique_ptr<StdClass> nativeObject, 
                            const zend_object_handlers *objectHandlers, uint32_t refCount)
-   : m_nativeObject(nativeObject)
+   : m_nativeObject(std::move(nativeObject))
 {
    ssize_t psize = zend_object_properties_size(entry);
    psize = psize < 0 ? 0 : psize;
@@ -39,7 +39,7 @@ ObjectBinder::ObjectBinder(zend_class_entry *entry, StdClass *nativeObject,
    if (refCount != 1) {
       GC_REFCOUNT(&m_container->m_zendObject) = refCount;
    }
-   nativeObject->m_implPtr->m_zendObject = &m_container->m_zendObject;
+   m_nativeObject->m_implPtr->m_zendObject = &m_container->m_zendObject;
 }
 
 zend_object *ObjectBinder::getZendObject() const

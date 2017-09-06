@@ -257,7 +257,7 @@ zend_object *AbstractClassPrivate::createObject(zend_class_entry *entry)
    // instantiate native c++ class associated with the meta class
    AbstractClassPrivate *abstractClsPrivatePtr = retrieve_acp_ptr_from_cls_entry(entry);
    // note: here we use StdClass type to store Derived class
-   StdClass *nativeObject = abstractClsPrivatePtr->m_apiPtr->construct();
+   std::unique_ptr<StdClass> nativeObject(abstractClsPrivatePtr->m_apiPtr->construct());
    if (!nativeObject) {
       // report error on failure, because this function is called directly from the
       // Zend engine, we can call zend_error() here (which does a longjmp() back to
@@ -267,7 +267,8 @@ zend_object *AbstractClassPrivate::createObject(zend_class_entry *entry)
    // here we assocaited a native object with an ObjectBinder object
    // ObjectBinder can make an relationship on nativeObject and zend_object
    // don't warry about memory, we do relase
-   ObjectBinder *binder = new ObjectBinder(entry, nativeObject, abstractClsPrivatePtr->getObjectHandlers(), 1);
+   // maybe memory leak
+   ObjectBinder *binder = new ObjectBinder(entry, std::move(nativeObject), abstractClsPrivatePtr->getObjectHandlers(), 1);
    return binder->getZendObject();
 }
 
@@ -278,7 +279,7 @@ zend_object *AbstractClassPrivate::cloneObject(zval *object)
    AbstractClassPrivate *selfPtr = retrieve_acp_ptr_from_cls_entry(entry);
    AbstractClass *meta = selfPtr->m_apiPtr;
    StdClass *origObject = objectBinder->getNativeObject();
-   StdClass *newNativeObject = meta->clone(origObject);
+   std::unique_ptr<StdClass> newNativeObject(meta->clone(origObject));
    // report error on failure (this does not occur because the cloneObject()
    // method is only installed as handler when we have seen that there is indeed
    // a copy constructor). Because this function is directly called from the
@@ -287,10 +288,10 @@ zend_object *AbstractClassPrivate::cloneObject(zval *object)
    if (!newNativeObject) {
       zend_error(E_ERROR, "Unable to clone %s", entry->name);
    }
-   ObjectBinder *newObjectBinder = new ObjectBinder(entry, newNativeObject, selfPtr->getObjectHandlers(), 1);
+   ObjectBinder *newObjectBinder = new ObjectBinder(entry, std::move(newNativeObject), selfPtr->getObjectHandlers(), 1);
    zend_objects_clone_members(newObjectBinder->getZendObject(), objectBinder->getZendObject());
    if (!entry->clone) {
-      meta->callClone(newNativeObject);
+      meta->callClone(newNativeObject.get());
    }
    return newObjectBinder->getZendObject();
 }

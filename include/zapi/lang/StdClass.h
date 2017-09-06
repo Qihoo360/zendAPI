@@ -26,6 +26,7 @@ namespace zapi
 namespace ds
 {
 class Variant;
+class ObjectVariant;
 } // ds
 
 namespace vm
@@ -51,6 +52,7 @@ namespace lang
 
 using zapi::lang::internal::StdClassPrivate;
 using zapi::ds::Variant;
+using zapi::ds::ObjectVariant;
 using zapi::vm::ObjectBinder;
 class Parameters;
 
@@ -76,7 +78,10 @@ protected:
 
 public:
    virtual ~StdClass();
-
+   
+   Variant callParent();
+   Variant callStaticParent();
+   ObjectVariant *getThisPtr() const;
    /**
     * Get access to a property by name using the [] operator
     * @param  string

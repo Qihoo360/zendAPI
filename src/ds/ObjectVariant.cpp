@@ -61,6 +61,15 @@ namespace ds
 
 using GuardStrType = std::unique_ptr<zend_string, std::function<void(zend_string *)>>;
 
+ObjectVariant::ObjectVariant()
+{
+   convert_to_object(getUnDerefZvalPtr());
+}
+
+ObjectVariant::ObjectVariant(const StdClass &nativeObject)
+   : Variant(nativeObject)
+{}
+
 bool ObjectVariant::isCallable(const char *name) const
 {
    if (Type::Object != getType()) {

@@ -20,25 +20,45 @@
 
 namespace zapi
 {
+namespace lang
+{
+class StdClass;
+} // lang
+} // zapi
+
+namespace zapi
+{
 namespace ds
 {
+
+using zapi::lang::StdClass;
 
 class ZAPI_DECL_EXPORT ObjectVariant final : public Variant
 {
 public:
+   ObjectVariant();
+   ObjectVariant(const StdClass &nativeObject);
+   ObjectVariant(const Variant &other);
+   ObjectVariant(const ObjectVariant &other);
+   ObjectVariant(Variant &&other);
+   ObjectVariant(ObjectVariant &&other) ZAPI_DECL_NOEXCEPT;
+
+   ObjectVariant &operator =(const ObjectVariant &other);
+   ObjectVariant &operator =(const Variant &other);
+
    bool isCallable(const char *name) const;
    Variant call(const char *name);
    Variant call(const char *name) const;
-   
+
    template <typename ...Args>
    Variant call(const char *name, Args&&... args);
    template <typename ...Args>
    Variant call(const char *name, Args&&... args) const;
-   
+
    bool instanceOf(const char *className, size_t size) const;
    bool instanceOf(const char *className) const;
    bool instanceOf(const std::string &className) const;
-   
+
    bool derivedFrom(const char *className, size_t size) const;
    bool derivedFrom(const char *className) const;
    bool derivedFrom(const std::string &className) const;

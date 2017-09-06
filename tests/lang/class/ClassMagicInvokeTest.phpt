@@ -4,7 +4,7 @@ Class magic invoke test
 <?php
 
 if (class_exists("\NonMagicMethodClass") && class_exists("\MagicMethodClass")) {
-    $nonMagicMethodObject = new NonMagicMethodClass();
+    //$nonMagicMethodObject = new NonMagicMethodClass();
     // $nonMagicMethodObject(1, 2, 3); // fata error
     $magicMethodClass = new MagicMethodClass();
     $sum = $magicMethodClass();

@@ -14,6 +14,7 @@
 // Created by zzu_softboy on 2017/06/08.
 
 #include "zapi/ds/Variant.h"
+#include "zapi/ds/ObjectVariant.h"
 #include "zapi/lang/StdClass.h"
 #include "zapi/lang/internal/StdClassPrivate.h"
 #include "zapi/kernel/NotImplemented.h"
@@ -43,6 +44,11 @@ StdClass::~StdClass()
 StdClass::StdClass(const StdClass &object)
    : m_implPtr(new StdClassPrivate)
 {}
+
+ObjectVariant *StdClass::getThisPtr() const
+{
+   return nullptr;
+}
 
 /**
  * Overridable method that is called right before an object is destructed

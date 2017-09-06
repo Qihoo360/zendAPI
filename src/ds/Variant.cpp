@@ -226,9 +226,9 @@ Variant::Variant(const char *value)
    : Variant(value, std::strlen(value))
 {}
 
-Variant::Variant(const StdClass &stdClass)
+Variant::Variant(const StdClass &nativeObject)
 {
-   zend_object *zobject = stdClass.m_implPtr->m_zendObject;
+   zend_object *zobject = nativeObject.m_implPtr->m_zendObject;
    if (nullptr == zobject) {
       throw FatalError("Can't construct from an unregister StdClass Object");
    }

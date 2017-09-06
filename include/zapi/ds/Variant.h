@@ -83,7 +83,7 @@ public:
    Variant(const std::string &value);
    Variant(const char *value, size_t length);
    Variant(const char *value);
-   Variant(const StdClass &stdClass);
+   Variant(const StdClass &nativeObject);
    
    /**
     * Copy constructor

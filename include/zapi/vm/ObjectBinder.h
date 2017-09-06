@@ -33,7 +33,7 @@ using zapi::lang::StdClass;
 class ObjectBinder
 {
 public:
-   ObjectBinder(zend_class_entry *entry, StdClass *nativeObject, const zend_object_handlers *objectHandlers, uint32_t refCount);
+   ObjectBinder(zend_class_entry *entry, std::unique_ptr<StdClass> nativeObject, const zend_object_handlers *objectHandlers, uint32_t refCount);
    ~ObjectBinder();
    void destroy();
    zend_object *getZendObject() const;
