@@ -37,7 +37,7 @@ class ZAPI_DECL_EXPORT ObjectVariant final : public Variant
 {
 public:
    ObjectVariant();
-   ObjectVariant(const StdClass &nativeObject);
+   ObjectVariant(const std::string &className, std::shared_ptr<StdClass> nativeObject);
    ObjectVariant(const Variant &other);
    ObjectVariant(const ObjectVariant &other);
    ObjectVariant(Variant &&other);
@@ -45,6 +45,8 @@ public:
 
    ObjectVariant &operator =(const ObjectVariant &other);
    ObjectVariant &operator =(const Variant &other);
+   ObjectVariant &operator =(ObjectVariant &&other) ZAPI_DECL_NOEXCEPT;
+   ObjectVariant &operator =(Variant &&other);
 
    bool isCallable(const char *name) const;
    Variant call(const char *name);

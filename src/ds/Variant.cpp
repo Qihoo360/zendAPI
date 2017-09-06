@@ -23,6 +23,7 @@
 #include "zapi/ds/BoolVariant.h"
 #include "zapi/ds/DoubleVariant.h"
 #include "zapi/ds/NumericVariant.h"
+#include "zapi/ds/ObjectVariant.h"
 #include "zapi/lang/StdClass.h"
 #include "zapi/lang/internal/StdClassPrivate.h"
 #include <cstring>
@@ -383,6 +384,12 @@ Variant::Variant(const ArrayVariant &value)
    stdCopyZval(getUnDerefZvalPtr(), const_cast<zval *>(value.getZvalPtr()));
 }
 
+Variant::Variant(const ObjectVariant &value)
+   : m_implPtr(new VariantPrivate, std_zval_deleter)
+{
+   stdCopyZval(getUnDerefZvalPtr(), const_cast<zval *>(value.getZvalPtr()));
+}
+
 /**
  * Move constructor
  * 
@@ -415,6 +422,11 @@ Variant::Variant(DoubleVariant &&value)
 }
 
 Variant::Variant(ArrayVariant &&value)
+{
+   m_implPtr = std::move(value.m_implPtr);
+}
+
+Variant::Variant(ObjectVariant &&value)
 {
    m_implPtr = std::move(value.m_implPtr);
 }
@@ -664,6 +676,8 @@ void Variant::stdAssignZval(zval *dest, zval *source)
                // this will decrement the reference count and invoke GC_ZVAL_CHECK_FOR_POSSIBLE_ROOT()
                zval_ptr_dtor(dest);
                zval_copy_ctor_func(dest);
+            } else {
+               Z_DELREF_P(dest);
             }
          } else {
             zval_dtor(dest);

@@ -141,7 +141,7 @@ zend_class_entry *AbstractClassPrivate::initialize(AbstractClass *cls, const std
       entry.get_iterator = &AbstractClassPrivate::getIterator;
       entry.iterator_funcs.funcs = IteratorBridge::getIteratorFuncs();
    }
-   
+
    if (m_apiPtr->serializable()) {
       entry.serialize = &AbstractClassPrivate::serialize;
       entry.unserialize = &AbstractClassPrivate::unserialize;
@@ -171,7 +171,7 @@ zend_class_entry *AbstractClassPrivate::initialize(AbstractClass *cls, const std
       }
    }
    m_classEntry->ce_flags = static_cast<uint32_t>(m_type);
-   
+
    for (std::shared_ptr<AbstractMember> &member : m_members) {
       member->initialize(m_classEntry);
    }
@@ -223,21 +223,21 @@ zend_object_handlers *AbstractClassPrivate::getObjectHandlers()
    m_handlers.read_dimension = &AbstractClassPrivate::readDimension;
    m_handlers.has_dimension = &AbstractClassPrivate::hasDimension;
    m_handlers.unset_dimension = &AbstractClassPrivate::unsetDimension;
-   
+
    // functions for magic properties handlers __get, __set, __isset and __unset
    m_handlers.write_property = &AbstractClassPrivate::writeProperty;
    m_handlers.read_property = &AbstractClassPrivate::readProperty;
    m_handlers.has_property = &AbstractClassPrivate::hasProperty;
    m_handlers.unset_property = &AbstractClassPrivate::unsetProperty;
-   
+
    // functions for method is called
    m_handlers.get_method = &AbstractClassPrivate::getMethod;
    m_handlers.get_closure = &AbstractClassPrivate::getClosure;
-   
+
    // functions for object destruct
    m_handlers.dtor_obj = &AbstractClassPrivate::destructObject;
    m_handlers.free_obj = &AbstractClassPrivate::freeObject;
-   
+
    // functions for type cast
    m_handlers.cast_object = &AbstractClassPrivate::cast;
    m_handlers.compare_objects = &AbstractClassPrivate::compare;
@@ -257,7 +257,7 @@ zend_object *AbstractClassPrivate::createObject(zend_class_entry *entry)
    // instantiate native c++ class associated with the meta class
    AbstractClassPrivate *abstractClsPrivatePtr = retrieve_acp_ptr_from_cls_entry(entry);
    // note: here we use StdClass type to store Derived class
-   std::unique_ptr<StdClass> nativeObject(abstractClsPrivatePtr->m_apiPtr->construct());
+   std::shared_ptr<StdClass> nativeObject(abstractClsPrivatePtr->m_apiPtr->construct());
    if (!nativeObject) {
       // report error on failure, because this function is called directly from the
       // Zend engine, we can call zend_error() here (which does a longjmp() back to
@@ -268,8 +268,14 @@ zend_object *AbstractClassPrivate::createObject(zend_class_entry *entry)
    // ObjectBinder can make an relationship on nativeObject and zend_object
    // don't warry about memory, we do relase
    // maybe memory leak
-   ObjectBinder *binder = new ObjectBinder(entry, std::move(nativeObject), abstractClsPrivatePtr->getObjectHandlers(), 1);
+   ObjectBinder *binder = new ObjectBinder(entry, nativeObject, abstractClsPrivatePtr->getObjectHandlers(), 1);
    return binder->getZendObject();
+}
+
+zend_object_handlers *AbstractClassPrivate::getObjectHandlers(zend_class_entry *entry)
+{
+   AbstractClassPrivate *abstractClsPrivatePtr = retrieve_acp_ptr_from_cls_entry(entry);
+   return abstractClsPrivatePtr->getObjectHandlers();
 }
 
 zend_object *AbstractClassPrivate::cloneObject(zval *object)
@@ -419,7 +425,7 @@ zend_object_iterator *AbstractClassPrivate::getIterator(zend_class_entry *entry,
       zend_error(E_ERROR, "Foreach by ref is not possible");
    }
    Traversable *traversable = dynamic_cast<Traversable *>(ObjectBinder::retrieveSelfPtr(object)->getNativeObject());
-   
+
    try {
       AbstractIterator *iterator = traversable->getIterator();
       // we are going to allocate an extended iterator (because php nowadays destructs
@@ -449,7 +455,7 @@ int AbstractClassPrivate::serialize(zval *object, unsigned char **buffer, size_t
    return ZAPI_SUCCESS;
 }
 
-int AbstractClassPrivate::unserialize(zval *object, zend_class_entry *entry, const unsigned char *buffer, 
+int AbstractClassPrivate::unserialize(zval *object, zend_class_entry *entry, const unsigned char *buffer,
                                       size_t bufLength, zend_unserialize_data *data)
 {
    object_init_ex(object, entry);
@@ -485,7 +491,7 @@ zval *AbstractClassPrivate::readProperty(zval *object, zval *name, int type, voi
    // from PHP. If someone wants to get a reference to such an internal variable,
    // that is in most cases simply impossible.
    // retrieve the object and class
-   
+
    try {
       ObjectBinder *objectBinder = ObjectBinder::retrieveSelfPtr(object);
       AbstractClassPrivate *selfPtr = retrieve_acp_ptr_from_cls_entry(Z_OBJCE_P(object));
@@ -502,7 +508,7 @@ zval *AbstractClassPrivate::readProperty(zval *object, zval *name, int type, voi
    } catch (const NotImplemented &exception) {
       if (!std_object_handlers.read_property) {
          // TODO here maybe problems
-         return nullptr; 
+         return nullptr;
       }
       return std_object_handlers.read_property(object, name, type, cacheSlot, rv);
    } catch (Exception &exception) {
@@ -570,7 +576,7 @@ int AbstractClassPrivate::hasProperty(zval *object, zval *name, int hasSetExists
       return std_object_handlers.has_property(object, name, hasSetExists, cacheSlot);
    } catch (Exception &exception) {
       process_exception(exception);
-      return false; 
+      return false;
    }
 }
 
@@ -644,7 +650,7 @@ zend_function *AbstractClassPrivate::getStaticMethod(zend_class_entry *entry, ze
    return reinterpret_cast<zend_function *>(callContext);
 }
 
-int AbstractClassPrivate::getClosure(zval *object, zend_class_entry **entry, zend_function **retFunc, 
+int AbstractClassPrivate::getClosure(zval *object, zend_class_entry **entry, zend_function **retFunc,
                                      zend_object **objectPtr)
 {
    CallContext *callContext = reinterpret_cast<CallContext *>(emalloc(sizeof(CallContext)));
@@ -873,42 +879,42 @@ void AbstractClass::registerProperty(const char *name, std::nullptr_t, Modifier 
 void AbstractClass::registerProperty(const char *name, int16_t value, Modifier flags)
 {
    ZAPI_D(AbstractClass);
-   implPtr->m_members.push_back(std::make_shared<NumericMember>(name, value, 
+   implPtr->m_members.push_back(std::make_shared<NumericMember>(name, value,
                                                                 flags & Modifier::PropertyModifiers));
 }
 
 void AbstractClass::registerProperty(const char *name, int32_t value, Modifier flags)
 {
    ZAPI_D(AbstractClass);
-   implPtr->m_members.push_back(std::make_shared<NumericMember>(name, value, 
+   implPtr->m_members.push_back(std::make_shared<NumericMember>(name, value,
                                                                 flags & Modifier::PropertyModifiers));
 }
 
 void AbstractClass::registerProperty(const char *name, int64_t value, Modifier flags)
 {
    ZAPI_D(AbstractClass);
-   implPtr->m_members.push_back(std::make_shared<NumericMember>(name, value, 
+   implPtr->m_members.push_back(std::make_shared<NumericMember>(name, value,
                                                                 flags & Modifier::PropertyModifiers));
 }
 
 void AbstractClass::registerProperty(const char *name, char value, Modifier flags)
 {
    ZAPI_D(AbstractClass);
-   implPtr->m_members.push_back(std::make_shared<StringMember>(name, &value, 1, 
+   implPtr->m_members.push_back(std::make_shared<StringMember>(name, &value, 1,
                                                                flags & Modifier::PropertyModifiers));
 }
 
 void AbstractClass::registerProperty(const char *name, const std::string &value, Modifier flags)
 {
    ZAPI_D(AbstractClass);
-   implPtr->m_members.push_back(std::make_shared<StringMember>(name, value, 
+   implPtr->m_members.push_back(std::make_shared<StringMember>(name, value,
                                                                flags & Modifier::PropertyModifiers));
 }
 
 void AbstractClass::registerProperty(const char *name, const char *value, Modifier flags)
 {
    ZAPI_D(AbstractClass);
-   implPtr->m_members.push_back(std::make_shared<StringMember>(name, value, std::strlen(value), 
+   implPtr->m_members.push_back(std::make_shared<StringMember>(name, value, std::strlen(value),
                                                                flags & Modifier::PropertyModifiers));
 }
 
@@ -938,28 +944,28 @@ void AbstractClass::registerProperty(const char *name, const zapi::GetterMethodC
    implPtr->m_properties[name] = std::make_shared<Property>(getter);
 }
 
-void AbstractClass::registerProperty(const char *name, const zapi::GetterMethodCallable0 &getter, 
+void AbstractClass::registerProperty(const char *name, const zapi::GetterMethodCallable0 &getter,
                                      const zapi::SetterMethodCallable0 &setter)
 {
    ZAPI_D(AbstractClass);
    implPtr->m_properties[name] = std::make_shared<Property>(getter, setter);
 }
 
-void AbstractClass::registerProperty(const char *name, const zapi::GetterMethodCallable0 &getter, 
+void AbstractClass::registerProperty(const char *name, const zapi::GetterMethodCallable0 &getter,
                                      const zapi::SetterMethodCallable1 &setter)
 {
    ZAPI_D(AbstractClass);
    implPtr->m_properties[name] = std::make_shared<Property>(getter, setter);
 }
 
-void AbstractClass::registerProperty(const char *name, const zapi::GetterMethodCallable1 &getter, 
+void AbstractClass::registerProperty(const char *name, const zapi::GetterMethodCallable1 &getter,
                                      const zapi::SetterMethodCallable0 &setter)
 {
    ZAPI_D(AbstractClass);
    implPtr->m_properties[name] = std::make_shared<Property>(getter, setter);
 }
 
-void AbstractClass::registerProperty(const char *name, const zapi::GetterMethodCallable1 &getter, 
+void AbstractClass::registerProperty(const char *name, const zapi::GetterMethodCallable1 &getter,
                                      const zapi::SetterMethodCallable1 &setter)
 {
    ZAPI_D(AbstractClass);
@@ -1002,7 +1008,7 @@ void AbstractClass::registerConstant(const Constant &constant)
    }
 }
 
-void AbstractClass::registerMethod(const char *name, zapi::ZendCallable callable, 
+void AbstractClass::registerMethod(const char *name, zapi::ZendCallable callable,
                                    Modifier flags, const Arguments &args)
 {
    m_implPtr->m_methods.push_back(std::make_shared<Method>(name, callable, (flags & Modifier::MethodModifiers), args));
@@ -1055,7 +1061,7 @@ Variant AbstractClass::callGet(StdClass *nativeObject, const std::string &name) 
    return nullptr;
 }
 
-void AbstractClass::callSet(StdClass *nativeObject, const std::string &name, 
+void AbstractClass::callSet(StdClass *nativeObject, const std::string &name,
                             const Variant &value) const
 {}
 

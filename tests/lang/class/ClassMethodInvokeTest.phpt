@@ -4,6 +4,7 @@ Class method invoke test
 <?php
 
 if (class_exists("\Person")) {
+    Person::makeNewPerson();
     $object = new \Person();
     if (method_exists($object, "showName")) {
         $object->showName();
@@ -38,7 +39,7 @@ if (class_exists("\Person")) {
     if (method_exists("Person", "concatStr")) {
         echo "the concat of abc and def is " . Person::concatStr("abc", "def");
     }
-    
+
 }
 
 ?>

@@ -67,11 +67,12 @@ public:
    zend_class_entry *initialize(AbstractClass *cls, const std::string &ns, int moduleNumber);
    std::unique_ptr<zend_function_entry[]> &getMethodEntries();
    zend_object_handlers *getObjectHandlers();
-   
+   static zend_object_handlers *getObjectHandlers(zend_class_entry *entry);
+
    // php class system facility static handle methods
    static zend_object *createObject(zend_class_entry *entry);
    static zend_object *cloneObject(zval *object);
-   
+
    // php object handlers
    static int countElements(zval *object, zend_long *count);
    static zval *readDimension(zval *object, zval *offset, int type, zval *returnValue);
@@ -80,7 +81,7 @@ public:
    static void unsetDimension(zval *object, zval *offset);
    static zend_object_iterator *getIterator(zend_class_entry *entry, zval *object, int byRef);
    static int serialize(zval *object, unsigned char **buffer, size_t *bufLength, zend_serialize_data *data);
-   static int unserialize(zval *object, zend_class_entry *entry, const unsigned char *buffer, 
+   static int unserialize(zval *object, zend_class_entry *entry, const unsigned char *buffer,
                           size_t bufLength, zend_unserialize_data *data);
    // property
    static zval *readProperty(zval *object, zval *name, int type, void **cacheSlot, zval *returnValue);
@@ -100,7 +101,7 @@ public:
    static int cast(zval *object, zval *retValue, int type);
    static int compare(zval *left, zval *right);
    static zval *toZval(Variant &&value, int type, zval *rv);
-   
+
 public:
    AbstractClass *m_apiPtr;
    std::string m_name;

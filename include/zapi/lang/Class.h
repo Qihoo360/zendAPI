@@ -44,7 +44,7 @@ class Interface;
 template <typename T>
 class Class;
 
-namespace internal 
+namespace internal
 {
 
 template <typename TargetClassType,
@@ -65,7 +65,7 @@ struct ClassMethodRegisterImpl<TargetClassType, CallalbleType, callable, false, 
 public:
    static void registerMethod(Class<TargetClassType> &meta, const char *name, Modifier flags, const Arguments &args)
    {
-      ZAPI_ASSERT_X(false, "Class::registerMethod", 
+      ZAPI_ASSERT_X(false, "Class::registerMethod",
                     "try to register class member pointer, and the class type "
                     "if the member pointer is not the registered class type");
    }
@@ -110,11 +110,11 @@ struct ClassMethodRegisterImpl<TargetClassType, CallalbleType, callable, true, t
 template <typename TargetClassType,
           typename CallalbleType,
           CallalbleType callable>
-struct ClassMethodRegister 
+struct ClassMethodRegister
       : public ClassMethodRegisterImpl<
-      TargetClassType, 
-      CallalbleType, 
-      callable, 
+      TargetClassType,
+      CallalbleType,
+      callable,
       zapi::stdext::is_function_pointer<CallalbleType>::value,
       std::is_member_function_pointer<CallalbleType>::value &&
       std::is_same<typename std::decay<typename member_pointer_traits<CallalbleType>::ClassType>::type,
@@ -127,6 +127,8 @@ template <typename T>
 class ZAPI_DECL_EXPORT Class final : public AbstractClass
 {
 public:
+   using HandlerClassType = T;
+   public:
    Class(const char *name, ClassType classType = ClassType::Regular);
    Class(const Class<T> &other);
    Class(Class<T> &&other) ZAPI_DECL_NOEXCEPT;
@@ -138,10 +140,10 @@ public:
    Class<T> &registerMethod(const char *name, Modifier flags, const Arguments &args = {});
    template <typename CallableType, CallableType callable>
    Class<T> &registerMethod(const char *name, const Arguments &args = {});
-   
+
    Class<T> &registerMethod(const char *name, Modifier flags, const Arguments &args = {});
    Class<T> &registerMethod(const char *name, const Arguments &args = {});
-   
+
    Class<T> &registerProperty(const char *name, std::nullptr_t value, Modifier flags = Modifier::Public);
    Class<T> &registerProperty(const char *name, int16_t value, Modifier flags = Modifier::Public);
    Class<T> &registerProperty(const char *name, int32_t value, Modifier flags = Modifier::Public);
@@ -157,7 +159,7 @@ public:
    Class<T> &registerProperty(const char *name, Variant (T::*getter)(), void (T::*setter)(const Variant &value) const);
    Class<T> &registerProperty(const char *name, Variant (T::*getter)() const, void (T::*setter)(const Variant &value));
    Class<T> &registerProperty(const char *name, Variant (T::*getter)() const, void (T::*setter)(const Variant &value) const);
-   
+
    Class<T> &registerConstant(const char *name, std::nullptr_t value);
    Class<T> &registerConstant(const char *name, int16_t value);
    Class<T> &registerConstant(const char *name, int32_t value);
@@ -168,10 +170,10 @@ public:
    Class<T> &registerConstant(const char *name, bool value);
    Class<T> &registerConstant(const char *name, double value);
    Class<T> &registerConstant(const Constant &constant);
-   
+
    Class<T> &registerInterface(const Interface &interface);
    Class<T> &registerInterface(Interface &&interface);
-   
+
 private:
    virtual StdClass *construct() const override;
    virtual StdClass *clone(StdClass *orig) const override;
@@ -184,55 +186,55 @@ private:
    virtual Variant callMagicCall(StdClass *nativeObject, const char *name, Parameters &params) const override;
    virtual Variant callMagicStaticCall(const char *name, Parameters &params) const override;
    virtual Variant callMagicInvoke(StdClass *nativeObject, Parameters &params) const override;
-   
+
    virtual Variant callGet(StdClass *nativeObject, const std::string &name) const override;
    virtual void callSet(StdClass *nativeObject, const std::string &name, const Variant &value) const override;
    virtual bool callIsset(StdClass *nativeObject, const std::string &name) const override;
    virtual void callUnset(StdClass *nativeObject, const std::string &name) const override;
-   
+
    virtual Variant castToString(StdClass *nativeObject) const override;
    virtual Variant castToInteger(StdClass *nativeObject) const override;
    virtual Variant castToDouble(StdClass *nativeObject) const override;
    virtual Variant castToBool(StdClass *nativeObject) const override;
-   
+
    template <typename X = T>
    typename std::enable_if<std::is_default_constructible<X>::value, StdClass *>::type
    static doConstructObject();
-   
+
    template <typename X = T>
    typename std::enable_if<!std::is_default_constructible<X>::value, StdClass *>::type
    static doConstructObject();
-   
+
    template <typename X = T>
    typename std::enable_if<std::is_copy_constructible<X>::value, StdClass *>::type
    static doCloneObject(X *orig);
-   
+
    template <typename X = T>
    typename std::enable_if<!std::is_copy_constructible<X>::value, StdClass *>::type
    static doCloneObject(X *orig);
-   
+
    template <typename X>
    class HasCallStatic
    {
       typedef char one;
       typedef long two;
-      template <typename C> 
+      template <typename C>
       static one test(decltype(&C::__callStatic));
-      template <typename C> 
+      template <typename C>
       static two test(...);
    public:
       static const bool value = sizeof(test<X>(0)) == sizeof(char);
    };
-   
+
    template <typename X>
    typename std::enable_if<HasCallStatic<X>::value, Variant>::type
    static doCallStatic(const char *name, Parameters &params);
-   
+
    template <typename X>
    typename std::enable_if<!HasCallStatic<X>::value, Variant>::type
    static doCallStatic(const char *name, Parameters &params);
    using AbstractClass::registerMethod;
-   
+
    template <typename TargetClassType, typename CallalbleType,
              CallalbleType callable, bool IsCallable, bool IsMemberCallable>
    friend class internal::ClassMethodRegisterImpl;
@@ -375,8 +377,8 @@ Class<T> &Class<T>::registerProperty(const char *name, Variant (T::*getter)() co
 }
 
 template <typename T>
-Class<T> &Class<T>::registerProperty(const char *name, Variant (T::*getter)(), 
-                           void (T::*setter)(const Variant &value))
+Class<T> &Class<T>::registerProperty(const char *name, Variant (T::*getter)(),
+                                     void (T::*setter)(const Variant &value))
 {
    AbstractClass::registerProperty(name, static_cast<zapi::GetterMethodCallable0>(getter),
                                    static_cast<zapi::SetterMethodCallable0>(setter));
@@ -384,8 +386,8 @@ Class<T> &Class<T>::registerProperty(const char *name, Variant (T::*getter)(),
 }
 
 template <typename T>
-Class<T> &Class<T>::registerProperty(const char *name, Variant (T::*getter)(), 
-                           void (T::*setter)(const Variant &value) const)
+Class<T> &Class<T>::registerProperty(const char *name, Variant (T::*getter)(),
+                                     void (T::*setter)(const Variant &value) const)
 {
    AbstractClass::registerProperty(name, static_cast<zapi::GetterMethodCallable0>(getter),
                                    static_cast<zapi::SetterMethodCallable1>(setter));
@@ -393,8 +395,8 @@ Class<T> &Class<T>::registerProperty(const char *name, Variant (T::*getter)(),
 }
 
 template <typename T>
-Class<T> &Class<T>::registerProperty(const char *name, Variant (T::*getter)() const, 
-                           void (T::*setter)(const Variant &value))
+Class<T> &Class<T>::registerProperty(const char *name, Variant (T::*getter)() const,
+                                     void (T::*setter)(const Variant &value))
 {
    AbstractClass::registerProperty(name, static_cast<zapi::GetterMethodCallable1>(getter),
                                    static_cast<zapi::SetterMethodCallable0>(setter));
@@ -402,8 +404,8 @@ Class<T> &Class<T>::registerProperty(const char *name, Variant (T::*getter)() co
 }
 
 template <typename T>
-Class<T> &Class<T>::registerProperty(const char *name, Variant (T::*getter)() const, 
-                           void (T::*setter)(const Variant &value) const)
+Class<T> &Class<T>::registerProperty(const char *name, Variant (T::*getter)() const,
+                                     void (T::*setter)(const Variant &value) const)
 {
    AbstractClass::registerProperty(name, static_cast<zapi::GetterMethodCallable1>(getter),
                                    static_cast<zapi::SetterMethodCallable1>(setter));

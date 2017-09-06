@@ -46,6 +46,7 @@ class NumericVariant;
 class DoubleVariant;
 class ArrayVariant;
 class BoolVariant;
+class ObjectVariant;
 
 } // ds
 } // zapi
@@ -102,12 +103,14 @@ public:
    Variant(const StringVariant &value);
    Variant(const DoubleVariant &value);
    Variant(const ArrayVariant &value);
+   Variant(const ObjectVariant &value);
 
    Variant(BoolVariant &&value);
    Variant(NumericVariant &&value);
    Variant(StringVariant &&value);
    Variant(DoubleVariant &&value);
    Variant(ArrayVariant &&value);
+   Variant(ObjectVariant &&value);
    template <typename T, 
              size_t arrayLength,
              typename Selector = typename std::enable_if<std::is_integral<T>::value>::type>
@@ -256,6 +259,7 @@ protected:
    friend class DoubleVariant;
    friend class ArrayVariant;
    friend class BoolVariant;
+   friend class ObjectVariant;
    ZAPI_DECLARE_PRIVATE(Variant)
    std::shared_ptr<VariantPrivate> m_implPtr;
 };

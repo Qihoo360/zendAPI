@@ -78,7 +78,7 @@ protected:
 
 public:
    virtual ~StdClass();
-   
+
    Variant callParent();
    Variant callStaticParent();
    ObjectVariant *getThisPtr() const;
@@ -108,7 +108,7 @@ public:
     * @return Value
     */
    Variant property(const std::string &name) const;
-   
+
    /**
     * Overridable method that is called right before an object is destructed
     */
@@ -237,11 +237,12 @@ public:
     *  @return int
     */
    int __compare(const StdClass &object) const;
-   
+
 protected:
    ZAPI_DECLARE_PRIVATE(StdClass)
    friend class Variant;// for Variant(const StdClass &stdClass);
    friend class ObjectBinder; // for set zend_object pointer
+   friend class ObjectVariant; // for initialze from StdClass instance
    std::unique_ptr<StdClassPrivate> m_implPtr;
 };
 

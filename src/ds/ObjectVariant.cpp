@@ -13,10 +13,15 @@
 //
 // Created by softboy on 2017/08/21.
 
+#include "zapi/lang/StdClass.h"
+#include "zapi/lang/internal/StdClassPrivate.h"
+#include "zapi/vm/internal/AbstractClassPrivate.h"
+#include "zapi/vm/ObjectBinder.h"
 #include "zapi/ds/ObjectVariant.h"
 #include "zapi/utils/CommonFuncs.h"
 #include "zapi/kernel/Exception.h"
 #include "zapi/kernel/OrigException.h"
+#include "zapi/kernel/FatalError.h"
 #include "php/Zend/zend_closures.h"
 
 using zapi::ds::Variant;
@@ -29,7 +34,7 @@ Variant do_execute(const zval *object, zval *method, int argc, zval *argv)
 {
    zval retval;
    zend_object *oldException = EG(exception);
-   if (ZAPI_SUCCESS != call_user_function_ex(CG(function_table), const_cast<zval *>(object), method, &retval, 
+   if (ZAPI_SUCCESS != call_user_function_ex(CG(function_table), const_cast<zval *>(object), method, &retval,
                                              argc, argv, 1, nullptr)) {
       std::string msg("Invalid call to ");
       msg.append(Z_STRVAL_P(method), Z_STRLEN_P(method));
@@ -60,15 +65,112 @@ namespace ds
 {
 
 using GuardStrType = std::unique_ptr<zend_string, std::function<void(zend_string *)>>;
+using zapi::vm::ObjectBinder;
+using zapi::vm::internal::AbstractClassPrivate;
 
 ObjectVariant::ObjectVariant()
 {
    convert_to_object(getUnDerefZvalPtr());
 }
 
-ObjectVariant::ObjectVariant(const StdClass &nativeObject)
-   : Variant(nativeObject)
+ObjectVariant::ObjectVariant(const Variant &other)
+{
+   zval *from = const_cast<zval *>(other.getZvalPtr());
+   zval *self = getUnDerefZvalPtr();
+   if (other.getType() == Type::Object) {
+      ZVAL_COPY(self, from);
+   } else {
+      zval temp;
+      // will increase 1 to gc refcount
+      ZVAL_DUP(&temp, from);
+      // will decrease 1 to gc refcount
+      convert_to_object(&temp);
+      ZVAL_COPY_VALUE(self, &temp);
+   }
+}
+
+ObjectVariant::ObjectVariant(const ObjectVariant &other)
+   : Variant(other)
 {}
+
+ObjectVariant::ObjectVariant(const std::string &className, std::shared_ptr<StdClass> nativeObject)
+{
+   zend_object *zobject = nativeObject->m_implPtr->m_zendObject;
+   if (!zobject) {
+      // new construct
+      zend_string *clsName = zend_string_init(className.c_str(), className.length(), 0);
+      zend_class_entry *entry = zend_fetch_class(clsName, ZEND_FETCH_CLASS_SILENT);
+      zend_string_free(clsName);
+      if (!entry) {
+         throw zapi::kernel::FatalError(std::string("Unknown class name ") + className);
+      }
+      ObjectBinder *binder = new ObjectBinder(entry, nativeObject,
+                                              AbstractClassPrivate::getObjectHandlers(entry), 0);
+      zobject = binder->getZendObject();
+   }
+   zval *self = getUnDerefZvalPtr();
+   ZVAL_OBJ(self, zobject);
+   Z_ADDREF_P(self);
+}
+
+ObjectVariant::ObjectVariant(Variant &&other)
+   : Variant(std::move(other))
+{
+   if (getUnDerefType() != Type::Object) {
+      convert_to_object(getUnDerefZvalPtr());
+   }
+}
+
+ObjectVariant::ObjectVariant(ObjectVariant &&other) ZAPI_DECL_NOEXCEPT
+   : Variant(std::move(other))
+{}
+
+ObjectVariant &ObjectVariant::operator =(const ObjectVariant &other)
+{
+   if (this != &other) {
+      Variant::operator =(const_cast<zval *>(other.getZvalPtr()));
+   }
+   return *this;
+}
+
+ObjectVariant &ObjectVariant::operator =(const Variant &other)
+{
+   if (this != &other) {
+      zval *self = getZvalPtr();
+      zval *from = const_cast<zval *>(other.getZvalPtr());
+      // need set gc info
+      if (other.getType() == Type::Object) {
+         // standard copy
+         Variant::operator =(from);
+      } else {
+         zval temp;
+         // will increase 1 to gc refcount
+         ZVAL_DUP(&temp, from);
+         // will decrease 1 to gc refcount
+         convert_to_object(&temp);
+         zval_dtor(self);
+         ZVAL_COPY_VALUE(self, &temp);
+      }
+   }
+   return *this;
+}
+
+ObjectVariant &ObjectVariant::operator =(ObjectVariant &&other) ZAPI_DECL_NOEXCEPT
+{
+   assert(this != &other);
+   m_implPtr = std::move(other.m_implPtr);
+   return *this;
+}
+
+ObjectVariant &ObjectVariant::operator =(Variant &&other)
+{
+   assert(this != &other);
+   m_implPtr = std::move(other.m_implPtr);
+   if (getUnDerefType() != Type::Object) {
+      convert_to_object(getUnDerefZvalPtr());
+   }
+   return *this;
+}
 
 bool ObjectVariant::isCallable(const char *name) const
 {
@@ -78,7 +180,7 @@ bool ObjectVariant::isCallable(const char *name) const
    zval *self = const_cast<zval *>(getZvalPtr());
    zend_class_entry *classEntry = Z_OBJCE_P(self);
    // TODO watch the resource release
-   GuardStrType methodName(zend_string_init(name, std::strlen(name), 0), 
+   GuardStrType methodName(zend_string_init(name, std::strlen(name), 0),
                            zapi::utils::std_zend_string_force_deleter);
    zapi::utils::str_tolower(ZSTR_VAL(methodName.get()));
    if (zend_hash_exists(&classEntry->function_table, methodName.get())) {
@@ -94,7 +196,7 @@ bool ObjectVariant::isCallable(const char *name) const
    if (!(func->common.fn_flags & ZEND_ACC_CALL_VIA_TRAMPOLINE)) {
       return true;
    }
-   bool result = func->common.scope == zend_ce_closure && 
+   bool result = func->common.scope == zend_ce_closure &&
          zend_string_equals_literal(methodName.get(), ZEND_INVOKE_FUNC_NAME);
    zend_string_release(func->common.function_name);
    zend_free_trampoline(func);
@@ -118,7 +220,7 @@ bool ObjectVariant::instanceOf(const char *className, size_t size) const
    if (!thisClsEntry) {
       return false;
    }
-   GuardStrType clsName(zend_string_init(className, size, 0), 
+   GuardStrType clsName(zend_string_init(className, size, 0),
                         zapi::utils::std_zend_string_force_deleter);
    zend_class_entry *clsEntry = zend_lookup_class_ex(clsName.get(), nullptr, 0);
    if (!clsEntry) {
@@ -143,7 +245,7 @@ bool ObjectVariant::derivedFrom(const char *className, size_t size) const
    if (!thisClsEntry) {
       return false;
    }
-   GuardStrType clsName(zend_string_init(className, size, 0), 
+   GuardStrType clsName(zend_string_init(className, size, 0),
                         zapi::utils::std_zend_string_force_deleter);
    zend_class_entry *clsEntry = zend_lookup_class_ex(clsName.get(), nullptr, 0);
    if (!clsEntry) {

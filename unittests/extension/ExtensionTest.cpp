@@ -10,6 +10,7 @@
 #include "php/Zend/zend_variables.h"
 #include "php/main/php_ini.h"
 #include "gtest/gtest.h"
+#include "zapi/ds/ObjectVariant.h"
 
 #include <iostream>
 #include <limits>
@@ -24,6 +25,7 @@ using zapi::lang::Extension;
 using zapi::lang::Ini;
 using zapi::lang::Constant;
 using zapi::vm::Engine;
+using zapi::ds::ObjectVariant;
 
 static std::string phpOutput;
 
@@ -45,7 +47,7 @@ static std::string phpOutput;
 //   // we set this in dummy extension, so we get this from here
 //   // this value we get it from zend engine
 //   ASSERT_STREQ(zapi::ini_get("zapi_author"), "xiuxiu");
-//   // define in php.ini but not regiester 
+//   // define in php.ini but not regiester
 //   ASSERT_EQ(zapi::ini_get("zapi_leader"), nullptr);
 //   ASSERT_STREQ(zapi::ini_get("zapi_team_address"), "shanghai");
 //   ASSERT_STREQ(zapi::ini_get("zapi_product"), "libpdk");
@@ -94,34 +96,34 @@ static std::string phpOutput;
 //   phpOutput.clear();
 //}
 
-TEST(ExtensionTest, testFuncRegister)
-{
-   std::string code("show_something();");
-   //   Engine::eval(code);
-   //   ASSERT_EQ(phpOutput, "hello world, zapi");
-   //   phpOutput.clear();
-   //   code = "print_name(\"zapi\");";
-   //   Engine::eval(code);
-   //   ASSERT_EQ(phpOutput, "zapi");
-   //   phpOutput.clear();
-   //   code = "print_name_and_age(\"zzu_softboy\", 27);";
-   //   Engine::eval(code);
-   //   ASSERT_EQ(phpOutput, "name: zzu_softboy age: 27");
-   //   phpOutput.clear();
-   // code = "zapi\\io\\print_name(\"zapi\");";
-   //Engine::eval(code);
-   //   ASSERT_EQ(phpOutput, "bool(true)\n");
-   
-   /// code = "zapi\\io\\print_sum(1, 2, 3, 4, 5, 9, 10, 11, 12);";
-   //   code = "echo \\get_name();";
-//   code = "echo \\add_two_number(1, 2);";
-//   code = "echo \\zapi\\io\\calculate_sum(1, 2, 3, 4, 5);";
-//   code = "$p = new Person;$p->print_sum(1, 2, 3, 4);";
-//   code = "$p = new Person;echo Person::concatStr('abc-', 'efg');";
-   code = "$num = 123;\\get_value_ref($num);echo $num;";
-   Engine::eval(code);
-   std::cout << phpOutput << std::endl;
-}
+//TEST(ExtensionTest, testFuncRegister)
+//{
+//   std::string code("show_something();");
+//   //   Engine::eval(code);
+//   //   ASSERT_EQ(phpOutput, "hello world, zapi");
+//   //   phpOutput.clear();
+//   //   code = "print_name(\"zapi\");";
+//   //   Engine::eval(code);
+//   //   ASSERT_EQ(phpOutput, "zapi");
+//   //   phpOutput.clear();
+//   //   code = "print_name_and_age(\"zzu_softboy\", 27);";
+//   //   Engine::eval(code);
+//   //   ASSERT_EQ(phpOutput, "name: zzu_softboy age: 27");
+//   //   phpOutput.clear();
+//   // code = "zapi\\io\\print_name(\"zapi\");";
+//   //Engine::eval(code);
+//   //   ASSERT_EQ(phpOutput, "bool(true)\n");
+
+//   /// code = "zapi\\io\\print_sum(1, 2, 3, 4, 5, 9, 10, 11, 12);";
+//   //   code = "echo \\get_name();";
+////   code = "echo \\add_two_number(1, 2);";
+////   code = "echo \\zapi\\io\\calculate_sum(1, 2, 3, 4, 5);";
+////   code = "$p = new Person;$p->print_sum(1, 2, 3, 4);";
+////   code = "$p = new Person;echo Person::concatStr('abc-', 'efg');";
+//   code = "$num = 123;\\get_value_ref($num);echo $num;";
+//   Engine::eval(code);
+//   std::cout << phpOutput << std::endl;
+//}
 
 //TEST(ExtensionTest, testClassRegister)
 //{

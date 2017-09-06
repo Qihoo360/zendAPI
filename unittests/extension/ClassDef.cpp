@@ -1,5 +1,9 @@
 #include "ClassDef.h"
 #include <string>
+#include "zapi/ds/ObjectVariant.h"
+
+using zapi::ds::ObjectVariant;
+
 Person::Person()
    : m_name("zzu_softboy"),
      m_age(0)
@@ -7,7 +11,7 @@ Person::Person()
 
 void Person::showName()
 {
-   zapi::out << "my name is zapi" << std::endl;   
+   zapi::out << "my name is zapi" << std::endl;
 }
 
 void Person::setAge(const NumericVariant &age)
@@ -27,7 +31,7 @@ Variant Person::getName()
 
 void Person::staticShowName()
 {
-   zapi::out << "static my name is zapi" << std::endl;   
+   zapi::out << "static my name is zapi" << std::endl;
 }
 
 StringVariant Person::concatStr(const StringVariant &lhs, const StringVariant &rhs)
@@ -37,12 +41,17 @@ StringVariant Person::concatStr(const StringVariant &lhs, const StringVariant &r
 
 void Person::staticProtectedMethod()
 {
-   
+
 }
 
 void Person::staticPrivateMethod()
 {
-   
+
+}
+
+void Person::makeNewPerson()
+{
+   ObjectVariant obj("Person", std::make_shared<Person>());
 }
 
 void Person::print_sum(zapi::ds::NumericVariant argQuantity, ...)
@@ -69,12 +78,12 @@ int Person::addSum(NumericVariant argQuantity, ...)
 
 void Person::protectedMethod()
 {
-   
+
 }
 
 void Person::privateMethod()
 {
-   
+
 }
 
 int Person::addTwoNum(const NumericVariant &num1, const NumericVariant &num2)
@@ -174,7 +183,7 @@ bool MagicMethodClass::__isset(const std::string &key) const
 {
    zapi::out << "MagicMethodClass::__isset is called" << std::endl;
    if (key == "prop1") {
-      return true; 
+      return true;
    } else if (key == "teamName" && !m_teamNameUnset) {
       return true;
    } else if (key == "address" && !m_teamAddressUnset) {
@@ -266,5 +275,5 @@ void MagicMethodClass::unserialize(const char *input, size_t size)
 
 MagicMethodClass::~MagicMethodClass() ZAPI_DECL_NOEXCEPT
 {
-   
+
 }

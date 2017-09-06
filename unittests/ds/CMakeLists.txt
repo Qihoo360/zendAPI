@@ -5,5 +5,6 @@ set(DS_TEST_SRCS
     NumericVariantTest.cpp
     StringVariantTest.cpp
     ArrayVariantTest.cpp
-    VariantTest.cpp)
+    VariantTest.cpp
+    ObjectVariantTest.cpp)
 zapi_add_unittest(UnitTests DsTest ${DS_TEST_SRCS})

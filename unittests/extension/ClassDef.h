@@ -17,20 +17,19 @@ public:
    void print_sum(NumericVariant argQuantity, ...);
    void setAge(const NumericVariant &age);
    int getAge();
-   
+
    Variant getName();
    int addTwoNum(const NumericVariant &num1, const NumericVariant &num2);
    int addSum(NumericVariant argQuantity, ...);
    // access level test method
    void protectedMethod();
    void privateMethod();
-   
+
    static void staticShowName();
    static StringVariant concatStr(const StringVariant &lhs, const StringVariant &rhs);
    static void staticProtectedMethod();
    static void staticPrivateMethod();
-   
-   
+   static void makeNewPerson();
 private:
    /**
      *  The initial value
@@ -72,7 +71,7 @@ public:
 
 class NonMagicMethodClass : public StdClass
 {
-   
+
 };
 
 class MagicMethodClass : public StdClass, public zapi::protocol::Serializable
@@ -100,5 +99,6 @@ private:
    int m_length = 0;
    std::string m_address;
 };
+
 
 #endif // ZAPI_UNITTEST_BRIDGE_DUMMYEXT_CLASS_DEF_H
