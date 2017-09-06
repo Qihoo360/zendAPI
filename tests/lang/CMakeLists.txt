@@ -43,4 +43,6 @@ set(ZAPI_PHP_TESTS
     lang/class/ClassMagicSerializeTest.phpt
     lang/class/ClassMagicCompareTest.phpt
     
+    lang/class/ObjectVariantInvokeTest.phpt
+    
     PARENT_SCOPE)

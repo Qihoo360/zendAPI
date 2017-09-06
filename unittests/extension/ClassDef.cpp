@@ -3,6 +3,7 @@
 #include "zapi/ds/ObjectVariant.h"
 
 using zapi::ds::ObjectVariant;
+using zapi::ds::StringVariant;
 
 Person::Person()
    : m_name("zzu_softboy"),
@@ -275,5 +276,24 @@ void MagicMethodClass::unserialize(const char *input, size_t size)
 
 MagicMethodClass::~MagicMethodClass() ZAPI_DECL_NOEXCEPT
 {
+   
+}
 
+
+Variant ObjectVariantClass::__invoke(Parameters &params) const
+{
+   zapi::out << params.size() << std::endl;
+   zval *xx = params.at(0).getUnDerefZvalPtr();
+   StringVariant str(params.at(0).getUnDerefZvalPtr(), true);
+   str = "zapi";
+   return "zapi";
+}
+
+void ObjectVariantClass::forwardInvoke()
+{
+   ObjectVariant obj("ObjectVariantClass", std::make_shared<ObjectVariantClass>());
+   Variant str("xxx");
+   obj.classInvoke(str.makeReferenceByZval(), 123, 456, 222);
+   zval *xx = str.getZvalPtr();
+   zval *xx1 = str.getZvalPtr();
 }

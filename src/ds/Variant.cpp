@@ -765,7 +765,7 @@ zval Variant::detach(bool keeprefcount)
 
 Variant Variant::makeReferenceByZval()
 {
-   return Variant(*this, true);
+   return Variant(getUnDerefZvalPtr(), true);
 }
 
 /**

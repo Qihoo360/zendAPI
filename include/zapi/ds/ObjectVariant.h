@@ -48,6 +48,8 @@ public:
    ObjectVariant &operator =(ObjectVariant &&other) ZAPI_DECL_NOEXCEPT;
    ObjectVariant &operator =(Variant &&other);
    
+   Variant operator()();
+   
    ObjectVariant &setProperty(const std::string &name, const Variant &value);
    Variant getProperty(const std::string &name);
    ObjectVariant &setStaticProperty(const std::string &name, const Variant &value);
@@ -62,6 +64,9 @@ public:
    Variant call(const char *name, Args&&... args);
    template <typename ...Args>
    Variant call(const char *name, Args&&... args) const;
+   
+   template <typename ...Args>
+   Variant classInvoke(Args&&... args);
 
    bool instanceOf(const char *className, size_t size) const;
    bool instanceOf(const char *className) const;
@@ -73,6 +78,7 @@ public:
 private:
    Variant exec(const char *name, int argc, Variant *argv);
    Variant exec(const char *name, int argc, Variant *argv) const;
+   bool doClassInvoke(int argc, Variant *argv, zval *retval);
 };
 
 template <typename ...Args>
@@ -86,6 +92,19 @@ template <typename ...Args>
 Variant ObjectVariant::call(const char *name, Args&&... args)
 {
    return const_cast<const ObjectVariant &>(*this).call(name, args...);
+}
+
+template <typename ...Args>
+Variant ObjectVariant::classInvoke(Args&&... args)
+{
+   Variant vargs[] = { Variant(std::forward<Args>(args))... };
+   zval result;
+   if (doClassInvoke(sizeof...(Args), vargs, &result)) {
+      Variant ret(&result);
+      zval_dtor(&result);
+      return ret;
+   }
+   return nullptr;
 }
 
 } // ds

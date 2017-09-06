@@ -144,7 +144,8 @@ StringVariant::StringVariant(zval *other, bool isRef)
 {
    zval *self = getUnDerefZvalPtr();
    if (nullptr != other && Z_TYPE_P(other) != IS_NULL) {
-      if (isRef && Z_TYPE_P(other) == IS_STRING) {
+      if (isRef && (Z_TYPE_P(other) == IS_STRING || 
+                    (Z_TYPE_P(other) == IS_REFERENCE && Z_TYPE_P(Z_REFVAL_P(other)) == IS_STRING))) {
          SEPARATE_STRING(other);
          ZVAL_MAKE_REF(other);
          zend_reference *ref = Z_REF_P(other);

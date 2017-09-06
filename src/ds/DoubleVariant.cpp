@@ -58,7 +58,8 @@ DoubleVariant::DoubleVariant(zval *other, bool isRef)
 {
    zval *self = getUnDerefZvalPtr();
    if (nullptr != other) {
-      if (isRef && Z_TYPE_P(other) == IS_DOUBLE) {
+      if (isRef && (Z_TYPE_P(other) == IS_DOUBLE ||
+                    (Z_TYPE_P(other) == IS_REFERENCE && Z_TYPE_P(Z_REFVAL_P(other)) == IS_DOUBLE))) {
          ZVAL_MAKE_REF(other);
          zend_reference *ref = Z_REF_P(other);
          ++GC_REFCOUNT(ref);

@@ -23,6 +23,7 @@
 #include "zapi/kernel/OrigException.h"
 #include "zapi/kernel/FatalError.h"
 #include "php/Zend/zend_closures.h"
+#include <ostream>
 
 using zapi::ds::Variant;
 using zapi::kernel::Exception;
@@ -172,6 +173,12 @@ ObjectVariant &ObjectVariant::operator =(Variant &&other)
    return *this;
 }
 
+Variant ObjectVariant::operator()()
+{
+   zapi::error << "Function name must be a string" << std::endl;
+   return nullptr;
+}
+
 ObjectVariant &ObjectVariant::setProperty(const std::string &name, const Variant &value)
 {
    zval *self = getUnDerefZvalPtr();
@@ -190,7 +197,7 @@ Variant ObjectVariant::getProperty(const std::string &name)
 ObjectVariant &ObjectVariant::setStaticProperty(const std::string &name, const Variant &value)
 {
    zend_update_static_property(Z_OBJCE_P(getUnDerefZvalPtr()), name.c_str(), name.length(), 
-                        const_cast<zval *>(value.getUnDerefZvalPtr()));
+                               const_cast<zval *>(value.getUnDerefZvalPtr()));
    return *this;
 }
 
@@ -326,6 +333,115 @@ Variant ObjectVariant::exec(const char *name, int argc, Variant *argv) const
       params[i] = *argv[i].getZvalPtr();
    }
    return do_execute(getZvalPtr(), methodName.getZvalPtr(), argc, params);
+}
+
+bool ObjectVariant::doClassInvoke(int argc, Variant *argv, zval *retval)
+{
+   zval *self = getUnDerefZvalPtr();
+   zend_execute_data *call;
+   zend_execute_data dummy_execute_data;
+   zend_function *func;
+   if (!EG(active)) {
+      return false; /* executor is already inactive */
+   }
+   if (EG(exception)) {
+      return false; /* we would result in an instable executor otherwise */
+   }
+   if (!EG(current_execute_data)) {
+      /* This only happens when we're called outside any execute()'s
+          * It shouldn't be strictly necessary to NULL execute_data out,
+          * but it may make bugs easier to spot
+          */
+      memset(&dummy_execute_data, 0, sizeof(zend_execute_data));
+      EG(current_execute_data) = &dummy_execute_data;
+   } else if (EG(current_execute_data)->func &&
+              ZEND_USER_CODE(EG(current_execute_data)->func->common.type) &&
+              EG(current_execute_data)->opline->opcode != ZEND_DO_FCALL &&
+              EG(current_execute_data)->opline->opcode != ZEND_DO_ICALL &&
+              EG(current_execute_data)->opline->opcode != ZEND_DO_UCALL &&
+              EG(current_execute_data)->opline->opcode != ZEND_DO_FCALL_BY_NAME) {
+      /* Insert fake frame in case of include or magic calls */
+      dummy_execute_data = *EG(current_execute_data);
+      dummy_execute_data.prev_execute_data = EG(current_execute_data);
+      dummy_execute_data.call = NULL;
+      dummy_execute_data.opline = NULL;
+      dummy_execute_data.func = NULL;
+      EG(current_execute_data) = &dummy_execute_data;
+   }
+   zend_class_entry *calledScope = Z_OBJCE_P(self);
+   zend_object *object;
+   uint32_t callInfo = ZEND_CALL_NESTED_FUNCTION | ZEND_CALL_DYNAMIC;
+   
+   if (EXPECTED(Z_OBJ_HANDLER_P(self, get_closure)) &&
+       EXPECTED(Z_OBJ_HANDLER_P(self, get_closure)(self, &calledScope, &func, &object) == ZAPI_SUCCESS)) {
+      if (func->common.fn_flags & ZEND_ACC_CLOSURE) {
+         /* Delay closure destruction until its invocation */
+         ZEND_ASSERT(GC_TYPE((zend_object*)func->common.prototype) == IS_OBJECT);
+         GC_REFCOUNT((zend_object*)func->common.prototype)++;
+         callInfo |= ZEND_CALL_CLOSURE;
+      } else if (object) {
+         callInfo |= ZEND_CALL_RELEASE_THIS;
+      }
+   } else {
+      zend_throw_error(NULL, "Function name must be a string");
+      return false;
+   }
+   call = zend_vm_stack_push_call_frame(callInfo, func, argc, calledScope, object);
+   
+   for (int i = 0; i< argc; i++) {
+      zval *param;
+      zval *arg = argv[i].getUnDerefZvalPtr();
+      
+      if (ARG_SHOULD_BE_SENT_BY_REF(func, i + 1)) {
+         if (UNEXPECTED(!Z_ISREF_P(arg))) {
+            if (!ARG_MAY_BE_SENT_BY_REF(func, i + 1)) {
+               /* By-value send is not allowed -- emit a warning,
+                   * but still perform the call with a by-value send. */
+               zend_error(E_WARNING,
+                          "Parameter %d to %s%s%s() expected to be a reference, value given", i+1,
+                          func->common.scope ? ZSTR_VAL(func->common.scope->name) : "",
+                          func->common.scope ? "::" : "",
+                          ZSTR_VAL(func->common.function_name));
+            } else {
+               ZVAL_NEW_REF(arg, arg);
+            }
+         }
+      } else {
+         if (Z_ISREF_P(arg) &&
+             !(func->common.fn_flags & ZEND_ACC_CALL_VIA_TRAMPOLINE)) {
+            /* don't separate references for __call */
+            arg = Z_REFVAL_P(arg);
+         }
+      }
+      
+      param = ZEND_CALL_ARG(call, i+1);
+      ZVAL_COPY(param, arg);
+   }
+   
+   assert(func->type == ZEND_INTERNAL_FUNCTION);
+   ZVAL_NULL(retval);
+   call->prev_execute_data = EG(current_execute_data);
+   call->return_value = NULL; /* this is not a constructor call */
+   EG(current_execute_data) = call;
+   if (EXPECTED(zend_execute_internal == NULL)) {
+      /* saves one function call if zend_execute_internal is not used */
+      func->internal_function.handler(call, retval);
+   } else {
+      zend_execute_internal(call, retval);
+   }
+   EG(current_execute_data) = call->prev_execute_data;
+   zend_vm_stack_free_args(call);
+   if (EG(exception)) {
+      zval_ptr_dtor(retval);
+      ZVAL_UNDEF(retval);
+   }
+   if (EG(current_execute_data) == &dummy_execute_data) {
+      EG(current_execute_data) = dummy_execute_data.prev_execute_data;
+   }
+   if (EG(exception)) {
+      zend_throw_exception_internal(nullptr);
+   }
+   return true;
 }
 
 } // ds

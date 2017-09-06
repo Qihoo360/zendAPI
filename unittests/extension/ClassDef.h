@@ -100,5 +100,12 @@ private:
    std::string m_address;
 };
 
+class ObjectVariantClass : public StdClass
+{
+public:
+   Variant __invoke(Parameters &params) const;
+   void forwardInvoke();
+};
+
 
 #endif // ZAPI_UNITTEST_BRIDGE_DUMMYEXT_CLASS_DEF_H

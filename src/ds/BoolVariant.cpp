@@ -43,7 +43,9 @@ BoolVariant::BoolVariant(zval *other, bool isRef)
 {
    zval *self = getUnDerefZvalPtr();
    if (nullptr != other) {
-      if (isRef && (Z_TYPE_P(other) == IS_TRUE || Z_TYPE_P(other) == IS_FALSE)) {
+      if (isRef && ((Z_TYPE_P(other) == IS_TRUE || Z_TYPE_P(other) == IS_FALSE) ||
+                    (Z_TYPE_P(other) == IS_REFERENCE && 
+                     (Z_TYPE_P(Z_REFVAL_P(other)) == IS_TRUE || Z_TYPE_P(Z_REFVAL_P(other)) == IS_FALSE)))) {
          ZVAL_MAKE_REF(other);
          zend_reference *ref = Z_REF_P(other);
          ++GC_REFCOUNT(ref);

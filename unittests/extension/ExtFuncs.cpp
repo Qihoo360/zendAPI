@@ -237,6 +237,13 @@ void register_magic_method_cls(Extension &extension)
    extension.registerClass(magicMethodClass);
 }
 
+void register_object_variant_cls(Extension &extension)
+{
+   zapi::lang::Class<ObjectVariantClass> objectVariantClass("ObjectVariantClass");
+   objectVariantClass.registerMethod<decltype(&ObjectVariantClass::forwardInvoke), &ObjectVariantClass::forwardInvoke>("forwardInvoke");
+   extension.registerClass(objectVariantClass);
+}
+
 void register_cls(Extension &extension)
 {
    zapi::lang::Class<Person> personClass("Person");
@@ -292,6 +299,7 @@ void register_cls(Extension &extension)
    register_construct_and_destruct(extension);
    register_props_test_cls(extension);
    register_magic_method_cls(extension);
+   register_object_variant_cls(extension);
 }
 
 
