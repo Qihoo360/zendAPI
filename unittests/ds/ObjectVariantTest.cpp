@@ -16,11 +16,15 @@
 #include "php/sapi/embed/php_embed.h"
 #include "gtest/gtest.h"
 #include "zapi/ds/ObjectVariant.h"
+#include "zapi/ds/StringVariant.h"
+#include "zapi/ds/NumericVariant.h"
 #include <iostream>
 #include <string>
 #include <vector>
 
 using zapi::ds::ObjectVariant;
+using zapi::ds::StringVariant;
+using zapi::ds::NumericVariant;
 using zapi::ds::Variant;
 using zapi::lang::Type;
 
@@ -78,4 +82,23 @@ TEST(ObjectVariantTest, testStdObject)
       ASSERT_EQ(stdObj.getRefCount(), 1);
       ASSERT_EQ(stdObj.getUnDerefType(), Type::Object);
    }
+}
+
+TEST(ObjectVariantTest, testSetAndGetProps)
+{
+   ObjectVariant stdObj;
+   ASSERT_FALSE(stdObj.hasProperty("name"));
+   stdObj.setProperty("name", "zapi");
+   ASSERT_TRUE(stdObj.hasProperty("name"));
+   ASSERT_EQ(StringVariant(stdObj.getProperty("name")).toString(), "zapi");
+   stdObj.setProperty("name", "UnicornTeam");
+   ASSERT_EQ(StringVariant(stdObj.getProperty("name")).toString(), "UnicornTeam");
+   ASSERT_FALSE(stdObj.hasProperty("age"));
+   stdObj.setProperty("age", 27);
+   ASSERT_TRUE(stdObj.hasProperty("age"));
+   ASSERT_EQ(NumericVariant(stdObj.getProperty("age")).toLong(), 27);
+   // test static property
+   // Fatal error: Access to undeclared static property: stdClass::$name in Unknown on line 0
+   //stdObj.setStaticProperty("name", "zzu_softboy");
+   //ASSERT_EQ(StringVariant(stdObj.getStaticProperty("name")).toString(), "zzu_softboy");
 }

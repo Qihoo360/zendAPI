@@ -47,6 +47,12 @@ public:
    ObjectVariant &operator =(const Variant &other);
    ObjectVariant &operator =(ObjectVariant &&other) ZAPI_DECL_NOEXCEPT;
    ObjectVariant &operator =(Variant &&other);
+   
+   ObjectVariant &setProperty(const std::string &name, const Variant &value);
+   Variant getProperty(const std::string &name);
+   ObjectVariant &setStaticProperty(const std::string &name, const Variant &value);
+   Variant getStaticProperty(const std::string &name);
+   bool hasProperty(const std::string &name);
 
    bool isCallable(const char *name) const;
    Variant call(const char *name);
@@ -64,7 +70,7 @@ public:
    bool derivedFrom(const char *className, size_t size) const;
    bool derivedFrom(const char *className) const;
    bool derivedFrom(const std::string &className) const;
-protected:
+private:
    Variant exec(const char *name, int argc, Variant *argv);
    Variant exec(const char *name, int argc, Variant *argv) const;
 };

@@ -172,6 +172,52 @@ ObjectVariant &ObjectVariant::operator =(Variant &&other)
    return *this;
 }
 
+ObjectVariant &ObjectVariant::setProperty(const std::string &name, const Variant &value)
+{
+   zval *self = getUnDerefZvalPtr();
+   zend_update_property(Z_OBJCE_P(self), self, name.c_str(), name.length(), 
+                        const_cast<zval *>(value.getUnDerefZvalPtr()));
+   return *this;
+}
+
+Variant ObjectVariant::getProperty(const std::string &name)
+{
+   zval *self = getUnDerefZvalPtr();
+   zval retval;
+   return zend_read_property(Z_OBJCE_P(self), self, name.c_str(), name.length(), 1, &retval);
+}
+
+ObjectVariant &ObjectVariant::setStaticProperty(const std::string &name, const Variant &value)
+{
+   zend_update_static_property(Z_OBJCE_P(getUnDerefZvalPtr()), name.c_str(), name.length(), 
+                        const_cast<zval *>(value.getUnDerefZvalPtr()));
+   return *this;
+}
+
+Variant ObjectVariant::getStaticProperty(const std::string &name)
+{
+   return zend_read_static_property(Z_OBJCE_P(getUnDerefZvalPtr()), name.c_str(), name.length(), 1);
+}
+
+bool ObjectVariant::hasProperty(const std::string &name)
+{
+   int value = 0;
+   zval *self = getUnDerefZvalPtr();
+   zend_class_entry *scope = Z_OBJCE_P(self);
+   zend_class_entry *old_scope = EG(fake_scope);
+   EG(fake_scope) = scope;
+   if (!Z_OBJ_HT_P(self)->has_property) {
+      zend_error_noreturn(E_CORE_ERROR, "Property %s of class %s cannot be read", name.c_str(), ZSTR_VAL(Z_OBJCE_P(self)->name));
+   }
+   zval nameZval;
+   ZVAL_STRINGL(&nameZval, name.c_str(), name.length());
+   // @TODO if I have time, I will find this cache, now pass nullptr
+   value = Z_OBJ_HT_P(self)->has_property(self, &nameZval, 2, nullptr);
+   zval_dtor(&nameZval);
+   EG(fake_scope) = old_scope;
+   return 1 == value;
+}
+
 bool ObjectVariant::isCallable(const char *name) const
 {
    if (Type::Object != getType()) {
