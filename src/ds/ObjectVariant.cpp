@@ -173,12 +173,6 @@ ObjectVariant &ObjectVariant::operator =(Variant &&other)
    return *this;
 }
 
-Variant ObjectVariant::operator()()
-{
-   zapi::error << "Function name must be a string" << std::endl;
-   return nullptr;
-}
-
 ObjectVariant &ObjectVariant::setProperty(const std::string &name, const Variant &value)
 {
    zval *self = getUnDerefZvalPtr();
@@ -421,9 +415,9 @@ bool ObjectVariant::doClassInvoke(int argc, Variant *argv, zval *retval)
    assert(func->type == ZEND_INTERNAL_FUNCTION);
    ZVAL_NULL(retval);
    call->prev_execute_data = EG(current_execute_data);
-   call->return_value = NULL; /* this is not a constructor call */
+   call->return_value = nullptr; /* this is not a constructor call */
    EG(current_execute_data) = call;
-   if (EXPECTED(zend_execute_internal == NULL)) {
+   if (EXPECTED(zend_execute_internal == nullptr)) {
       /* saves one function call if zend_execute_internal is not used */
       func->internal_function.handler(call, retval);
    } else {

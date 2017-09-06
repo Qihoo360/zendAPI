@@ -282,18 +282,23 @@ MagicMethodClass::~MagicMethodClass() ZAPI_DECL_NOEXCEPT
 
 Variant ObjectVariantClass::__invoke(Parameters &params) const
 {
-   zapi::out << params.size() << std::endl;
-   zval *xx = params.at(0).getUnDerefZvalPtr();
+   zapi::out << "ObjectVariantClass::__invoke invoked" << std::endl;
    StringVariant str(params.at(0).getUnDerefZvalPtr(), true);
+   NumericVariant result;
+   for (int i = 1; i < params.size(); i++) {
+      result += NumericVariant(params.at(i));
+   }
    str = "zapi";
-   return "zapi";
+   return str;
 }
 
 void ObjectVariantClass::forwardInvoke()
 {
    ObjectVariant obj("ObjectVariantClass", std::make_shared<ObjectVariantClass>());
    Variant str("xxx");
-   obj.classInvoke(str.makeReferenceByZval(), 123, 456, 222);
-   zval *xx = str.getZvalPtr();
-   zval *xx1 = str.getZvalPtr();
+   zapi::out << "begin invoke ObjectVariant::classInvoke : the text is xxx" << std::endl;
+   Variant result = obj(str.makeReferenceByZval(), 123, 456, 222);
+   zapi::out << "after invoke ObjectVariant::classInvoke : this text is " << result << std::endl;
+   ObjectVariant obj1("NonMagicMethodClass", std::make_shared<NonMagicMethodClass>());
+   // obj1(1, 2); // Fatal error: Function name must be a string
 }
