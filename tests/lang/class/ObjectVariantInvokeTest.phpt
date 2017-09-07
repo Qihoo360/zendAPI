@@ -5,11 +5,8 @@ ObjectVariant invoke test
 
 if (class_exists("ObjectVariantClass")) {
     $object = new ObjectVariantClass();
-    $object->forwardInvoke();
+    //$object->forwardInvoke();
 }
 
 ?>
 --EXPECT--
-begin invoke ObjectVariant::classInvoke : the text is xxx
-ObjectVariantClass::__invoke invoked
-after invoke ObjectVariant::classInvoke : this text is zapi

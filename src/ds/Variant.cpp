@@ -968,7 +968,7 @@ bool Variant::toBool() const ZAPI_DECL_NOEXCEPT
 std::string Variant::toString() const ZAPI_DECL_NOEXCEPT
 {
    zend_string *s  = zval_get_string(const_cast<zval *>(getZvalPtr()));
-   std::string ret(ZSTR_VAL(s), ZSTR_LEN(s));
+   std::string ret(ZSTR_VAL(s));
    zend_string_release(s);
    return ret;
 }

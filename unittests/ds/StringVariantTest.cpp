@@ -375,6 +375,19 @@ TEST(StringVariantTest, testAssignOperators)
    ASSERT_STREQ(str1.getCStr(), "c");
    ASSERT_EQ(str1.getRefCount(), 1);
    ASSERT_EQ(str1.getLength(), 1);
+   {
+      Variant str("zapi");
+      StringVariant str1(str.makeReferenceByZval());
+      ASSERT_EQ(str1.getUnDerefType(), Type::Reference);
+      
+      ASSERT_EQ(str.toString(), "zapi");
+      std::cout << str <<std::endl;
+      str1 = "hello, zapi";
+      ASSERT_EQ(str.toString(), "hello, zapi");
+      ASSERT_EQ(str1.toString(), "hello, zapi");
+      Variant str2(str1);
+      ASSERT_EQ(str2.toString(), "hello, zapi");
+   }
 }
 
 TEST(StringVariantTest, testplusAssignOperators)

@@ -41,7 +41,8 @@ public:
    operator const _zval_struct *() const &;
    _zval_struct &operator*() const &;
    _zval_struct *dereference() const;
-   std::aligned_storage<16>::type m_buffer;
+   //std::aligned_storage<16>::type m_buffer;
+   zval m_buffer;
 };
 
 } // internal

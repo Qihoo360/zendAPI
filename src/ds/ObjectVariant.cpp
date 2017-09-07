@@ -379,7 +379,8 @@ Variant ObjectVariant::exec(const char *name, int argc, Variant *argv) const
    Variant methodName(name);
    zval params[argc];
    for (int i = 0; i < argc; i++) {
-      params[i] = *argv[i].getZvalPtr();
+      params[i] = *argv[i].getUnDerefZvalPtr();
+      Z_TRY_ADDREF_P(&params[i]); // _call_user_function_ex free call stack will decrease 1
    }
    return do_execute(getZvalPtr(), methodName.getZvalPtr(), argc, params);
 }

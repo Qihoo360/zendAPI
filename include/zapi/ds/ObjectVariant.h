@@ -17,6 +17,7 @@
 #define ZAPI_DS_OBJECT_VARIANT_H
 
 #include "zapi/ds/Variant.h"
+#include <iostream>
 
 namespace zapi
 {
@@ -94,7 +95,7 @@ Variant ObjectVariant::call(const char *name, Args&&... args) const
 template <typename ...Args>
 Variant ObjectVariant::call(const char *name, Args&&... args)
 {
-   return const_cast<const ObjectVariant &>(*this).call(name, args...);
+   return const_cast<const ObjectVariant &>(*this).call(name, std::forward<Args>(args)...);
 }
 
 template <typename ...Args>

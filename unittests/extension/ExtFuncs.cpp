@@ -249,6 +249,11 @@ void register_object_variant_cls(Extension &extension)
    objectVariantClass.registerMethod<decltype(&ObjectVariantClass::getName), &ObjectVariantClass::getName>("getName");
    objectVariantClass.registerMethod<decltype(&ObjectVariantClass::printSum), &ObjectVariantClass::printSum>("printSum");
    objectVariantClass.registerMethod<decltype(&ObjectVariantClass::calculateSum), &ObjectVariantClass::calculateSum>("calculateSum");
+   objectVariantClass.registerMethod<decltype(&ObjectVariantClass::changeNameByRef), &ObjectVariantClass::changeNameByRef>
+         ("changeNameByRef", {
+             RefArgument("name", Type::String)
+          });
+   
    extension.registerClass(objectVariantClass);
 }
 

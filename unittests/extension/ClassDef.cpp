@@ -4,6 +4,7 @@
 
 using zapi::ds::ObjectVariant;
 using zapi::ds::StringVariant;
+using zapi::lang::Type;
 
 Person::Person()
    : m_name("zzu_softboy"),
@@ -386,6 +387,11 @@ void ObjectVariantClass::testVarArgsCall()
    obj.call("printSum", 12, 12, 12);
    Variant ret = obj.call("calculateSum", 1, 2, 4);
    zapi::out << "the result of ObjectVariantClass::calculateSum is " << ret << std::endl;
+   // test ref arg
+   Variant str("zapi");
+   zapi::out << "before call by ref arg " << str << std::endl;
+   obj.call("changeNameByRef", str.makeReferenceByZval());
+   zapi::out << "after call by ref arg " << str << std::endl;
 }
 
 void ObjectVariantClass::printName()
@@ -424,4 +430,13 @@ int ObjectVariantClass::calculateSum(NumericVariant argQuantity, ...)
    }
    zapi::out << "the result is " << result << std::endl;
    return result;
+}
+
+void ObjectVariantClass::changeNameByRef(StringVariant &name)
+{
+   zapi::out << "ObjectVariantClass::changeNameByRef been called" << std::endl;
+   if (name.getUnDerefType() == Type::Reference) {
+      zapi::out << "get ref arg" << std::endl;
+   }
+   name = "hello, zapi";
 }

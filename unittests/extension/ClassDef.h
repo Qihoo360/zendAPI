@@ -113,6 +113,7 @@ public:
    std::string getName();
    void printSum(NumericVariant argQuantity, ...);
    int calculateSum(NumericVariant argQuantity, ...);
+   void changeNameByRef(StringVariant &name);
 };
 
 class A : public StdClass
