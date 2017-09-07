@@ -241,6 +241,8 @@ void register_object_variant_cls(Extension &extension)
 {
    zapi::lang::Class<ObjectVariantClass> objectVariantClass("ObjectVariantClass");
    objectVariantClass.registerMethod<decltype(&ObjectVariantClass::forwardInvoke), &ObjectVariantClass::forwardInvoke>("forwardInvoke");
+   objectVariantClass.registerMethod<decltype(&ObjectVariantClass::testDerivedFrom), &ObjectVariantClass::testDerivedFrom>("testDerivedFrom");
+   objectVariantClass.registerMethod<decltype(&ObjectVariantClass::testInstanceOf), &ObjectVariantClass::testInstanceOf>("testInstanceOf");
    extension.registerClass(objectVariantClass);
 }
 

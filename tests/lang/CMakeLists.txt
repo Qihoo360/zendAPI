@@ -44,5 +44,7 @@ set(ZAPI_PHP_TESTS
     lang/class/ClassMagicCompareTest.phpt
     
     lang/class/ObjectVariantInvokeTest.phpt
+    lang/class/ObjectVariantInstanceOfTest.phpt
+    lang/class/ObjectVariantDerivedFromTest.phpt
     
     PARENT_SCOPE)

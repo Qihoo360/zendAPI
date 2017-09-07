@@ -42,12 +42,12 @@ StringVariant Person::concatStr(const StringVariant &lhs, const StringVariant &r
 
 void Person::staticProtectedMethod()
 {
-
+   
 }
 
 void Person::staticPrivateMethod()
 {
-
+   
 }
 
 void Person::makeNewPerson()
@@ -79,12 +79,12 @@ int Person::addSum(NumericVariant argQuantity, ...)
 
 void Person::protectedMethod()
 {
-
+   
 }
 
 void Person::privateMethod()
 {
-
+   
 }
 
 int Person::addTwoNum(const NumericVariant &num1, const NumericVariant &num2)
@@ -301,4 +301,37 @@ void ObjectVariantClass::forwardInvoke()
    zapi::out << "after invoke ObjectVariant::classInvoke : this text is " << result << std::endl;
    ObjectVariant obj1("NonMagicMethodClass", std::make_shared<NonMagicMethodClass>());
    // obj1(1, 2); // Fatal error: Function name must be a string
+}
+
+void ObjectVariantClass::testInstanceOf()
+{
+   ObjectVariant objA("A", std::make_shared<A>());
+   ObjectVariant objB("B", std::make_shared<B>());
+   ObjectVariant objC("C", std::make_shared<C>());
+   if (objB.instanceOf("A") && objB.instanceOf(objA)) {
+      zapi::out << "B is instance of A" << std::endl;
+   }
+   if (objC.instanceOf("B") && objC.instanceOf(objB)) {
+      zapi::out << "C is instance of B" << std::endl;
+   }
+   if (objC.instanceOf("A") && objC.instanceOf(objA)) {
+      zapi::out << "C is instance of A" << std::endl;
+   }
+   
+   if (!objA.instanceOf("B") && !objA.instanceOf(objB)) {
+      zapi::out << "A is not instance of B" << std::endl;
+   }
+   if (!objB.instanceOf("C") && !objB.instanceOf(objC)) {
+      zapi::out << "C is not instance of B" << std::endl;
+   }
+   if (!objA.instanceOf("C") && !objA.instanceOf(objC)) {
+      zapi::out << "C is not instance of A" << std::endl;
+   }
+}
+
+void ObjectVariantClass::testDerivedFrom()
+{
+   ObjectVariant objA("A", std::make_shared<A>());
+   ObjectVariant objB("B", std::make_shared<B>());
+   ObjectVariant objC("C", std::make_shared<C>());
 }

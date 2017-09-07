@@ -69,10 +69,12 @@ public:
    bool instanceOf(const char *className, size_t size) const;
    bool instanceOf(const char *className) const;
    bool instanceOf(const std::string &className) const;
+   bool instanceOf(const ObjectVariant &other) const;
 
    bool derivedFrom(const char *className, size_t size) const;
    bool derivedFrom(const char *className) const;
    bool derivedFrom(const std::string &className) const;
+   bool derivedFrom(const ObjectVariant &other) const;
 private:
    Variant exec(const char *name, int argc, Variant *argv);
    Variant exec(const char *name, int argc, Variant *argv) const;

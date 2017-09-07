@@ -105,6 +105,8 @@ class ObjectVariantClass : public StdClass
 public:
    Variant __invoke(Parameters &params) const;
    void forwardInvoke();
+   void testInstanceOf();
+   void testDerivedFrom();
 };
 
 class A : public StdClass

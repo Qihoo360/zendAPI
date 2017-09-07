@@ -286,6 +286,19 @@ bool ObjectVariant::instanceOf(const std::string &className) const
    return instanceOf(className.c_str(), className.length());
 }
 
+bool ObjectVariant::instanceOf(const ObjectVariant &other) const
+{
+   zend_class_entry *thisClsEntry = Z_OBJCE_P(getUnDerefZvalPtr());
+   if (!thisClsEntry) {
+      return false;
+   }
+   zend_class_entry *clsEntry = Z_OBJCE_P(other.getUnDerefZvalPtr());
+   if (!clsEntry) {
+      return false;
+   }
+   return instanceof_function(thisClsEntry, clsEntry);
+}
+
 bool ObjectVariant::derivedFrom(const char *className, size_t size) const
 {
    zend_class_entry *thisClsEntry = Z_OBJCE_P(getUnDerefZvalPtr());
@@ -312,6 +325,22 @@ bool ObjectVariant::derivedFrom(const char *className) const
 bool ObjectVariant::derivedFrom(const std::string &className) const
 {
    return derivedFrom(className.c_str(), className.length());
+}
+
+bool ObjectVariant::derivedFrom(const ObjectVariant &other) const
+{
+   zend_class_entry *thisClsEntry = Z_OBJCE_P(getUnDerefZvalPtr());
+   if (!thisClsEntry) {
+      return false;
+   }
+   zend_class_entry *clsEntry = Z_OBJCE_P(other.getUnDerefZvalPtr());
+   if (!clsEntry) {
+      return false;
+   }
+   if (thisClsEntry == clsEntry) {
+      return false;
+   }
+   return instanceof_function(thisClsEntry, clsEntry);
 }
 
 Variant ObjectVariant::exec(const char *name, int argc, Variant *argv)
