@@ -101,10 +101,13 @@ protected:
    void registerProperty(const char *name, const zapi::GetterMethodCallable0 &getter, const zapi::SetterMethodCallable1 &setter);
    void registerProperty(const char *name, const zapi::GetterMethodCallable1 &getter, const zapi::SetterMethodCallable0 &setter);
    void registerProperty(const char *name, const zapi::GetterMethodCallable1 &getter, const zapi::SetterMethodCallable1 &setter);
+   
+   void registerConstant(const Constant &constant);
+   
    void registerInterface(const Interface &interface);
    void registerInterface(Interface &&interface);
    void registerBaseClass(const AbstractClass &base);
-   void registerConstant(const Constant &constant);
+   void registerBaseClass(AbstractClass &&base);
 protected:
    virtual StdClass *construct() const;
    virtual StdClass *clone(StdClass *orig) const;

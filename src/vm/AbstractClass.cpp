@@ -870,6 +870,18 @@ void AbstractClass::registerInterface(Interface &&interface)
    implPtr->m_interfaces.push_back(std::make_shared<Interface>(std::move(interface)));
 }
 
+void AbstractClass::registerBaseClass(const AbstractClass &base)
+{
+   ZAPI_D(AbstractClass);
+   implPtr->m_parent = std::make_shared<AbstractClass>(base);
+}
+
+void AbstractClass::registerBaseClass(AbstractClass &&base)
+{
+   ZAPI_D(AbstractClass);
+   implPtr->m_parent = std::make_shared<AbstractClass>(std::move(base));
+}
+
 void AbstractClass::registerProperty(const char *name, std::nullptr_t, Modifier flags)
 {
    ZAPI_D(AbstractClass);

@@ -155,7 +155,7 @@ void register_funcs(Extension &extension)
          ("passby_value", {
              ValueArgument("number", zapi::lang::Type::Numeric),
           });
-
+   
    // test for default arguments
    extension.registerFunction<decltype(&dummyext::say_hello), &dummyext::say_hello>
          ("say_hello", {
@@ -212,7 +212,7 @@ void register_props_test_cls(Extension &extension)
    propsTestClass.registerProperty("doubleProp", 3.1415);
    propsTestClass.registerProperty("strProp", "zapi");
    propsTestClass.registerProperty("str1Prop", std::string("zapi"));
-
+   
    propsTestClass.registerProperty("staticNullProp", nullptr, Modifier::Static);
    propsTestClass.registerProperty("staticTrueProp", true, Modifier::Static);
    propsTestClass.registerProperty("staticFalseProp", false, Modifier::Static);
@@ -220,12 +220,12 @@ void register_props_test_cls(Extension &extension)
    propsTestClass.registerProperty("staticDoubleProp", 3.1415, Modifier::Static);
    propsTestClass.registerProperty("staticStrProp", "static zapi", Modifier::Static);
    propsTestClass.registerProperty("staticStr1Prop", std::string("static zapi"), Modifier::Static);
-
+   
    propsTestClass.registerProperty("MATH_PI", 3.14, Modifier::Const);
-
+   
    propsTestClass.registerProperty("name", &PropsTestClass::getName, &PropsTestClass::setName);
    propsTestClass.registerProperty("age", &PropsTestClass::getAge, &PropsTestClass::setAge);
-
+   
    extension.registerClass(propsTestClass);
 }
 
@@ -242,6 +242,18 @@ void register_object_variant_cls(Extension &extension)
    zapi::lang::Class<ObjectVariantClass> objectVariantClass("ObjectVariantClass");
    objectVariantClass.registerMethod<decltype(&ObjectVariantClass::forwardInvoke), &ObjectVariantClass::forwardInvoke>("forwardInvoke");
    extension.registerClass(objectVariantClass);
+}
+
+void register_inherit_cls(Extension &extension)
+{
+   zapi::lang::Class<A> a("A");
+   zapi::lang::Class<B> b("B");
+   zapi::lang::Class<C> c("C");
+   b.registerBaseClass(a);
+   c.registerBaseClass(b);
+   extension.registerClass(a);
+   extension.registerClass(b);
+   extension.registerClass(c);
 }
 
 void register_cls(Extension &extension)
@@ -278,7 +290,7 @@ void register_cls(Extension &extension)
          ("protectedMethod", Modifier::Protected);
    personClass.registerMethod<decltype(&Person::privateMethod), &Person::privateMethod>
          ("privateMethod", Modifier::Private);
-
+   
    personClass.registerMethod<decltype(&Person::concatStr), &Person::concatStr>
          ("concatStr", {
              ValueArgument("lhs", zapi::lang::Type::String),
@@ -290,7 +302,7 @@ void register_cls(Extension &extension)
    personClass.registerMethod<decltype(&Person::staticPrivateMethod), &Person::staticPrivateMethod>
          ("staticPrivateMethod", Modifier::Private);
    personClass.registerMethod<decltype(&Person::makeNewPerson), &Person::makeNewPerson>("makeNewPerson");
-
+   
    //   Interface infoInterface("InfoProvider");
    //   //   infoInterface.registerMethod("getName");
    //   personClass.registerInterface(infoInterface);
@@ -300,6 +312,7 @@ void register_cls(Extension &extension)
    register_props_test_cls(extension);
    register_magic_method_cls(extension);
    register_object_variant_cls(extension);
+   register_inherit_cls(extension);
 }
 
 

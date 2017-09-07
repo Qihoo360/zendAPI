@@ -107,5 +107,13 @@ public:
    void forwardInvoke();
 };
 
+class A : public StdClass
+{};
+
+class B : public StdClass
+{};
+
+class C : public StdClass
+{};
 
 #endif // ZAPI_UNITTEST_BRIDGE_DUMMYEXT_CLASS_DEF_H

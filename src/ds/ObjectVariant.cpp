@@ -263,7 +263,7 @@ Variant ObjectVariant::call(const char *name) const
 
 bool ObjectVariant::instanceOf(const char *className, size_t size) const
 {
-   zend_class_entry *thisClsEntry = Z_OBJCE_P(getZvalPtr());
+   zend_class_entry *thisClsEntry = Z_OBJCE_P(getUnDerefZvalPtr());
    if (!thisClsEntry) {
       return false;
    }
@@ -288,7 +288,7 @@ bool ObjectVariant::instanceOf(const std::string &className) const
 
 bool ObjectVariant::derivedFrom(const char *className, size_t size) const
 {
-   zend_class_entry *thisClsEntry = Z_OBJCE_P(getZvalPtr());
+   zend_class_entry *thisClsEntry = Z_OBJCE_P(getUnDerefZvalPtr());
    if (!thisClsEntry) {
       return false;
    }

@@ -173,6 +173,11 @@ public:
 
    Class<T> &registerInterface(const Interface &interface);
    Class<T> &registerInterface(Interface &&interface);
+   
+   template <typename ClassType>
+   Class<T> &registerBaseClass(const Class<ClassType> &baseClass);
+   template <typename ClassType>
+   Class<T> &registerBaseClass(Class<ClassType> &&baseClass);
 
 private:
    virtual StdClass *construct() const override;
@@ -266,6 +271,22 @@ template <typename T>
 Class<T> &Class<T>::registerInterface(Interface &&interface)
 {
    AbstractClass::registerInterface(std::move(interface));
+   return *this;
+}
+
+template <typename T>
+template <typename ClassType>
+Class<T> &Class<T>::registerBaseClass(const Class<ClassType> &baseClass)
+{
+   AbstractClass::registerBaseClass(baseClass);
+   return *this;
+}
+
+template <typename T>
+template <typename ClassType>
+Class<T> &Class<T>::registerBaseClass(Class<ClassType> &&baseClass)
+{
+   AbstractClass::registerBaseClass(std::move(baseClass));
    return *this;
 }
 
