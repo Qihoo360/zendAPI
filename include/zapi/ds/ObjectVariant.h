@@ -42,6 +42,9 @@ public:
    ObjectVariant(const ObjectVariant &other);
    ObjectVariant(Variant &&other);
    ObjectVariant(ObjectVariant &&other) ZAPI_DECL_NOEXCEPT;
+   ObjectVariant(zval &other);
+   ObjectVariant(zval &&other);
+   ObjectVariant(zval *other);
 
    ObjectVariant &operator =(const ObjectVariant &other);
    ObjectVariant &operator =(const Variant &other);

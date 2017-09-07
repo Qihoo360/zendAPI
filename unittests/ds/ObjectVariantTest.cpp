@@ -103,3 +103,25 @@ TEST(ObjectVariantTest, testSetAndGetProps)
    //ASSERT_EQ(StringVariant(stdObj.getStaticProperty("name")).toString(), "zzu_softboy");
    //stdObj();
 }
+
+TEST(ObjectVariantTest, testConstructFromZval)
+{
+   {
+      zval strZval;
+      ZVAL_STRING(&strZval, "zapi");
+      ASSERT_EQ(Z_REFCOUNT_P(&strZval), 1);
+      ObjectVariant stdObj(strZval);
+      ASSERT_EQ(stdObj.getRefCount(), 1);
+      zval_dtor(&strZval);
+   }
+   {
+      zval objZVal;
+      ZVAL_NULL(&objZVal);
+      convert_to_object(&objZVal);
+      ASSERT_EQ(Z_REFCOUNT_P(&objZVal), 1);
+      ObjectVariant stdObj(objZVal);
+      ASSERT_EQ(stdObj.getRefCount(), 2);
+      zval_dtor(&objZVal);
+   }
+   
+}

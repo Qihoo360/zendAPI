@@ -126,6 +126,32 @@ ObjectVariant::ObjectVariant(ObjectVariant &&other) ZAPI_DECL_NOEXCEPT
    : Variant(std::move(other))
 {}
 
+ObjectVariant::ObjectVariant(zval &other)
+   : ObjectVariant(&other)
+{}
+
+ObjectVariant::ObjectVariant(zval &&other)
+   : ObjectVariant(&other)
+{}
+
+ObjectVariant::ObjectVariant(zval *other)
+{
+   zval *self = getUnDerefZvalPtr();
+   if (nullptr != other && Z_TYPE_P(other) != IS_NULL) {
+      if ((Z_TYPE_P(other) == IS_OBJECT || 
+           (Z_TYPE_P(other) == IS_REFERENCE && Z_TYPE_P(Z_REFVAL_P(other)) == IS_OBJECT))) {
+         ZVAL_DEREF(other);
+         ZVAL_COPY(self, other);
+      }else {
+         ZVAL_DUP(self, other);
+         convert_to_object(self);
+      }
+   } else {
+      Z_OBJ_P(self) = nullptr;
+      Z_TYPE_INFO_P(self) = IS_OBJECT;
+   }
+}
+
 ObjectVariant &ObjectVariant::operator =(const ObjectVariant &other)
 {
    if (this != &other) {
