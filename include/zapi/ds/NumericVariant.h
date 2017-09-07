@@ -54,6 +54,7 @@ public:
    NumericVariant &operator =(const DoubleVariant &other);
    NumericVariant &operator =(ArrayItemProxy &&other);
    operator zapi_long () const;
+   operator int () const;
    NumericVariant &operator++();
    NumericVariant operator++(int);
    NumericVariant &operator--();

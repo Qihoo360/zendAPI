@@ -372,3 +372,56 @@ void ObjectVariantClass::testDerivedFrom()
       zapi::out << "C is not derived from A" << std::endl;
    }
 }
+
+void ObjectVariantClass::testNoArgCall()
+{
+   ObjectVariant obj("ObjectVariantClass", std::make_shared<ObjectVariantClass>());
+   obj.call("printName");
+   zapi::out << "the result of ObjectVariantClass::getName is " << obj.call("getName") << std::endl;
+}
+
+void ObjectVariantClass::testVarArgsCall()
+{
+   ObjectVariant obj("ObjectVariantClass", std::make_shared<ObjectVariantClass>());
+   obj.call("printSum", 12, 12, 12);
+   Variant ret = obj.call("calculateSum", 1, 2, 4);
+   zapi::out << "the result of ObjectVariantClass::calculateSum is " << ret << std::endl;
+}
+
+void ObjectVariantClass::printName()
+{
+   zapi::out << "ObjectVariantClass::printName been called" << std::endl;
+}
+
+std::string ObjectVariantClass::getName()
+{
+   zapi::out << "ObjectVariantClass::getName been called" << std::endl;
+   return "hello, zapi";
+}
+
+void ObjectVariantClass::printSum(NumericVariant argQuantity, ...)
+{
+   zapi::out << "ObjectVariantClass::printSum been called" << std::endl;
+   zapi::out << "got " << argQuantity << " args" << std::endl;
+   va_list args;
+   va_start(args, argQuantity);
+   NumericVariant result;
+   for (int i = 0; i < argQuantity; ++i) {
+      result += NumericVariant(va_arg(args, zapi_varidic_item_type), false);
+   }
+   zapi::out << "the result is " << result << std::endl;
+}
+
+int ObjectVariantClass::calculateSum(NumericVariant argQuantity, ...)
+{
+   zapi::out << "ObjectVariantClass::calculateSum been called" << std::endl;
+   zapi::out << "got " << argQuantity << " args" << std::endl;
+   va_list args;
+   va_start(args, argQuantity);
+   NumericVariant result;
+   for (int i = 0; i < argQuantity; ++i) {
+      result += NumericVariant(va_arg(args, zapi_varidic_item_type), false);
+   }
+   zapi::out << "the result is " << result << std::endl;
+   return result;
+}

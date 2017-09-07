@@ -107,6 +107,12 @@ public:
    void forwardInvoke();
    void testInstanceOf();
    void testDerivedFrom();
+   void testNoArgCall();
+   void testVarArgsCall();
+   void printName();
+   std::string getName();
+   void printSum(NumericVariant argQuantity, ...);
+   int calculateSum(NumericVariant argQuantity, ...);
 };
 
 class A : public StdClass

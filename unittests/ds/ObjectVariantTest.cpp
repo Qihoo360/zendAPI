@@ -123,5 +123,10 @@ TEST(ObjectVariantTest, testConstructFromZval)
       ASSERT_EQ(stdObj.getRefCount(), 2);
       zval_dtor(&objZVal);
    }
-   
+}
+
+TEST(ObjectVariantTest, testIsCallable)
+{
+   ObjectVariant stdObj;
+   ASSERT_FALSE(stdObj.isCallable("notExistMethod"));
 }

@@ -46,5 +46,7 @@ set(ZAPI_PHP_TESTS
     lang/class/ObjectVariantInvokeTest.phpt
     lang/class/ObjectVariantInstanceOfTest.phpt
     lang/class/ObjectVariantDerivedFromTest.phpt
+    lang/class/ObjectVariantNoArgsCallTest.phpt
+    lang/class/ObjectVariantVarArgsCallTest.phpt
     
     PARENT_SCOPE)

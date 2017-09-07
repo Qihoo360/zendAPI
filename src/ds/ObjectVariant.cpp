@@ -250,7 +250,7 @@ bool ObjectVariant::isCallable(const char *name) const
    if (Type::Object != getType()) {
       return false;
    }
-   zval *self = const_cast<zval *>(getZvalPtr());
+   zval *self = const_cast<zval *>(getUnDerefZvalPtr());
    zend_class_entry *classEntry = Z_OBJCE_P(self);
    // TODO watch the resource release
    GuardStrType methodName(zend_string_init(name, std::strlen(name), 0),

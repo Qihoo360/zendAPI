@@ -243,6 +243,12 @@ void register_object_variant_cls(Extension &extension)
    objectVariantClass.registerMethod<decltype(&ObjectVariantClass::forwardInvoke), &ObjectVariantClass::forwardInvoke>("forwardInvoke");
    objectVariantClass.registerMethod<decltype(&ObjectVariantClass::testDerivedFrom), &ObjectVariantClass::testDerivedFrom>("testDerivedFrom");
    objectVariantClass.registerMethod<decltype(&ObjectVariantClass::testInstanceOf), &ObjectVariantClass::testInstanceOf>("testInstanceOf");
+   objectVariantClass.registerMethod<decltype(&ObjectVariantClass::testNoArgCall), &ObjectVariantClass::testNoArgCall>("testNoArgCall");
+   objectVariantClass.registerMethod<decltype(&ObjectVariantClass::testVarArgsCall), &ObjectVariantClass::testVarArgsCall>("testVarArgsCall");
+   objectVariantClass.registerMethod<decltype(&ObjectVariantClass::printName), &ObjectVariantClass::printName>("printName");
+   objectVariantClass.registerMethod<decltype(&ObjectVariantClass::getName), &ObjectVariantClass::getName>("getName");
+   objectVariantClass.registerMethod<decltype(&ObjectVariantClass::printSum), &ObjectVariantClass::printSum>("printSum");
+   objectVariantClass.registerMethod<decltype(&ObjectVariantClass::calculateSum), &ObjectVariantClass::calculateSum>("calculateSum");
    extension.registerClass(objectVariantClass);
 }
 

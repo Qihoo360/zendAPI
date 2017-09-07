@@ -87,7 +87,7 @@ private:
 template <typename ...Args>
 Variant ObjectVariant::call(const char *name, Args&&... args) const
 {
-   Variant vargs[] = { static_cast<Variant>(args)... };
+   Variant vargs[] = { Variant(std::forward<Args>(args))... };
    return exec(name, sizeof...(Args), vargs);
 }
 
