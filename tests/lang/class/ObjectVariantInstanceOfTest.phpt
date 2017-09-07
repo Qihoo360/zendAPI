@@ -10,6 +10,9 @@ if (class_exists("ObjectVariantClass")) {
 
 ?>
 --EXPECT--
+A is instance of A
+B is instance of B
+C is instance of C
 B is instance of A
 C is instance of B
 C is instance of A

@@ -308,6 +308,15 @@ void ObjectVariantClass::testInstanceOf()
    ObjectVariant objA("A", std::make_shared<A>());
    ObjectVariant objB("B", std::make_shared<B>());
    ObjectVariant objC("C", std::make_shared<C>());
+   if (objA.instanceOf("A") && objA.instanceOf(objA)) {
+      zapi::out << "A is instance of A" << std::endl;
+   }
+   if (objB.instanceOf("B") && objB.instanceOf(objB)) {
+      zapi::out << "B is instance of B" << std::endl;
+   }
+   if (objC.instanceOf("C") && objC.instanceOf(objC)) {
+      zapi::out << "C is instance of C" << std::endl;
+   }
    if (objB.instanceOf("A") && objB.instanceOf(objA)) {
       zapi::out << "B is instance of A" << std::endl;
    }
@@ -334,4 +343,32 @@ void ObjectVariantClass::testDerivedFrom()
    ObjectVariant objA("A", std::make_shared<A>());
    ObjectVariant objB("B", std::make_shared<B>());
    ObjectVariant objC("C", std::make_shared<C>());
+   if (!objA.derivedFrom("A") && !objA.derivedFrom(objA)) {
+      zapi::out << "A is not derived from A" << std::endl;
+   }
+   if (!objB.derivedFrom("B") && !objB.derivedFrom(objB)) {
+      zapi::out << "B is not derived from B" << std::endl;
+   }
+   if (!objC.derivedFrom("C") && !objC.derivedFrom(objC)) {
+      zapi::out << "C is not derived from C" << std::endl;
+   }
+   if (objB.derivedFrom("A") && objB.derivedFrom(objA)) {
+      zapi::out << "B is derived from A" << std::endl;
+   }
+   if (objC.derivedFrom("B") && objC.derivedFrom(objB)) {
+      zapi::out << "C is derived from B" << std::endl;
+   }
+   if (objC.derivedFrom("A") && objC.derivedFrom(objA)) {
+      zapi::out << "C is derived from A" << std::endl;
+   }
+   
+   if (!objA.derivedFrom("B") && !objA.derivedFrom(objB)) {
+      zapi::out << "A is not derived from B" << std::endl;
+   }
+   if (!objB.derivedFrom("C") && !objB.derivedFrom(objC)) {
+      zapi::out << "C is not derived from B" << std::endl;
+   }
+   if (!objA.derivedFrom("C") && !objA.derivedFrom(objC)) {
+      zapi::out << "C is not derived from A" << std::endl;
+   }
 }
