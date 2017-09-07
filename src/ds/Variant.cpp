@@ -612,7 +612,7 @@ Variant &Variant::operator =(double value)
 {
    zval temp;
    ZVAL_DOUBLE(&temp, value);
-   return operator =(value);
+   return operator =(&temp);
 }
 
 bool Variant::operator ==(const Variant &other) const

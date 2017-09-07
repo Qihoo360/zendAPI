@@ -1,5 +1,4 @@
 set(LANG_TEST_SRCS
-    VariantTest.cpp
     ArgumentTest.cpp
     FunctionTest.cpp
     ConstantTest.cpp
