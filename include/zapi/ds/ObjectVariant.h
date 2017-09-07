@@ -51,10 +51,10 @@ public:
    ObjectVariant &operator =(const Variant &other);
    ObjectVariant &operator =(ObjectVariant &&other) ZAPI_DECL_NOEXCEPT;
    ObjectVariant &operator =(Variant &&other);
-   
+
    template <typename ...Args>
    Variant operator()(Args&&... args);
-   
+
    ObjectVariant &setProperty(const std::string &name, const Variant &value);
    Variant getProperty(const std::string &name);
    ObjectVariant &setStaticProperty(const std::string &name, const Variant &value);

@@ -441,7 +441,7 @@ bool ObjectVariant::doClassInvoke(int argc, Variant *argv, zval *retval)
    for (int i = 0; i< argc; i++) {
       zval *param;
       zval *arg = argv[i].getUnDerefZvalPtr();
-      
+      Z_TRY_ADDREF_P(arg);
       if (ARG_SHOULD_BE_SENT_BY_REF(func, i + 1)) {
          if (UNEXPECTED(!Z_ISREF_P(arg))) {
             if (!ARG_MAY_BE_SENT_BY_REF(func, i + 1)) {
