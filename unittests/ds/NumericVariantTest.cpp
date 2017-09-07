@@ -104,7 +104,9 @@ TEST(NumericVariantTest, testConstructors)
       ASSERT_EQ(num1.getUnDerefType(), Type::Reference);
       ASSERT_EQ(num2.getUnDerefType(), Type::Reference);
       NumericVariant num3(std::move(num1));
-      ASSERT_EQ(num3.getUnDerefType(), Type::Numeric);
+      ASSERT_EQ(num3.getUnDerefType(), Type::Reference);
+      NumericVariant num4(num3);
+      ASSERT_EQ(num4.getUnDerefType(), Type::Long);
    }
 }
 

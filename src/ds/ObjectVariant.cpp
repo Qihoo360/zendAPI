@@ -406,7 +406,7 @@ bool ObjectVariant::doClassInvoke(int argc, Variant *argv, zval *retval)
          callInfo |= ZEND_CALL_RELEASE_THIS;
       }
    } else {
-      zend_throw_error(NULL, "Function name must be a string");
+      zapi::error << "Function name must be a string" << std::endl;
       return false;
    }
    call = zend_vm_stack_push_call_frame(callInfo, func, argc, calledScope, object);

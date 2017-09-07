@@ -151,7 +151,11 @@ StringVariant::StringVariant(zval *other, bool isRef)
          zend_reference *ref = Z_REF_P(other);
          ++GC_REFCOUNT(ref);
          ZVAL_REF(self, ref);
-      } else {
+      } else if ((Z_TYPE_P(other) == IS_STRING || 
+                  (Z_TYPE_P(other) == IS_REFERENCE && Z_TYPE_P(Z_REFVAL_P(other)) == IS_STRING))) {
+         ZVAL_DEREF(other);
+         ZVAL_COPY(self, other);
+      }else {
          ZVAL_DUP(self, other);
          convert_to_string(self);
       }

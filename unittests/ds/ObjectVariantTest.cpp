@@ -101,5 +101,5 @@ TEST(ObjectVariantTest, testSetAndGetProps)
    // Fatal error: Access to undeclared static property: stdClass::$name in Unknown on line 0
    //stdObj.setStaticProperty("name", "zzu_softboy");
    //ASSERT_EQ(StringVariant(stdObj.getStaticProperty("name")).toString(), "zzu_softboy");
-   stdObj();
+   //stdObj();
 }

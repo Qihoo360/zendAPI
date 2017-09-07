@@ -24,41 +24,41 @@ using zapi::ds::StringVariant;
 using zapi::ds::Variant;
 using zapi::lang::Type;
 
-//TEST(StringVariantTest, testConstructors)
-//{
-//   StringVariant str("xiuxiu");
-//   StringVariant emptyStr;
-//   ASSERT_TRUE(emptyStr.isEmpty());
-//   ASSERT_EQ(emptyStr.getCapacity(), 0);
-//   ASSERT_EQ(emptyStr.getSize(), 0);
-//   emptyStr = 1;
-//   //std::cout << emptyStr << std::endl;
-//   emptyStr.append('C');
-//   ASSERT_EQ(emptyStr.getSize(), 2);
-//   ASSERT_EQ(emptyStr.getCapacity(), 199);
-//   ASSERT_EQ(emptyStr.at(0), '1');
-//   emptyStr.clear();
-//   ASSERT_EQ(emptyStr.getSize(), 0);
-//   ASSERT_EQ(emptyStr.getCapacity(), 0);
-//   emptyStr = str;
-//   ASSERT_EQ(emptyStr.getSize(), 6);
-//   ASSERT_EQ(emptyStr.getCapacity(), 199);
-//   ASSERT_EQ(emptyStr.getRefCount(), 2);
-//   ASSERT_EQ(str.getRefCount(), 2);
-//   emptyStr.clear();
-//   ASSERT_EQ(emptyStr.getSize(), 0);
-//   ASSERT_EQ(emptyStr.getCapacity(), 0);
-//   emptyStr = Variant("zapi");
-//   ASSERT_EQ(emptyStr.getSize(), 4);
-//   ASSERT_EQ(emptyStr.getCapacity(), 32);
-//   ASSERT_EQ(emptyStr.getRefCount(), 1);
-//   emptyStr.clear();
-//   Variant gvar("zapi");
-//   emptyStr = gvar;
-//   ASSERT_EQ(emptyStr.getSize(), 4);
-//   ASSERT_EQ(emptyStr.getCapacity(), 32);
-//   ASSERT_EQ(emptyStr.getRefCount(), 2);
-//}
+TEST(StringVariantTest, testConstructors)
+{
+   StringVariant str("xiuxiu");
+   StringVariant emptyStr;
+   ASSERT_TRUE(emptyStr.isEmpty());
+   ASSERT_EQ(emptyStr.getCapacity(), 0);
+   ASSERT_EQ(emptyStr.getSize(), 0);
+   emptyStr = 1;
+   //std::cout << emptyStr << std::endl;
+   emptyStr.append('C');
+   ASSERT_EQ(emptyStr.getSize(), 2);
+   ASSERT_EQ(emptyStr.getCapacity(), 199);
+   ASSERT_EQ(emptyStr.at(0), '1');
+   emptyStr.clear();
+   ASSERT_EQ(emptyStr.getSize(), 0);
+   ASSERT_EQ(emptyStr.getCapacity(), 0);
+   emptyStr = str;
+   ASSERT_EQ(emptyStr.getSize(), 6);
+   ASSERT_EQ(emptyStr.getCapacity(), 199);
+   ASSERT_EQ(emptyStr.getRefCount(), 2);
+   ASSERT_EQ(str.getRefCount(), 2);
+   emptyStr.clear();
+   ASSERT_EQ(emptyStr.getSize(), 0);
+   ASSERT_EQ(emptyStr.getCapacity(), 0);
+   emptyStr = Variant("zapi");
+   ASSERT_EQ(emptyStr.getSize(), 4);
+   ASSERT_EQ(emptyStr.getCapacity(), 32);
+   ASSERT_EQ(emptyStr.getRefCount(), 1);
+   emptyStr.clear();
+   Variant gvar("zapi");
+   emptyStr = gvar;
+   ASSERT_EQ(emptyStr.getSize(), 4);
+   ASSERT_EQ(emptyStr.getCapacity(), 32);
+   ASSERT_EQ(emptyStr.getRefCount(), 2);
+}
 
 TEST(StringVariantTest, testRefConstruct)
 {
@@ -68,7 +68,7 @@ TEST(StringVariantTest, testRefConstruct)
       ASSERT_STREQ(Z_STRVAL_P(&rawStrVar), "zapi");
       StringVariant strVariant(rawStrVar, false);
       ASSERT_EQ(strVariant.getLength(), 4);
-      ASSERT_EQ(strVariant.getRefCount(), 1);
+      ASSERT_EQ(strVariant.getRefCount(), 2);
       ASSERT_TRUE(strVariant.getUnDerefType() == Type::String);
       ASSERT_TRUE(strVariant.getType() == Type::String);
       StringVariant refStrVariant(rawStrVar, true);
@@ -86,6 +86,16 @@ TEST(StringVariantTest, testRefConstruct)
       ASSERT_STREQ(refStrVariant.getCStr(), "zapix");
       ASSERT_STREQ(Z_STRVAL_P(rval), "zapix");
       zval_dtor(&rawStrVar);
+   }
+   {
+      zval rawVar;
+      ZVAL_LONG(&rawVar, 123);
+      StringVariant strVariant(rawVar, false);
+      ASSERT_EQ(strVariant.getLength(), 3);
+      ASSERT_EQ(strVariant.getRefCount(), 1);
+      StringVariant strVariantRef(rawVar, true);
+      ASSERT_EQ(strVariantRef.getLength(), 3);
+      ASSERT_EQ(strVariantRef.getRefCount(), 1);
    }
    {
       StringVariant str1("zapi");
@@ -188,6 +198,7 @@ TEST(StringVariantTest, testRefConstruct)
    }
 }
 
+
 TEST(StringVariantTest, testRefMidify)
 {
    {
@@ -288,11 +299,12 @@ TEST(StringVariantTest, testMoveConstruct)
    ASSERT_STREQ(str3.getCStr(), "hello zzu_softboy, hello unicornteam");
    ASSERT_EQ(str2.getSize(), str3.getSize());
    ASSERT_EQ(str2.getCapacity(), str3.getCapacity());
+   // move construct will transfer reference
    StringVariant str4(std::move(str3));
    ASSERT_STREQ(str4.getCStr(), "hello zzu_softboy, hello unicornteam");
    str4.append("XX");
    ASSERT_STREQ(str4.getCStr(), "hello zzu_softboy, hello unicornteamXX");
-   ASSERT_STREQ(str2.getCStr(), "hello zzu_softboy, hello unicornteam");
+   ASSERT_STREQ(str2.getCStr(), "hello zzu_softboy, hello unicornteamXX");
 }
 
 TEST(StringVariantTest, testAssignOperators)

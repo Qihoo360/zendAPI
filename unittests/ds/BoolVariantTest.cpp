@@ -101,7 +101,9 @@ TEST(BoolVariantTest, testMoveConstruct)
    ASSERT_EQ(bool1.getUnDerefType(), Type::Reference);
    ASSERT_EQ(bool2.getUnDerefType(), Type::Reference);
    BoolVariant bool3(std::move(bool1));
-   ASSERT_EQ(bool3.getUnDerefType(), Type::True);
+   ASSERT_EQ(bool3.getUnDerefType(), Type::Reference);
+   BoolVariant bool4(bool3);
+   ASSERT_EQ(bool4.getUnDerefType(), Type::True);
 }
 
 TEST(BoolVariantTest, testRefConstruct)

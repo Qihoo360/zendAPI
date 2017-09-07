@@ -115,7 +115,9 @@ TEST(VariantTest, testVariantMoveConstruct)
    Variant variant1(123);
    Variant variant2(variant1, true);
    Variant variant3(std::move(variant1));
-   ASSERT_EQ(variant3.getUnDerefType(), Type::Numeric);
+   ASSERT_EQ(variant3.getUnDerefType(), Type::Reference);
+   Variant variant4(variant3);
+   ASSERT_EQ(variant4.getUnDerefType(), Type::Numeric);
 }
 
 TEST(VariantTest, testConstructor)

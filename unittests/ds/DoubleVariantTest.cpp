@@ -30,7 +30,9 @@ TEST(DoubleVariantTest, testMoveConstruct)
    ASSERT_EQ(num1.getUnDerefType(), Type::Reference);
    ASSERT_EQ(num2.getUnDerefType(), Type::Reference);
    DoubleVariant num3(std::move(num1));
-   ASSERT_EQ(num3.getUnDerefType(), Type::Double);
+   ASSERT_EQ(num3.getUnDerefType(), Type::Reference);
+   DoubleVariant num4(num3);
+   ASSERT_EQ(num4.getUnDerefType(), Type::Double);
 }
 
 TEST(DoubleVariantTest, testRefConstruct)
