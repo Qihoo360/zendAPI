@@ -469,16 +469,22 @@ void B::showSomething()
 
 void B::calculateSumByRef(NumericVariant argQuantity, NumericVariant retval, ...)
 {
-    zapi::out << "C::calculateSumByRef been called" << std::endl;
-    zapi::out << "got " << argQuantity << " args" << std::endl;
-    if (retval.getUnDerefType() == Type::Reference) {
-       zapi::out << "retval is reference arg" << std::endl;
-    }
-    va_list args;
-    va_start(args, retval);
-    for (int i = 0; i < argQuantity - 1; ++i) {
-       retval += NumericVariant(va_arg(args, zapi_varidic_item_type), false);
-    }
+   zapi::out << "C::calculateSumByRef been called" << std::endl;
+   zapi::out << "got " << argQuantity << " args" << std::endl;
+   if (retval.getUnDerefType() == Type::Reference) {
+      zapi::out << "retval is reference arg" << std::endl;
+   }
+   va_list args;
+   va_start(args, retval);
+   for (int i = 0; i < argQuantity - 1; ++i) {
+      retval += NumericVariant(va_arg(args, zapi_varidic_item_type), false);
+   }
+}
+
+Variant B::addTwoNumber(NumericVariant &lhs, NumericVariant &rhs)
+{
+   zapi::out << "C::addTwoNumber been called" << std::endl;
+   return lhs + rhs;
 }
 
 void C::printInfo()
@@ -501,4 +507,11 @@ void C::testCallParentPassRefArg()
    callParent("calculateSumByRef", ret.makeReferenceByZval(), 12, 2, 33);
    zapi::out << "after call calculateSumByRef : " << ret.toLong() << std::endl;
    
+}
+
+void C::testCallParentWithReturn()
+{
+   zapi::out << "C::testCallParentWithReturn been called" << std::endl;
+   Variant ret = callParent("addTwoNumber", 1, 23);
+   zapi::out << "after call addTwoNumber get : " << ret << std::endl;
 }

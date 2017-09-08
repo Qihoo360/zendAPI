@@ -275,8 +275,15 @@ void register_inherit_cls(Extension &extension)
              RefArgument("result", Type::Long),
              VariadicArgument("numbers", Type::Long)
           });
+   b.registerMethod<decltype(&B::addTwoNumber), &B::addTwoNumber>
+         ("addTwoNumber", {
+             ValueArgument("lhs"),
+             ValueArgument("rhs")
+          });
    c.registerMethod<decltype(&C::printInfo), &C::printInfo>("printInfo");
    c.registerMethod<decltype(&C::testCallParentPassRefArg), &C::testCallParentPassRefArg>("testCallParentPassRefArg");
+   c.registerMethod<decltype(&C::testCallParentWithReturn), &C::testCallParentWithReturn>("testCallParentWithReturn");
+   
    b.registerBaseClass(a);
    c.registerBaseClass(b);
    extension.registerClass(a);

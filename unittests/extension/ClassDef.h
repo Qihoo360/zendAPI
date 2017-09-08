@@ -129,7 +129,7 @@ public:
    void printInfo();
    void showSomething();
    void calculateSumByRef(NumericVariant argQuantity, NumericVariant retval, ...);
-   
+   Variant addTwoNumber(NumericVariant &lhs, NumericVariant &rhs);
 };
 
 class C : public StdClass
@@ -137,6 +137,7 @@ class C : public StdClass
 public:
    void printInfo();
    void testCallParentPassRefArg();
+   void testCallParentWithReturn();
 };
 
 #endif // ZAPI_UNITTEST_BRIDGE_DUMMYEXT_CLASS_DEF_H
