@@ -12,3 +12,4 @@ if (class_exists("ObjectVariantClass")) {
 --EXPECT--
 begin invoke ObjectVariant::classInvoke : the text is xxx
 ObjectVariantClass::__invoke invoked
+after invoke ObjectVariant::classInvoke : this text is zapi

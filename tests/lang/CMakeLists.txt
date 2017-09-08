@@ -23,6 +23,7 @@ set(ZAPI_PHP_TESTS
     lang/class/ClassStaticMethodExistTest.phpt
     lang/class/ClassCallParentPassRefArgTest.phpt
     lang/class/ClassCallParentMethodWithReturnTest.phpt
+    lang/class/ClassInheritPropertyTest.phpt
     
     lang/class/ClassMethodExistTest.phpt
     lang/class/ClassPropertyTest.phpt

@@ -267,7 +267,9 @@ void register_inherit_cls(Extension &extension)
          ("changeNameByRef", {
              RefArgument("name", Type::String)
           });
-   
+   a.registerProperty("name", "zapi");
+   a.registerProperty("protectedName", "protected zapi", Modifier::Protected);
+   a.registerProperty("privateName", "private zapi", Modifier::Private);
    b.registerMethod<decltype(&B::printInfo), &B::printInfo>("printInfo");
    b.registerMethod<decltype(&B::showSomething), &B::showSomething>("showSomething");
    b.registerMethod<decltype(&B::calculateSumByRef), &B::calculateSumByRef>
@@ -280,6 +282,7 @@ void register_inherit_cls(Extension &extension)
              ValueArgument("lhs"),
              ValueArgument("rhs")
           });
+   b.registerProperty("propsFromB", "unicornteam", Modifier::Protected);
    c.registerMethod<decltype(&C::printInfo), &C::printInfo>("printInfo");
    c.registerMethod<decltype(&C::testCallParentPassRefArg), &C::testCallParentPassRefArg>("testCallParentPassRefArg");
    c.registerMethod<decltype(&C::testCallParentWithReturn), &C::testCallParentWithReturn>("testCallParentWithReturn");

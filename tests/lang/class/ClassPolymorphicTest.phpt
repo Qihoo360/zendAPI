@@ -21,3 +21,5 @@ class A and class B and class C exist
 A::printInfo been called
 B::printInfo been called
 C::printInfo been called
+B::printInfo been called
+B::showSomething been called
