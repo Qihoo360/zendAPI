@@ -78,10 +78,6 @@ protected:
 
 public:
    virtual ~StdClass();
-
-   Variant callParent();
-   Variant callStaticParent();
-   ObjectVariant *getThisPtr() const;
    /**
     * Get access to a property by name using the [] operator
     * @param  string
@@ -237,7 +233,13 @@ public:
     *  @return int
     */
    int __compare(const StdClass &object) const;
-
+protected:
+   template <typename ...Args>
+   Variant callParent(const char *name, Args&&... args);
+   template <typename ...Args>
+   Variant callParent(const char *name, Args&&... args) const;
+private:
+   zval *doCallParent(const char *name, const int argc, Variant *argv, zval *retval) const;
 protected:
    ZAPI_DECLARE_PRIVATE(StdClass)
    friend class Variant;// for Variant(const StdClass &stdClass);
@@ -245,6 +247,24 @@ protected:
    friend class ObjectVariant; // for initialze from StdClass instance
    std::unique_ptr<StdClassPrivate> m_implPtr;
 };
+
+template <typename ...Args>
+Variant StdClass::callParent(const char *name, Args&&... args) const
+{
+   Variant vargs[] = { Variant(std::forward<Args>(args))... };
+   zval retval;
+   std::memset(&retval, 0, sizeof(retval));
+   doCallParent(name, sizeof...(Args), vargs, &retval);
+   Variant resultVarint(retval);
+   zval_dtor(&retval);
+   return resultVarint;
+}
+
+template <typename ...Args>
+Variant StdClass::callParent(const char *name, Args&&... args)
+{
+   return const_cast<const StdClass &>(*this).callParent(name, std::forward<Args>(args)...);
+}
 
 } // lang
 } // zapi

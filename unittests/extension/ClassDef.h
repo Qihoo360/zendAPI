@@ -120,18 +120,23 @@ class A : public StdClass
 {
 public:
    void printInfo();
+   void changeNameByRef(StringVariant &name);
 };
 
 class B : public StdClass
 {
 public:
    void printInfo();
+   void showSomething();
+   void calculateSumByRef(NumericVariant argQuantity, NumericVariant retval, ...);
+   
 };
 
 class C : public StdClass
 {
 public:
    void printInfo();
+   void testCallParentPassRefArg();
 };
 
 #endif // ZAPI_UNITTEST_BRIDGE_DUMMYEXT_CLASS_DEF_H

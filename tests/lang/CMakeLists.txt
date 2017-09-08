@@ -21,6 +21,7 @@ set(ZAPI_PHP_TESTS
     lang/class/ClassPolymorphicTest.phpt
     lang/class/ClassIteratorTest.phpt
     lang/class/ClassStaticMethodExistTest.phpt
+    lang/class/ClassCallParentPassRefArgTest.phpt
     
     lang/class/ClassMethodExistTest.phpt
     lang/class/ClassPropertyTest.phpt

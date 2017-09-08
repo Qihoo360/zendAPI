@@ -432,6 +432,7 @@ int ObjectVariantClass::calculateSum(NumericVariant argQuantity, ...)
    return result;
 }
 
+
 void ObjectVariantClass::changeNameByRef(StringVariant &name)
 {
    zapi::out << "ObjectVariantClass::changeNameByRef been called" << std::endl;
@@ -446,12 +447,58 @@ void A::printInfo()
    zapi::out << "A::printInfo been called" << std::endl;
 }
 
+void A::changeNameByRef(StringVariant &name)
+{
+   zapi::out << "A::changeNameByRef been called" << std::endl;
+   if (name.getUnDerefType() == Type::Reference) {
+      zapi::out << "get ref arg" << std::endl;
+   }
+   name = "hello, zapi";
+}
+
 void B::printInfo()
 {
    zapi::out << "B::printInfo been called" << std::endl;
 }
 
+void B::showSomething()
+{
+   zapi::out << "B::showSomething been called" << std::endl;
+   
+}
+
+void B::calculateSumByRef(NumericVariant argQuantity, NumericVariant retval, ...)
+{
+    zapi::out << "C::calculateSumByRef been called" << std::endl;
+    zapi::out << "got " << argQuantity << " args" << std::endl;
+    if (retval.getUnDerefType() == Type::Reference) {
+       zapi::out << "retval is reference arg" << std::endl;
+    }
+    va_list args;
+    va_start(args, retval);
+    for (int i = 0; i < argQuantity - 1; ++i) {
+       retval += NumericVariant(va_arg(args, zapi_varidic_item_type), false);
+    }
+}
+
 void C::printInfo()
 {
    zapi::out << "C::printInfo been called" << std::endl;
+   callParent("printInfo");
+   callParent("showSomething");
+}
+
+void C::testCallParentPassRefArg()
+{
+   zapi::out << "C::testCallParentPassRefArg been called" << std::endl;
+   Variant str("xxxx");
+   zapi::out << "before call changeNameByRef : " << str << std::endl;
+   callParent("changeNameByRef", str.makeReferenceByZval());
+   zapi::out << "after call changeNameByRef : " << str << std::endl;
+   // pass arg when variant args
+   NumericVariant ret(0);
+   zapi::out << "before call calculateSumByRef : " << ret.toLong() << std::endl;
+   callParent("calculateSumByRef", ret.makeReferenceByZval(), 12, 2, 33);
+   zapi::out << "after call calculateSumByRef : " << ret.toLong() << std::endl;
+   
 }

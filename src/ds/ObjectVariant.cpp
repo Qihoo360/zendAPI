@@ -378,9 +378,13 @@ Variant ObjectVariant::exec(const char *name, int argc, Variant *argv) const
 {
    Variant methodName(name);
    zval params[argc];
+   zval *curArgPtr = nullptr;
    for (int i = 0; i < argc; i++) {
       params[i] = *argv[i].getUnDerefZvalPtr();
-      Z_TRY_ADDREF_P(&params[i]); // _call_user_function_ex free call stack will decrease 1
+      curArgPtr = &params[i];
+      if (Z_TYPE_P(curArgPtr) == IS_REFERENCE && Z_REFCOUNTED_P(Z_REFVAL_P(curArgPtr))) {
+          Z_TRY_ADDREF_P(&params[i]); // _call_user_function_ex free call stack will decrease 1
+      }
    }
    return do_execute(getZvalPtr(), methodName.getZvalPtr(), argc, params);
 }

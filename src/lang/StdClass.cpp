@@ -18,6 +18,7 @@
 #include "zapi/lang/StdClass.h"
 #include "zapi/lang/internal/StdClassPrivate.h"
 #include "zapi/kernel/NotImplemented.h"
+#include "zapi/utils/CommonFuncs.h"
 
 namespace zapi
 {
@@ -33,6 +34,7 @@ StdClassPrivate::StdClassPrivate()
 } // internal
 
 using zapi::kernel::NotImplemented;
+using zapi::lang::internal::StdClassPrivate;
 
 StdClass::StdClass()
    : m_implPtr(new StdClassPrivate)
@@ -44,11 +46,6 @@ StdClass::~StdClass()
 StdClass::StdClass(const StdClass &object)
    : m_implPtr(new StdClassPrivate)
 {}
-
-ObjectVariant *StdClass::getThisPtr() const
-{
-   return nullptr;
-}
 
 /**
  * Overridable method that is called right before an object is destructed
@@ -209,6 +206,82 @@ Variant StdClass::__toBool() const
 int StdClass::__compare(const StdClass &object) const
 {
    throw NotImplemented();
+}
+
+zval *StdClass::doCallParent(const char *name, const int argc, Variant *argv, zval *retvalPtr) const
+{
+   zend_object *object = m_implPtr->m_zendObject;
+   if (!object) {
+      zapi::error << "invoke StdClass::doCallParent on unbinded nativeObject" << std::endl;
+   }
+   int result;
+   zend_fcall_info fci;
+   zval retval;
+   HashTable *funcTable;
+   zval params[argc];
+   zval *curArgPtr = nullptr;
+   for (int i = 0; i < argc; i++) {
+      params[i] = *argv[i].getUnDerefZvalPtr();
+      curArgPtr = &params[i];
+      if (Z_TYPE_P(curArgPtr) == IS_REFERENCE && Z_REFCOUNTED_P(Z_REFVAL_P(curArgPtr))) {
+          Z_TRY_ADDREF_P(&params[i]); // _call_user_function_ex free call stack will decrease 1
+      }
+   }
+   fci.size = sizeof(fci);
+   fci.object = object;
+   ZVAL_STRINGL(&fci.function_name, name, std::strlen(name));
+   zapi::utils::str_tolower(Z_STRVAL(fci.function_name), Z_STRLEN(fci.function_name));
+   fci.retval = retvalPtr ? retvalPtr : &retval;
+   fci.param_count = argc;
+   fci.params = params;
+   fci.no_separation = 1;
+   
+   // setup cache
+   zend_fcall_info_cache fcic;
+   fcic.initialized = 1;
+   zend_class_entry *parentClassType = object->ce->parent;
+   if (parentClassType) {
+      funcTable = &parentClassType->function_table;
+   } else {
+      funcTable = EG(function_table);
+   }
+   if ((fcic.function_handler = reinterpret_cast<zend_function *>(zend_hash_find_ptr(funcTable, Z_STR(fci.function_name)))) == nullptr) {
+      /* error at c-level */
+      zend_error(E_CORE_ERROR, "Couldn't find implementation for method %s%s%s", 
+                 parentClassType ? ZSTR_VAL(parentClassType->name) : "", parentClassType ? "::" : "", name);
+   }
+   fcic.calling_scope = parentClassType;
+   if (object) {
+      fcic.called_scope = object->ce;
+   } else {
+      zend_class_entry *calledScope = zend_get_called_scope(EG(current_execute_data));
+      
+      if (parentClassType &&
+          (!calledScope ||
+           !instanceof_function(calledScope, parentClassType))) {
+         fcic.called_scope = parentClassType;
+      } else {
+         fcic.called_scope = calledScope;
+      }
+   }
+   fcic.object = object ? object : nullptr;
+   result = zend_call_function(&fci, &fcic);
+   zval_ptr_dtor(&fci.function_name);
+   if (result == ZAPI_FAILURE) {
+      /* error at c-level */
+      if (!parentClassType) {
+         parentClassType = object ? object->ce : nullptr;
+      }
+      if (!EG(exception)) {
+         zend_error(E_CORE_ERROR, "Couldn't execute method %s%s%s", parentClassType 
+                    ? ZSTR_VAL(parentClassType->name) : "", parentClassType ? "::" : "", name);
+      }
+   }
+   if (!retvalPtr) {
+      zval_ptr_dtor(&retval);
+      return nullptr;
+   }
+   return retvalPtr;
 }
 
 } // lang
