@@ -456,6 +456,16 @@ void A::changeNameByRef(StringVariant &name)
    name = "hello, zapi";
 }
 
+void A::privateAMethod()
+{
+   zapi::out << "A::privateBMethod been called" << std::endl;
+}
+
+void A::protectedAMethod()
+{
+   zapi::out << "A::protectedAMethod been called" << std::endl;
+}
+
 void B::printInfo()
 {
    zapi::out << "B::printInfo been called" << std::endl;
@@ -483,8 +493,19 @@ void B::calculateSumByRef(NumericVariant argQuantity, NumericVariant retval, ...
 
 Variant B::addTwoNumber(NumericVariant &lhs, NumericVariant &rhs)
 {
-   zapi::out << "C::addTwoNumber been called" << std::endl;
+   zapi::out << "B::addTwoNumber been called" << std::endl;
    return lhs + rhs;
+}
+
+void B::privateBMethod()
+{
+   zapi::out << "B::privateBMethod been called" << std::endl;
+}
+
+void B::protectedBMethod()
+{
+   zapi::out << "B::protectedBMethod been called" << std::endl;
+   callParent("protectedAMethod");
 }
 
 void C::printInfo()
@@ -514,4 +535,55 @@ void C::testCallParentWithReturn()
    zapi::out << "C::testCallParentWithReturn been called" << std::endl;
    Variant ret = callParent("addTwoNumber", 1, 23);
    zapi::out << "after call addTwoNumber get : " << ret << std::endl;
+}
+
+void C::testGetObjectVaraintPtr()
+{
+   zapi::out << "C::testGetObjectVaraintPtr been called" << std::endl;
+   ObjectVariant *objZvalPtr = this->getObjectZvalPtr();
+   if (objZvalPtr->hasProperty("address")) {
+      zapi::out << "property C::address exists" << std::endl;
+      zapi::out << "property value : " << objZvalPtr->getProperty("address") << std::endl;
+   }
+   if (!objZvalPtr->hasProperty("privateName")) {
+      zapi::out << "property C::privateName not exists" << std::endl;
+   }
+   if (objZvalPtr->hasProperty("protectedName")) {
+      zapi::out << "property C::protectedName exists" << std::endl;
+      zapi::out << "property value : " << objZvalPtr->getProperty("protectedName") << std::endl;
+   }
+   if (objZvalPtr->methodExist("showSomething")) {
+      zapi::out << "method C::showSomething exists" << std::endl;
+      objZvalPtr->call("showSomething");
+   }
+   if (objZvalPtr->methodExist("privateCMethod")) {
+      zapi::out << "method C::privateCMethod exists" << std::endl;
+      objZvalPtr->call("privateCMethod");
+   }
+   if (objZvalPtr->methodExist("privateAMethod")) {
+      zapi::out << "method C::privateCMethod exists" << std::endl;
+      // objZvalPtr->call("privateAMethod"); fata error
+   }
+   if (objZvalPtr->methodExist("protectedAMethod")) {
+      zapi::out << "method C::protectedAMethod exists" << std::endl;
+      objZvalPtr->call("protectedAMethod");
+   }
+   if (objZvalPtr->methodExist("privateBMethod")) {
+      zapi::out << "method C::privateBMethod exists" << std::endl;
+      // objZvalPtr->call("privateAMethod"); fata error
+   }
+   if (objZvalPtr->methodExist("protectedBMethod")) {
+      zapi::out << "method C::protectedBMethod exists" << std::endl;
+      objZvalPtr->call("protectedBMethod");
+   }
+}
+
+void C::privateCMethod()
+{
+   zapi::out << "C::privateCMethod been called" << std::endl;
+}
+
+void C::protectedCMethod()
+{
+   zapi::out << "C::protectedCMethod been called" << std::endl;
 }

@@ -128,5 +128,5 @@ TEST(ObjectVariantTest, testConstructFromZval)
 TEST(ObjectVariantTest, testIsCallable)
 {
    ObjectVariant stdObj;
-   ASSERT_FALSE(stdObj.isCallable("notExistMethod"));
+   ASSERT_FALSE(stdObj.methodExist("notExistMethod"));
 }

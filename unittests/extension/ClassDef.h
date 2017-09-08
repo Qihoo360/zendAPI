@@ -121,6 +121,8 @@ class A : public StdClass
 public:
    void printInfo();
    void changeNameByRef(StringVariant &name);
+   void privateAMethod();
+   void protectedAMethod();
 };
 
 class B : public StdClass
@@ -130,6 +132,8 @@ public:
    void showSomething();
    void calculateSumByRef(NumericVariant argQuantity, NumericVariant retval, ...);
    Variant addTwoNumber(NumericVariant &lhs, NumericVariant &rhs);
+   void privateBMethod();
+   void protectedBMethod();
 };
 
 class C : public StdClass
@@ -138,6 +142,9 @@ public:
    void printInfo();
    void testCallParentPassRefArg();
    void testCallParentWithReturn();
+   void testGetObjectVaraintPtr();
+   void privateCMethod();
+   void protectedCMethod();
 };
 
 #endif // ZAPI_UNITTEST_BRIDGE_DUMMYEXT_CLASS_DEF_H

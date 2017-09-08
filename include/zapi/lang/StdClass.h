@@ -18,6 +18,7 @@
 
 #include "zapi/Global.h"
 #include "zapi/ds/Variant.h"
+#include "zapi/ds/ObjectVariant.h"
 
 namespace zapi
 {
@@ -26,7 +27,6 @@ namespace zapi
 namespace ds
 {
 class Variant;
-class ObjectVariant;
 } // ds
 
 namespace vm
@@ -63,7 +63,7 @@ protected:
     * Constructor
     */
    StdClass();
-
+   
    /**
     * Copy constructor
     *
@@ -75,7 +75,7 @@ protected:
     * @param object
     */
    StdClass(const StdClass &object);
-
+   
 public:
    virtual ~StdClass();
    /**
@@ -84,7 +84,7 @@ public:
     * @return Value
     */
    Variant operator[](const char *name) const;
-
+   
    /**
     * Alternative way to access a property using the [] operator
     * @param  string
@@ -97,26 +97,26 @@ public:
     * @return Value
     */
    Variant property(const char *name) const;
-
+   
    /**
     * Retrieve a property by name
     * @param  string
     * @return Value
     */
    Variant property(const std::string &name) const;
-
+   
    /**
     * Overridable method that is called right before an object is destructed
     */
    void __destruct() const;
-
+   
    /**
     * Overridable method that is called right after an object is cloned
     *
     * The default implementation does nothing
     */
    void __clone();
-
+   
    /**
     * Overridable method that is called to check if a property is set
     *
@@ -127,7 +127,7 @@ public:
     * @return bool
     */
    bool __isset(const std::string &key) const;
-
+   
    /**
     * Overridable method that is called to set a new property
     *
@@ -138,7 +138,7 @@ public:
     * @param  value
     */
    void __set(const std::string &key, const Variant &value);
-
+   
    /**
     * Retrieve a property
     *
@@ -149,7 +149,7 @@ public:
     * @return value
     */
    Variant __get(const std::string &key) const;
-
+   
    /**
     * Remove a member
     *
@@ -159,7 +159,7 @@ public:
     * @param key
     */
    void __unset(const std::string &key);
-
+   
    /**
     * Call a method
     *
@@ -172,7 +172,7 @@ public:
     * @return Value       The return value
     */
    Variant __call(const std::string &method, Parameters &params) const;
-
+   
    /**
     * Call the class as if it was a function
     *
@@ -183,7 +183,7 @@ public:
     * @return Value       The return value
     */
    Variant __invoke(Parameters &params) const;
-
+   
    /**
     * Cast the object to a string
     *
@@ -193,7 +193,7 @@ public:
     * @return Value       The object as a string
     */
    Variant __toString() const;
-
+   
    /**
     * Cast the object to an integer
     *
@@ -203,7 +203,7 @@ public:
     * @return int Integer value
     */
    Variant __toInteger() const;
-
+   
    /**
     * Cast the object to a float
     *
@@ -213,7 +213,7 @@ public:
     * @return double      Floating point value
     */
    Variant __toDouble() const;
-
+   
    /**
     * Cast the object to a boolean
     *
@@ -223,7 +223,7 @@ public:
     * @return bool
     */
    Variant __toBool() const;
-
+   
    /**
     *  Compare the object with a different object
     *
@@ -234,10 +234,16 @@ public:
     */
    int __compare(const StdClass &object) const;
 protected:
+   ObjectVariant *getObjectZvalPtr() const;
+   ObjectVariant *getObjectZvalPtr();
    template <typename ...Args>
    Variant callParent(const char *name, Args&&... args);
    template <typename ...Args>
    Variant callParent(const char *name, Args&&... args) const;
+   template <typename ...Args>
+   Variant call(const char *name, Args&&... args);
+   template <typename ...Args>
+   Variant call(const char *name, Args&&... args) const;
 private:
    zval *doCallParent(const char *name, const int argc, Variant *argv, zval *retval) const;
 protected:
@@ -265,6 +271,20 @@ Variant StdClass::callParent(const char *name, Args&&... args)
 {
    return const_cast<const StdClass &>(*this).callParent(name, std::forward<Args>(args)...);
 }
+
+template <typename ...Args>
+Variant StdClass::call(const char *name, Args&&... args) const
+{
+   Variant vargs[] = { Variant(std::forward<Args>(args))... };
+   return getObjectZvalPtr()->exec(name, sizeof...(Args), vargs);
+}
+
+template <typename ...Args>
+Variant StdClass::call(const char *name, Args&&... args)
+{
+   return const_cast<const StdClass &>(*this).call(name, std::forward<Args>(args)...);
+}
+
 
 } // lang
 } // zapi

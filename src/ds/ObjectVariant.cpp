@@ -245,7 +245,7 @@ bool ObjectVariant::hasProperty(const std::string &name)
    return 1 == value;
 }
 
-bool ObjectVariant::isCallable(const char *name) const
+bool ObjectVariant::methodExist(const char *name) const
 {
    if (Type::Object != getType()) {
       return false;
@@ -367,6 +367,14 @@ bool ObjectVariant::derivedFrom(const ObjectVariant &other) const
       return false;
    }
    return instanceof_function(thisClsEntry, clsEntry);
+}
+
+ObjectVariant::ObjectVariant(StdClass *nativeObject)
+{
+   zend_object *zobject = nativeObject->m_implPtr->m_zendObject;
+   assert(zobject);
+   zval *self = getUnDerefZvalPtr();
+   ZVAL_OBJ(self, zobject);
 }
 
 Variant ObjectVariant::exec(const char *name, int argc, Variant *argv)

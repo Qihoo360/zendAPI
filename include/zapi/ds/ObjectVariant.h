@@ -61,7 +61,7 @@ public:
    Variant getStaticProperty(const std::string &name);
    bool hasProperty(const std::string &name);
 
-   bool isCallable(const char *name) const;
+   bool methodExist(const char *name) const;
    Variant call(const char *name);
    Variant call(const char *name) const;
 
@@ -80,9 +80,11 @@ public:
    bool derivedFrom(const std::string &className) const;
    bool derivedFrom(const ObjectVariant &other) const;
 private:
+   ObjectVariant(StdClass *nativeObject);
    Variant exec(const char *name, int argc, Variant *argv);
    Variant exec(const char *name, int argc, Variant *argv) const;
    bool doClassInvoke(int argc, Variant *argv, zval *retval);
+   friend class StdClass;
 };
 
 template <typename ...Args>

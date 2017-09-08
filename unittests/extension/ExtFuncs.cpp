@@ -267,9 +267,13 @@ void register_inherit_cls(Extension &extension)
          ("changeNameByRef", {
              RefArgument("name", Type::String)
           });
+   a.registerMethod<decltype(&A::privateAMethod), &A::privateAMethod>("privateAMethod", Modifier::Private);
+   a.registerMethod<decltype(&A::protectedAMethod), &A::protectedAMethod>("protectedAMethod", Modifier::Protected);
    a.registerProperty("name", "zapi");
    a.registerProperty("protectedName", "protected zapi", Modifier::Protected);
    a.registerProperty("privateName", "private zapi", Modifier::Private);
+   b.registerMethod<decltype(&B::privateBMethod), &B::privateBMethod>("privateBMethod", Modifier::Private);
+   b.registerMethod<decltype(&B::protectedBMethod), &B::protectedBMethod>("protectedBMethod", Modifier::Protected);
    b.registerMethod<decltype(&B::printInfo), &B::printInfo>("printInfo");
    b.registerMethod<decltype(&B::showSomething), &B::showSomething>("showSomething");
    b.registerMethod<decltype(&B::calculateSumByRef), &B::calculateSumByRef>
@@ -286,7 +290,10 @@ void register_inherit_cls(Extension &extension)
    c.registerMethod<decltype(&C::printInfo), &C::printInfo>("printInfo");
    c.registerMethod<decltype(&C::testCallParentPassRefArg), &C::testCallParentPassRefArg>("testCallParentPassRefArg");
    c.registerMethod<decltype(&C::testCallParentWithReturn), &C::testCallParentWithReturn>("testCallParentWithReturn");
-   
+   c.registerMethod<decltype(&C::testGetObjectVaraintPtr), &C::testGetObjectVaraintPtr>("testGetObjectVaraintPtr");
+   c.registerMethod<decltype(&C::privateCMethod), &C::privateCMethod>("privateCMethod", Modifier::Private);
+   c.registerMethod<decltype(&C::protectedCMethod), &C::protectedCMethod>("protectedCMethod", Modifier::Protected);
+   c.registerProperty("address", "beijing", Modifier::Private);
    b.registerBaseClass(a);
    c.registerBaseClass(b);
    extension.registerClass(a);

@@ -20,17 +20,32 @@
 
 #include "zapi/Global.h"
 
+// class forware declare with namespace
+namespace zapi
+{
+namespace ds
+{
+
+class ObjectVariant;
+
+} // ds
+} // zapi
+
 namespace zapi
 {
 namespace lang
 {
 namespace internal
 {
+
+using zapi::ds::ObjectVariant;
+
 class StdClassPrivate
 {
 public:
    StdClassPrivate();
    zend_object *m_zendObject = nullptr;
+   std::unique_ptr<ObjectVariant> m_objVariant;
 };
 } // internal
 } // lang

@@ -14,7 +14,6 @@
 // Created by zzu_softboy on 2017/06/08.
 
 #include "zapi/ds/Variant.h"
-#include "zapi/ds/ObjectVariant.h"
 #include "zapi/lang/StdClass.h"
 #include "zapi/lang/internal/StdClassPrivate.h"
 #include "zapi/kernel/NotImplemented.h"
@@ -206,6 +205,20 @@ Variant StdClass::__toBool() const
 int StdClass::__compare(const StdClass &object) const
 {
    throw NotImplemented();
+}
+
+ObjectVariant *StdClass::getObjectZvalPtr() const
+{
+   if (!m_implPtr->m_objVariant) {
+      auto self = this;
+      m_implPtr->m_objVariant.reset(new ObjectVariant(const_cast<StdClass *>(self)));
+   }
+   return m_implPtr->m_objVariant.get();
+}
+
+ObjectVariant *StdClass::getObjectZvalPtr()
+{
+   return const_cast<const StdClass *>(this)->getObjectZvalPtr();
 }
 
 zval *StdClass::doCallParent(const char *name, const int argc, Variant *argv, zval *retvalPtr) const
