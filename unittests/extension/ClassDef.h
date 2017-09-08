@@ -117,12 +117,21 @@ public:
 };
 
 class A : public StdClass
-{};
+{
+public:
+   void printInfo();
+};
 
 class B : public StdClass
-{};
+{
+public:
+   void printInfo();
+};
 
 class C : public StdClass
-{};
+{
+public:
+   void printInfo();
+};
 
 #endif // ZAPI_UNITTEST_BRIDGE_DUMMYEXT_CLASS_DEF_H

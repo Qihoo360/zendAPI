@@ -262,6 +262,9 @@ void register_inherit_cls(Extension &extension)
    zapi::lang::Class<A> a("A");
    zapi::lang::Class<B> b("B");
    zapi::lang::Class<C> c("C");
+   a.registerMethod<decltype(&A::printInfo), &A::printInfo>("printInfo");
+   b.registerMethod<decltype(&B::printInfo), &B::printInfo>("printInfo");
+   c.registerMethod<decltype(&C::printInfo), &C::printInfo>("printInfo");
    b.registerBaseClass(a);
    c.registerBaseClass(b);
    extension.registerClass(a);

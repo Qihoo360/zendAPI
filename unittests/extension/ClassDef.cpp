@@ -440,3 +440,18 @@ void ObjectVariantClass::changeNameByRef(StringVariant &name)
    }
    name = "hello, zapi";
 }
+
+void A::printInfo()
+{
+   zapi::out << "A::printInfo been called" << std::endl;
+}
+
+void B::printInfo()
+{
+   zapi::out << "B::printInfo been called" << std::endl;
+}
+
+void C::printInfo()
+{
+   zapi::out << "C::printInfo been called" << std::endl;
+}

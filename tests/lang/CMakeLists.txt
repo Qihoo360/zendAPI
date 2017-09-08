@@ -18,7 +18,7 @@ set(ZAPI_PHP_TESTS
     lang/class/ClassConstantTypeTest.phpt
     lang/class/ClassInheritTest.phpt
     lang/class/ClassInterfaceImplementTest.phpt
-    
+    lang/class/ClassPolymorphicTest.phpt
     lang/class/ClassIteratorTest.phpt
     lang/class/ClassStaticMethodExistTest.phpt
     
