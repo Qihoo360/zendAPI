@@ -332,6 +332,11 @@ void register_visibility_cls(Extension &extension)
    visibilityClass.registerMethod<decltype(&VisibilityClass::protectedMethod), &VisibilityClass::protectedMethod>("protectedMethod", Modifier::Protected);
    visibilityClass.registerMethod<decltype(&VisibilityClass::privateMethod), &VisibilityClass::privateMethod>("privateMethod", Modifier::Private);
    visibilityClass.registerMethod<decltype(&VisibilityClass::finalMethod), &VisibilityClass::finalMethod>("finalMethod", Modifier::Final);
+   // register some property
+   visibilityClass.registerProperty("publicProp", "propValue", Modifier::Public);
+   visibilityClass.registerProperty("protectedProp", "propValue", Modifier::Protected);
+   visibilityClass.registerProperty("privateProp", "propValue", Modifier::Private);
+   
    zapi::lang::Class<FinalTestClass> finalTestClass("FinalTestClass", zapi::lang::ClassType::Final);
    finalTestClass.registerMethod<decltype(&FinalTestClass::someMethod), &FinalTestClass::someMethod>("someMethod");
    extension.registerClass(visibilityClass);
