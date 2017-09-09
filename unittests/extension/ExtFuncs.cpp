@@ -353,6 +353,7 @@ void register_cls(Extension &extension)
    //   personClass.registerInterface(infoInterface);
    //   extension.registerInterface(infoInterface);
    extension.registerClass(personClass);
+   register_interfaces(extension);
    register_construct_and_destruct(extension);
    register_props_test_cls(extension);
    register_magic_method_cls(extension);
@@ -360,6 +361,26 @@ void register_cls(Extension &extension)
    register_inherit_cls(extension);
 }
 
-
+void register_interfaces(Extension &extension)
+{
+   zapi::lang::Interface interfaceA("InterfaceA");
+   zapi::lang::Interface interfaceB("InterfaceB");
+   zapi::lang::Interface interfaceC("InterfaceC");
+   interfaceA.registerMethod("methodOfA");
+   interfaceA.registerMethod("protectedMethodOfA", Modifier::Protected);
+   interfaceA.registerMethod("privateMethodOfA", Modifier::Private);
+   interfaceB.registerMethod("methodOfB");
+   interfaceB.registerMethod("protectedMethodOfB", Modifier::Protected);
+   interfaceB.registerMethod("privateMethodOfB", Modifier::Private);
+   interfaceC.registerMethod("methodOfC");
+   interfaceC.registerMethod("protectedMethodOfC", Modifier::Protected);
+   interfaceC.registerMethod("privateMethodOfC", Modifier::Private);
+   
+   interfaceC.registerBaseInterface(interfaceB);
+   interfaceB.registerBaseInterface(interfaceA);
+   extension.registerInterface(interfaceA);
+   extension.registerInterface(interfaceB);
+   extension.registerInterface(interfaceC);
+}
 
 } // dummyext

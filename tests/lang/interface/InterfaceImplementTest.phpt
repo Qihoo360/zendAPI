@@ -1,12 +1,14 @@
 --TEST--
-interface exists test
+interface implement test
 --FILE--
 <?php
 
 if (interface_exists("InterfaceA") && interface_exists("InterfaceB") && interface_exists("InterfaceC")) {
-    echo "InterfaceA and InterfaceB and InterfaceC exists\n";
+   if (is_subclass_of("InterfaceC", "InterfaceB") {
+      echo "xxxxx";
+   }
 }
 
 ?>
 --EXPECT--
-InterfaceA and InterfaceB and InterfaceC exists
+

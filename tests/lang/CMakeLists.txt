@@ -11,13 +11,16 @@ set(ZAPI_PHP_TESTS
     lang/func/FunctionReturnTest.phpt
     lang/func/FunctionVarArgsTest.phpt
     
+    lang/interface/InterfaceImplementTest.phpt
+    lang/interface/InterfaceInheritTest.phpt
+    lang/interface/InterfaceExistTest.phpt
+    
     lang/class/ClassExistTest.phpt
     lang/class/ClassArrayAccessTest.phpt
     lang/class/ClassCallParentMethodTest.phpt
     lang/class/ClassConstantTest.phpt
     lang/class/ClassConstantTypeTest.phpt
     lang/class/ClassInheritTest.phpt
-    lang/class/ClassInterfaceImplementTest.phpt
     lang/class/ClassPolymorphicTest.phpt
     lang/class/ClassIteratorTest.phpt
     lang/class/ClassStaticMethodExistTest.phpt

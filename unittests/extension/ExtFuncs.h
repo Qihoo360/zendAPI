@@ -30,6 +30,7 @@ ZAPI_DECL_EXPORT void register_ns_io(Namespace &io);
 ZAPI_DECL_EXPORT void register_ns_zapi(Namespace &zapi);
 ZAPI_DECL_EXPORT void register_const(Extension &extension);
 ZAPI_DECL_EXPORT void register_cls(Extension &extension);
+ZAPI_DECL_EXPORT void register_interfaces(Extension &extension);
 
 } // dummyext
 

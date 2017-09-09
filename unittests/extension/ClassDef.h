@@ -147,4 +147,5 @@ public:
    void protectedCMethod();
 };
 
+
 #endif // ZAPI_UNITTEST_BRIDGE_DUMMYEXT_CLASS_DEF_H
