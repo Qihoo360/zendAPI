@@ -340,6 +340,7 @@ void register_visibility_cls(Extension &extension)
    zapi::lang::Class<FinalTestClass> finalTestClass("FinalTestClass", zapi::lang::ClassType::Final);
    finalTestClass.registerMethod<decltype(&FinalTestClass::someMethod), &FinalTestClass::someMethod>("someMethod");
    extension.registerClass(visibilityClass);
+   extension.registerClass(finalTestClass);
 }
 
 void register_cls(Extension &extension)

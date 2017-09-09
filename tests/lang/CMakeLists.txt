@@ -30,7 +30,7 @@ set(ZAPI_PHP_TESTS
     lang/class/ClassGetVariantPtrTest.phpt
     lang/class/ClassPropertyVisibilityTest.phpt
     lang/class/ClassMethodVisibilityTest.phpt
-    
+    lang/class/ClassFinalTest.phpt
     lang/class/ClassMethodExistTest.phpt
     lang/class/ClassPropertyTest.phpt
     lang/class/ClassPropertyTypeTest.phpt
