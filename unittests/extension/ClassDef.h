@@ -17,14 +17,14 @@ public:
    void print_sum(NumericVariant argQuantity, ...);
    void setAge(const NumericVariant &age);
    int getAge();
-
+   
    Variant getName();
    int addTwoNum(const NumericVariant &num1, const NumericVariant &num2);
    int addSum(NumericVariant argQuantity, ...);
    // access level test method
    void protectedMethod();
    void privateMethod();
-
+   
    static void staticShowName();
    static StringVariant concatStr(const StringVariant &lhs, const StringVariant &rhs);
    static void staticProtectedMethod();
@@ -71,7 +71,7 @@ public:
 
 class NonMagicMethodClass : public StdClass
 {
-
+   
 };
 
 class MagicMethodClass : public StdClass, public zapi::protocol::Serializable
@@ -148,6 +148,27 @@ public:
    void methodOfA();
    void protectedMethodOfA();
    void privateMethodOfA();
+};
+
+class VisibilityClass : public StdClass
+{
+public:
+   void publicMethod();
+   void protectedMethod();
+   void privateMethod();
+   void finalMethod();
+};
+
+class FinalTestClass : public StdClass   
+{
+public:
+   void someMethod();
+};
+
+class AbstractTestClass : public StdClass
+{
+public:
+   void normalMethod();   
 };
 
 

@@ -28,6 +28,8 @@ set(ZAPI_PHP_TESTS
     lang/class/ClassCallParentMethodWithReturnTest.phpt
     lang/class/ClassInheritPropertyTest.phpt
     lang/class/ClassGetVariantPtrTest.phpt
+    lang/class/ClassPropertyVisibilityTest.phpt
+    lang/class/ClassMethodVisibilityTest.phpt
     
     lang/class/ClassMethodExistTest.phpt
     lang/class/ClassPropertyTest.phpt

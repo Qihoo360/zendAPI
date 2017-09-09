@@ -325,6 +325,18 @@ void register_inherit_cls(Extension &extension)
    extension.registerClass(c);
 }
 
+void register_visibility_cls(Extension &extension)
+{
+   zapi::lang::Class<VisibilityClass> visibilityClass("VisibilityClass");
+   visibilityClass.registerMethod<decltype(&VisibilityClass::publicMethod), &VisibilityClass::publicMethod>("publicMethod", Modifier::Public);
+   visibilityClass.registerMethod<decltype(&VisibilityClass::protectedMethod), &VisibilityClass::protectedMethod>("protectedMethod", Modifier::Protected);
+   visibilityClass.registerMethod<decltype(&VisibilityClass::privateMethod), &VisibilityClass::privateMethod>("privateMethod", Modifier::Private);
+   visibilityClass.registerMethod<decltype(&VisibilityClass::finalMethod), &VisibilityClass::finalMethod>("finalMethod", Modifier::Final);
+   zapi::lang::Class<FinalTestClass> finalTestClass("FinalTestClass", zapi::lang::ClassType::Final);
+   finalTestClass.registerMethod<decltype(&FinalTestClass::someMethod), &FinalTestClass::someMethod>("someMethod");
+   extension.registerClass(visibilityClass);
+}
+
 void register_cls(Extension &extension)
 {
    zapi::lang::Class<Person> personClass("Person");
@@ -382,6 +394,7 @@ void register_cls(Extension &extension)
    register_magic_method_cls(extension);
    register_object_variant_cls(extension);
    register_inherit_cls(extension);
+   register_visibility_cls(extension);
 }
 
 

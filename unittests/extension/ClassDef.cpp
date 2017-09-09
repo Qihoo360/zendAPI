@@ -602,3 +602,24 @@ void C::privateMethodOfA()
 {
    
 }
+
+void VisibilityClass::publicMethod()
+{}
+
+void VisibilityClass::protectedMethod()
+{}
+
+void VisibilityClass::privateMethod()
+{}
+
+void VisibilityClass::finalMethod()
+{}
+
+void FinalTestClass::someMethod()
+{
+}
+
+void AbstractTestClass::normalMethod()
+{
+   
+}
