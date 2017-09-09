@@ -145,6 +145,9 @@ public:
    void testGetObjectVaraintPtr();
    void privateCMethod();
    void protectedCMethod();
+   void methodOfA();
+   void protectedMethodOfA();
+   void privateMethodOfA();
 };
 
 

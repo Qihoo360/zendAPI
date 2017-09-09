@@ -587,3 +587,18 @@ void C::protectedCMethod()
 {
    zapi::out << "C::protectedCMethod been called" << std::endl;
 }
+
+void C::methodOfA()
+{
+   
+}
+
+void C::protectedMethodOfA()
+{
+   
+}
+
+void C::privateMethodOfA()
+{
+   
+}

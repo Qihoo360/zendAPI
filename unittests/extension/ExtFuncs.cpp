@@ -259,6 +259,26 @@ void register_object_variant_cls(Extension &extension)
 
 void register_inherit_cls(Extension &extension)
 {
+   
+   zapi::lang::Interface interfaceA("InterfaceA");
+   zapi::lang::Interface interfaceB("InterfaceB");
+   zapi::lang::Interface interfaceC("InterfaceC");
+   interfaceA.registerMethod("methodOfA");
+   interfaceA.registerMethod("protectedMethodOfA", Modifier::Protected);
+   interfaceA.registerMethod("privateMethodOfA", Modifier::Private);
+   interfaceB.registerMethod("methodOfB");
+   interfaceB.registerMethod("protectedMethodOfB", Modifier::Protected);
+   interfaceB.registerMethod("privateMethodOfB", Modifier::Private);
+   interfaceC.registerMethod("methodOfC");
+   interfaceC.registerMethod("protectedMethodOfC", Modifier::Protected);
+   interfaceC.registerMethod("privateMethodOfC", Modifier::Private);
+   
+   interfaceC.registerBaseInterface(interfaceB);
+   interfaceB.registerBaseInterface(interfaceA);
+   extension.registerInterface(interfaceA);
+   extension.registerInterface(interfaceB);
+   extension.registerInterface(interfaceC);
+   
    zapi::lang::Class<A> a("A");
    zapi::lang::Class<B> b("B");
    zapi::lang::Class<C> c("C");
@@ -293,9 +313,13 @@ void register_inherit_cls(Extension &extension)
    c.registerMethod<decltype(&C::testGetObjectVaraintPtr), &C::testGetObjectVaraintPtr>("testGetObjectVaraintPtr");
    c.registerMethod<decltype(&C::privateCMethod), &C::privateCMethod>("privateCMethod", Modifier::Private);
    c.registerMethod<decltype(&C::protectedCMethod), &C::protectedCMethod>("protectedCMethod", Modifier::Protected);
+   c.registerMethod<decltype(&C::methodOfA), &C::methodOfA>("methodOfA", Modifier::Public);
+   c.registerMethod<decltype(&C::protectedMethodOfA), &C::protectedMethodOfA>("protectedMethodOfA", Modifier::Public);
+   c.registerMethod<decltype(&C::privateMethodOfA), &C::privateMethodOfA>("privateMethodOfA", Modifier::Public);
    c.registerProperty("address", "beijing", Modifier::Private);
    b.registerBaseClass(a);
    c.registerBaseClass(b);
+   c.registerInterface(interfaceA);
    extension.registerClass(a);
    extension.registerClass(b);
    extension.registerClass(c);
@@ -353,7 +377,6 @@ void register_cls(Extension &extension)
    //   personClass.registerInterface(infoInterface);
    //   extension.registerInterface(infoInterface);
    extension.registerClass(personClass);
-   register_interfaces(extension);
    register_construct_and_destruct(extension);
    register_props_test_cls(extension);
    register_magic_method_cls(extension);
@@ -361,26 +384,5 @@ void register_cls(Extension &extension)
    register_inherit_cls(extension);
 }
 
-void register_interfaces(Extension &extension)
-{
-   zapi::lang::Interface interfaceA("InterfaceA");
-   zapi::lang::Interface interfaceB("InterfaceB");
-   zapi::lang::Interface interfaceC("InterfaceC");
-   interfaceA.registerMethod("methodOfA");
-   interfaceA.registerMethod("protectedMethodOfA", Modifier::Protected);
-   interfaceA.registerMethod("privateMethodOfA", Modifier::Private);
-   interfaceB.registerMethod("methodOfB");
-   interfaceB.registerMethod("protectedMethodOfB", Modifier::Protected);
-   interfaceB.registerMethod("privateMethodOfB", Modifier::Private);
-   interfaceC.registerMethod("methodOfC");
-   interfaceC.registerMethod("protectedMethodOfC", Modifier::Protected);
-   interfaceC.registerMethod("privateMethodOfC", Modifier::Private);
-   
-   interfaceC.registerBaseInterface(interfaceB);
-   interfaceB.registerBaseInterface(interfaceA);
-   extension.registerInterface(interfaceA);
-   extension.registerInterface(interfaceB);
-   extension.registerInterface(interfaceC);
-}
 
 } // dummyext

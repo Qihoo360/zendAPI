@@ -15,6 +15,8 @@
 
 #include <iostream>
 #include <cstring>
+#include "php/Zend/zend_inheritance.h"
+#include "php/Zend/zend.h"
 #include "zapi/vm/IteratorBridge.h"
 #include "zapi/vm/AbstractClass.h"
 #include "zapi/vm/internal/AbstractClassPrivate.h"
@@ -97,6 +99,60 @@ void acp_ptr_deleter(zend_string *ptr)
 {
    zend_string_release(ptr);
 }
+
+#define MAX_ABSTRACT_INFO_CNT 3
+#define MAX_ABSTRACT_INFO_FMT "%s%s%s%s"
+#define DISPLAY_ABSTRACT_FN(idx) \
+   ai.afn[idx] ? ZEND_FN_SCOPE_NAME(ai.afn[idx]) : "", \
+   ai.afn[idx] ? "::" : "", \
+   ai.afn[idx] ? ZSTR_VAL(ai.afn[idx]->common.function_name) : "", \
+   ai.afn[idx] && ai.afn[idx + 1] ? ", " : (ai.afn[idx] && ai.cnt > MAX_ABSTRACT_INFO_CNT ? ", ..." : "")
+
+typedef struct _zend_abstract_info {
+   zend_function *afn[MAX_ABSTRACT_INFO_CNT + 1];
+   int cnt;
+   int ctor;
+} zend_abstract_info;
+
+void verify_abstract_class_function(zend_function *fn, zend_abstract_info *ai) /* {{{ */
+{
+   if (fn->common.fn_flags & ZEND_ACC_ABSTRACT) {
+      if (ai->cnt < MAX_ABSTRACT_INFO_CNT) {
+         ai->afn[ai->cnt] = fn;
+      }
+      if (fn->common.fn_flags & ZEND_ACC_CTOR) {
+         if (!ai->ctor) {
+            ai->cnt++;
+            ai->ctor = 1;
+         } else {
+            ai->afn[ai->cnt] = NULL;
+         }
+      } else {
+         ai->cnt++;
+      }
+   }
+}
+
+void verify_abstract_class(zend_class_entry *ce) /* {{{ */
+{
+   void *func;
+   zend_abstract_info ai;
+   memset(&ai, 0, sizeof(ai));
+   ZEND_HASH_FOREACH_PTR(&ce->function_table, func) {
+      verify_abstract_class_function(reinterpret_cast<zend_function *>(func), &ai);
+   } ZEND_HASH_FOREACH_END();
+   
+   if (ai.cnt) {
+      zend_error(E_ERROR, "Class %s contains %d abstract method%s and must therefore be declared abstract or implement the remaining methods (" MAX_ABSTRACT_INFO_FMT MAX_ABSTRACT_INFO_FMT MAX_ABSTRACT_INFO_FMT ")",
+                          ZSTR_VAL(ce->name), ai.cnt,
+                          ai.cnt > 1 ? "s" : "",
+                          DISPLAY_ABSTRACT_FN(0),
+                          DISPLAY_ABSTRACT_FN(1),
+                          DISPLAY_ABSTRACT_FN(2)
+                          );
+   }
+}
+
 } // anonymous namespace
 
 struct CallContext
@@ -141,7 +197,7 @@ zend_class_entry *AbstractClassPrivate::initialize(AbstractClass *cls, const std
       entry.get_iterator = &AbstractClassPrivate::getIterator;
       entry.iterator_funcs.funcs = IteratorBridge::getIteratorFuncs();
    }
-
+   
    if (m_apiPtr->serializable()) {
       entry.serialize = &AbstractClassPrivate::serialize;
       entry.unserialize = &AbstractClassPrivate::unserialize;
@@ -160,9 +216,10 @@ zend_class_entry *AbstractClassPrivate::initialize(AbstractClass *cls, const std
       m_classEntry = zend_register_internal_class(&entry);
    }
    // register the interfaces of the class
+   
    for (std::shared_ptr<AbstractClass> &interface : m_interfaces) {
       if (interface->m_implPtr->m_classEntry) {
-         zend_class_implements(m_classEntry, 1, interface->m_implPtr->m_classEntry);
+         zend_do_implement_interface(m_classEntry, interface->m_implPtr->m_classEntry);
       } else {
          // interface that want to implement is not initialized
          std::cerr << "Derived class " << m_name << " is initialized before base class "
@@ -171,7 +228,6 @@ zend_class_entry *AbstractClassPrivate::initialize(AbstractClass *cls, const std
       }
    }
    m_classEntry->ce_flags = static_cast<uint32_t>(m_type);
-
    for (std::shared_ptr<AbstractMember> &member : m_members) {
       member->initialize(m_classEntry);
    }
@@ -223,21 +279,21 @@ zend_object_handlers *AbstractClassPrivate::getObjectHandlers()
    m_handlers.read_dimension = &AbstractClassPrivate::readDimension;
    m_handlers.has_dimension = &AbstractClassPrivate::hasDimension;
    m_handlers.unset_dimension = &AbstractClassPrivate::unsetDimension;
-
+   
    // functions for magic properties handlers __get, __set, __isset and __unset
    m_handlers.write_property = &AbstractClassPrivate::writeProperty;
    m_handlers.read_property = &AbstractClassPrivate::readProperty;
    m_handlers.has_property = &AbstractClassPrivate::hasProperty;
    m_handlers.unset_property = &AbstractClassPrivate::unsetProperty;
-
+   
    // functions for method is called
    m_handlers.get_method = &AbstractClassPrivate::getMethod;
    m_handlers.get_closure = &AbstractClassPrivate::getClosure;
-
+   
    // functions for object destruct
    m_handlers.dtor_obj = &AbstractClassPrivate::destructObject;
    m_handlers.free_obj = &AbstractClassPrivate::freeObject;
-
+   
    // functions for type cast
    m_handlers.cast_object = &AbstractClassPrivate::cast;
    m_handlers.compare_objects = &AbstractClassPrivate::compare;
@@ -251,6 +307,9 @@ zend_object_handlers *AbstractClassPrivate::getObjectHandlers()
 
 zend_object *AbstractClassPrivate::createObject(zend_class_entry *entry)
 {
+   if (!(entry->ce_flags & (ZEND_ACC_TRAIT|ZEND_ACC_EXPLICIT_ABSTRACT_CLASS|ZEND_ACC_INTERFACE|ZEND_ACC_IMPLEMENT_INTERFACES|ZEND_ACC_IMPLEMENT_TRAITS))) {
+      verify_abstract_class(entry);
+   }
    // here we lose everything from AbstractClass object
    // of course we are in static method of AbstractClass
    // but we need get pointer to it, we need some meta info in it and we must
@@ -425,7 +484,7 @@ zend_object_iterator *AbstractClassPrivate::getIterator(zend_class_entry *entry,
       zend_error(E_ERROR, "Foreach by ref is not possible");
    }
    Traversable *traversable = dynamic_cast<Traversable *>(ObjectBinder::retrieveSelfPtr(object)->getNativeObject());
-
+   
    try {
       AbstractIterator *iterator = traversable->getIterator();
       // we are going to allocate an extended iterator (because php nowadays destructs
@@ -491,7 +550,7 @@ zval *AbstractClassPrivate::readProperty(zval *object, zval *name, int type, voi
    // from PHP. If someone wants to get a reference to such an internal variable,
    // that is in most cases simply impossible.
    // retrieve the object and class
-
+   
    try {
       ObjectBinder *objectBinder = ObjectBinder::retrieveSelfPtr(object);
       AbstractClassPrivate *selfPtr = retrieve_acp_ptr_from_cls_entry(Z_OBJCE_P(object));
