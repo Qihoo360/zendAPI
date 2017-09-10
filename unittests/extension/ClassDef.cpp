@@ -670,5 +670,70 @@ void IterateTestClass::rewind()
    m_currentIter = m_items.begin();
 }
 
+zapi_long IterateTestClass::count()
+{
+   zapi::out << "IterateTestClass::count called" << std::endl;
+   return m_items.size();
+}
+
+bool IterateTestClass::offsetExists(Variant offset)
+{
+   auto begin = m_items.begin();
+   auto end = m_items.end();
+   std::string key = StringVariant(std::move(offset)).toString();
+   while (begin != end) {
+      if (begin->first == key) {
+         return true;
+      }
+      begin++;
+   }
+   return false;
+}
+
+void IterateTestClass::offsetSet(Variant offset, Variant value)
+{
+   auto begin = m_items.begin();
+   auto end = m_items.end();
+   std::string key = StringVariant(std::move(offset)).toString();
+   while (begin != end) {
+      if (begin->first == key) {
+         begin->second = StringVariant(std::move(value)).toString();
+         return;
+      }
+      begin++;
+   }
+}
+
+Variant IterateTestClass::offsetGet(Variant offset)
+{
+   auto begin = m_items.begin();
+   auto end = m_items.end();
+   std::string key = StringVariant(std::move(offset)).toString();
+   while (begin != end) {
+      if (begin->first == key) {
+         return begin->second;
+      }
+      begin++;
+   }
+   return nullptr;
+}
+
+void IterateTestClass::offsetUnset(Variant offset)
+{
+   auto begin = m_items.begin();
+   auto end = m_items.end();
+   std::string key = StringVariant(std::move(offset)).toString();
+   while (begin != end) {
+      if (begin->first == key) {
+         break;
+      }
+      begin++;
+   }
+   if (begin != end) {
+      m_items.erase(begin);
+   }
+   
+}
+
 IterateTestClass::~IterateTestClass()
 {}

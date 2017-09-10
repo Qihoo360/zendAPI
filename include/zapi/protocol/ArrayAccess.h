@@ -35,10 +35,10 @@ using zapi::ds::Variant;
 class ZAPI_DECL_EXPORT ArrayAccess
 {
 public:
-   virtual bool offsetExists(const Variant &offset) = 0;
-   virtual void offsetSet(const Variant &offset, const Variant &value) = 0;
-   virtual Variant offsetGet(const Variant &offset) = 0;
-   virtual Variant offsetUnset(const Variant &offset) = 0;
+   virtual bool offsetExists(Variant offset) = 0;
+   virtual void offsetSet(Variant offset, Variant value) = 0;
+   virtual Variant offsetGet(Variant offset) = 0;
+   virtual void offsetUnset(Variant offset) = 0;
    virtual ~ArrayAccess();
 };
 

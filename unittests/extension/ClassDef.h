@@ -175,7 +175,9 @@ public:
 class IterateTestClass : 
       public StdClass, 
       public zapi::protocol::Traversable, 
-      public zapi::protocol::AbstractIterator
+      public zapi::protocol::AbstractIterator,
+      public zapi::protocol::Countable,
+      public zapi::protocol::ArrayAccess
 {
    using IteratorType = std::vector<std::pair<std::string, std::string>>::iterator;
 public:
@@ -186,6 +188,12 @@ public:
    virtual Variant key();
    virtual void next();
    virtual void rewind();
+   virtual zapi_long count();
+   
+   virtual bool offsetExists(Variant offset);
+   virtual void offsetSet(Variant offset, Variant value);
+   virtual Variant offsetGet(Variant offset);
+   virtual void offsetUnset(Variant offset);
    virtual ~IterateTestClass();
 protected:
    // save iterator object
