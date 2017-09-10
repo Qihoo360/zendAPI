@@ -5,6 +5,7 @@
 using zapi::ds::ObjectVariant;
 using zapi::ds::StringVariant;
 using zapi::lang::Type;
+using zapi::protocol::AbstractIterator;
 
 Person::Person()
    : m_name("zzu_softboy"),
@@ -619,7 +620,55 @@ void FinalTestClass::someMethod()
 {
 }
 
+IterateTestClass::IterateTestClass()
+   : AbstractIterator(this)
+{
+   m_items.push_back(std::make_pair<std::string, std::string>("key1", "value1"));
+   m_items.push_back(std::make_pair<std::string, std::string>("key2", "value2"));
+   m_items.push_back(std::make_pair<std::string, std::string>("key3", "value3"));
+   m_items.push_back(std::make_pair<std::string, std::string>("key4", "value4"));
+   m_currentIter = m_items.begin();
+}
+
 void AbstractTestClass::normalMethod()
 {
    
 }
+
+AbstractIterator *IterateTestClass::getIterator()
+{
+   return this;
+}
+
+bool IterateTestClass::valid()
+{
+   zapi::out << "IterateTestClass::valid called" << std::endl;
+   return m_currentIter != m_items.end();
+}
+
+Variant IterateTestClass::current()
+{
+   zapi::out << "IterateTestClass::current called" << std::endl;
+   return m_currentIter->second;
+}
+
+Variant IterateTestClass::key()
+{
+   zapi::out << "IterateTestClass::key called" << std::endl;
+   return m_currentIter->first;
+}
+
+void IterateTestClass::next()
+{
+   zapi::out << "IterateTestClass::next called" << std::endl;
+   m_currentIter++;
+}
+
+void IterateTestClass::rewind()
+{
+   zapi::out << "IterateTestClass::rewind called" << std::endl;
+   m_currentIter = m_items.begin();
+}
+
+IterateTestClass::~IterateTestClass()
+{}

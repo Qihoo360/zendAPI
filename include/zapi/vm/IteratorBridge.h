@@ -64,7 +64,7 @@ private:
    static void invalidate(zend_object_iterator *iterator);
 private:
    zend_object_iterator m_iterator;
-   std::unique_ptr<AbstractIterator> m_userspaceIterator;
+   AbstractIterator *m_userspaceIterator;
    Variant m_current;
 };
 

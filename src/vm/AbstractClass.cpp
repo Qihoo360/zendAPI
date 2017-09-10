@@ -484,9 +484,11 @@ zend_object_iterator *AbstractClassPrivate::getIterator(zend_class_entry *entry,
       zend_error(E_ERROR, "Foreach by ref is not possible");
    }
    Traversable *traversable = dynamic_cast<Traversable *>(ObjectBinder::retrieveSelfPtr(object)->getNativeObject());
-   
+   ZAPI_ASSERT_X(traversable, "AbstractClassPrivate::getIterator", "traversable can't be nullptr");
    try {
       AbstractIterator *iterator = traversable->getIterator();
+      ZAPI_ASSERT_X(iterator,  "AbstractClassPrivate::getIterator", "iterator can't be nullptr");
+      // @mark native memory alloc
       // we are going to allocate an extended iterator (because php nowadays destructs
       // the iteraters itself, we can no longer let c++ allocate the buffer + object
       // directly, so we first allocate the buffer, which is going to be cleaned up by php)

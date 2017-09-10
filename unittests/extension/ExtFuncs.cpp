@@ -343,6 +343,12 @@ void register_visibility_cls(Extension &extension)
    extension.registerClass(finalTestClass);
 }
 
+void register_iterator_cls(Extension &extension)
+{
+   zapi::lang::Class<IterateTestClass> iterateTestClass("IterateTestClass");
+   extension.registerClass(iterateTestClass);
+}
+
 void register_cls(Extension &extension)
 {
    zapi::lang::Class<Person> personClass("Person");
@@ -401,6 +407,7 @@ void register_cls(Extension &extension)
    register_object_variant_cls(extension);
    register_inherit_cls(extension);
    register_visibility_cls(extension);
+   register_iterator_cls(extension);
 }
 
 

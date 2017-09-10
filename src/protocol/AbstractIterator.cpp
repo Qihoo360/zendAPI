@@ -29,7 +29,10 @@ class AbstractIteratorPrivate
 {
 public:
    AbstractIteratorPrivate(StdClass *nativeObject)
+      : m_object(nativeObject)
    {}
+   // here we just prevent during iterator zend_object being destroy
+   // any better method to do this
    Variant m_object;
 };
 

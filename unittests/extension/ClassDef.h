@@ -3,6 +3,7 @@
 
 #include "zapi/ZendApi.h"
 #include <string>
+#include <vector>
 
 using zapi::lang::StdClass;
 using zapi::ds::Variant;
@@ -169,6 +170,28 @@ class AbstractTestClass : public StdClass
 {
 public:
    void normalMethod();   
+};
+
+class IterateTestClass : 
+      public StdClass, 
+      public zapi::protocol::Traversable, 
+      public zapi::protocol::AbstractIterator
+{
+   using IteratorType = std::vector<std::pair<std::string, std::string>>::iterator;
+public:
+   IterateTestClass();
+   virtual AbstractIterator *getIterator();
+   virtual bool valid();
+   virtual Variant current();
+   virtual Variant key();
+   virtual void next();
+   virtual void rewind();
+   virtual ~IterateTestClass();
+protected:
+   // save iterator object
+   std::shared_ptr<AbstractIterator> m_iterator;
+   IteratorType m_currentIter;
+   std::vector<std::pair<std::string, std::string>> m_items;
 };
 
 

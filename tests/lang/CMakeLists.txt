@@ -18,6 +18,7 @@ set(ZAPI_PHP_TESTS
     lang/class/ClassExistTest.phpt
     lang/class/ClassArrayAccessTest.phpt
     lang/class/ClassCallParentMethodTest.phpt
+    lang/class/ClassCountTest.phpt
     lang/class/ClassConstantTest.phpt
     lang/class/ClassConstantTypeTest.phpt
     lang/class/ClassInheritTest.phpt
