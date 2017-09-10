@@ -422,9 +422,10 @@ void startup_handler()
 void shutdown_handler()
 {
    add_mhandler_info("module shutdown handler called");
-   assert(infos.size() == 4);
-   assert(infos[2] == "request shutdown handler called");
-   assert(infos[3] == "module shutdown handler called");
+   assert(infos.size() == 5);
+   assert(infos[2] == "module info handler called");
+   assert(infos[3] == "request shutdown handler called");
+   assert(infos[4] == "module shutdown handler called");
 }
 
 void request_startup_handler()
@@ -440,6 +441,10 @@ void request_shutdown_handler()
 void module_info_handler()
 {
    add_mhandler_info("module info handler called");
+   zapi::php_info_print_table_start();
+   zapi::php_info_print_table_row(2, "dummyext support", "enabled");
+   zapi::php_info_print_table_row(2, "dummyext team", "qcoreteam");
+   zapi::php_info_print_table_end();
 }
 
 void add_mhandler_info(const std::string &msg)

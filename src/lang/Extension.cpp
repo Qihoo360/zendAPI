@@ -286,7 +286,7 @@ ExtensionPrivate::ExtensionPrivate(const char *name, const char *version, int ap
    m_entry.module_shutdown_func = &ExtensionPrivate::processShutdown;
    m_entry.request_startup_func = &ExtensionPrivate::processRequestStartup;
    m_entry.request_shutdown_func = &ExtensionPrivate::processRequestShutdown;
-   m_entry.info_func = nullptr;
+   m_entry.info_func = &ExtensionPrivate::processModuleInfo;
    m_entry.version = version;
    m_entry.globals_size = 0;
    m_entry.globals_ctor = nullptr;
