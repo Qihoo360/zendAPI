@@ -106,24 +106,24 @@ Extension &Extension::setStartupHandler(const Callback &callback)
    return *this;
 }
 
-Extension &Extension::setRequestHandler(const Callback &callback)
+Extension &Extension::setShutdownHandler(const Callback &callback)
+{
+   ZAPI_D(Extension);
+   implPtr->m_shutdownHandler = callback;
+   return *this;
+}
+
+Extension &Extension::setRequestStartupHandler(const Callback &callback)
 {
    ZAPI_D(Extension);
    implPtr->m_requestStartupHandler = callback;
    return *this;
 }
 
-Extension &Extension::setIdleHandler(const Callback &callback)
+Extension &Extension::setRequestShutdownHandler(const Callback &callback)
 {
    ZAPI_D(Extension);
    implPtr->m_requestShutdownHandler = callback;
-   return *this;
-}
-
-Extension &Extension::setShutdownHandler(const Callback &callback)
-{
-   ZAPI_D(Extension);
-   implPtr->m_shutdownHandler = callback;
    return *this;
 }
 
@@ -134,9 +134,9 @@ Extension &Extension::setInfoHandler(const Callback &callback)
    return *this;
 }
 
-void *Extension::getModule()
+void *Extension::getModule() 
 {
-   return static_cast<void *>(getImplPtr()->getModule());
+   return getImplPtr()->getModule();
 }
 
 bool Extension::isLocked() const
@@ -394,15 +394,6 @@ void ExtensionPrivate::iterateClasses(const std::function<void(AbstractClass &cl
    }
 }
 
-int ExtensionPrivate::processRequestShutdown(SHUTDOWN_FUNC_ARGS)
-{
-   Extension *extension = find_module(module_number);
-   if (extension->m_implPtr->m_requestStartupHandler) {
-      extension->m_implPtr->m_requestStartupHandler();
-   }
-   return BOOL2SUCCESS(true);
-}
-
 int ExtensionPrivate::processMismatch(INIT_FUNC_ARGS)
 {
    Extension *extension = find_module(module_number);
@@ -417,6 +408,15 @@ int ExtensionPrivate::processRequestStartup(INIT_FUNC_ARGS)
    Extension *extension = find_module(module_number);
    if (extension->m_implPtr->m_requestStartupHandler) {
       extension->m_implPtr->m_requestStartupHandler();
+   }
+   return BOOL2SUCCESS(true);
+}
+
+int ExtensionPrivate::processRequestShutdown(SHUTDOWN_FUNC_ARGS)
+{
+   Extension *extension = find_module(module_number);
+   if (extension->m_implPtr->m_requestShutdownHandler) {
+      extension->m_implPtr->m_requestShutdownHandler();
    }
    return BOOL2SUCCESS(true);
 }

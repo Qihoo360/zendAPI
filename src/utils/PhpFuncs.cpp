@@ -17,6 +17,7 @@
 #include "zapi/ds/ArrayItemProxy.h"
 #include "zapi/ds/internal/ArrayItemProxyPrivate.h"
 #include "zapi/ds/Variant.h"
+#include "zapi/lang/Extension.h"
 #include <string>
 
 namespace zapi
@@ -64,6 +65,75 @@ bool array_isset(ArrayItemProxy &&arrayItem)
 bool empty(const Variant &value)
 {
    return value.isNull() || !value.toBool();
+}
+
+std::string php_info_html_esc(const std::string &string)
+{
+   zend_string *zstring = ::php_info_html_esc(const_cast<char *>(string.c_str()));
+   if (zstring) {
+      return std::string(ZSTR_VAL(zstring), ZSTR_LEN(zstring));
+   }
+   return std::string();
+}
+
+void php_info_html_esc_write(const std::string &string)
+{
+   ::php_info_html_esc_write(const_cast<char *>(string.c_str()), string.size());
+}
+
+void php_print_info_htmlhead(void)
+{
+   ::php_print_info_htmlhead();
+}
+
+void php_print_info(int flag)
+{
+   ::php_print_info(flag);
+}
+
+void php_print_style(void)
+{
+   ::php_print_style();
+}
+
+void php_info_print_style(void)
+{
+   ::php_info_print_style();
+}
+
+void php_info_print_table_colspan_header(int numCols, const std::string &header)
+{
+   ::php_info_print_table_colspan_header(numCols, const_cast<char *>(header.c_str()));
+}
+
+void php_info_print_table_start(void)
+{
+   ::php_info_print_table_start();
+}
+
+void php_info_print_table_end(void)
+{
+   ::php_info_print_table_end();
+}
+
+void php_info_print_box_start(int bg)
+{
+   ::php_info_print_box_start(bg);
+}
+
+void php_info_print_box_end(void)
+{
+   ::php_info_print_box_end();
+}
+
+void php_info_print_hr(void)
+{
+   ::php_info_print_hr();
+}
+
+void php_info_print_module(const zapi::lang::Extension &extension)
+{
+   ::php_info_print_module(reinterpret_cast<zend_module_entry *>(const_cast<void *>(extension.getModule())));
 }
 
 } // zapi

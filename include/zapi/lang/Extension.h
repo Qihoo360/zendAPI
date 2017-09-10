@@ -145,7 +145,7 @@ public:
    * @param Callback callback Function to be called
    * @return Extension Same object to allow chaining
    */
-   Extension &setRequestHandler(const Callback &callback);
+   Extension &setRequestStartupHandler(const Callback &callback);
    
   /**
    * Register a callback that is called to cleanup things after a pageview/request
@@ -158,7 +158,7 @@ public:
    * @param Callback callback Function to be called
    * @return Extension Same object to allow chaining
    */
-   Extension &setIdleHandler(const Callback &callback);
+   Extension &setRequestShutdownHandler(const Callback &callback);
    
    Extension &setInfoHandler(const Callback &callback);
    
@@ -171,6 +171,7 @@ public:
    * @return void*
    */
    void *getModule();
+   const void *getModule() const;
    const char *getName() const;
    const char *getVersion() const;
 protected:

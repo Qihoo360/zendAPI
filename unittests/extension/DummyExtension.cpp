@@ -21,6 +21,7 @@ extern void register_ns_io(Namespace &io);
 extern void register_ns_zapi(Namespace &zapi);
 extern void register_cls(Extension &extension);
 extern void register_const(Extension &extension);
+
 } // dummyext
 
 extern "C" {
@@ -28,6 +29,13 @@ extern "C" {
 ZAPI_DECL_EXPORT void *get_module() 
 {
    static zapi::lang::Extension extension("dummyext", "1.0");
+   // register handler
+   extension.setInfoHandler(&dummyext::module_info_handler);
+   extension.setStartupHandler(&dummyext::startup_handler);
+   extension.setShutdownHandler(&dummyext::shutdown_handler);
+   extension.setRequestStartupHandler(&dummyext::request_startup_handler);
+   extension.setRequestShutdownHandler(&dummyext::request_shutdown_handler);
+   
    // this have no effect we write this in php.ini
    extension.registerIni(zapi::lang::Ini("zapi_author", "xiuxiu"));
    // rewrite in php.ini

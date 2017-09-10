@@ -9,6 +9,7 @@ namespace dummyext
 using zapi::ds::Variant;
 using zapi::ds::StringVariant;
 using zapi::ds::NumericVariant;
+using zapi::ds::ArrayVariant;
 using zapi::lang::Parameters;
 using zapi::lang::Arguments;
 using zapi::lang::ValueArgument;
@@ -126,6 +127,7 @@ void register_const(Extension &extension)
 
 void register_funcs(Extension &extension)
 {
+   extension.registerFunction<decltype(&dummyext::get_ext_handler_msgs), &dummyext::get_ext_handler_msgs>("get_ext_handler_msgs");
    extension.registerFunction<decltype(&dummyext::show_something), &dummyext::show_something>("show_something");
    extension.registerFunction<decltype(&dummyext::get_name), &dummyext::get_name>("get_name");
    extension.registerFunction<decltype(&dummyext::print_name), &dummyext::print_name>
@@ -410,5 +412,50 @@ void register_cls(Extension &extension)
    register_iterator_cls(extension);
 }
 
+static std::vector<std::string> infos;
+
+void startup_handler()
+{
+   add_mhandler_info("module startup handler called");
+}
+
+void shutdown_handler()
+{
+   add_mhandler_info("module shutdown handler called");
+   assert(infos.size() == 4);
+   assert(infos[2] == "request shutdown handler called");
+   assert(infos[3] == "module shutdown handler called");
+}
+
+void request_startup_handler()
+{
+   add_mhandler_info("request startup handler called");
+}
+
+void request_shutdown_handler()
+{
+   add_mhandler_info("request shutdown handler called");
+}
+
+void module_info_handler()
+{
+   add_mhandler_info("module info handler called");
+}
+
+void add_mhandler_info(const std::string &msg)
+{
+   infos.push_back(msg);
+}
+
+Variant get_ext_handler_msgs()
+{
+   ArrayVariant ret;
+   auto begin = infos.begin();
+   while (begin != infos.end()) {
+      ret.append(*begin);
+      begin++;
+   }
+   return ret;
+}
 
 } // dummyext

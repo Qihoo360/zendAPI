@@ -17,6 +17,7 @@
 #define ZAPI_UTILS_PHPFUNCS_H
 
 #include "zapi/lang/Ini.h"
+#include "php/ext/standard/info.h"
 
 // forward declare with namespace
 namespace zapi
@@ -26,6 +27,12 @@ namespace ds
 class ArrayItemProxy;
 class Variant;
 } // ds
+
+namespace lang
+{
+class Extension;
+} // lang
+
 } // zapi
 // forward declare
 
@@ -48,6 +55,37 @@ ZAPI_DECL_EXPORT bool array_unset(zapi::ds::ArrayItemProxy &&arrayItem);
 ZAPI_DECL_EXPORT bool array_isset(zapi::ds::ArrayItemProxy &&arrayItem);
 
 ZAPI_DECL_EXPORT bool empty(const zapi::ds::Variant &value);
+ZAPI_DECL_EXPORT std::string php_info_html_esc(const std::string &string);
+ZAPI_DECL_EXPORT void php_info_html_esc_write(const std::string &string);
+ZAPI_DECL_EXPORT void php_print_info_htmlhead(void);
+ZAPI_DECL_EXPORT void php_print_info(int flag);
+ZAPI_DECL_EXPORT void php_print_style(void);
+ZAPI_DECL_EXPORT void php_info_print_style(void);
+ZAPI_DECL_EXPORT void php_info_print_table_colspan_header(int numCols, const std::string &header);
+ZAPI_DECL_EXPORT void php_info_print_table_start(void);
+ZAPI_DECL_EXPORT void php_info_print_table_end(void);
+ZAPI_DECL_EXPORT void php_info_print_box_start(int bg);
+ZAPI_DECL_EXPORT void php_info_print_box_end(void);
+ZAPI_DECL_EXPORT void php_info_print_hr(void);
+ZAPI_DECL_EXPORT void php_info_print_module(const zapi::lang::Extension &extension);
+
+template <typename... Args>
+ZAPI_DECL_EXPORT void php_info_print_table_header(int numCols, Args&&... args)
+{
+   ::php_info_print_table_header(numCols, std::forward<Args>(args)...);
+}
+
+template <typename... Args>
+ZAPI_DECL_EXPORT void php_info_print_table_row(int numCols, Args&&... args)
+{
+   ::php_info_print_table_row(numCols, std::forward<Args>(args)...);
+}
+
+template <typename... Args>
+ZAPI_DECL_EXPORT void php_info_print_table_row_ex(int numCols, const char *str,  Args&&... args)
+{
+   ::php_info_print_table_row_ex(numCols, str, std::forward<Args>(args)...);
+}
 
 } // zapi
 
