@@ -13,5 +13,5 @@ if (class_exists("A") && class_exists("B") && class_exists("C")) {
 --EXPECT--
 class A and class B and class C exist
 C::testCallParentWithReturn been called
-C::addTwoNumber been called
+B::addTwoNumber been called
 after call addTwoNumber get : 24

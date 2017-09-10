@@ -81,19 +81,20 @@ public:
    size_t getIniQuantity() const;
    bool initialize(int moduleNumber);
    bool shutdown(int moduleNumber);
-   static int processStartup(int type, int moduleNumber);
-   static int processShutdown(int type, int moduleNumber);
-   static int processRequest(int type, int moduleNumber);
-   static int processIdle(int type, int moduleNumber);
-   static int processMismatch(int type, int moduleNumber);
-   
+   static int processStartup(INIT_FUNC_ARGS);
+   static int processShutdown(SHUTDOWN_FUNC_ARGS);
+   static int processRequestStartup(INIT_FUNC_ARGS);
+   static int processRequestShutdown(SHUTDOWN_FUNC_ARGS);
+   static int processMismatch(INIT_FUNC_ARGS);
+   static void processModuleInfo(ZEND_MODULE_INFO_FUNC_ARGS);
    // properties
    
    Extension *m_apiPtr;
    zapi::Callback m_startupHandler;
-   zapi::Callback m_requestHandler;
-   zapi::Callback m_idleHandler;
+   zapi::Callback m_requestStartupHandler;
+   zapi::Callback m_requestShutdownHandler;
    zapi::Callback m_shutdownHandler;
+   zapi::Callback m_minfoHandler;
    zend_module_entry m_entry;
    bool m_locked = false;
    std::list<std::shared_ptr<Ini>> m_iniEntries;

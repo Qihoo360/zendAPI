@@ -109,14 +109,14 @@ Extension &Extension::setStartupHandler(const Callback &callback)
 Extension &Extension::setRequestHandler(const Callback &callback)
 {
    ZAPI_D(Extension);
-   implPtr->m_requestHandler = callback;
+   implPtr->m_requestStartupHandler = callback;
    return *this;
 }
 
 Extension &Extension::setIdleHandler(const Callback &callback)
 {
    ZAPI_D(Extension);
-   implPtr->m_idleHandler = callback;
+   implPtr->m_requestShutdownHandler = callback;
    return *this;
 }
 
@@ -124,6 +124,13 @@ Extension &Extension::setShutdownHandler(const Callback &callback)
 {
    ZAPI_D(Extension);
    implPtr->m_shutdownHandler = callback;
+   return *this;
+}
+
+Extension &Extension::setInfoHandler(const Callback &callback)
+{
+   ZAPI_D(Extension);
+   implPtr->m_minfoHandler = callback;
    return *this;
 }
 
@@ -277,8 +284,8 @@ ExtensionPrivate::ExtensionPrivate(const char *name, const char *version, int ap
    m_entry.functions = nullptr;
    m_entry.module_startup_func = &ExtensionPrivate::processStartup;
    m_entry.module_shutdown_func = &ExtensionPrivate::processShutdown;
-   m_entry.request_startup_func = &ExtensionPrivate::processRequest;
-   m_entry.request_shutdown_func = &ExtensionPrivate::processIdle;
+   m_entry.request_startup_func = &ExtensionPrivate::processRequestStartup;
+   m_entry.request_shutdown_func = &ExtensionPrivate::processRequestShutdown;
    m_entry.info_func = nullptr;
    m_entry.version = version;
    m_entry.globals_size = 0;
@@ -305,6 +312,7 @@ ExtensionPrivate::ExtensionPrivate(const char *name, const char *version, int ap
    m_entry.module_shutdown_func = nullptr;
    m_entry.request_startup_func = nullptr;
    m_entry.request_shutdown_func = nullptr;
+   m_entry.info_func = nullptr;
 }
 
 ExtensionPrivate::~ExtensionPrivate()
@@ -386,45 +394,53 @@ void ExtensionPrivate::iterateClasses(const std::function<void(AbstractClass &cl
    }
 }
 
-int ExtensionPrivate::processIdle(int type, int moduleNumber)
+int ExtensionPrivate::processRequestShutdown(SHUTDOWN_FUNC_ARGS)
 {
-   Extension *extension = find_module(moduleNumber);
-   if (extension->m_implPtr->m_idleHandler) {
-      extension->m_implPtr->m_idleHandler();
+   Extension *extension = find_module(module_number);
+   if (extension->m_implPtr->m_requestStartupHandler) {
+      extension->m_implPtr->m_requestStartupHandler();
    }
    return BOOL2SUCCESS(true);
 }
 
-int ExtensionPrivate::processMismatch(int type, int moduleNumber)
+int ExtensionPrivate::processMismatch(INIT_FUNC_ARGS)
 {
-   Extension *extension = find_module(moduleNumber);
+   Extension *extension = find_module(module_number);
    // @TODO is this really good? we need a method to check compatibility more graceful
    zapi::warning << " Version mismatch between zendAPI and extension " << extension->getName()
                  << " " << extension->getVersion() << " (recompile needed?) " << std::endl;
    return BOOL2SUCCESS(true);
 }
 
-int ExtensionPrivate::processRequest(int type, int moduleNumber)
+int ExtensionPrivate::processRequestStartup(INIT_FUNC_ARGS)
 {
-   Extension *extension = find_module(moduleNumber);
-   if (extension->m_implPtr->m_requestHandler) {
-      extension->m_implPtr->m_requestHandler();
+   Extension *extension = find_module(module_number);
+   if (extension->m_implPtr->m_requestStartupHandler) {
+      extension->m_implPtr->m_requestStartupHandler();
    }
    return BOOL2SUCCESS(true);
 }
 
-int ExtensionPrivate::processStartup(int type, int moduleNumber)
+int ExtensionPrivate::processStartup(INIT_FUNC_ARGS)
 {
    ZEND_INIT_MODULE_GLOBALS(zapi, init_globals, nullptr);
-   Extension *extension = find_module(moduleNumber);
-   return BOOL2SUCCESS(extension->initialize(moduleNumber));
+   Extension *extension = find_module(module_number);
+   return BOOL2SUCCESS(extension->initialize(module_number));
 }
 
-int ExtensionPrivate::processShutdown(int type, int moduleNumber)
+int ExtensionPrivate::processShutdown(SHUTDOWN_FUNC_ARGS)
 {
-   Extension *extension = find_module(moduleNumber);
-   mid2extension.erase(moduleNumber);
-   return BOOL2SUCCESS(extension->m_implPtr->shutdown(moduleNumber));
+   Extension *extension = find_module(module_number);
+   mid2extension.erase(module_number);
+   return BOOL2SUCCESS(extension->m_implPtr->shutdown(module_number));
+}
+
+void ExtensionPrivate::processModuleInfo(ZEND_MODULE_INFO_FUNC_ARGS)
+{
+   Extension *extension = find_module(zend_module->module_number);
+   if (extension->m_implPtr->m_minfoHandler) {
+      extension->m_implPtr->m_minfoHandler();
+   }
 }
 
 ExtensionPrivate &ExtensionPrivate::registerFunction(const char *name, zapi::ZendCallable function, 

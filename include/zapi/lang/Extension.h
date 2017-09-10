@@ -160,6 +160,8 @@ public:
    */
    Extension &setIdleHandler(const Callback &callback);
    
+   Extension &setInfoHandler(const Callback &callback);
+   
   /**
    * Retrieve the module pointer
    *

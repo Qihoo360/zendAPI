@@ -13,3 +13,5 @@ if (class_exists("A") && class_exists("B") && class_exists("C")) {
 --EXPECT--
 class A and class B and class C exist
 C::printInfo been called
+B::printInfo been called
+B::showSomething been called

@@ -24,7 +24,6 @@ if (class_exists("\VisibilityClass")) {
 ?>
 --EXPECT--
 FinalTestClass exists
-FinalTestClass exists
 class FinalTestClass is final
 VisibilityClass exists
 method VisibilityClass::finalMethod is final

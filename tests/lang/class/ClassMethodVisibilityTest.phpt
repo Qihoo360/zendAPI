@@ -26,3 +26,4 @@ class VisibilityClass exists
 VisibilityClass::publicMethod is public
 VisibilityClass::protectedMethod is protected
 VisibilityClass::privateMethod is private
+
