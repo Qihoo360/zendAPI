@@ -26,7 +26,7 @@ namespace zapi
 // forware declare with namespace
 namespace ds
 {
-class Variant;
+class ArrayVariant;
 } // ds
 
 namespace vm
@@ -52,6 +52,7 @@ namespace lang
 
 using zapi::lang::internal::StdClassPrivate;
 using zapi::ds::Variant;
+using zapi::ds::ArrayVariant;
 using zapi::ds::ObjectVariant;
 using zapi::vm::ObjectBinder;
 class Parameters;
@@ -233,6 +234,8 @@ public:
     *  @return int
     */
    int __compare(const StdClass &object) const;
+   
+   ArrayVariant __debugInfo() const;
 protected:
    ObjectVariant *getObjectZvalPtr() const;
    ObjectVariant *getObjectZvalPtr();

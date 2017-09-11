@@ -231,6 +231,14 @@ Variant MagicMethodClass::__toBool() const
    return true;
 }
 
+ArrayVariant MagicMethodClass::__debugInfo() const
+{
+   ArrayVariant info;
+   info.insert("name", "zapi");
+   info.insert("address", "beijing");
+   return info;
+}
+
 int MagicMethodClass::__compare(const MagicMethodClass &object) const
 {
    zapi::out << "MagicMethodClass::__compare is called" << std::endl;

@@ -33,6 +33,7 @@
 #include "zapi/ds/NumericVariant.h"
 #include "zapi/ds/DoubleVariant.h"
 #include "zapi/ds/BoolVariant.h"
+#include "zapi/ds/ArrayVariant.h"
 #include "zapi/lang/Method.h"
 #include "zapi/lang/StdClass.h"
 #include "zapi/lang/Constant.h"
@@ -57,6 +58,7 @@ using zapi::ds::BoolVariant;
 using zapi::ds::StringVariant;
 using zapi::ds::DoubleVariant;
 using zapi::ds::NumericVariant;
+using zapi::ds::ArrayVariant;
 using zapi::lang::Constant;
 using zapi::lang::Variant;
 using zapi::lang::Method;
@@ -279,7 +281,7 @@ zend_object_handlers *AbstractClassPrivate::getObjectHandlers()
    m_handlers.read_dimension = &AbstractClassPrivate::readDimension;
    m_handlers.has_dimension = &AbstractClassPrivate::hasDimension;
    m_handlers.unset_dimension = &AbstractClassPrivate::unsetDimension;
-   
+   m_handlers.get_debug_info = &AbstractClassPrivate::debugInfo;
    // functions for magic properties handlers __get, __set, __isset and __unset
    m_handlers.write_property = &AbstractClassPrivate::writeProperty;
    m_handlers.read_property = &AbstractClassPrivate::readProperty;
@@ -531,6 +533,28 @@ int AbstractClassPrivate::unserialize(zval *object, zend_class_entry *entry, con
       return ZAPI_FAILURE;
    }
    return ZAPI_SUCCESS;
+}
+
+HashTable *AbstractClassPrivate::debugInfo(zval *object, int *isTemp)
+{
+   try {
+      ObjectBinder *objectBinder = ObjectBinder::retrieveSelfPtr(object);
+      AbstractClassPrivate *selfPtr = retrieve_acp_ptr_from_cls_entry(Z_OBJCE_P(object));
+      AbstractClass *meta = selfPtr->m_apiPtr;
+      StdClass *nativeObject = objectBinder->getNativeObject();
+      zval infoZval = meta->callDebugInfo(nativeObject).detach(true);
+      *isTemp = 1;
+      return Z_ARR(infoZval);
+   } catch (const NotImplemented &exception) {
+      if (!std_object_handlers.get_debug_info) {
+         return nullptr;
+      }
+      return std_object_handlers.get_debug_info(object, isTemp);
+   } catch (Exception &exception) {
+      process_exception(exception);
+      // this statement will never execute
+      return nullptr;
+   }
 }
 
 zval *AbstractClassPrivate::readProperty(zval *object, zval *name, int type, void **cacheSlot, zval *rv)
@@ -1125,6 +1149,11 @@ Variant AbstractClass::callMagicStaticCall(const char *name, Parameters &params)
 }
 
 Variant AbstractClass::callMagicInvoke(StdClass *nativeObject, Parameters &params) const
+{
+   return nullptr;
+}
+
+ArrayVariant AbstractClass::callDebugInfo(StdClass *nativeObject) const
 {
    return nullptr;
 }

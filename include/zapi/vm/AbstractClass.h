@@ -26,6 +26,7 @@ namespace zapi
 namespace ds
 {
 class Variant;
+class ArrayVariant;
 } // ds
 
 namespace lang
@@ -67,6 +68,7 @@ using zapi::lang::Constant;
 using zapi::lang::Interface;
 using zapi::lang::Parameters;
 using zapi::ds::Variant;
+using zapi::ds::ArrayVariant;
 
 class ZAPI_DECL_EXPORT AbstractClass
 {
@@ -120,6 +122,7 @@ protected:
    virtual Variant callMagicCall(StdClass *nativeObject, const char *name, Parameters &params) const;
    virtual Variant callMagicStaticCall(const char *name, Parameters &params) const;
    virtual Variant callMagicInvoke(StdClass *nativeObject, Parameters &params) const;
+   virtual ArrayVariant callDebugInfo(StdClass *nativeObject) const;
    // property
    virtual Variant callGet(StdClass *nativeObject, const std::string &name) const;
    virtual void callSet(StdClass *nativeObject, const std::string &name, const Variant &value) const;

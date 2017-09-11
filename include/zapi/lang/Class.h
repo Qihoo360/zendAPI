@@ -22,6 +22,7 @@
 #include "zapi/ds/BoolVariant.h"
 #include "zapi/ds/DoubleVariant.h"
 #include "zapi/ds/NumericVariant.h"
+#include "zapi/ds/ArrayVariant.h"
 #include "zapi/protocol/Serializable.h"
 #include "zapi/protocol/Traversable.h"
 #include "zapi/stdext/TypeTraits.h"
@@ -31,6 +32,7 @@ namespace zapi
 namespace lang
 {
 
+using zapi::ds::ArrayVariant;
 using zapi::vm::AbstractClass;
 using zapi::vm::InvokeBridge;
 using zapi::protocol::Serializable;
@@ -191,7 +193,8 @@ private:
    virtual Variant callMagicCall(StdClass *nativeObject, const char *name, Parameters &params) const override;
    virtual Variant callMagicStaticCall(const char *name, Parameters &params) const override;
    virtual Variant callMagicInvoke(StdClass *nativeObject, Parameters &params) const override;
-
+   virtual ArrayVariant callDebugInfo(StdClass *nativeObject) const override;
+   
    virtual Variant callGet(StdClass *nativeObject, const std::string &name) const override;
    virtual void callSet(StdClass *nativeObject, const std::string &name, const Variant &value) const override;
    virtual bool callIsset(StdClass *nativeObject, const std::string &name) const override;
@@ -534,6 +537,13 @@ Variant Class<T>::callMagicInvoke(StdClass *nativeObject, Parameters &params) co
 {
    T *object = static_cast<T *>(nativeObject);
    return object->__invoke(params);
+}
+
+template <typename T>
+ArrayVariant Class<T>::callDebugInfo(StdClass *nativeObject) const
+{
+   T *object = static_cast<T *>(nativeObject);
+   return object->__debugInfo();
 }
 
 template <typename T>

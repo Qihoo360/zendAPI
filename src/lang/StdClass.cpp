@@ -14,6 +14,7 @@
 // Created by zzu_softboy on 2017/06/08.
 
 #include "zapi/ds/Variant.h"
+#include "zapi/ds/ArrayVariant.h"
 #include "zapi/lang/StdClass.h"
 #include "zapi/lang/internal/StdClassPrivate.h"
 #include "zapi/kernel/NotImplemented.h"
@@ -203,6 +204,11 @@ Variant StdClass::__toBool() const
  * @return int
  */
 int StdClass::__compare(const StdClass &object) const
+{
+   throw NotImplemented();
+}
+
+ArrayVariant StdClass::__debugInfo() const
 {
    throw NotImplemented();
 }

@@ -9,6 +9,7 @@ using zapi::lang::StdClass;
 using zapi::ds::Variant;
 using zapi::ds::NumericVariant;
 using zapi::ds::StringVariant;
+using zapi::ds::ArrayVariant;
 
 class Person : public StdClass
 {
@@ -88,6 +89,7 @@ public:
    Variant __toInteger() const;
    Variant __toDouble() const;
    Variant __toBool() const;
+   ArrayVariant __debugInfo() const;
    int __compare(const MagicMethodClass &object) const;
    void __clone();
    static Variant __callStatic(const std::string &method, Parameters &params);

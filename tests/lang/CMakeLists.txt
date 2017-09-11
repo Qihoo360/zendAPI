@@ -55,6 +55,7 @@ set(ZAPI_PHP_TESTS
     lang/class/ClassMagicUnsetTest.phpt
     lang/class/ClassMagicSerializeTest.phpt
     lang/class/ClassMagicCompareTest.phpt
+    lang/class/ClassMagicDebugInfoTest.phpt
     
     lang/class/ObjectVariantInvokeTest.phpt
     lang/class/ObjectVariantInstanceOfTest.phpt
