@@ -204,5 +204,4 @@ protected:
    std::vector<std::pair<std::string, std::string>> m_items;
 };
 
-
 #endif // ZAPI_UNITTEST_BRIDGE_DUMMYEXT_CLASS_DEF_H

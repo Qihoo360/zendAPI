@@ -2,6 +2,7 @@ set(ZAPI_PHP_TESTS
     ${ZAPI_PHP_TESTS}
     
     ext/ExtensionInfoTest.phpt
+    ext/IniTest.phpt
     
     lang/const/ConstantTypeTest.phpt
     lang/const/ConstantExistTest.phpt

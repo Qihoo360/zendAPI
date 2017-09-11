@@ -36,12 +36,7 @@ ZAPI_DECL_EXPORT void *get_module()
    extension.setRequestStartupHandler(&dummyext::request_startup_handler);
    extension.setRequestShutdownHandler(&dummyext::request_shutdown_handler);
    
-   // this have no effect we write this in php.ini
-   extension.registerIni(zapi::lang::Ini("zapi_author", "xiuxiu"));
-   // rewrite in php.ini
-   extension.registerIni(zapi::lang::Ini("zapi_team_address", "beijing"));
-   // register but empty value
-   extension.registerIni(zapi::lang::Ini("zapi_product", ""));
+   dummyext::register_ini(extension);
    dummyext::register_const(extension);
    dummyext::register_funcs(extension);
    dummyext::register_cls(extension);

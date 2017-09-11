@@ -114,6 +114,24 @@ int f(U u)
    return u;
 }
 
+void register_ini(Extension &extension)
+{
+   // this have no effect we write this in php.ini
+   extension.registerIni(zapi::lang::Ini("zapi_author", "xiuxiu"));
+   // rewrite in php.ini
+   extension.registerIni(zapi::lang::Ini("zapi_team_address", "beijing"));
+   // register but empty value
+   extension.registerIni(zapi::lang::Ini("zapi_product", ""));
+   extension.registerIni(zapi::lang::Ini("zapi_enable_gpu", "off"));
+   extension.registerIni(zapi::lang::Ini("zapi_name", "zzu_xiuxiu"));
+   extension.registerIni(zapi::lang::Ini("zapi_age", 1));
+   // int type
+   extension.registerIni(zapi::lang::Ini("zapi_string_value", "stringvalue"));
+   extension.registerIni(zapi::lang::Ini("zapi_int_value", 2017));
+   extension.registerIni(zapi::lang::Ini("zapi_bool_value", true));
+   extension.registerIni(zapi::lang::Ini("zapi_double_value", 3.14));
+}
+
 void register_const(Extension &extension)
 {
    extension.registerConstant(Constant("MY_CONST", 12333));
@@ -422,10 +440,10 @@ void startup_handler()
 void shutdown_handler()
 {
    add_mhandler_info("module shutdown handler called");
-//   assert(infos.size() == 5);
-//   assert(infos[2] == "module info handler called");
-//   assert(infos[3] == "request shutdown handler called");
-//   assert(infos[4] == "module shutdown handler called");
+   //   assert(infos.size() == 5);
+   //   assert(infos[2] == "module info handler called");
+   //   assert(infos[3] == "request shutdown handler called");
+   //   assert(infos[4] == "module shutdown handler called");
 }
 
 void request_startup_handler()

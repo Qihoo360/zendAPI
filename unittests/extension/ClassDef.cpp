@@ -285,10 +285,7 @@ void MagicMethodClass::unserialize(const char *input, size_t size)
 }
 
 MagicMethodClass::~MagicMethodClass() ZAPI_DECL_NOEXCEPT
-{
-   
-}
-
+{}
 
 Variant ObjectVariantClass::__invoke(Parameters &params) const
 {

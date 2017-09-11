@@ -918,8 +918,12 @@ default_socket_timeout = 60
 ; Module Settings ;
 ;;;;;;;;;;;;;;;;;;;
 [dummyext]
-zapi_team_address=shanghai
-zapi_product=libpdk
+zapi_team_address = shanghai
+zapi_product = libpdk
+zapi_enable_gpu = on
+zapi_name = zzu_softboy
+zapi_age = 27
+zapi_not_registered = notregistered
 
 [CLI Server]
 ; Whether the CLI web server uses ANSI color coding in its terminal output.

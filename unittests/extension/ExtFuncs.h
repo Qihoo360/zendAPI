@@ -31,6 +31,7 @@ ZAPI_DECL_EXPORT void register_ns_zapi(Namespace &zapi);
 ZAPI_DECL_EXPORT void register_const(Extension &extension);
 ZAPI_DECL_EXPORT void register_cls(Extension &extension);
 ZAPI_DECL_EXPORT void register_interfaces(Extension &extension);
+ZAPI_DECL_EXPORT void register_ini(Extension &extension);
 
 ZAPI_DECL_EXPORT void startup_handler();
 ZAPI_DECL_EXPORT void shutdown_handler();
@@ -39,6 +40,7 @@ ZAPI_DECL_EXPORT void request_shutdown_handler();
 ZAPI_DECL_EXPORT void module_info_handler();
 ZAPI_DECL_EXPORT void add_mhandler_info(const std::string &msg);
 ZAPI_DECL_EXPORT Variant get_ext_handler_msgs();
+
 } // dummyext
 
 #endif // ZAPI_UNITTEST_BRIDGE_DUMMYEXT_FUNCS_H
