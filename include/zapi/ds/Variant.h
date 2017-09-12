@@ -47,6 +47,7 @@ class DoubleVariant;
 class ArrayVariant;
 class BoolVariant;
 class ObjectVariant;
+class CallableVariant;
 
 } // ds
 } // zapi
@@ -104,6 +105,7 @@ public:
    Variant(const DoubleVariant &value);
    Variant(const ArrayVariant &value);
    Variant(const ObjectVariant &value);
+   Variant(const CallableVariant &value);
 
    Variant(BoolVariant &&value);
    Variant(NumericVariant &&value);
@@ -111,6 +113,8 @@ public:
    Variant(DoubleVariant &&value);
    Variant(ArrayVariant &&value);
    Variant(ObjectVariant &&value);
+   Variant(CallableVariant &&value);
+   
    template <typename T, 
              size_t arrayLength,
              typename Selector = typename std::enable_if<std::is_integral<T>::value>::type>

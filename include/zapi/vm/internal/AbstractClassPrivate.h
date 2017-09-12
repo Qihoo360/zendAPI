@@ -53,6 +53,16 @@ namespace vm
 namespace internal
 {
 
+class AbstractClassPrivate;
+
+struct CallContext
+{
+   zend_internal_function m_func;
+   AbstractClassPrivate *m_selfPtr;
+};
+
+using ContextMapType = std::map<std::string, std::shared_ptr<CallContext>>;
+
 using zapi::lang::ClassType;
 using zapi::lang::Method;
 using zapi::lang::Modifier;
@@ -67,6 +77,7 @@ public:
    zend_class_entry *initialize(AbstractClass *cls, const std::string &ns, int moduleNumber);
    std::unique_ptr<zend_function_entry[]> &getMethodEntries();
    zend_object_handlers *getObjectHandlers();
+   ~AbstractClassPrivate();
    static zend_object_handlers *getObjectHandlers(zend_class_entry *entry);
 
    // php class system facility static handle methods
@@ -117,6 +128,7 @@ public:
    std::shared_ptr<AbstractClass> m_parent;
    bool m_intialized = false;
    std::unique_ptr<zend_string, std::function<void(zend_string *)>> m_self = nullptr;
+   static ContextMapType sm_contextPtrs;
 };
 
 } // internal

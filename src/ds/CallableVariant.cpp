@@ -14,8 +14,10 @@
 // Created by softboy on 2017/08/21.
 
 #include "zapi/ds/CallableVariant.h"
+#include "zapi/ds/ObjectVariant.h"
 #include "zapi/kernel/Exception.h"
 #include "zapi/kernel/OrigException.h"
+#include "zapi/vm/Closure.h"
 #include <string>
 
 using zapi::ds::Variant;
@@ -24,11 +26,11 @@ using zapi::kernel::OrigException;
 
 namespace
 {
-Variant do_execute(const zval *object, zval *func, int argc, zval *argv)
+Variant do_execute(zval *func, int argc, zval *argv)
 {
    zval retval;
    zend_object *oldException = EG(exception);
-   if (ZAPI_SUCCESS != call_user_function_ex(CG(function_table), const_cast<zval *>(object), func, &retval, 
+   if (ZAPI_SUCCESS != call_user_function_ex(CG(function_table), nullptr, func, &retval, 
                                              argc, argv, 1, nullptr)) {
       std::string msg("Invalid call to ");
       msg.append(Z_STRVAL_P(func), Z_STRLEN_P(func));
@@ -58,18 +60,44 @@ namespace zapi
 namespace ds
 {
 
+using zapi::vm::Closure;
+
+CallableVariant::CallableVariant(const std::function<Variant(Parameters &)> &callable)
+   : Variant(ObjectVariant(Closure::getClassEntry(), std::make_shared<Closure>(callable)))
+{}
+
+CallableVariant::CallableVariant(const std::function<Variant()> &callable)
+   : Variant(ObjectVariant(Closure::getClassEntry(), std::make_shared<Closure>([callable](Parameters &params) -> Variant {
+                              return callable();
+                           })))
+{}
+
+CallableVariant::CallableVariant(const std::function<void()> &callable)
+   : Variant(ObjectVariant(Closure::getClassEntry(), std::make_shared<Closure>([callable](Parameters &params) -> Variant {
+                              callable();
+                              return nullptr;
+                           })))
+{}
+
+CallableVariant::CallableVariant(const std::function<void(Parameters &)> &callable)
+   : Variant(ObjectVariant(Closure::getClassEntry(), std::make_shared<Closure>([callable](Parameters &params) -> Variant {
+                              callable(params);
+                              return nullptr;
+                           })))
+{}
+
 Variant CallableVariant::exec(int argc, Variant *argv) const
 {
    zval params[argc];
    for (int i = 0; i < argc; i++) {
       params[i] = *argv[i].getZvalPtr();
    }
-   return do_execute(nullptr, const_cast<zval *>(getZvalPtr()), argc, params);
+   return do_execute(const_cast<zval *>(getUnDerefZvalPtr()), argc, params);
 }
 
 Variant CallableVariant::operator ()() const
 {
-   return do_execute(nullptr, const_cast<zval *>(getZvalPtr()), 0, nullptr);
+   return do_execute(const_cast<zval *>(getUnDerefZvalPtr()), 0, nullptr);
 }
 
 CallableVariant::~CallableVariant()

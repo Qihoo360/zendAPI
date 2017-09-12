@@ -1,11 +1,16 @@
 #include "ClassDef.h"
 #include <string>
 #include "zapi/ds/ObjectVariant.h"
+#include "zapi/ds/CallableVariant.h"
+#include "zapi/lang/Parameters.h"
 
 using zapi::ds::ObjectVariant;
 using zapi::ds::StringVariant;
+using zapi::ds::CallableVariant;
 using zapi::lang::Type;
+using zapi::lang::Parameters;
 using zapi::protocol::AbstractIterator;
+
 
 Person::Person()
    : m_name("zzu_softboy"),
@@ -741,4 +746,23 @@ void IterateTestClass::offsetUnset(Variant offset)
 }
 
 IterateTestClass::~IterateTestClass()
+{}
+
+void print_something()
+{
+   zapi::out << "print_something called" << std::endl;
+}
+
+void ClosureTestClass::testClosureCallable()
+{
+   CallableVariant callableVar(print_something);
+   //callableVar();
+}
+
+Variant ClosureTestClass::getCallable()
+{
+   return CallableVariant(print_something);
+}
+
+ClosureTestClass::~ClosureTestClass()
 {}

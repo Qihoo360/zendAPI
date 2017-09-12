@@ -48,6 +48,7 @@
 #include "zapi/protocol/Serializable.h"
 #include "zapi/protocol/Traversable.h"
 #include "zapi/utils/PhpFuncs.h"
+#include "zapi/utils/CommonFuncs.h"
 
 namespace zapi
 {
@@ -76,6 +77,7 @@ using zapi::protocol::AbstractIterator;
 using zapi::kernel::NotImplemented;
 using zapi::kernel::Exception;
 using zapi::kernel::process_exception;
+using zapi::utils::std_php_memory_deleter; 
 
 namespace internal
 {
@@ -146,36 +148,18 @@ void verify_abstract_class(zend_class_entry *ce) /* {{{ */
    
    if (ai.cnt) {
       zend_error(E_ERROR, "Class %s contains %d abstract method%s and must therefore be declared abstract or implement the remaining methods (" MAX_ABSTRACT_INFO_FMT MAX_ABSTRACT_INFO_FMT MAX_ABSTRACT_INFO_FMT ")",
-                          ZSTR_VAL(ce->name), ai.cnt,
-                          ai.cnt > 1 ? "s" : "",
-                          DISPLAY_ABSTRACT_FN(0),
-                          DISPLAY_ABSTRACT_FN(1),
-                          DISPLAY_ABSTRACT_FN(2)
-                          );
+                 ZSTR_VAL(ce->name), ai.cnt,
+                 ai.cnt > 1 ? "s" : "",
+                 DISPLAY_ABSTRACT_FN(0),
+                 DISPLAY_ABSTRACT_FN(1),
+                 DISPLAY_ABSTRACT_FN(2)
+                 );
    }
 }
 
 } // anonymous namespace
 
-struct CallContext
-{
-   zend_internal_function m_func;
-   AbstractClassPrivate *m_selfPtr;
-};
-
-class ScopedFree
-{
-public:
-   ScopedFree(void *data)
-      : m_data(data)
-   {}
-   ~ScopedFree()
-   {
-      efree(m_data);
-   }
-private:
-   void *m_data;
-};
+ContextMapType AbstractClassPrivate::sm_contextPtrs;
 
 AbstractClassPrivate::AbstractClassPrivate(const char *className, lang::ClassType type)
    : m_name(className),
@@ -306,6 +290,9 @@ zend_object_handlers *AbstractClassPrivate::getObjectHandlers()
    m_intialized = true;
    return &m_handlers;
 }
+
+AbstractClassPrivate::~AbstractClassPrivate()
+{}
 
 zend_object *AbstractClassPrivate::createObject(zend_class_entry *entry)
 {
@@ -695,20 +682,32 @@ zend_function *AbstractClassPrivate::getMethod(zend_object **object, zend_string
       return defaultFuncInfo;
    }
    // if exception throw before delete the memory will be relase after request cycle
-   zend_class_entry *entry = (*object)->ce;
-   CallContext *callContext = reinterpret_cast<CallContext *>(emalloc(sizeof(CallContext)));
-   std::memset(callContext, 0, sizeof(CallContext));
-   zend_internal_function *func = &callContext->m_func;
-   func->type = ZEND_INTERNAL_FUNCTION;
-   func->module = nullptr;
-   func->handler = AbstractClassPrivate::magicCallForwarder;
-   func->arg_info = nullptr;
-   func->num_args = 0;
-   func->required_num_args = 0;
-   func->scope = entry;
-   func->fn_flags = ZEND_ACC_CALL_VIA_HANDLER;
-   func->function_name = methodName;
-   callContext->m_selfPtr = retrieve_acp_ptr_from_cls_entry(entry);
+   zend_class_entry *defClassEntry = (*object)->ce;
+   assert(defClassEntry);
+   std::string contextKey(defClassEntry->name->val, defClassEntry->name->len);
+   contextKey.append("::");
+   contextKey.append(methodName->val, methodName->len);
+   CallContext *callContext  = nullptr;
+   auto targetContext = sm_contextPtrs.find(contextKey);
+   if (targetContext != sm_contextPtrs.end()) {
+      callContext = targetContext->second.get();  
+   } else {
+      std::shared_ptr<CallContext> targetContext(reinterpret_cast<CallContext *>(emalloc(sizeof(CallContext))), std_php_memory_deleter);
+      callContext = targetContext.get();
+      std::memset(callContext, 0, sizeof(CallContext));
+      zend_internal_function *func = &callContext->m_func;
+      func->type = ZEND_INTERNAL_FUNCTION;
+      func->module = nullptr;
+      func->handler = AbstractClassPrivate::magicCallForwarder;
+      func->arg_info = nullptr;
+      func->num_args = 0;
+      func->required_num_args = 0;
+      func->scope = defClassEntry;
+      func->fn_flags = ZEND_ACC_CALL_VIA_HANDLER;
+      func->function_name = methodName;
+      callContext->m_selfPtr = retrieve_acp_ptr_from_cls_entry(defClassEntry);
+      sm_contextPtrs[contextKey] = std::move(targetContext);
+   }
    return reinterpret_cast<zend_function *>(callContext);
 }
 
@@ -719,51 +718,101 @@ zend_function *AbstractClassPrivate::getStaticMethod(zend_class_entry *entry, ze
       return defaultFuncInfo;
    }
    // if exception throw before delete the memory will be relase after request cycle
-   CallContext *callContext = reinterpret_cast<CallContext *>(emalloc(sizeof(CallContext)));
-   std::memset(callContext, 0, sizeof(CallContext));
-   zend_internal_function *func = &callContext->m_func;
-   func->type = ZEND_INTERNAL_FUNCTION;
-   func->module = nullptr;
-   func->handler = &AbstractClassPrivate::magicCallForwarder;
-   func->arg_info = nullptr;
-   func->num_args = 0;
-   func->required_num_args = 0;
-   func->scope = nullptr;
-   func->fn_flags = ZEND_ACC_CALL_VIA_HANDLER | ZEND_ACC_STATIC;
-   func->function_name = methodName;
-   callContext->m_selfPtr = retrieve_acp_ptr_from_cls_entry(entry);
+   std::string contextKey(entry->name->val,  entry->name->len);
+   contextKey.append("::");
+   contextKey.append(methodName->val, methodName->len);
+   contextKey.append("static");
+   CallContext *callContext  = nullptr;
+   auto targetContext = sm_contextPtrs.find(contextKey);
+   if (targetContext != sm_contextPtrs.end()) {
+      callContext = targetContext->second.get();  
+   } else {
+      std::shared_ptr<CallContext> targetContext(reinterpret_cast<CallContext *>(emalloc(sizeof(CallContext))), std_php_memory_deleter);
+      callContext = targetContext.get();
+      std::memset(callContext, 0, sizeof(CallContext));
+      zend_internal_function *func = &callContext->m_func;
+      func->type = ZEND_INTERNAL_FUNCTION;
+      func->module = nullptr;
+      func->handler = &AbstractClassPrivate::magicCallForwarder;
+      func->arg_info = nullptr;
+      func->num_args = 0;
+      func->required_num_args = 0;
+      func->scope = nullptr;
+      func->fn_flags = ZEND_ACC_CALL_VIA_HANDLER | ZEND_ACC_STATIC;
+      func->function_name = methodName;
+      callContext->m_selfPtr = retrieve_acp_ptr_from_cls_entry(entry);
+      sm_contextPtrs[contextKey] = std::move(targetContext);
+   }
    return reinterpret_cast<zend_function *>(callContext);
 }
 
 int AbstractClassPrivate::getClosure(zval *object, zend_class_entry **entry, zend_function **retFunc,
                                      zend_object **objectPtr)
 {
-   CallContext *callContext = reinterpret_cast<CallContext *>(emalloc(sizeof(CallContext)));
-   std::memset(callContext, 0, sizeof(CallContext));
-   zend_internal_function *func = &callContext->m_func;
-   func->type = ZEND_INTERNAL_FUNCTION;
-   func->module = nullptr;
-   func->handler = &AbstractClassPrivate::magicInvokeForwarder;
-   func->arg_info = nullptr;
-   func->num_args = 0;
-   func->required_num_args = 0;
-   func->scope = *entry;
-   func->fn_flags = ZEND_ACC_CALL_VIA_HANDLER;
-   func->function_name = nullptr;
-   callContext->m_selfPtr = retrieve_acp_ptr_from_cls_entry(Z_OBJCE_P(object));
+   // @mark is this really right ?
+   zend_class_entry *defClassEntry = Z_OBJCE_P(object);
+   assert(defClassEntry);
+   std::string contextKey(defClassEntry->name->val, defClassEntry->name->len);
+   contextKey.append("::__invoke");
+   CallContext *callContext  = nullptr;
+   auto targetContext = sm_contextPtrs.find(contextKey);
+   if (targetContext != sm_contextPtrs.end()) {
+      callContext = targetContext->second.get();  
+   } else {
+      std::shared_ptr<CallContext> targetContext(reinterpret_cast<CallContext *>(emalloc(sizeof(CallContext))), std_php_memory_deleter);
+      callContext = targetContext.get();
+      std::memset(callContext, 0, sizeof(CallContext));
+      zend_internal_function *func = &callContext->m_func;
+      func->type = ZEND_INTERNAL_FUNCTION;
+      func->module = nullptr;
+      func->handler = &AbstractClassPrivate::magicInvokeForwarder;
+      func->arg_info = nullptr;
+      func->num_args = 0;
+      func->required_num_args = 0;
+      func->scope = *entry;
+      func->fn_flags = ZEND_ACC_CALL_VIA_HANDLER;
+      func->function_name = nullptr;
+      callContext->m_selfPtr = retrieve_acp_ptr_from_cls_entry(Z_OBJCE_P(object));
+      sm_contextPtrs[contextKey] = std::move(targetContext);
+   }
    *retFunc = reinterpret_cast<zend_function *>(callContext);
    *objectPtr = Z_OBJ_P(object);
    return ZAPI_SUCCESS;
 }
 
+class ScopedFree
+{
+public:
+   ScopedFree(ContextMapType &map, const std::string &key)
+      : m_map(map),
+        m_key(key)
+   {}
+   ~ScopedFree()
+   {
+      m_map.erase(m_key);
+   }
+private:
+   std::string m_key;
+   ContextMapType &m_map;
+};
+
 void AbstractClassPrivate::magicCallForwarder(INTERNAL_FUNCTION_PARAMETERS)
 {
    CallContext *callContext = reinterpret_cast<CallContext *>(execute_data->func);
-   zend_internal_function *func = &callContext->m_func;
-   const char *name = ZSTR_VAL(func->function_name);
-   ScopedFree scopeFree(callContext);
+   assert(callContext);
    bool isStatic = false;
    AbstractClass *meta = callContext->m_selfPtr->m_apiPtr;
+   zend_class_entry *defClassEntry = callContext->m_selfPtr->m_classEntry;
+   zend_internal_function *func = &callContext->m_func;
+   zend_string *funcName = func->function_name;
+   std::string contextKey(defClassEntry->name->val, defClassEntry->name->len);
+   contextKey.append("::");
+   contextKey.append(funcName->val, funcName->len);
+   if (!func->scope) {
+      contextKey.append("static");
+   }
+   ScopedFree scopeFree(sm_contextPtrs, contextKey);
+   const char *name = ZSTR_VAL(funcName);
    try {
       Parameters params(getThis(), ZEND_NUM_ARGS());
       StdClass *nativeObject = params.getObject();
@@ -789,9 +838,15 @@ void AbstractClassPrivate::magicCallForwarder(INTERNAL_FUNCTION_PARAMETERS)
 void AbstractClassPrivate::magicInvokeForwarder(INTERNAL_FUNCTION_PARAMETERS)
 {
    CallContext *callContext = reinterpret_cast<CallContext *>(execute_data->func);
+   assert(callContext);
    zend_internal_function *func = &callContext->m_func;
    AbstractClass *meta = callContext->m_selfPtr->m_apiPtr;
-   ScopedFree scopeFree(callContext);
+   zend_class_entry *defClassEntry = callContext->m_selfPtr->m_classEntry;
+   assert(defClassEntry);
+   // @mark is this really right ?
+   std::string contextKey(defClassEntry->name->val, defClassEntry->name->len);
+   contextKey.append("::__invoke");
+   ScopedFree scopeFree(sm_contextPtrs, contextKey);
    try {
       Parameters params(getThis(), ZEND_NUM_ARGS());
       StdClass *nativeObject = params.getObject();

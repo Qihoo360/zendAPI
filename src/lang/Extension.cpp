@@ -24,6 +24,7 @@
 #include "zapi/lang/Constant.h"
 #include "zapi/lang/Namespace.h"
 #include "zapi/vm/Closure.h"
+#include "zapi/vm/internal/AbstractClassPrivate.h"
 #include "php/Zend/zend_constants.h"
 
 #ifdef ZTS
@@ -90,6 +91,7 @@ namespace lang
 using zapi::lang::Constant;
 using zapi::lang::internal::ExtensionPrivate;
 using zapi::lang::internal::NamespacePrivate;
+using zapi::vm::AbstractClassPrivate;
 
 Extension::Extension(const char *name, const char *version, int apiVersion)
    : m_implPtr(new ExtensionPrivate(name, version, apiVersion, this))
@@ -419,6 +421,8 @@ int ExtensionPrivate::processRequestShutdown(SHUTDOWN_FUNC_ARGS)
    if (extension->m_implPtr->m_requestShutdownHandler) {
       extension->m_implPtr->m_requestShutdownHandler();
    }
+   // release call context
+   AbstractClassPrivate::sm_contextPtrs.clear();
    return BOOL2SUCCESS(true);
 }
 

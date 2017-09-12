@@ -16,8 +16,10 @@
 #ifndef ZAPI_VM_CLOSURE_H
 #define ZAPI_VM_CLOSURE_H
 
+#include <functional>
 #include "zapi/Global.h"
 #include "zapi/lang/StdClass.h"
+#include "zapi/stdext/TypeTraits.h"
 
 // forward declare class with namespace
 namespace zapi
@@ -45,19 +47,23 @@ namespace vm
 using zapi::ds::Variant;
 using zapi::lang::internal::ExtensionPrivate;
 using zapi::lang::Parameters;
+using zapi::stdext::is_function_pointer;
+using ClosureCallableType = std::function<Variant(Parameters &)>;
 
 class Closure final : public zapi::lang::StdClass
 {
 public:
+   Closure(const ClosureCallableType &callable);
    Variant __invoke(Parameters &params) const;
    virtual ~Closure();
+   static zend_class_entry *getClassEntry();
 private:
    static void registerToZendNg(int moduleNumber);
    static void unregisterFromZendNg();
-   static zend_class_entry *getClassEntry();
 private:
    friend class ExtensionPrivate;
    static zend_class_entry *m_entry;
+   const ClosureCallableType m_callable;
 };
 
 } // vm

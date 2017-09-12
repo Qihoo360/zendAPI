@@ -9,7 +9,7 @@ if (class_exists("\NonMagicMethodClass") && class_exists("\MagicMethodClass")) {
     echo "the sum is " . $sum ."\n";
     $ret = MagicMethodClass::notProcessCase("zapi");
     if (!is_null($ret)) {
-        echo "MagicMethodClass::notProcessCase('zapi') return $ret\n";
+       echo "MagicMethodClass::notProcessCase('zapi') return $ret\n";
     }
 }
 

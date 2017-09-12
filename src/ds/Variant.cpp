@@ -24,6 +24,7 @@
 #include "zapi/ds/DoubleVariant.h"
 #include "zapi/ds/NumericVariant.h"
 #include "zapi/ds/ObjectVariant.h"
+#include "zapi/ds/CallableVariant.h"
 #include "zapi/lang/StdClass.h"
 #include "zapi/lang/internal/StdClassPrivate.h"
 #include <cstring>
@@ -390,6 +391,12 @@ Variant::Variant(const ObjectVariant &value)
    stdCopyZval(getUnDerefZvalPtr(), const_cast<zval *>(value.getZvalPtr()));
 }
 
+Variant::Variant(const CallableVariant &value)
+   : m_implPtr(new VariantPrivate, std_zval_deleter)
+{
+   stdCopyZval(getUnDerefZvalPtr(), const_cast<zval *>(value.getZvalPtr()));
+}
+
 /**
  * Move constructor
  * 
@@ -427,6 +434,11 @@ Variant::Variant(ArrayVariant &&value)
 }
 
 Variant::Variant(ObjectVariant &&value)
+{
+   m_implPtr = std::move(value.m_implPtr);
+}
+
+Variant::Variant(CallableVariant &&value)
 {
    m_implPtr = std::move(value.m_implPtr);
 }

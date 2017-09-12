@@ -81,7 +81,6 @@ TEST(ArrayVariantTest, testRefConstruct)
 //   }
 }
 
-#if 0
 
 TEST(ArrayVariantTest, testCopyConstructor)
 {
@@ -1043,5 +1042,6 @@ TEST(ArrayVariantTest, testAccessOperator)
    array["info"] = 3.14;
    // StringVariant name = array["info"]["name"]["name"]; // Can't use a scalar value as an array
 }
+#if 0
 
 #endif

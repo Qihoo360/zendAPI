@@ -21,26 +21,28 @@
 
 namespace zapi
 {
+namespace lang
+{
+
+class Parameters;
+
+} // lang
+} // zapi
+
+namespace zapi
+{
 namespace ds
 {
 
-// define self php val struct
-// this for save function in zval
-
-template <typename CallableType>
-struct zapi_func_value
-{
-   zend_refcounted_h gc;
-   std::function<CallableType> func;
-};
+using zapi::lang::Parameters;
 
 class ZAPI_DECL_EXPORT CallableVariant final : public Variant
 {
 public:
-   template <typename CallableType,
-             typename DecayCallableType = typename std::decay<CallableType>::type,
-             typename = typename std::enable_if<zapi::stdext::is_function_pointer<DecayCallableType>::value>::type>
-   CallableVariant(CallableType callable);
+   CallableVariant(const std::function<Variant(Parameters &)> &callable);
+   CallableVariant(const std::function<Variant()> &callable);
+   CallableVariant(const std::function<void()> &callable);
+   CallableVariant(const std::function<void(Parameters &)> &callable);
    Variant operator ()() const;
    template <typename ...Args>
    Variant operator ()(Args&&... args);
@@ -56,18 +58,7 @@ Variant CallableVariant::operator ()(Args&&... args)
    return exec(sizeof...(Args), vargs);
 }
 
-template <typename CallableType,
-          typename DecayCallableType,
-          typename>
-CallableVariant::CallableVariant(CallableType callable)
-{
-   zval *self = getUnDerefZvalPtr();
-   self->value.ptr = reinterpret_cast<void *>(new zapi_func_value<typename std::remove_pointer<CallableType>::type>());
-   Z_TYPE_INFO_P(self) = IS_PTR;
-}
-
-
-} // ds
+} // ds 
 } // zapi
 
 #endif // ZAPI_DS_CALLABLE_VARIANT_H

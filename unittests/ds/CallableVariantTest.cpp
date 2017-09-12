@@ -64,14 +64,14 @@ public:
 
 TEST(CallableVariantTest, testConstruct)
 {
-   CallableVariant getNameHandler(print_name);
-   CallableVariant getHeight(get_height);
-   CallableVariant printSumHandler(print_two_number_sum);
-   CallableVariant addTwoNumber(add_two_number);
-   CallableVariant clsGetNameHandler(&Handler::print_name);
-   CallableVariant clsGetHeight(&Handler::get_height);
-   CallableVariant clsPrintSumHandler(&Handler::print_two_number_sum);
-   CallableVariant clsAddTwoNumber(&Handler::add_two_number);
+//   CallableVariant getNameHandler(print_name);
+//   CallableVariant getHeight(get_height);
+//   CallableVariant printSumHandler(print_two_number_sum);
+//   CallableVariant addTwoNumber(add_two_number);
+//   CallableVariant clsGetNameHandler(&Handler::print_name);
+//   CallableVariant clsGetHeight(&Handler::get_height);
+//   CallableVariant clsPrintSumHandler(&Handler::print_two_number_sum);
+//   CallableVariant clsAddTwoNumber(&Handler::add_two_number);
    // call it 
-   getNameHandler();
+   //getNameHandler();
 }

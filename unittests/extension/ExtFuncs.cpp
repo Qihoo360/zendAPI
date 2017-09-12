@@ -369,6 +369,14 @@ void register_iterator_cls(Extension &extension)
    extension.registerClass(iterateTestClass);
 }
 
+void register_closure_cls(Extension &extension)
+{
+   zapi::lang::Class<ClosureTestClass> closureTestClass("ClosureTestClass");
+   closureTestClass.registerMethod<decltype(&ClosureTestClass::testClosureCallable), &ClosureTestClass::testClosureCallable>("testClosureCallable");
+   closureTestClass.registerMethod<decltype(&ClosureTestClass::getCallable), &ClosureTestClass::getCallable>("getCallable");
+   extension.registerClass(closureTestClass);
+}
+
 void register_cls(Extension &extension)
 {
    zapi::lang::Class<Person> personClass("Person");
@@ -428,6 +436,7 @@ void register_cls(Extension &extension)
    register_inherit_cls(extension);
    register_visibility_cls(extension);
    register_iterator_cls(extension);
+   register_closure_cls(extension);
 }
 
 static std::vector<std::string> infos;

@@ -204,4 +204,12 @@ protected:
    std::vector<std::pair<std::string, std::string>> m_items;
 };
 
+class ClosureTestClass : public StdClass
+{
+public:
+   void testClosureCallable();
+   Variant getCallable();
+   ~ClosureTestClass();
+};
+
 #endif // ZAPI_UNITTEST_BRIDGE_DUMMYEXT_CLASS_DEF_H

@@ -27,9 +27,13 @@ using zapi::lang::ClassType;
 
 zend_class_entry *Closure::m_entry = nullptr;
 
+Closure::Closure(const ClosureCallableType &callable)
+   : m_callable(callable)
+{}
+
 Variant Closure::__invoke(Parameters &params) const
 {
-   return nullptr;
+   return m_callable(params);
 }
 
 void Closure::registerToZendNg(int moduleNumber)
@@ -40,7 +44,7 @@ void Closure::registerToZendNg(int moduleNumber)
    }
    // @mark we save meta class as local static is really ok ?
    static std::unique_ptr<AbstractClass> closureWrapper(new Class<Closure>("ZapiClosure", ClassType::Final));
-   closureWrapper->initialize(moduleNumber);
+   m_entry = closureWrapper->initialize(moduleNumber);
 }
 
 void Closure::unregisterFromZendNg()
