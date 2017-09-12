@@ -23,6 +23,7 @@
 #include "zapi/lang/Function.h"
 #include "zapi/lang/Constant.h"
 #include "zapi/lang/Namespace.h"
+#include "zapi/vm/Closure.h"
 #include "php/Zend/zend_constants.h"
 
 #ifdef ZTS
@@ -478,6 +479,8 @@ bool ExtensionPrivate::initialize(int moduleNumber)
    for (std::shared_ptr<Namespace> &ns : m_namepsaces) {
       ns->initialize(moduleNumber);
    }
+   // initialize closure class
+   zapi::vm::Closure::registerToZendNg(moduleNumber);
    
    // remember that we're initialized (when you use "apache reload" it is
    // possible that the processStartup() method is called more than once)
@@ -495,6 +498,7 @@ bool ExtensionPrivate::shutdown(int moduleNumber)
    if (m_shutdownHandler) {
       m_shutdownHandler();
    }
+   zapi::vm::Closure::unregisterFromZendNg();
    m_locked = false;
    return true;
 }

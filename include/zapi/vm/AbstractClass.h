@@ -45,6 +45,7 @@ class NamespacePrivate;
 
 namespace vm
 {
+class Closure;
 namespace internal
 {
 class AbstractClassPrivate;
@@ -69,6 +70,8 @@ using zapi::lang::Interface;
 using zapi::lang::Parameters;
 using zapi::ds::Variant;
 using zapi::ds::ArrayVariant;
+using zapi::lang::internal::ExtensionPrivate;
+using zapi::lang::internal::NamespacePrivate;
 
 class ZAPI_DECL_EXPORT AbstractClass
 {
@@ -141,8 +144,9 @@ private:
 private:
    ZAPI_DECLARE_PRIVATE(AbstractClass)
    std::shared_ptr<AbstractClassPrivate> m_implPtr;
-   friend class zapi::lang::internal::ExtensionPrivate;
-   friend class zapi::lang::internal::NamespacePrivate;
+   friend class ExtensionPrivate;
+   friend class NamespacePrivate;
+   friend class Closure;
 };
 
 } // vm

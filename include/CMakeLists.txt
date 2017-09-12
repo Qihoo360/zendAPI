@@ -68,6 +68,7 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/vm/ExecStateGuard.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/IteratorBridge.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/ObjectBinder.h
+   ${ZAPI_INCLUDE_DIR}/zapi/vm/Closure.h
    )
 
 set(ZAPI_PUBLIC_HEADERS ${ZAPI_PUBLIC_HEADERS} PARENT_SCOPE)

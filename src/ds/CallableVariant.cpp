@@ -72,5 +72,8 @@ Variant CallableVariant::operator ()() const
    return do_execute(nullptr, const_cast<zval *>(getZvalPtr()), 0, nullptr);
 }
 
+CallableVariant::~CallableVariant()
+{}
+
 } // ds
 } // zapi

@@ -39,6 +39,7 @@ class ZAPI_DECL_EXPORT ObjectVariant final : public Variant
 public:
    ObjectVariant();
    ObjectVariant(const std::string &className, std::shared_ptr<StdClass> nativeObject);
+   ObjectVariant(zend_class_entry *entry, std::shared_ptr<StdClass> nativeObject);
    ObjectVariant(const Variant &other);
    ObjectVariant(const ObjectVariant &other);
    ObjectVariant(Variant &&other);

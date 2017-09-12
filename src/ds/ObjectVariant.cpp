@@ -114,6 +114,21 @@ ObjectVariant::ObjectVariant(const std::string &className, std::shared_ptr<StdCl
    Z_ADDREF_P(self);
 }
 
+ObjectVariant::ObjectVariant(zend_class_entry *entry, std::shared_ptr<StdClass> nativeObject)
+{
+   zend_object *zobject = nativeObject->m_implPtr->m_zendObject;
+   if (!zobject) {
+      // new construct
+      ZAPI_ASSERT_X(entry, "ObjectVariant::ObjectVariant", "class entry pointer can't be nullptr");
+      ObjectBinder *binder = new ObjectBinder(entry, nativeObject,
+                                              AbstractClassPrivate::getObjectHandlers(entry), 0);
+      zobject = binder->getZendObject();
+   }
+   zval *self = getUnDerefZvalPtr();
+   ZVAL_OBJ(self, zobject);
+   Z_ADDREF_P(self);
+}
+
 ObjectVariant::ObjectVariant(Variant &&other)
    : Variant(std::move(other))
 {

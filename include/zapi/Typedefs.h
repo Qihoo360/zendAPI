@@ -18,6 +18,7 @@
 
 #include <functional>
 #include "php/Zend/zend_errors.h"
+#include "php/Zend/zend_types.h"
 
 struct _zend_execute_data;
 struct _zval_struct;

@@ -42,6 +42,7 @@ set(ZAPI_SRC
    vm/Engine.cpp
    vm/IteratorBridge.cpp
    vm/ObjectBinder.cpp
+   vm/Closure.cpp
    utils/PhpFuncs.cpp
    utils/CommonFuncs.cpp)
 

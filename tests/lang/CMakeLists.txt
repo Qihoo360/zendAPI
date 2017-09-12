@@ -19,6 +19,7 @@ set(ZAPI_PHP_TESTS
     lang/interface/InterfaceInheritTest.phpt
     lang/interface/InterfaceExistTest.phpt
     
+    lang/class/ClassClosureTest.phpt
     lang/class/ClassExistTest.phpt
     lang/class/ClassArrayAccessTest.phpt
     lang/class/ClassCallParentMethodTest.phpt
