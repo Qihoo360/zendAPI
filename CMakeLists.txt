@@ -61,12 +61,14 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 option(ZAPI_OPT_DISABLE_TESTS
    "If tests should be compiled or not" OFF)
-
 option(ZAPI_OPT_ENABLE_VERBOSE_DEBUG
    "Enable verbose debugging" OFF)
-
 option(ZAPI_OPT_DISABLE_TESTS
    "If tests should be compiled or not" OFF)
+
+set(ZAPI_OPT_PHP_INCLUDE_PATH "" CACHE STRING "Specify the php include path of host platform")
+set(ZAPI_OPT_PHP_LIB_PATH "" CACHE STRING "Specify the php lib path of host platform")
+set(ZAPI_OPT_PHP_BIN_PATH "" CACHE STRING "Specify the php bin path of host platform")
 
 set(ZAPI_OPT_LIBDIR_SUFFIX "" CACHE STRING "Define suffix of library directory name (32/64)" )
 string(TOUPPER "${CMAKE_BUILD_TYPE}" ZAPI_BUILD_TYPE)
@@ -75,16 +77,15 @@ if(ZAPI_OPT_ENABLE_VERBOSE_DEBUG)
    add_definitions(-DZAPI_DEBUG_MODE 1)
 endif()
 
-#if (CMAKE_VERSION VERSION_LESS "3.1")
-#   if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-#      set(CMAKE_CXX_FLAGS "--std=gnu++14 ${CMAKE_CXX_FLAGS}")
-#   elseif(CMAKE_CXX_FLAGS STREQUAL "Clang")
-#      set(CMAKE_CXX_FLAGS "--std=c++14 ${CMAKE_CXX_FLAGS}")
-#   endif ()
-#else ()
-#   set(CMAKE_CXX_STANDARD 14)
-#endif ()
-add_compile_options("--std=c++11")
+if (CMAKE_VERSION VERSION_LESS "3.1")
+   if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+      set(CMAKE_CXX_FLAGS "--std=gnu++11 ${CMAKE_CXX_FLAGS}")
+   elseif(CMAKE_CXX_FLAGS STREQUAL "Clang")
+      set(CMAKE_CXX_FLAGS "--std=c++11 ${CMAKE_CXX_FLAGS}")
+   endif ()
+else ()
+   set(CMAKE_CXX_STANDARD 11)
+endif ()
 
 # prepare for installation
 set(ZAPI_INSTALL_LIB_DIR lib CACHE PATH "Installation directory for libraries")
