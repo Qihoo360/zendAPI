@@ -1022,20 +1022,20 @@ struct is_function_pointer
             false;
 };
 
-template<typename T> 
-struct function_traits;
+//template<typename T> 
+//struct function_traits;
 
-template<typename R, typename ...Args> 
-struct function_traits<std::function<R(Args...)> >
-{
-   static const size_t nargs = sizeof...(Args);
-   typedef R result_type;
-   template <size_t i>
-   struct arg
-   {
-      using type = typename std::tuple_element<i, std::tuple<Args...>>::type;
-   };
-};
+//template<typename R, typename ...Args> 
+//struct function_traits<std::function<R(Args...)> >
+//{
+//   static const size_t nargs = sizeof...(Args);
+//   typedef R result_type;
+//   template <size_t i>
+//   struct arg
+//   {
+//      using type = typename std::tuple_element<i, std::tuple<Args...>>::type;
+//   };
+//};
 
 } // stdext
 } // zapi

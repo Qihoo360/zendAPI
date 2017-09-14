@@ -182,7 +182,7 @@ CallableVariant &CallableVariant::operator =(Variant &&other)
    zval *self = getUnDerefZvalPtr();
    zend_class_entry *classEntry = nullptr;
    if (getUnDerefType() != Type::Object ||
-       (classEntry = Z_OBJCE_P(self)) && 0 == std::memcmp("ZapiClosure", classEntry->name->val, classEntry->name->len)) {
+       ((classEntry = Z_OBJCE_P(self)) && 0 == std::memcmp("ZapiClosure", classEntry->name->val, classEntry->name->len))) {
       ObjectVariant defaultCallable(Closure::getClassEntry(), std::make_shared<Closure>(do_nothing));
       zval temp = defaultCallable.detach(true);
       ZVAL_COPY_VALUE(self, &temp);
