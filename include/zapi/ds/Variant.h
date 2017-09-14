@@ -264,6 +264,7 @@ protected:
    friend class ArrayVariant;
    friend class BoolVariant;
    friend class ObjectVariant;
+   friend class CallableVariant;
    ZAPI_DECLARE_PRIVATE(Variant)
    std::shared_ptr<VariantPrivate> m_implPtr;
 };

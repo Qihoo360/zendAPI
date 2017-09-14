@@ -411,7 +411,7 @@ template <typename CallableType,
           typename DecayCallableType = typename std::decay<CallableType>::type>
 class InvokeBridge : public InvokeBridgePrivate<DecayCallableType, callable,
       std::is_member_function_pointer<DecayCallableType>::value,
-      zapi::stdext::callable_has_return<DecayCallableType>::value,
+      zapi::stdext::CallableHasReturn<DecayCallableType>::value,
       zapi::stdext::CallableInfoTrait<DecayCallableType>::hasVaridicParams>
 {};
 

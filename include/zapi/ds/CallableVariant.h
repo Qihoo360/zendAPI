@@ -18,6 +18,7 @@
 
 #include "zapi/ds/Variant.h"
 #include "zapi/stdext/TypeTraits.h"
+#include "zapi/vm/Closure.h"
 
 namespace zapi
 {
@@ -34,15 +35,30 @@ namespace zapi
 namespace ds
 {
 
+using zapi::vm::Closure;
 using zapi::lang::Parameters;
 
 class ZAPI_DECL_EXPORT CallableVariant final : public Variant
 {
 public:
-   CallableVariant(const std::function<Variant(Parameters &)> &callable);
-   CallableVariant(const std::function<Variant()> &callable);
-   CallableVariant(const std::function<void()> &callable);
-   CallableVariant(const std::function<void(Parameters &)> &callable);
+   using HaveArgCallable = Variant(Parameters &);
+   using NoArgCallable = Variant();
+   CallableVariant(HaveArgCallable callable);
+   CallableVariant(NoArgCallable callable);
+   
+   CallableVariant(const Variant &other);
+   CallableVariant(const CallableVariant &other);
+   CallableVariant(Variant &&other);
+   CallableVariant(CallableVariant &&other) ZAPI_DECL_NOEXCEPT;
+   CallableVariant(zval &other);
+   CallableVariant(zval &&other);
+   CallableVariant(zval *other);
+
+   CallableVariant &operator =(const CallableVariant &other);
+   CallableVariant &operator =(const Variant &other);
+   CallableVariant &operator =(CallableVariant &&other) ZAPI_DECL_NOEXCEPT;
+   CallableVariant &operator =(Variant &&other);
+   
    Variant operator ()() const;
    template <typename ...Args>
    Variant operator ()(Args&&... args);
@@ -57,6 +73,7 @@ Variant CallableVariant::operator ()(Args&&... args)
    Variant vargs[] = { static_cast<Variant>(args)... };
    return exec(sizeof...(Args), vargs);
 }
+
 
 } // ds 
 } // zapi

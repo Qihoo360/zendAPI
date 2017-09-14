@@ -102,7 +102,7 @@ public:
    std::list<std::shared_ptr<Function>> m_functions;
    std::list<std::shared_ptr<Constant>> m_constants;
    std::list<std::shared_ptr<AbstractClass>> m_classes;
-   std::list<std::shared_ptr<Namespace>> m_namepsaces;
+   std::list<std::shared_ptr<Namespace>> m_namespaces;
 };
 
 } // internal

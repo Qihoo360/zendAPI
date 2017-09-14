@@ -17,7 +17,7 @@
 #include "zapi/ds/ObjectVariant.h"
 #include "zapi/kernel/Exception.h"
 #include "zapi/kernel/OrigException.h"
-#include "zapi/vm/Closure.h"
+#include "zapi/lang/Parameters.h"
 #include <string>
 
 using zapi::ds::Variant;
@@ -53,6 +53,12 @@ Variant do_execute(zval *func, int argc, zval *argv)
       return result;
    }
 }
+
+Variant do_nothing(zapi::lang::Parameters &param)
+{
+   return nullptr;
+}
+
 }
 
 namespace zapi
@@ -60,31 +66,129 @@ namespace zapi
 namespace ds
 {
 
-using zapi::vm::Closure;
-
-CallableVariant::CallableVariant(const std::function<Variant(Parameters &)> &callable)
-   : Variant(ObjectVariant(Closure::getClassEntry(), std::make_shared<Closure>(callable)))
+CallableVariant::CallableVariant(HaveArgCallable callable)
+   : Variant(ObjectVariant(Closure::getClassEntry(), std::make_shared<Closure>(std::function<HaveArgCallable>(callable))))
 {}
 
-CallableVariant::CallableVariant(const std::function<Variant()> &callable)
+CallableVariant::CallableVariant(NoArgCallable callable)
    : Variant(ObjectVariant(Closure::getClassEntry(), std::make_shared<Closure>([callable](Parameters &params) -> Variant {
                               return callable();
                            })))
 {}
 
-CallableVariant::CallableVariant(const std::function<void()> &callable)
-   : Variant(ObjectVariant(Closure::getClassEntry(), std::make_shared<Closure>([callable](Parameters &params) -> Variant {
-                              callable();
-                              return nullptr;
-                           })))
+CallableVariant::CallableVariant(const Variant &other)
+{
+   zval *from = const_cast<zval *>(other.getZvalPtr());
+   zval *self = getUnDerefZvalPtr();
+   zend_class_entry *classEntry = nullptr;
+   if (other.getType() == Type::Object &&
+       (classEntry = Z_OBJCE_P(from)) && 0 == std::memcmp("ZapiClosure", classEntry->name->val, classEntry->name->len)) {
+      ZVAL_COPY(self, from);
+   } else {
+      ObjectVariant defaultCallable(Closure::getClassEntry(), std::make_shared<Closure>(do_nothing));
+      zval temp = defaultCallable.detach(true);
+      ZVAL_COPY_VALUE(self, &temp);
+   }
+}
+
+CallableVariant::CallableVariant(const CallableVariant &other)
+   : Variant(other)
 {}
 
-CallableVariant::CallableVariant(const std::function<void(Parameters &)> &callable)
-   : Variant(ObjectVariant(Closure::getClassEntry(), std::make_shared<Closure>([callable](Parameters &params) -> Variant {
-                              callable(params);
-                              return nullptr;
-                           })))
+CallableVariant::CallableVariant(Variant &&other)
+   : Variant(std::move(other))
+{
+   zval *self = getUnDerefZvalPtr();
+   zend_class_entry *classEntry = nullptr;
+   if (getUnDerefType() != Type::Object || 
+       ((classEntry = Z_OBJCE_P(self)) && 0 != std::memcmp("ZapiClosure", classEntry->name->val, classEntry->name->len))) {
+      ObjectVariant defaultCallable(Closure::getClassEntry(), std::make_shared<Closure>(do_nothing));
+      zval temp = defaultCallable.detach(true);
+      ZVAL_COPY_VALUE(self, &temp);
+   }
+}
+
+CallableVariant::CallableVariant(CallableVariant &&other) ZAPI_DECL_NOEXCEPT
+   : Variant(std::move(other))
 {}
+
+CallableVariant::CallableVariant(zval &other)
+   : CallableVariant(&other)
+{}
+
+CallableVariant::CallableVariant(zval &&other)
+   : CallableVariant(&other)
+{}
+
+CallableVariant::CallableVariant(zval *other)
+{
+   zval *self = getUnDerefZvalPtr();
+   if (nullptr != other && Z_TYPE_P(other) != IS_NULL) {
+      if ((Z_TYPE_P(other) == IS_OBJECT || 
+           (Z_TYPE_P(other) == IS_REFERENCE && Z_TYPE_P(Z_REFVAL_P(other)) == IS_OBJECT))) {
+         ZVAL_DEREF(other);
+         zend_class_entry *classEntry = Z_OBJCE_P(other);
+         if (classEntry && 0 == std::memcmp("ZapiClosure", classEntry->name->val, classEntry->name->len)) {
+            ZVAL_COPY(self, other);
+            return;
+         }
+      }
+   }
+   // construct default
+   ObjectVariant defaultCallable(Closure::getClassEntry(), std::make_shared<Closure>(do_nothing));
+   zval temp = defaultCallable.detach(true);
+   ZVAL_COPY_VALUE(self, &temp);
+}
+
+CallableVariant &CallableVariant::operator =(const CallableVariant &other)
+{
+   if (this != &other) {
+      Variant::operator =(const_cast<zval *>(other.getZvalPtr()));
+   }
+   return *this;
+}
+
+CallableVariant &CallableVariant::operator =(const Variant &other)
+{
+   if (this != &other) {
+      zval *self = getZvalPtr();
+      zval *from = const_cast<zval *>(other.getZvalPtr());
+      zend_class_entry *classEntry = nullptr;
+      if (other.getType() == Type::Object &&
+          (classEntry = Z_OBJCE_P(from)) && 0 == std::memcmp("ZapiClosure", classEntry->name->val, classEntry->name->len)) {
+         // standard copy
+         Variant::operator =(from);
+      } else {
+         ObjectVariant defaultCallable(Closure::getClassEntry(), std::make_shared<Closure>(do_nothing));
+         zval temp = defaultCallable.detach(true);
+         zval_dtor(self);
+         ZVAL_COPY_VALUE(self, &temp);
+      }
+   }
+   return *this;
+}
+
+CallableVariant &CallableVariant::operator =(CallableVariant &&other) ZAPI_DECL_NOEXCEPT
+{
+   assert(this != &other);
+   m_implPtr = std::move(other.m_implPtr);
+   return *this;
+}
+
+CallableVariant &CallableVariant::operator =(Variant &&other)
+{
+   assert(this != &other);
+   m_implPtr = std::move(other.m_implPtr);
+   zval *self = getUnDerefZvalPtr();
+   zend_class_entry *classEntry = nullptr;
+   if (getUnDerefType() != Type::Object ||
+       (classEntry = Z_OBJCE_P(self)) && 0 == std::memcmp("ZapiClosure", classEntry->name->val, classEntry->name->len)) {
+      ObjectVariant defaultCallable(Closure::getClassEntry(), std::make_shared<Closure>(do_nothing));
+      zval temp = defaultCallable.detach(true);
+      ZVAL_COPY_VALUE(self, &temp);
+   }
+   return *this;
+}
 
 Variant CallableVariant::exec(int argc, Variant *argv) const
 {

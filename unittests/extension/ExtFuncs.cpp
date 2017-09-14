@@ -373,7 +373,8 @@ void register_closure_cls(Extension &extension)
 {
    zapi::lang::Class<ClosureTestClass> closureTestClass("ClosureTestClass");
    closureTestClass.registerMethod<decltype(&ClosureTestClass::testClosureCallable), &ClosureTestClass::testClosureCallable>("testClosureCallable");
-   closureTestClass.registerMethod<decltype(&ClosureTestClass::getCallable), &ClosureTestClass::getCallable>("getCallable");
+   closureTestClass.registerMethod<decltype(&ClosureTestClass::getNoArgAndReturnCallable), &ClosureTestClass::getNoArgAndReturnCallable>("getNoArgAndReturnCallable");
+   closureTestClass.registerMethod<decltype(&ClosureTestClass::getArgAndReturnCallable), &ClosureTestClass::getArgAndReturnCallable>("getArgAndReturnCallable");
    extension.registerClass(closureTestClass);
 }
 

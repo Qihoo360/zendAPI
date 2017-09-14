@@ -525,7 +525,9 @@ struct CallableInfoTrait<RetType (&)(ParamTypes ...args)>
    using ReturnType = RetType;
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = false;
+   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
    const static bool isMemberCallable = false;
+   const static bool hasReturn = !std::is_same<RetType, void>::value;
    template <size_t index>
    struct arg
    {
@@ -539,7 +541,9 @@ struct CallableInfoTrait<RetType (*)(ParamTypes ...args)>
    using ReturnType = RetType;
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = false;
+   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
    const static bool isMemberCallable = false;
+   const static bool hasReturn = !std::is_same<RetType, void>::value;
    template <size_t index>
    struct arg
    {
@@ -553,7 +557,9 @@ struct CallableInfoTrait<RetType (ParamTypes ...args)>
    using ReturnType = RetType;
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = false;
+   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
    const static bool isMemberCallable = false;
+   const static bool hasReturn = !std::is_same<RetType, void>::value;
    template <size_t index>
    struct arg
    {
@@ -567,7 +573,9 @@ struct CallableInfoTrait<RetType (&)(ParamTypes ...args, ...)>
    using ReturnType = RetType;
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = true;
+   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
    const static bool isMemberCallable = false;
+   const static bool hasReturn = !std::is_same<RetType, void>::value;
    template <size_t index>
    struct arg
    {
@@ -581,7 +589,9 @@ struct CallableInfoTrait<RetType (*)(ParamTypes ...args, ...)>
    using ReturnType = RetType;
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = true;
+   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
    const static bool isMemberCallable = false;
+   const static bool hasReturn = !std::is_same<RetType, void>::value;
    template <size_t index>
    struct arg
    {
@@ -595,7 +605,9 @@ struct CallableInfoTrait<RetType (ParamTypes ...args, ...)>
    using ReturnType = RetType;
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = true;
+   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
    const static bool isMemberCallable = false;
+   const static bool hasReturn = !std::is_same<RetType, void>::value;
    template <size_t index>
    struct arg
    {
@@ -609,7 +621,9 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args)>
    using ReturnType = RetType;
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = false;
+   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
    const static bool isMemberCallable = true;
+   const static bool hasReturn = !std::is_same<RetType, void>::value;
    template <size_t index>
    struct arg
    {
@@ -623,7 +637,9 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...)>
    using ReturnType = RetType;
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = true;
+   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
    const static bool isMemberCallable = true;
+   const static bool hasReturn = !std::is_same<RetType, void>::value;
    template <size_t index>
    struct arg
    {
@@ -637,7 +653,9 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) const>
    using ReturnType = RetType;
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = false;
+   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
    const static bool isMemberCallable = true;
+   const static bool hasReturn = !std::is_same<RetType, void>::value;
    template <size_t index>
    struct arg
    {
@@ -651,7 +669,9 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) const>
    using ReturnType = RetType;
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = true;
+   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
    const static bool isMemberCallable = true;
+   const static bool hasReturn = !std::is_same<RetType, void>::value;
    template <size_t index>
    struct arg
    {
@@ -665,7 +685,9 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) volatile>
    using ReturnType = RetType;
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = false;
+   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
    const static bool isMemberCallable = true;
+   const static bool hasReturn = !std::is_same<RetType, void>::value;
    template <size_t index>
    struct arg
    {
@@ -679,7 +701,9 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) volatile>
    using ReturnType = RetType;
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = true;
+   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
    const static bool isMemberCallable = true;
+   const static bool hasReturn = !std::is_same<RetType, void>::value;
    template <size_t index>
    struct arg
    {
@@ -693,7 +717,9 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) const volatile>
    using ReturnType = RetType;
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = false;
+   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
    const static bool isMemberCallable = true;
+   const static bool hasReturn = !std::is_same<RetType, void>::value;
    template <size_t index>
    struct arg
    {
@@ -707,7 +733,9 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) const volat
    using ReturnType = RetType;
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = true;
+   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
    const static bool isMemberCallable = true;
+   const static bool hasReturn = !std::is_same<RetType, void>::value;
    template <size_t index>
    struct arg
    {
@@ -721,7 +749,9 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) &>
    using ReturnType = RetType;
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = false;
+   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
    const static bool isMemberCallable = true;
+   const static bool hasReturn = !std::is_same<RetType, void>::value;
    template <size_t index>
    struct arg
    {
@@ -735,7 +765,9 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) &>
    using ReturnType = RetType;
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = true;
+   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
    const static bool isMemberCallable = true;
+   const static bool hasReturn = !std::is_same<RetType, void>::value;
    template <size_t index>
    struct arg
    {
@@ -749,7 +781,9 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) const&>
    using ReturnType = RetType;
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = false;
+   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
    const static bool isMemberCallable = true;
+   const static bool hasReturn = !std::is_same<RetType, void>::value;
    template <size_t index>
    struct arg
    {
@@ -763,7 +797,9 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) const&>
    using ReturnType = RetType;
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = true;
+   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
    const static bool isMemberCallable = true;
+   const static bool hasReturn = !std::is_same<RetType, void>::value;
    template <size_t index>
    struct arg
    {
@@ -777,7 +813,9 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) volatile&>
    using ReturnType = RetType;
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = false;
+   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
    const static bool isMemberCallable = true;
+   const static bool hasReturn = !std::is_same<RetType, void>::value;
    template <size_t index>
    struct arg
    {
@@ -791,7 +829,9 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) volatile&>
    using ReturnType = RetType;
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = true;
+   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
    const static bool isMemberCallable = true;
+   const static bool hasReturn = !std::is_same<RetType, void>::value;
    template <size_t index>
    struct arg
    {
@@ -805,7 +845,9 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) const volatile&>
    using ReturnType = RetType;
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = false;
+   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
    const static bool isMemberCallable = true;
+   const static bool hasReturn = !std::is_same<RetType, void>::value;
    template <size_t index>
    struct arg
    {
@@ -819,7 +861,9 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) const volat
    using ReturnType = RetType;
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = true;
+   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
    const static bool isMemberCallable = true;
+   const static bool hasReturn = !std::is_same<RetType, void>::value;
    template <size_t index>
    struct arg
    {
@@ -833,7 +877,9 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) &&>
    using ReturnType = RetType;
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = false;
+   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
    const static bool isMemberCallable = true;
+   const static bool hasReturn = !std::is_same<RetType, void>::value;
    template <size_t index>
    struct arg
    {
@@ -847,7 +893,9 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) &&>
    using ReturnType = RetType;
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = true;
+   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
    const static bool isMemberCallable = true;
+   const static bool hasReturn = !std::is_same<RetType, void>::value;
    template <size_t index>
    struct arg
    {
@@ -861,7 +909,9 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) const&&>
    using ReturnType = RetType;
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = false;
+   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
    const static bool isMemberCallable = true;
+   const static bool hasReturn = !std::is_same<RetType, void>::value;
    template <size_t index>
    struct arg
    {
@@ -875,7 +925,9 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) const&&>
    using ReturnType = RetType;
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = true;
+   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
    const static bool isMemberCallable = true;
+   const static bool hasReturn = !std::is_same<RetType, void>::value;
    template <size_t index>
    struct arg
    {
@@ -889,7 +941,9 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) volatile&&>
    using ReturnType = RetType;
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = false;
+   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
    const static bool isMemberCallable = true;
+   const static bool hasReturn = !std::is_same<RetType, void>::value;
    template <size_t index>
    struct arg
    {
@@ -903,7 +957,9 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) volatile&&>
    using ReturnType = RetType;
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = true;
+   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
    const static bool isMemberCallable = true;
+   const static bool hasReturn = !std::is_same<RetType, void>::value;
    template <size_t index>
    struct arg
    {
@@ -917,7 +973,9 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) const volatile&&
    using ReturnType = RetType;
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = false;
+   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
    const static bool isMemberCallable = true;
+   const static bool hasReturn = !std::is_same<RetType, void>::value;
    template <size_t index>
    struct arg
    {
@@ -931,7 +989,9 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) const volat
    using ReturnType = RetType;
    const static size_t argNum = sizeof...(ParamTypes);
    const static bool hasVaridicParams = true;
+   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
    const static bool isMemberCallable = true;
+   const static bool hasReturn = !std::is_same<RetType, void>::value;
    template <size_t index>
    struct arg
    {
@@ -940,9 +1000,15 @@ struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) const volat
 };
 
 template <typename CallableType>
-struct callable_has_return
+struct CallableHasReturn
 {
    const static bool value = !std::is_same<typename CallableInfoTrait<CallableType>::ReturnType, void>::value;
+};
+
+template <typename CallableType>
+struct CallableHasNoReturn
+{
+   const static bool value = std::is_same<typename CallableInfoTrait<CallableType>::ReturnType, void>::value;
 };
 
 template <typename MemberPointer>

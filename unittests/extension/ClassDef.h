@@ -208,7 +208,8 @@ class ClosureTestClass : public StdClass
 {
 public:
    void testClosureCallable();
-   Variant getCallable();
+   Variant getNoArgAndReturnCallable();
+   Variant getArgAndReturnCallable();
    ~ClosureTestClass();
 };
 

@@ -748,9 +748,20 @@ void IterateTestClass::offsetUnset(Variant offset)
 IterateTestClass::~IterateTestClass()
 {}
 
-void print_something()
+Variant print_something()
 {
    zapi::out << "print_something called" << std::endl;
+   return "print_some";
+}
+
+Variant have_ret_and_have_arg(Parameters &params)
+{
+   zapi::out << "have_ret_and_have_arg called" << std::endl;
+   if (params.empty()) {
+      return "have_ret_and_have_arg";
+   } else {
+      return params.at(0);
+   }
 }
 
 void ClosureTestClass::testClosureCallable()
@@ -759,9 +770,14 @@ void ClosureTestClass::testClosureCallable()
    //callableVar();
 }
 
-Variant ClosureTestClass::getCallable()
+Variant ClosureTestClass::getNoArgAndReturnCallable()
 {
    return CallableVariant(print_something);
+}
+
+Variant ClosureTestClass::getArgAndReturnCallable()
+{
+   return CallableVariant(have_ret_and_have_arg);
 }
 
 ClosureTestClass::~ClosureTestClass()

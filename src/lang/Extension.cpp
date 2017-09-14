@@ -214,7 +214,7 @@ Extension &Extension::registerNamespace(const Namespace &ns)
    if (implPtr->m_locked) {
       return *this;
    }
-   implPtr->m_namepsaces.push_back(std::make_shared<Namespace>(ns));
+   implPtr->m_namespaces.push_back(std::make_shared<Namespace>(ns));
    return *this;
 }
 
@@ -224,7 +224,7 @@ Extension &Extension::registerNamespace(Namespace &&ns)
    if (implPtr->m_locked) {
       return *this;
    }
-   implPtr->m_namepsaces.push_back(std::make_shared<Namespace>(std::move(ns)));
+   implPtr->m_namespaces.push_back(std::make_shared<Namespace>(std::move(ns)));
    return *this;
 }
 
@@ -328,7 +328,7 @@ size_t ExtensionPrivate::getFunctionQuantity() const
 {
    // now just return global namespaces functions
    size_t ret = m_functions.size();
-   for (const std::shared_ptr<Namespace> &ns : m_namepsaces) {
+   for (const std::shared_ptr<Namespace> &ns : m_namespaces) {
       ret += ns->getFunctionQuantity();
    }
    return ret;
@@ -357,7 +357,7 @@ zend_module_entry *ExtensionPrivate::getModule()
       callable.initialize(&entries[i]);
       i++;
    });
-   for (std::shared_ptr<Namespace> &ns : m_namepsaces) {
+   for (std::shared_ptr<Namespace> &ns : m_namespaces) {
       ns->m_implPtr->iterateFunctions([&i, entries](const std::string &ns, Function &callable){
          callable.initialize(ns, &entries[i]);
          i++;
@@ -480,7 +480,7 @@ bool ExtensionPrivate::initialize(int moduleNumber)
    });
    // work with register namespaces
    
-   for (std::shared_ptr<Namespace> &ns : m_namepsaces) {
+   for (std::shared_ptr<Namespace> &ns : m_namespaces) {
       ns->initialize(moduleNumber);
    }
    // initialize closure class
