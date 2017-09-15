@@ -66,9 +66,22 @@ option(ZAPI_OPT_ENABLE_VERBOSE_DEBUG
 option(ZAPI_OPT_DISABLE_TESTS
    "If tests should be compiled or not" OFF)
 
+set(ZAPI_OPT_PHP_ROOT_PATH "" CACHE STRING "Specify the root php path of host platform")
 set(ZAPI_OPT_PHP_INCLUDE_PATH "" CACHE STRING "Specify the php include path of host platform")
 set(ZAPI_OPT_PHP_LIB_PATH "" CACHE STRING "Specify the php lib path of host platform")
 set(ZAPI_OPT_PHP_BIN_PATH "" CACHE STRING "Specify the php bin path of host platform")
+
+if (ZAPI_OPT_PHP_ROOT_PATH)
+    if (NOT ZAPI_OPT_PHP_INCLUDE_PATH)
+        set(ZAPI_OPT_PHP_INCLUDE_PATH ${ZAPI_OPT_PHP_ROOT_PATH}/include)
+    endif()
+    if (NOT ZAPI_OPT_PHP_LIB_PATH)
+        set(ZAPI_OPT_PHP_LIB_PATH ${ZAPI_OPT_PHP_ROOT_PATH}/lib)
+    endif()
+    if (NOT ZAPI_OPT_PHP_BIN_PATH)
+        set(ZAPI_OPT_PHP_BIN_PATH ${ZAPI_OPT_PHP_ROOT_PATH}/bin)
+    endif()
+endif()
 
 set(ZAPI_OPT_LIBDIR_SUFFIX "" CACHE STRING "Define suffix of library directory name (32/64)" )
 string(TOUPPER "${CMAKE_BUILD_TYPE}" ZAPI_BUILD_TYPE)
@@ -79,13 +92,17 @@ endif()
 
 if (CMAKE_VERSION VERSION_LESS "3.1")
    if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-      set(CMAKE_CXX_FLAGS "--std=gnu++11 ${CMAKE_CXX_FLAGS}")
+      set(CMAKE_CXX_FLAGS "--std=gnu++11 -Wno-deprecated-declarations ${CMAKE_CXX_FLAGS}")
    elseif(CMAKE_CXX_FLAGS STREQUAL "Clang")
       set(CMAKE_CXX_FLAGS "--std=c++11 ${CMAKE_CXX_FLAGS}")
    endif ()
 else ()
    set(CMAKE_CXX_STANDARD 11)
 endif ()
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    set(CMAKE_CXX_FLAGS "-Wno-deprecated-declarations ${CMAKE_CXX_FLAGS}")
+endif()
 
 # prepare for installation
 set(ZAPI_INSTALL_LIB_DIR lib CACHE PATH "Installation directory for libraries")
@@ -132,6 +149,7 @@ set(ZAPI_PRIVATE_HEADERS "")
 
 add_subdirectory(include)
 add_subdirectory(src)
+add_subdirectory(scripts)
 
 if(NOT ZAPI_OPT_DISABLE_TESTS)
    set(ZAPI_PHP_INI_TPL_FILENAME ${ZAPI_ASSETS_DIR}/php.ini.in)
@@ -171,9 +189,14 @@ install(FILES
    DESTINATION
    "${ZAPI_INSTALL_CMAKE_DIR}"
    COMPONENT dev)
-
-message(STATUS "")
-message(STATUS "(zapi ${ZAPI_VERSION})")
+message(STATUS "--------------------------------------------------------------------------------------")
+message(STATUS "Thank for using zendAPI project, have a lot of fun!")
+message(STATUS "--------------------------------------------------------------------------------------")
+message(STATUS "ZAPI_VERSION: ${ZAPI_VERSION}")
+message(STATUS "PHP_INCLUDE_PATH: ${ZAPI_PHP_INCLUDE_PATH}")
+message(STATUS "PHP_LIB_PATH: ${ZAPI_PHP_LIB}")
+message(STATUS "PHP_EXECUTABLE: ${ZAPI_PHP_EXECUTABLE}")
+message(STATUS "PHP_CONFIG_EXECUABLE: ${ZAPI_PHP_CONFIG_EXECUABLE}")
 message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
 message(STATUS "CMAKE_BINARY_DIR: ${CMAKE_BINARY_DIR}")
 message(STATUS "CMAKE_CURRENT_BINARY_DIR: ${CMAKE_CURRENT_BINARY_DIR}")
@@ -191,7 +214,8 @@ message(STATUS "CMAKE_SYSTEM_PROCESSOR: ${CMAKE_SYSTEM_PROCESSOR}")
 message(STATUS "CMAKE_SKIP_RPATH: ${CMAKE_SKIP_RPATH}")
 message(STATUS "CMAKE_VERBOSE_MAKEFILE: ${CMAKE_VERBOSE_MAKEFILE}")
 message(STATUS "CMAKE_CXX_COMPILER: ${CMAKE_CXX_COMPILER}")
+message(STATUS "CMAKE_CXX_COMPILER_VERSION: ${CMAKE_CXX_COMPILER_VERSION}")
 message(STATUS "CMAKE_CXX_FLAGS: ${CMAKE_CXX_FLAGS}")
 message(STATUS "CMAKE_AR: ${CMAKE_AR}")
 message(STATUS "CMAKE_RANLIB: ${CMAKE_RANLIB}")
-message(STATUS "")
+message(STATUS "--------------------------------------------------------------------------------------")

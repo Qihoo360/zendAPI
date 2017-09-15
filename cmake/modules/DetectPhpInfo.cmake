@@ -33,12 +33,14 @@ endif()
 
 # find php include path
 find_path(ZAPI_PHP_INCLUDE_PATH php/main/php.h
-    PATHS ${ZAPI_PHP_POSSIBLE_INCLUDE_PATHS})
+    HINTS ${ZAPI_PHP_POSSIBLE_INCLUDE_PATHS}
+    )
+
 find_program(ZAPI_PHP_EXECUTABLE NAEMS php
-    PATHS ${ZAPI_PHP_POSSIBLE_BIN_PATHS} NO_DEFAULT_PATH)
+    HINTS ${ZAPI_PHP_POSSIBLE_BIN_PATHS} NO_DEFAULT_PATH)
 
 find_program(ZAPI_PHP_CONFIG_EXECUABLE php-config
-    PATHS ${ZAPI_PHP_POSSIBLE_BIN_PATHS} NO_DEFAULT_PATH)
+    HINTS ${ZAPI_PHP_POSSIBLE_BIN_PATHS} NO_DEFAULT_PATH)
 
 # if you build the unittest we will detect libphp library
 if(NOT ZAPI_OPT_DISABLE_TESTS)
@@ -62,6 +64,9 @@ if (NOT ZAPI_OPT_DISABLE_TESTS AND NOT ZAPI_PHP_LIB)
     message(FATAL_ERROR "php library is not found")
 endif()
 
+# here we need ensure detected paths is compatible
+# TODO
+
 # we use php-config to detect php extra include paths
 execute_process(COMMAND ${ZAPI_PHP_CONFIG_EXECUABLE} --includes
     RESULT_VARIABLE ZAPI_TEMP_RUN_PHPCFG_RET
@@ -73,8 +78,11 @@ endif()
 
 string(REPLACE " " ";" ZAPI_TEMP_RUN_PHPCFG_OUTPUT ${ZAPI_TEMP_RUN_PHPCFG_OUTPUT})
 
+set(ZAPI_PHP_INCLUDE_PATHS ${ZAPI_PHP_INCLUDE_PATH})
+
+# here we just add subdirectory of php include path to compiler include paths
 foreach(zapi_temp_include_path ${ZAPI_TEMP_RUN_PHPCFG_OUTPUT})
     string(SUBSTRING ${zapi_temp_include_path} 2 -1 zapi_temp_include_path)
-    list(APPEND ZAPI_PHP_INCLUDE_PATH ${zapi_temp_include_path})
+    list(APPEND ZAPI_PHP_INCLUDE_PATHS ${zapi_temp_include_path})
 endforeach()
-include_directories(BEFORE ${ZAPI_PHP_INCLUDE_PATH})
+include_directories(BEFORE ${ZAPI_PHP_INCLUDE_PATHS})
