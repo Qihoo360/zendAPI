@@ -65,7 +65,18 @@ if (NOT ZAPI_OPT_DISABLE_TESTS AND NOT ZAPI_PHP_LIB)
 endif()
 
 # here we need ensure detected paths is compatible
-# TODO
+execute_process(COMMAND ${ZAPI_PHP_EXECUTABLE} ${ZAPI_SCRIPTS_DIR}/build/retrieve_php_info.php ${ZAPI_PHP_INCLUDE_PATH} --PHP_VERSION_ID
+    RESULT_VARIABLE ZAPI_TEMP_RUN_PHP_INFO_RET
+    OUTPUT_VARIABLE ZAPI_TEMP_RUN_PHP_INFO_OUTPUT
+    ERROR_QUIET)
+
+if (ZAPI_TEMP_RUN_PHP_INFO_RET)
+    message(FATAL_ERROR "execute retrieve_php_info.php script error: " ${ZAPI_TEMP_RUN_PHP_INFO_OUTPUT})
+endif()
+
+if (ZAPI_TEMP_RUN_PHP_INFO_OUTPUT LESS 70000)
+    message(FATAL_ERROR "sorry, zendAPI just support PHP version 7.0.0 or above, please upgrade PHP.")
+endif()
 
 # we use php-config to detect php extra include paths
 execute_process(COMMAND ${ZAPI_PHP_CONFIG_EXECUABLE} --includes
