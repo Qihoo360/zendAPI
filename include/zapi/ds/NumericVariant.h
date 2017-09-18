@@ -17,6 +17,7 @@
 #define ZAPI_DS_NUMERIC_VARIANT_H
 
 #include "zapi/ds/Variant.h"
+#include <type_traits>
 
 namespace zapi
 {
@@ -53,8 +54,9 @@ public:
    NumericVariant &operator =(const Variant &other);
    NumericVariant &operator =(const DoubleVariant &other);
    NumericVariant &operator =(ArrayItemProxy &&other);
-   operator zapi_long () const;
-   operator int () const;
+   template <typename T,
+             typename Selector = typename std::enable_if<std::is_integral<T>::value>::type>
+   operator T () const;
    NumericVariant &operator++();
    NumericVariant operator++(int);
    NumericVariant &operator--();
@@ -92,6 +94,13 @@ public:
    zapi_long toLong() const ZAPI_DECL_NOEXCEPT;
    virtual ~NumericVariant() ZAPI_DECL_NOEXCEPT;
 };
+
+template <typename T,
+          typename Selector>
+NumericVariant::operator T () const
+{
+   return zval_get_long(const_cast<zval *>(getZvalPtr()));
+}
 
 template <typename T, typename Selector>
 NumericVariant &NumericVariant::operator +=(T value) ZAPI_DECL_NOEXCEPT

@@ -47,7 +47,7 @@ TEST(NumericVarintTest, testBaseFuncs)
    ASSERT_FALSE(12 >= num2);
    Variant gvar(666);
    NumericVariant gcopy(gvar);
-   ASSERT_EQ(gcopy, 666);
+   ASSERT_EQ(gcopy.toLong(), 666);
 }
 
 TEST(NumericVariantTest, testAddOps)

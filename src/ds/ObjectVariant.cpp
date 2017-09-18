@@ -249,7 +249,7 @@ bool ObjectVariant::hasProperty(const std::string &name)
    zend_class_entry *old_scope = EG(fake_scope);
    EG(fake_scope) = scope;
    if (!Z_OBJ_HT_P(self)->has_property) {
-      zend_error_noreturn(E_CORE_ERROR, "Property %s of class %s cannot be read", name.c_str(), ZSTR_VAL(Z_OBJCE_P(self)->name));
+      zend_error(E_CORE_ERROR, "Property %s of class %s cannot be read", name.c_str(), ZSTR_VAL(Z_OBJCE_P(self)->name));
    }
    zval nameZval;
    ZVAL_STRINGL(&nameZval, name.c_str(), name.length());

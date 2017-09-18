@@ -117,15 +117,15 @@ NumericVariant::NumericVariant(Variant &&other)
    }
 }
 
-NumericVariant::operator zapi_long () const
-{
-   return zval_get_long(const_cast<zval *>(getZvalPtr()));
-}
+//NumericVariant::operator zapi_long () const
+//{
+//   return zval_get_long(const_cast<zval *>(getZvalPtr()));
+//}
 
-NumericVariant::operator int () const
-{
-   return zval_get_long(const_cast<zval *>(getZvalPtr()));
-}
+//NumericVariant::operator int () const
+//{
+//   return zval_get_long(const_cast<zval *>(getZvalPtr()));
+//}
 
 zapi_long NumericVariant::toLong() const ZAPI_DECL_NOEXCEPT
 {

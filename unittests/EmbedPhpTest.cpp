@@ -19,9 +19,9 @@
 
 int main(int argc, char **argv) {
    PHP_EMBED_START_BLOCK(argc,argv);
-   char * script = " function show_version (){echo 'hello zend api: v0.0.1';} show_version();";
+   char * script = const_cast<char *>(" function show_version (){echo 'hello zend api: v0.0.1';} show_version();");
    zend_eval_string(script, NULL,
-                    "Simple Hello World App" TSRMLS_CC);
+                    const_cast<char *>("Simple Hello World App") TSRMLS_CC);
    PHP_EMBED_END_BLOCK();
    return 0;
 }
