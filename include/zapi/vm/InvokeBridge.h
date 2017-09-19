@@ -178,7 +178,7 @@ public:
             return;
          }
          const size_t argNumber = ZEND_NUM_ARGS();
-         zval arguments[argNumber];
+         zval arguments[16];
          zend_get_parameters_array_ex(argNumber, arguments);
          // 15 arguments is enough ?
          auto tuple = zapi::stdext::gen_tuple<16>(
@@ -241,7 +241,7 @@ public:
             return;
          }
          const size_t argNumber = ZEND_NUM_ARGS();
-         zval arguments[argNumber];
+         zval arguments[16];
          zend_get_parameters_array_ex(argNumber, arguments);
          // 15 arguments is enough ?
          auto tuple = zapi::stdext::gen_tuple<16>(
@@ -309,7 +309,7 @@ public:
          using ClassType = typename std::decay<typename zapi::stdext::member_pointer_traits<CallableType>::ClassType>::type;
          StdClass *nativeObject = ObjectBinder::retrieveSelfPtr(getThis())->getNativeObject();
          const size_t argNumber = ZEND_NUM_ARGS();
-         zval arguments[argNumber];
+         zval arguments[16];
          zend_get_parameters_array_ex(argNumber, arguments);
          // for class object
          auto objectTuple = std::make_tuple(static_cast<ClassType *>(nativeObject));
@@ -379,7 +379,7 @@ public:
          using ClassType = typename std::decay<typename zapi::stdext::member_pointer_traits<CallableType>::ClassType>::type;
          StdClass *nativeObject = ObjectBinder::retrieveSelfPtr(getThis())->getNativeObject();
          const size_t argNumber = ZEND_NUM_ARGS();
-         zval arguments[argNumber];
+         zval arguments[16];
          zend_get_parameters_array_ex(argNumber, arguments);
          // for class object
          auto objectTuple = std::make_tuple(static_cast<ClassType *>(nativeObject));
@@ -410,7 +410,7 @@ template <typename CallableType,
           typename std::decay<CallableType>::type callable,
           typename DecayCallableType = typename std::decay<CallableType>::type>
 class InvokeBridge : public InvokeBridgePrivate<DecayCallableType, callable,
-      std::is_member_function_pointer<DecayCallableType>::value,
+      zapi::stdext::CallableInfoTrait<DecayCallableType>::isMemberCallable,
       zapi::stdext::CallableHasReturn<DecayCallableType>::value,
       zapi::stdext::CallableInfoTrait<DecayCallableType>::hasVaridicParams>
 {};

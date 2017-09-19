@@ -144,7 +144,6 @@ macro(zapi_add_executable name)
    zapi_set_output_directory(${name}
       BINARY_DIR ${ZAPI_RUNTIME_OUTPUT_INTDIR}
       LIBRARY_DIR ${ZAPI_LIBRARY_OUTPUT_INTDIR})
-   
    if(ZAPI_COMMON_DEPENDS)
       add_dependencies(${name} ${ZAPI_COMMON_DEPENDS})
    endif()

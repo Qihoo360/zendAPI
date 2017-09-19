@@ -17,6 +17,7 @@
 #ifndef ZAPI_STDEXT_TYPETRAITS_H
 #define ZAPI_STDEXT_TYPETRAITS_H
 
+#include "zapi/CompilerDetection.h"
 #include <type_traits>
 #include <tuple>
 
@@ -70,6 +71,497 @@ struct apply_cv<SourceType &, TargetType, false, true>
 {
    using type = volatile TargetType &;
 };
+
+} // internal
+
+template <typename CallableType>
+struct CallableInfoTrait
+{
+   constexpr const static bool isMemberCallable = false;
+};
+
+template <typename RetType, typename ...ParamTypes>
+struct CallableInfoTrait<RetType (&)(ParamTypes ...args)>
+{
+   using ReturnType = RetType;
+   constexpr const static size_t argNum = sizeof...(ParamTypes);
+   constexpr const static bool hasVaridicParams = false;
+   constexpr const static bool hasParamDef = argNum != 0 || hasVaridicParams;
+   constexpr const static bool isMemberCallable = false;
+   constexpr const static bool hasReturn = !std::is_same<RetType, void>::value;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
+};
+
+template <typename RetType, typename ...ParamTypes>
+struct CallableInfoTrait<RetType (*)(ParamTypes ...args)>
+{
+   using ReturnType = RetType;
+   constexpr const static size_t argNum = sizeof...(ParamTypes);
+   constexpr const static bool hasVaridicParams = false;
+   constexpr const static bool hasParamDef = argNum != 0 || hasVaridicParams;
+   constexpr const static bool isMemberCallable = false;
+   constexpr const static bool hasReturn = !std::is_same<RetType, void>::value;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
+};
+
+template <typename RetType, typename ...ParamTypes>
+struct CallableInfoTrait<RetType (ParamTypes ...args)>
+{
+   using ReturnType = RetType;
+   constexpr const static size_t argNum = sizeof...(ParamTypes);
+   constexpr const static bool hasVaridicParams = false;
+   constexpr const static bool hasParamDef = argNum != 0 || hasVaridicParams;
+   constexpr const static bool isMemberCallable = false;
+   constexpr const static bool hasReturn = !std::is_same<RetType, void>::value;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
+};
+
+template <typename RetType, typename ...ParamTypes>
+struct CallableInfoTrait<RetType (&)(ParamTypes ...args, ...)>
+{
+   using ReturnType = RetType;
+   constexpr const static size_t argNum = sizeof...(ParamTypes);
+   constexpr const static bool hasVaridicParams = true;
+   constexpr const static bool hasParamDef = argNum != 0 || hasVaridicParams;
+   constexpr const static bool isMemberCallable = false;
+   constexpr const static bool hasReturn = !std::is_same<RetType, void>::value;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
+};
+
+template <typename RetType, typename ...ParamTypes>
+struct CallableInfoTrait<RetType (*)(ParamTypes ...args, ...)>
+{
+   using ReturnType = RetType;
+   constexpr const static size_t argNum = sizeof...(ParamTypes);
+   constexpr const static bool hasVaridicParams = true;
+   constexpr const static bool hasParamDef = argNum != 0 || hasVaridicParams;
+   constexpr const static bool isMemberCallable = false;
+   constexpr const static bool hasReturn = !std::is_same<RetType, void>::value;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
+};
+
+template <typename RetType, typename ...ParamTypes>
+struct CallableInfoTrait<RetType (ParamTypes ...args, ...)>
+{
+   using ReturnType = RetType;
+   constexpr const static size_t argNum = sizeof...(ParamTypes);
+   constexpr const static bool hasVaridicParams = true;
+   constexpr const static bool hasParamDef = argNum != 0 || hasVaridicParams;
+   constexpr const static bool isMemberCallable = false;
+   constexpr const static bool hasReturn = !std::is_same<RetType, void>::value;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args)>
+{
+   using ReturnType = RetType;
+   constexpr const static size_t argNum = sizeof...(ParamTypes);
+   constexpr const static bool hasVaridicParams = false;
+   constexpr const static bool hasParamDef = argNum != 0 || hasVaridicParams;
+   constexpr const static bool isMemberCallable = true;
+   constexpr const static bool hasReturn = !std::is_same<RetType, void>::value;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...)>
+{
+   using ReturnType = RetType;
+   constexpr const static size_t argNum = sizeof...(ParamTypes);
+   constexpr const static bool hasVaridicParams = true;
+   constexpr const static bool hasParamDef = argNum != 0 || hasVaridicParams;
+   constexpr const static bool isMemberCallable = true;
+   constexpr const static bool hasReturn = !std::is_same<RetType, void>::value;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) const>
+{
+   using ReturnType = RetType;
+   constexpr const static size_t argNum = sizeof...(ParamTypes);
+   constexpr const static bool hasVaridicParams = false;
+   constexpr const static bool hasParamDef = argNum != 0 || hasVaridicParams;
+   constexpr const static bool isMemberCallable = true;
+   constexpr const static bool hasReturn = !std::is_same<RetType, void>::value;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) const>
+{
+   using ReturnType = RetType;
+   constexpr const static size_t argNum = sizeof...(ParamTypes);
+   constexpr const static bool hasVaridicParams = true;
+   constexpr const static bool hasParamDef = argNum != 0 || hasVaridicParams;
+   constexpr const static bool isMemberCallable = true;
+   constexpr const static bool hasReturn = !std::is_same<RetType, void>::value;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) volatile>
+{
+   using ReturnType = RetType;
+   constexpr const static size_t argNum = sizeof...(ParamTypes);
+   constexpr const static bool hasVaridicParams = false;
+   constexpr const static bool hasParamDef = argNum != 0 || hasVaridicParams;
+   constexpr const static bool isMemberCallable = true;
+   constexpr const static bool hasReturn = !std::is_same<RetType, void>::value;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) volatile>
+{
+   using ReturnType = RetType;
+   constexpr const static size_t argNum = sizeof...(ParamTypes);
+   constexpr const static bool hasVaridicParams = true;
+   constexpr const static bool hasParamDef = argNum != 0 || hasVaridicParams;
+   constexpr const static bool isMemberCallable = true;
+   constexpr const static bool hasReturn = !std::is_same<RetType, void>::value;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) const volatile>
+{
+   using ReturnType = RetType;
+   constexpr const static size_t argNum = sizeof...(ParamTypes);
+   constexpr const static bool hasVaridicParams = false;
+   constexpr const static bool hasParamDef = argNum != 0 || hasVaridicParams;
+   constexpr const static bool isMemberCallable = true;
+   constexpr const static bool hasReturn = !std::is_same<RetType, void>::value;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) const volatile>
+{
+   using ReturnType = RetType;
+   constexpr const static size_t argNum = sizeof...(ParamTypes);
+   constexpr const static bool hasVaridicParams = true;
+   constexpr const static bool hasParamDef = argNum != 0 || hasVaridicParams;
+   constexpr const static bool isMemberCallable = true;
+   constexpr const static bool hasReturn = !std::is_same<RetType, void>::value;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) &>
+{
+   using ReturnType = RetType;
+   constexpr const static size_t argNum = sizeof...(ParamTypes);
+   constexpr const static bool hasVaridicParams = false;
+   constexpr const static bool hasParamDef = argNum != 0 || hasVaridicParams;
+   constexpr const static bool isMemberCallable = true;
+   constexpr const static bool hasReturn = !std::is_same<RetType, void>::value;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) &>
+{
+   using ReturnType = RetType;
+   constexpr const static size_t argNum = sizeof...(ParamTypes);
+   constexpr const static bool hasVaridicParams = true;
+   constexpr const static bool hasParamDef = argNum != 0 || hasVaridicParams;
+   constexpr const static bool isMemberCallable = true;
+   constexpr const static bool hasReturn = !std::is_same<RetType, void>::value;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) const&>
+{
+   using ReturnType = RetType;
+   constexpr const static size_t argNum = sizeof...(ParamTypes);
+   constexpr const static bool hasVaridicParams = false;
+   constexpr const static bool hasParamDef = argNum != 0 || hasVaridicParams;
+   constexpr const static bool isMemberCallable = true;
+   constexpr const static bool hasReturn = !std::is_same<RetType, void>::value;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) const&>
+{
+   using ReturnType = RetType;
+   constexpr const static size_t argNum = sizeof...(ParamTypes);
+   constexpr const static bool hasVaridicParams = true;
+   constexpr const static bool hasParamDef = argNum != 0 || hasVaridicParams;
+   constexpr const static bool isMemberCallable = true;
+   constexpr const static bool hasReturn = !std::is_same<RetType, void>::value;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) volatile&>
+{
+   using ReturnType = RetType;
+   constexpr const static size_t argNum = sizeof...(ParamTypes);
+   constexpr const static bool hasVaridicParams = false;
+   constexpr const static bool hasParamDef = argNum != 0 || hasVaridicParams;
+   constexpr const static bool isMemberCallable = true;
+   constexpr const static bool hasReturn = !std::is_same<RetType, void>::value;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) volatile&>
+{
+   using ReturnType = RetType;
+   constexpr const static size_t argNum = sizeof...(ParamTypes);
+   constexpr const static bool hasVaridicParams = true;
+   constexpr const static bool hasParamDef = argNum != 0 || hasVaridicParams;
+   constexpr const static bool isMemberCallable = true;
+   constexpr const static bool hasReturn = !std::is_same<RetType, void>::value;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) const volatile&>
+{
+   using ReturnType = RetType;
+   constexpr const static size_t argNum = sizeof...(ParamTypes);
+   constexpr const static bool hasVaridicParams = false;
+   constexpr const static bool hasParamDef = argNum != 0 || hasVaridicParams;
+   constexpr const static bool isMemberCallable = true;
+   constexpr const static bool hasReturn = !std::is_same<RetType, void>::value;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) const volatile&>
+{
+   using ReturnType = RetType;
+   constexpr const static size_t argNum = sizeof...(ParamTypes);
+   constexpr const static bool hasVaridicParams = true;
+   constexpr const static bool hasParamDef = argNum != 0 || hasVaridicParams;
+   constexpr const static bool isMemberCallable = true;
+   constexpr const static bool hasReturn = !std::is_same<RetType, void>::value;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) &&>
+{
+   using ReturnType = RetType;
+   constexpr const static size_t argNum = sizeof...(ParamTypes);
+   constexpr const static bool hasVaridicParams = false;
+   constexpr const static bool hasParamDef = argNum != 0 || hasVaridicParams;
+   constexpr const static bool isMemberCallable = true;
+   constexpr const static bool hasReturn = !std::is_same<RetType, void>::value;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) &&>
+{
+   using ReturnType = RetType;
+   constexpr const static size_t argNum = sizeof...(ParamTypes);
+   constexpr const static bool hasVaridicParams = true;
+   constexpr const static bool hasParamDef = argNum != 0 || hasVaridicParams;
+   constexpr const static bool isMemberCallable = true;
+   constexpr const static bool hasReturn = !std::is_same<RetType, void>::value;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) const&&>
+{
+   using ReturnType = RetType;
+   constexpr const static size_t argNum = sizeof...(ParamTypes);
+   constexpr const static bool hasVaridicParams = false;
+   constexpr const static bool hasParamDef = argNum != 0 || hasVaridicParams;
+   constexpr const static bool isMemberCallable = true;
+   constexpr const static bool hasReturn = !std::is_same<RetType, void>::value;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) const&&>
+{
+   using ReturnType = RetType;
+   constexpr const static size_t argNum = sizeof...(ParamTypes);
+   constexpr const static bool hasVaridicParams = true;
+   constexpr const static bool hasParamDef = argNum != 0 || hasVaridicParams;
+   constexpr const static bool isMemberCallable = true;
+   constexpr const static bool hasReturn = !std::is_same<RetType, void>::value;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) volatile&&>
+{
+   using ReturnType = RetType;
+   constexpr const static size_t argNum = sizeof...(ParamTypes);
+   constexpr const static bool hasVaridicParams = false;
+   constexpr const static bool hasParamDef = argNum != 0 || hasVaridicParams;
+   constexpr const static bool isMemberCallable = true;
+   constexpr const static bool hasReturn = !std::is_same<RetType, void>::value;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) volatile&&>
+{
+   using ReturnType = RetType;
+   constexpr const static size_t argNum = sizeof...(ParamTypes);
+   constexpr const static bool hasVaridicParams = true;
+   constexpr const static bool hasParamDef = argNum != 0 || hasVaridicParams;
+   constexpr const static bool isMemberCallable = true;
+   constexpr const static bool hasReturn = !std::is_same<RetType, void>::value;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) const volatile&&>
+{
+   using ReturnType = RetType;
+   constexpr const static size_t argNum = sizeof...(ParamTypes);
+   constexpr const static bool hasVaridicParams = false;
+   constexpr const static bool hasParamDef = argNum != 0 || hasVaridicParams;
+   constexpr const static bool isMemberCallable = true;
+   constexpr const static bool hasReturn = !std::is_same<RetType, void>::value;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
+};
+
+template <typename RetType, typename Class, typename ...ParamTypes>
+struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) const volatile&&>
+{
+   using ReturnType = RetType;
+   constexpr const static size_t argNum = sizeof...(ParamTypes);
+   constexpr const static bool hasVaridicParams = true;
+   constexpr const static bool hasParamDef = argNum != 0 || hasVaridicParams;
+   constexpr const static bool isMemberCallable = true;
+   constexpr const static bool hasReturn = !std::is_same<RetType, void>::value;
+   template <size_t index>
+   struct arg
+   {
+      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
+   };
+};
+
+namespace internal
+{
 
 template <typename MemberPointerType, bool IsMemberFunctionPtr, bool IsMemberObjectPtr>
 struct member_pointer_traits_imp
@@ -278,13 +770,6 @@ struct member_pointer_traits_imp<UnderType Class::*, false, true>
    using ReturnType = UnderType;
 };
 
-template <typename MemberPointer>
-struct member_pointer_traits 
-      : public member_pointer_traits_imp<typename std::remove_cv<MemberPointer>::type,
-      std::is_member_function_pointer<MemberPointer>::value,
-      std::is_member_object_pointer<MemberPointer>::value>
-{};
-
 template <typename DecayedFuncType>
 struct member_pointer_class_type 
 {};
@@ -314,7 +799,7 @@ template <typename FuncType, typename A0,
           typename ClassType = typename member_pointer_class_type<DecayFuncType>::type>
 using enable_if_bullet1 = typename std::enable_if
 <
-std::is_member_function_pointer<DecayFuncType>::value &&
+zapi::stdext::CallableInfoTrait<DecayFuncType>::isMemberCallable &&
 std::is_base_of<ClassType, DecayA0>::value
 >::type;
 
@@ -323,7 +808,7 @@ template <typename FuncType, typename A0,
           typename DecayA0 = typename std::decay<A0>::type>
 using enable_if_bullet2 = typename std::enable_if
 <
-std::is_member_function_pointer<DecayFuncType>::value &&
+zapi::stdext::CallableInfoTrait<DecayFuncType>::isMemberCallable &&
 is_reference_wrapper<DecayA0>::value
 >::type;
 
@@ -333,7 +818,7 @@ template <typename FuncType, typename A0,
           typename ClassType = typename member_pointer_class_type<DecayFuncType>::type>
 using enable_if_bullet3 = typename std::enable_if
 <
-std::is_member_function_pointer<DecayFuncType>::value &&
+zapi::stdext::CallableInfoTrait<DecayFuncType>::isMemberCallable &&
 !std::is_base_of<ClassType, DecayA0>::value &&
 !is_reference_wrapper<DecayA0>::value
 >::type;
@@ -516,503 +1001,16 @@ noexcept(noexcept(std::forward<FuncType>(func)(std::forward<Args>(args)...)))
 } // internal
 
 template <typename CallableType>
-struct CallableInfoTrait
-{};
-
-template <typename RetType, typename ...ParamTypes>
-struct CallableInfoTrait<RetType (&)(ParamTypes ...args)>
-{
-   using ReturnType = RetType;
-   const static size_t argNum = sizeof...(ParamTypes);
-   const static bool hasVaridicParams = false;
-   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
-   const static bool isMemberCallable = false;
-   const static bool hasReturn = !std::is_same<RetType, void>::value;
-   template <size_t index>
-   struct arg
-   {
-      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
-   };
-};
-
-template <typename RetType, typename ...ParamTypes>
-struct CallableInfoTrait<RetType (*)(ParamTypes ...args)>
-{
-   using ReturnType = RetType;
-   const static size_t argNum = sizeof...(ParamTypes);
-   const static bool hasVaridicParams = false;
-   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
-   const static bool isMemberCallable = false;
-   const static bool hasReturn = !std::is_same<RetType, void>::value;
-   template <size_t index>
-   struct arg
-   {
-      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
-   };
-};
-
-template <typename RetType, typename ...ParamTypes>
-struct CallableInfoTrait<RetType (ParamTypes ...args)>
-{
-   using ReturnType = RetType;
-   const static size_t argNum = sizeof...(ParamTypes);
-   const static bool hasVaridicParams = false;
-   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
-   const static bool isMemberCallable = false;
-   const static bool hasReturn = !std::is_same<RetType, void>::value;
-   template <size_t index>
-   struct arg
-   {
-      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
-   };
-};
-
-template <typename RetType, typename ...ParamTypes>
-struct CallableInfoTrait<RetType (&)(ParamTypes ...args, ...)>
-{
-   using ReturnType = RetType;
-   const static size_t argNum = sizeof...(ParamTypes);
-   const static bool hasVaridicParams = true;
-   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
-   const static bool isMemberCallable = false;
-   const static bool hasReturn = !std::is_same<RetType, void>::value;
-   template <size_t index>
-   struct arg
-   {
-      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
-   };
-};
-
-template <typename RetType, typename ...ParamTypes>
-struct CallableInfoTrait<RetType (*)(ParamTypes ...args, ...)>
-{
-   using ReturnType = RetType;
-   const static size_t argNum = sizeof...(ParamTypes);
-   const static bool hasVaridicParams = true;
-   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
-   const static bool isMemberCallable = false;
-   const static bool hasReturn = !std::is_same<RetType, void>::value;
-   template <size_t index>
-   struct arg
-   {
-      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
-   };
-};
-
-template <typename RetType, typename ...ParamTypes>
-struct CallableInfoTrait<RetType (ParamTypes ...args, ...)>
-{
-   using ReturnType = RetType;
-   const static size_t argNum = sizeof...(ParamTypes);
-   const static bool hasVaridicParams = true;
-   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
-   const static bool isMemberCallable = false;
-   const static bool hasReturn = !std::is_same<RetType, void>::value;
-   template <size_t index>
-   struct arg
-   {
-      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
-   };
-};
-
-template <typename RetType, typename Class, typename ...ParamTypes>
-struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args)>
-{
-   using ReturnType = RetType;
-   const static size_t argNum = sizeof...(ParamTypes);
-   const static bool hasVaridicParams = false;
-   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
-   const static bool isMemberCallable = true;
-   const static bool hasReturn = !std::is_same<RetType, void>::value;
-   template <size_t index>
-   struct arg
-   {
-      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
-   };
-};
-
-template <typename RetType, typename Class, typename ...ParamTypes>
-struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...)>
-{
-   using ReturnType = RetType;
-   const static size_t argNum = sizeof...(ParamTypes);
-   const static bool hasVaridicParams = true;
-   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
-   const static bool isMemberCallable = true;
-   const static bool hasReturn = !std::is_same<RetType, void>::value;
-   template <size_t index>
-   struct arg
-   {
-      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
-   };
-};
-
-template <typename RetType, typename Class, typename ...ParamTypes>
-struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) const>
-{
-   using ReturnType = RetType;
-   const static size_t argNum = sizeof...(ParamTypes);
-   const static bool hasVaridicParams = false;
-   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
-   const static bool isMemberCallable = true;
-   const static bool hasReturn = !std::is_same<RetType, void>::value;
-   template <size_t index>
-   struct arg
-   {
-      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
-   };
-};
-
-template <typename RetType, typename Class, typename ...ParamTypes>
-struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) const>
-{
-   using ReturnType = RetType;
-   const static size_t argNum = sizeof...(ParamTypes);
-   const static bool hasVaridicParams = true;
-   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
-   const static bool isMemberCallable = true;
-   const static bool hasReturn = !std::is_same<RetType, void>::value;
-   template <size_t index>
-   struct arg
-   {
-      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
-   };
-};
-
-template <typename RetType, typename Class, typename ...ParamTypes>
-struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) volatile>
-{
-   using ReturnType = RetType;
-   const static size_t argNum = sizeof...(ParamTypes);
-   const static bool hasVaridicParams = false;
-   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
-   const static bool isMemberCallable = true;
-   const static bool hasReturn = !std::is_same<RetType, void>::value;
-   template <size_t index>
-   struct arg
-   {
-      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
-   };
-};
-
-template <typename RetType, typename Class, typename ...ParamTypes>
-struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) volatile>
-{
-   using ReturnType = RetType;
-   const static size_t argNum = sizeof...(ParamTypes);
-   const static bool hasVaridicParams = true;
-   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
-   const static bool isMemberCallable = true;
-   const static bool hasReturn = !std::is_same<RetType, void>::value;
-   template <size_t index>
-   struct arg
-   {
-      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
-   };
-};
-
-template <typename RetType, typename Class, typename ...ParamTypes>
-struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) const volatile>
-{
-   using ReturnType = RetType;
-   const static size_t argNum = sizeof...(ParamTypes);
-   const static bool hasVaridicParams = false;
-   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
-   const static bool isMemberCallable = true;
-   const static bool hasReturn = !std::is_same<RetType, void>::value;
-   template <size_t index>
-   struct arg
-   {
-      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
-   };
-};
-
-template <typename RetType, typename Class, typename ...ParamTypes>
-struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) const volatile>
-{
-   using ReturnType = RetType;
-   const static size_t argNum = sizeof...(ParamTypes);
-   const static bool hasVaridicParams = true;
-   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
-   const static bool isMemberCallable = true;
-   const static bool hasReturn = !std::is_same<RetType, void>::value;
-   template <size_t index>
-   struct arg
-   {
-      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
-   };
-};
-
-template <typename RetType, typename Class, typename ...ParamTypes>
-struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) &>
-{
-   using ReturnType = RetType;
-   const static size_t argNum = sizeof...(ParamTypes);
-   const static bool hasVaridicParams = false;
-   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
-   const static bool isMemberCallable = true;
-   const static bool hasReturn = !std::is_same<RetType, void>::value;
-   template <size_t index>
-   struct arg
-   {
-      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
-   };
-};
-
-template <typename RetType, typename Class, typename ...ParamTypes>
-struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) &>
-{
-   using ReturnType = RetType;
-   const static size_t argNum = sizeof...(ParamTypes);
-   const static bool hasVaridicParams = true;
-   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
-   const static bool isMemberCallable = true;
-   const static bool hasReturn = !std::is_same<RetType, void>::value;
-   template <size_t index>
-   struct arg
-   {
-      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
-   };
-};
-
-template <typename RetType, typename Class, typename ...ParamTypes>
-struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) const&>
-{
-   using ReturnType = RetType;
-   const static size_t argNum = sizeof...(ParamTypes);
-   const static bool hasVaridicParams = false;
-   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
-   const static bool isMemberCallable = true;
-   const static bool hasReturn = !std::is_same<RetType, void>::value;
-   template <size_t index>
-   struct arg
-   {
-      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
-   };
-};
-
-template <typename RetType, typename Class, typename ...ParamTypes>
-struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) const&>
-{
-   using ReturnType = RetType;
-   const static size_t argNum = sizeof...(ParamTypes);
-   const static bool hasVaridicParams = true;
-   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
-   const static bool isMemberCallable = true;
-   const static bool hasReturn = !std::is_same<RetType, void>::value;
-   template <size_t index>
-   struct arg
-   {
-      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
-   };
-};
-
-template <typename RetType, typename Class, typename ...ParamTypes>
-struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) volatile&>
-{
-   using ReturnType = RetType;
-   const static size_t argNum = sizeof...(ParamTypes);
-   const static bool hasVaridicParams = false;
-   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
-   const static bool isMemberCallable = true;
-   const static bool hasReturn = !std::is_same<RetType, void>::value;
-   template <size_t index>
-   struct arg
-   {
-      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
-   };
-};
-
-template <typename RetType, typename Class, typename ...ParamTypes>
-struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) volatile&>
-{
-   using ReturnType = RetType;
-   const static size_t argNum = sizeof...(ParamTypes);
-   const static bool hasVaridicParams = true;
-   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
-   const static bool isMemberCallable = true;
-   const static bool hasReturn = !std::is_same<RetType, void>::value;
-   template <size_t index>
-   struct arg
-   {
-      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
-   };
-};
-
-template <typename RetType, typename Class, typename ...ParamTypes>
-struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) const volatile&>
-{
-   using ReturnType = RetType;
-   const static size_t argNum = sizeof...(ParamTypes);
-   const static bool hasVaridicParams = false;
-   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
-   const static bool isMemberCallable = true;
-   const static bool hasReturn = !std::is_same<RetType, void>::value;
-   template <size_t index>
-   struct arg
-   {
-      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
-   };
-};
-
-template <typename RetType, typename Class, typename ...ParamTypes>
-struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) const volatile&>
-{
-   using ReturnType = RetType;
-   const static size_t argNum = sizeof...(ParamTypes);
-   const static bool hasVaridicParams = true;
-   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
-   const static bool isMemberCallable = true;
-   const static bool hasReturn = !std::is_same<RetType, void>::value;
-   template <size_t index>
-   struct arg
-   {
-      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
-   };
-};
-
-template <typename RetType, typename Class, typename ...ParamTypes>
-struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) &&>
-{
-   using ReturnType = RetType;
-   const static size_t argNum = sizeof...(ParamTypes);
-   const static bool hasVaridicParams = false;
-   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
-   const static bool isMemberCallable = true;
-   const static bool hasReturn = !std::is_same<RetType, void>::value;
-   template <size_t index>
-   struct arg
-   {
-      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
-   };
-};
-
-template <typename RetType, typename Class, typename ...ParamTypes>
-struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) &&>
-{
-   using ReturnType = RetType;
-   const static size_t argNum = sizeof...(ParamTypes);
-   const static bool hasVaridicParams = true;
-   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
-   const static bool isMemberCallable = true;
-   const static bool hasReturn = !std::is_same<RetType, void>::value;
-   template <size_t index>
-   struct arg
-   {
-      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
-   };
-};
-
-template <typename RetType, typename Class, typename ...ParamTypes>
-struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) const&&>
-{
-   using ReturnType = RetType;
-   const static size_t argNum = sizeof...(ParamTypes);
-   const static bool hasVaridicParams = false;
-   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
-   const static bool isMemberCallable = true;
-   const static bool hasReturn = !std::is_same<RetType, void>::value;
-   template <size_t index>
-   struct arg
-   {
-      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
-   };
-};
-
-template <typename RetType, typename Class, typename ...ParamTypes>
-struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) const&&>
-{
-   using ReturnType = RetType;
-   const static size_t argNum = sizeof...(ParamTypes);
-   const static bool hasVaridicParams = true;
-   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
-   const static bool isMemberCallable = true;
-   const static bool hasReturn = !std::is_same<RetType, void>::value;
-   template <size_t index>
-   struct arg
-   {
-      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
-   };
-};
-
-template <typename RetType, typename Class, typename ...ParamTypes>
-struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) volatile&&>
-{
-   using ReturnType = RetType;
-   const static size_t argNum = sizeof...(ParamTypes);
-   const static bool hasVaridicParams = false;
-   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
-   const static bool isMemberCallable = true;
-   const static bool hasReturn = !std::is_same<RetType, void>::value;
-   template <size_t index>
-   struct arg
-   {
-      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
-   };
-};
-
-template <typename RetType, typename Class, typename ...ParamTypes>
-struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) volatile&&>
-{
-   using ReturnType = RetType;
-   const static size_t argNum = sizeof...(ParamTypes);
-   const static bool hasVaridicParams = true;
-   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
-   const static bool isMemberCallable = true;
-   const static bool hasReturn = !std::is_same<RetType, void>::value;
-   template <size_t index>
-   struct arg
-   {
-      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
-   };
-};
-
-template <typename RetType, typename Class, typename ...ParamTypes>
-struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args) const volatile&&>
-{
-   using ReturnType = RetType;
-   const static size_t argNum = sizeof...(ParamTypes);
-   const static bool hasVaridicParams = false;
-   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
-   const static bool isMemberCallable = true;
-   const static bool hasReturn = !std::is_same<RetType, void>::value;
-   template <size_t index>
-   struct arg
-   {
-      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
-   };
-};
-
-template <typename RetType, typename Class, typename ...ParamTypes>
-struct CallableInfoTrait<RetType (Class::*)(ParamTypes... args, ...) const volatile&&>
-{
-   using ReturnType = RetType;
-   const static size_t argNum = sizeof...(ParamTypes);
-   const static bool hasVaridicParams = true;
-   const static bool hasParamDef = argNum != 0 || hasVaridicParams;
-   const static bool isMemberCallable = true;
-   const static bool hasReturn = !std::is_same<RetType, void>::value;
-   template <size_t index>
-   struct arg
-   {
-      using type = typename std::tuple_element<index, std::tuple<ParamTypes...>>::type;
-   };
-};
-
-template <typename CallableType>
 struct CallableHasReturn
 {
-   const static bool value = !std::is_same<typename CallableInfoTrait<CallableType>::ReturnType, void>::value;
+   constexpr const static bool value = !std::is_same<typename CallableInfoTrait<CallableType>::ReturnType, void>::value;
 };
 
 template <typename CallableType>
 struct CallableHasNoReturn
 {
-   const static bool value = std::is_same<typename CallableInfoTrait<CallableType>::ReturnType, void>::value;
+   constexpr const static bool value = std::is_same<typename CallableInfoTrait<CallableType>::ReturnType, void>::value;
 };
-
-template <typename MemberPointer>
-using member_pointer_traits = internal::member_pointer_traits<MemberPointer>;
 
 template<typename TargetType>
 struct is_function_pointer
@@ -1022,20 +1020,18 @@ struct is_function_pointer
             false;
 };
 
-//template<typename T> 
-//struct function_traits;
+template <class TypePointer> 
+struct IsMemberObjectPointer
+      : public std::integral_constant<bool, std::is_member_pointer<TypePointer>::value &&
+      !CallableInfoTrait<TypePointer>::isMemberCallable> 
+{};
 
-//template<typename R, typename ...Args> 
-//struct function_traits<std::function<R(Args...)> >
-//{
-//   static const size_t nargs = sizeof...(Args);
-//   typedef R result_type;
-//   template <size_t i>
-//   struct arg
-//   {
-//      using type = typename std::tuple_element<i, std::tuple<Args...>>::type;
-//   };
-//};
+template <typename MemberPointer>
+struct member_pointer_traits 
+      : public internal::member_pointer_traits_imp<typename std::remove_cv<MemberPointer>::type,
+      zapi::stdext::CallableInfoTrait<MemberPointer>::isMemberCallable,
+      zapi::stdext::IsMemberObjectPointer<MemberPointer>::value>
+{};
 
 } // stdext
 } // zapi

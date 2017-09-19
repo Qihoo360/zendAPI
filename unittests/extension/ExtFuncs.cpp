@@ -425,10 +425,10 @@ void register_cls(Extension &extension)
          ("staticPrivateMethod", Modifier::Private);
    personClass.registerMethod<decltype(&Person::makeNewPerson), &Person::makeNewPerson>("makeNewPerson");
    
-   //   Interface infoInterface("InfoProvider");
-   //   //   infoInterface.registerMethod("getName");
-   //   personClass.registerInterface(infoInterface);
-   //   extension.registerInterface(infoInterface);
+      Interface infoInterface("InfoProvider");
+      //   infoInterface.registerMethod("getName");
+      personClass.registerInterface(infoInterface);
+      extension.registerInterface(infoInterface);
    extension.registerClass(personClass);
    register_construct_and_destruct(extension);
    register_props_test_cls(extension);

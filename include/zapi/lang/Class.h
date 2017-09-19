@@ -64,13 +64,13 @@ struct ClassMethodRegisterImpl<TargetClassType, CallalbleType, callable, false, 
 {
    // is member pointer but class type of the pointer is not same with
    // register class type
-public:
-   static void registerMethod(Class<TargetClassType> &meta, const char *name, Modifier flags, const Arguments &args)
-   {
-      ZAPI_ASSERT_X(false, "Class::registerMethod",
-                    "try to register class member pointer, and the class type "
-                    "if the member pointer is not the registered class type");
-   }
+//public:
+//   static void registerMethod(Class<TargetClassType> &meta, const char *name, Modifier flags, const Arguments &args)
+//   {
+//      ZAPI_ASSERT_X(false, "Class::registerMethod",
+//                    "try to register class member pointer, and the class type "
+//                    "of the member pointer is not the registered class type");
+//   }
 };
 
 template <typename TargetClassType,
@@ -117,8 +117,8 @@ struct ClassMethodRegister
       TargetClassType,
       CallalbleType,
       callable,
-      zapi::stdext::is_function_pointer<CallalbleType>::value,
-      std::is_member_function_pointer<CallalbleType>::value &&
+      zapi::stdext::is_function_pointer<typename std::decay<CallalbleType>::type>::value,
+      zapi::stdext::CallableInfoTrait<typename std::decay<CallalbleType>::type>::isMemberCallable &&
       std::is_same<typename std::decay<typename member_pointer_traits<CallalbleType>::ClassType>::type,
       typename std::decay<TargetClassType>::type>::value>
 {};
