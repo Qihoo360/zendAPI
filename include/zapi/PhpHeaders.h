@@ -20,8 +20,11 @@
 #include <cmath>
 
 // for isfinite and isnan is not correct defined issue
+namespace
+{
 using std::isfinite;
 using std::isnan;
+}
 
 #include "zapi/CompilerDetection.h"
 #include "php/main/php.h"
