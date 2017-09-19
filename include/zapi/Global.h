@@ -17,10 +17,6 @@
 #ifndef ZAPI_GLOBAL_H
 #define ZAPI_GLOBAL_H
 
-#include "php/main/php.h"
-#include "php/Zend/zend_API.h"
-#include "php/Zend/zend_types.h"
-
 #include "zapi/Version.h"
 #include "zapi/Config.h"
 
@@ -36,6 +32,7 @@
 #include "zapi/ProcessorDetection.h"
 #include "zapi/CompilerDetection.h"
 
+#include "zapi/PhpHeaders.h"
 #include "zapi/lang/Type.h"
 #include "zapi/Typedefs.h"
 

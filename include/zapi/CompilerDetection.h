@@ -13,9 +13,6 @@
 //
 // Created by softboy on 5/18/17.
 
-#ifndef ZAPI_GLOBAL_H
-# include "zapi/Global.h"
-#endif
 #ifndef ZAPI_COMPILERDETECTION_H
 #define ZAPI_COMPILERDETECTION_H
 

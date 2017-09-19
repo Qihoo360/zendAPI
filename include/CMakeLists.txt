@@ -2,6 +2,7 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/apidoc.h
    ${ZAPI_INCLUDE_DIR}/zapi/CompilerDetection.h
    ${ZAPI_INCLUDE_DIR}/zapi/Global.h
+   ${ZAPI_INCLUDE_DIR}/zapi/PhpHeaders.h
    ${ZAPI_INCLUDE_DIR}/zapi/Typedefs.h
    ${ZAPI_INCLUDE_DIR}/zapi/ProcessorDetection.h 
    ${ZAPI_INCLUDE_DIR}/zapi/SystemDetection.h

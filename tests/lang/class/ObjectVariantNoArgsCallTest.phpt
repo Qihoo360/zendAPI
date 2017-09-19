@@ -11,5 +11,5 @@ if (class_exists("ObjectVariantClass")) {
 ?>
 --EXPECT--
 ObjectVariantClass::printName been called
-the result of ObjectVariantClass::getName is ObjectVariantClass::getName been called
-hello, zapi
+ObjectVariantClass::getName been called
+the result of ObjectVariantClass::getName is hello, zapi

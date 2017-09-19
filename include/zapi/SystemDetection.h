@@ -13,10 +13,6 @@
 //
 // Created by softboy on 5/18/17.
 
-#ifndef ZAPI_GLOBAL_H
-# include "zapi/Global.h"
-#endif
-
 #ifndef ZAPI_SYSTEMDETECTION_H
 #define ZAPI_SYSTEMDETECTION_H
 

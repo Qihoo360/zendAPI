@@ -16,8 +16,7 @@
 #ifndef ZAPI_LANG_TYPE_H
 #define ZAPI_LANG_TYPE_H
 
-#include "php/Zend/zend_compile.h"
-#include "zapi/CompilerDetection.h"
+#include "zapi/PhpHeaders.h"
 
 namespace zapi
 {

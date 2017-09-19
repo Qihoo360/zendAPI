@@ -389,7 +389,8 @@ void ObjectVariantClass::testNoArgCall()
 {
    ObjectVariant obj("ObjectVariantClass", std::make_shared<ObjectVariantClass>());
    obj.call("printName");
-   zapi::out << "the result of ObjectVariantClass::getName is " << obj.call("getName") << std::endl;
+   StringVariant ret = obj.call("getName");
+   zapi::out << "the result of ObjectVariantClass::getName is " << ret << std::endl;
 }
 
 void ObjectVariantClass::testVarArgsCall()
