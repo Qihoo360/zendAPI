@@ -117,7 +117,7 @@ set(ZAPI_INSTALL_INCLUDE_DIR include CACHE PATH "Installation directory for head
 if(WIN32 AND NOT CYGWIN)
     set(ZAPI_INSTALL_CMAKE_DIR_TMP cmake)
 else()
-    set(ZAPI_INSTALL_CMAKE_DIR_TMP lib/cmake/zendapi)
+    set(ZAPI_INSTALL_CMAKE_DIR_TMP lib/cmake/zapi)
 endif()
 
 set(ZAPI_INSTALL_CMAKE_DIR ${ZAPI_INSTALL_CMAKE_DIR_TMP}
