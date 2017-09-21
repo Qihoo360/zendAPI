@@ -43,7 +43,7 @@ find_program(ZAPI_PHP_CONFIG_EXECUABLE php-config
     HINTS ${ZAPI_PHP_POSSIBLE_BIN_PATHS} NO_DEFAULT_PATH)
 
 # if you build the unittest we will detect libphp library
-if(NOT ZAPI_OPT_DISABLE_TESTS)
+if(NOT ZAPI_OPT_ENABLE_TESTS)
     find_library(ZAPI_PHP_LIB php7 NAEMS php php5
         PATHS ${ZAPI_PHP_POSSIBLE_LIB_PATHS} NO_DEFAULT_PATH)
     add_library(zapi_php_lib SHARED IMPORTED GLOBAL)
@@ -60,7 +60,7 @@ if (NOT ZAPI_PHP_EXECUTABLE)
     message(FATAL_ERROR "php executable is not found")
 endif()
 
-if (NOT ZAPI_OPT_DISABLE_TESTS AND NOT ZAPI_PHP_LIB)
+if (NOT ZAPI_OPT_ENABLE_TESTS AND NOT ZAPI_PHP_LIB)
     message(FATAL_ERROR "php library is not found")
 endif()
 

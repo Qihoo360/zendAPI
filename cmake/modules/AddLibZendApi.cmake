@@ -150,7 +150,7 @@ macro(zapi_add_executable name)
 endmacro()
 
 function(zapi_add_unittest test_suite test_name)
-   if(ZAPI_OPT_DISABLE_TESTS)
+   if(ZAPI_OPT_ENABLE_TESTS)
       set(EXCLUDE_FROM_ALL ON)
    endif()
    include_directories(${ZAPI_UTILS_DIR}/unittest/googletest/include)

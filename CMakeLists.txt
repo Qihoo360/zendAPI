@@ -60,12 +60,10 @@ set(ZAPI_ARCHIVE_OUTPUT_INTDIR "${ZAPI_BINARY_DIR}/${CMAKE_CFG_INTDIR}/lib")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-option(ZAPI_OPT_DISABLE_TESTS
+option(ZAPI_OPT_ENABLE_TESTS
     "If tests should be compiled or not" OFF)
 option(ZAPI_OPT_ENABLE_VERBOSE_DEBUG
     "Enable verbose debugging" OFF)
-option(ZAPI_OPT_DISABLE_TESTS
-    "If tests should be compiled or not" OFF)
 
 set(ZAPI_OPT_PHP_ROOT_PATH "" CACHE STRING "Specify the root php path of host platform")
 set(ZAPI_OPT_PHP_INCLUDE_PATH "" CACHE STRING "Specify the php include path of host platform")
@@ -88,7 +86,7 @@ set(ZAPI_OPT_LIBDIR_SUFFIX "" CACHE STRING "Define suffix of library directory n
 string(TOUPPER "${CMAKE_BUILD_TYPE}" ZAPI_BUILD_TYPE)
 
 if(ZAPI_OPT_ENABLE_VERBOSE_DEBUG)
-    add_definitions(-DZAPI_DEBUG_MODE 1)
+    add_definitions(-DZAPI_VERBOSE_DEBUG_MODE 1)
 endif()
 
 if (CMAKE_VERSION VERSION_LESS "3.1")
@@ -158,7 +156,7 @@ add_subdirectory(include)
 add_subdirectory(src)
 add_subdirectory(scripts)
 
-if(NOT ZAPI_OPT_DISABLE_TESTS)
+if(ZAPI_OPT_ENABLE_TESTS)
     set(ZAPI_PHP_INI_TPL_FILENAME ${ZAPI_ASSETS_DIR}/php.ini.in)
     set(ZAPI_ETC_DIR ${ZAPI_BINARY_DIR}/etc)
     set(ZAPI_EXTENSION_DIR ${ZAPI_BINARY_DIR}/extensions)
