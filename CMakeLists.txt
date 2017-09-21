@@ -12,7 +12,7 @@ set(ZAPI_VERSION_MINOR 0)
 set(ZAPI_VERSION_PATCH 1)
 set(ZAPI_VERSION_STAGE "devel")
 # the ZAPI api version, is release date number
-set(ZAPI_API_VERSION 20170605)
+set(ZAPI_API_VERSION 20170927)
 
 set(ZAPI_ABI_MAJOR ${ZAPI_VERSION_MAJOR})
 set(ZAPI_ABI_MINOR ${ZAPI_VERSION_MINOR})
@@ -61,7 +61,7 @@ set(ZAPI_ARCHIVE_OUTPUT_INTDIR "${ZAPI_BINARY_DIR}/${CMAKE_CFG_INTDIR}/lib")
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 option(ZAPI_OPT_ENABLE_TESTS
-    "If tests should be compiled or not" OFF)
+    "If tests should be compiled or not" ON)
 option(ZAPI_OPT_ENABLE_VERBOSE_DEBUG
     "Enable verbose debugging" OFF)
 
@@ -85,13 +85,9 @@ endif()
 set(ZAPI_OPT_LIBDIR_SUFFIX "" CACHE STRING "Define suffix of library directory name (32/64)" )
 string(TOUPPER "${CMAKE_BUILD_TYPE}" ZAPI_BUILD_TYPE)
 
-if(ZAPI_OPT_ENABLE_VERBOSE_DEBUG)
-    add_definitions(-DZAPI_VERBOSE_DEBUG_MODE 1)
-endif()
-
 if (CMAKE_VERSION VERSION_LESS "3.1")
     if (CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-        set(CMAKE_CXX_FLAGS "-std=gnu++11 -Wno-deprecated-declarations ${CMAKE_CXX_FLAGS}")
+        set(CMAKE_CXX_FLAGS "-std=gnu++11 ${CMAKE_CXX_FLAGS}")
     elseif(CMAKE_CXX_FLAGS STREQUAL "Clang")
         set(CMAKE_CXX_FLAGS "-std=c++11 ${CMAKE_CXX_FLAGS}")
     endif ()
@@ -100,7 +96,7 @@ else ()
 endif ()
 
 set(CMAKE_CXX_FLAGS "-Wno-deprecated-declarations ${CMAKE_CXX_FLAGS}")
-set(CMAKE_CXX_FLAGS "-Wa,-q -Wno-macro-redefined ${CMAKE_CXX_FLAGS}")
+set(CMAKE_CXX_FLAGS "-Wno-macro-redefined ${CMAKE_CXX_FLAGS}")
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     set(CMAKE_CXX_FLAGS "-stdlib=libc++ ${CMAKE_CXX_FLAGS}")
 endif()
@@ -129,6 +125,14 @@ foreach(dirname LIB BIN INCLUDE CMAKE)
         set(${var} "${CMAKE_INSTALL_PREFIX}/${${var}}")
     endif()
 endforeach()
+
+# setup for debug
+if (CMAKE_BUILD_TYPE STREQUAL "Debug") #  OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo"
+    set(ZAPI_DEBUG TRUE)
+    if(ZAPI_OPT_ENABLE_VERBOSE_DEBUG)
+        set(ZAPI_VERBOSE_DEBUG TRUE)
+    endif()
+endif()
 
 include(AddLibZendApi)
 include(DetectPhpInfo)
@@ -199,6 +203,7 @@ message(STATUS "----------------------------------------------------------------
 message(STATUS "Thank for using zendAPI project, have a lot of fun!")
 message(STATUS "--------------------------------------------------------------------------------------")
 message(STATUS "ZAPI_VERSION: ${ZAPI_VERSION}")
+message(STATUS "CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
 message(STATUS "PHP_INCLUDE_PATH: ${ZAPI_PHP_INCLUDE_PATH}")
 message(STATUS "PHP_LIB_PATH: ${ZAPI_PHP_LIB}")
 message(STATUS "PHP_EXECUTABLE: ${ZAPI_PHP_EXECUTABLE}")
@@ -211,7 +216,6 @@ message(STATUS "PROJECT_BINARY_DIR: ${PROJECT_BINARY_DIR}")
 message(STATUS "PROJECT_SOURCE_DIR: ${PROJECT_SOURCE_DIR}")
 message(STATUS "CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
 message(STATUS "CMAKE_COMMAND: ${CMAKE_COMMAND}")
-message(STATUS "CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
 message(STATUS "CMAKE_ROOT: ${CMAKE_ROOT}")
 message(STATUS "CMAKE_SYSTEM: ${CMAKE_SYSTEM}")
 message(STATUS "CMAKE_SYSTEM_NAME: ${CMAKE_SYSTEM_NAME}")

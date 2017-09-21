@@ -48,6 +48,16 @@ set(ZAPI_SRC
 
 zapi_add_library(${ZAPI_PROJECT_NAME} SHARED ${ZAPI_SRC} ${ZAPI_PUBLIC_HEADERS})
 
+# setup zapi property
+target_compile_options(${ZAPI_PROJECT_NAME} 
+    INTERFACE -Wno-deprecated-declarations
+    INTERFACE -Wno-macro-redefined)
+
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+   target_compile_options(${ZAPI_PROJECT_NAME} 
+       INTERFACE -stdlib=libc++)
+endif()
+
 export(TARGETS ${ZAPI_PROJECT_NAME}
    FILE "${ZAPI_BINARY_DIR}/ZendApiTargets.cmake")
 export(PACKAGE ${ZAPI_PROJECT_NAME})
