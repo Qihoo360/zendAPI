@@ -160,7 +160,7 @@ add_subdirectory(include)
 add_subdirectory(src)
 add_subdirectory(scripts)
 
-if(ZAPI_OPT_ENABLE_TESTS)
+if(CMAKE_BUILD_TYPE STREQUAL "Debug" AND ZAPI_OPT_ENABLE_TESTS)
     set(ZAPI_PHP_INI_TPL_FILENAME ${ZAPI_ASSETS_DIR}/php.ini.in)
     set(ZAPI_ETC_DIR ${ZAPI_BINARY_DIR}/etc)
     set(ZAPI_EXTENSION_DIR ${ZAPI_BINARY_DIR}/extensions)
