@@ -180,22 +180,22 @@ set(ZAPI_INCLUDE_DIRS_TEMP
 set(ZAPI_INCLUDE_DIRS
     ${ZAPI_INCLUDE_DIRS_TEMP} CACHE PATH "ZendApi include directories")
 
-configure_file(${ZAPI_CMAKE_DIR}/ZendApiConfigBuildTree.cmake.in
-    ${ZAPI_BINARY_DIR}/ZendApiConfig.cmake
+configure_file(${ZAPI_CMAKE_DIR}/zendAPIConfigBuildTree.cmake.in
+    ${ZAPI_BINARY_DIR}/zendAPIConfig.cmake
     @ONLY)
 
-configure_file(${ZAPI_CMAKE_DIR}/ZendApiConfig.cmake.in
-    ${ZAPI_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/ZendApiConfig.cmake
+configure_file(${ZAPI_CMAKE_DIR}/zendAPIConfig.cmake.in
+    ${ZAPI_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/zendAPIConfig.cmake
     @ONLY)
 
 # Generate version info for both build-tree and install-tree.
-configure_file(${ZAPI_CMAKE_DIR}/ZendApiConfigVersion.cmake.in
-    ${ZAPI_BINARY_DIR}/ZendApiConfigVersion.cmake
+configure_file(${ZAPI_CMAKE_DIR}/zendAPIConfigVersion.cmake.in
+    ${ZAPI_BINARY_DIR}/zendAPIConfigVersion.cmake
     @ONLY)
 
 install(FILES
-    ${ZAPI_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/ZendApiConfig.cmake
-    ${ZAPI_BINARY_DIR}/ZendApiConfigVersion.cmake
+    ${ZAPI_BINARY_DIR}/${CMAKE_FILES_DIRECTORY}/zendAPIConfig.cmake
+    ${ZAPI_BINARY_DIR}/zendAPIConfigVersion.cmake
     DESTINATION
     "${ZAPI_INSTALL_CMAKE_DIR}"
     COMPONENT dev)

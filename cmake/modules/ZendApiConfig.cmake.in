@@ -10,7 +10,7 @@ get_filename_component(ZAPI_CMAKE_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 set(ZAPI_INCLUDE_DIRS "@ZAPI_INSTALL_INCLUDE_DIR@")
 
 # Include the project Targets file, this contains definitions for IMPORTED targets.
-include(${ZAPI_CMAKE_DIR}/ZendApiTargets.cmake)
+include(${ZAPI_CMAKE_DIR}/zendAPITargets.cmake)
 
 # IMPORTED targets from ZendApiTargets.cmake
 set(ZAPI_LIBRARIES zapi)

@@ -12,5 +12,5 @@ set(ZAPI_INCLUDE_DIRS "@ZAPI_INCLUDE_DIRS@")
 # Include the project Targets file, this contains definitions for IMPORTED targets.
 
 # IMPORTED targets from ZendApiTargets.cmake
-set(ZAPI_LIBRARIES zendapi)
+set(ZAPI_LIBRARIES zapi)
 

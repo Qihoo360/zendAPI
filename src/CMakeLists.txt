@@ -59,7 +59,7 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 endif()
 
 export(TARGETS ${ZAPI_PROJECT_NAME}
-   FILE "${ZAPI_BINARY_DIR}/ZendApiTargets.cmake")
+   FILE "${ZAPI_BINARY_DIR}/zendAPITargets.cmake")
 export(PACKAGE ${ZAPI_PROJECT_NAME})
 
 file(RELATIVE_PATH
@@ -71,13 +71,13 @@ file(RELATIVE_PATH
 # Install targets
 #
 install(TARGETS ${ZAPI_PROJECT_NAME}
-   EXPORT ZendApiTargets
+   EXPORT zendAPITargets
    RUNTIME DESTINATION "${ZAPI_INSTALL_BIN_DIR}" COMPONENT bin
    LIBRARY DESTINATION "${ZAPI_INSTALL_LIB_DIR}" COMPONENT lib
    ARCHIVE DESTINATION "${ZAPI_INSTALL_LIB_DIR}" COMPONENT lib)
 
 # Install exports for the install-tree.
-install(EXPORT ZendApiTargets
+install(EXPORT zendAPITargets
    DESTINATION
    "${ZAPI_INSTALL_CMAKE_DIR}"
    COMPONENT dev)
