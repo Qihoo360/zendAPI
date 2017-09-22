@@ -1,65 +1,56 @@
-<img src="http://www.zendapi.com/statics/images/components/about/images//zendapi-logo.svg" width="300" style="margin:10px auto"/>
+<img width="350" src ="https://raw.githubusercontent.com/qcoreteam/zendapi/master/assets/images/zendapi.png"/>
 
-### 介绍
+#### zendAPI 是什么？
 
-该项目是对 Zend Engine 的 C 接口使用 C++11 进行而面向对象的封装，从而屏蔽了底层 Zend Engine API 的接口复杂性，加快开发 PHP 扩展的效率。
+zendAPI 是对 Zend Engine 的 C 接口使用 C++ 的最新标准 C++11 进行而面向对象的封装，从而屏蔽了底层 Zend Engine API 的接口复杂性，加快开发 PHP 扩展的效率。从而让 PHP 的扩展开发成为一种享受，不用在考虑不同 PHP 版本带来的差异性，让开发者专注于自身的业务逻辑。
 
-项目官网地址：www.zendapi.org
+#### zendAPI 的使命
 
-### 设计目标
+让 PHP 的扩展开发成为一种享受
 
-让 PHP 扩展开发更有趣<br/><br/>
-你是否在开发扩展的时候遇到想使用PHP的一个接口，但是就是苦于不知道在哪里定义，就算找到了在哪里定义看到的定义是否让你抓狂，各种指针，各种宏定义
-让你的生活变得不美好，哈哈，是时候尝试 zendAPI 啦，我们让你无忧无虑的调用底层的 Zend Engine API, 安装语义对一维的 C API 进行二次组织，精心的
-设计每一个接口，并且提供关于接口的详细文档与使用范例，还等什么，赶快到碗里来吧。
+#### 为什么项目名叫做 zendAPI
 
-### 特性
+考虑到项目本身就是对 PHP 语言引擎的开发接口的封装已经 PHP 的语言引擎叫做 Zend Engine，为了方便大家记住我便将项目命名为 zendAPI，官方网站使用 zendapi.org 
+
+#### zendAPI 的特性
 
 1. 完全面向对象，对 Zend Engine API 进行二次定义
 2. 使用现代的 C++11 语法进行开发，便于维护
 3. 最大化屏蔽 PHP 版本对扩展开发的影响，zendAPI 将对 Zend Engine API 不同版本带来的差异屏蔽掉
 4. 高覆盖的单元测试，保证代码质量
 5. 在封装的时候，尽最大能力保证性能
+6. 致力于项目库的二进制兼容
 
-### 文档相关
+#### 项目说明
 
-用户手册: www.zendapi.org/manual</br>
-API手册: www.zendapi.org/api
+为了减少研发精力，在决定开发 zendAPI 的时候，在设计思想上我们参考了国外的同类项目 PHPCPP，非常感谢这个团队将这么卓越的项目带给了 PHP 社区，我们在这里表示感谢，我们也将在 zendAPI 项目中对 PHPCPP 的引用加上版权声明，同时把我们发现的代码 bug 反馈到 PHPCPP。
 
-### 说明
+PS:
 
-当前 zendAPI 项目处于非常前期阶段，很多接口都不稳定，甚至会经常有大的变化，请不要用于实际项目，现阶段只适合学习用途。
-项目参考 
-1. PHP-CPP 进行实现，大家要是对PHP-CPP感兴趣，请点击 https://github.com/CopernicaMarketingSoftware/PHP-CPP
-2. Qt project 在底层数据结构的接口上借鉴Qt core相关设计，如果您对 Qt 感兴趣，请点击：http://doc.qt.io/
+PHPCPP 的 github 地址是： https://github.com/CopernicaMarketingSoftware/PHP-CPP 大家有兴趣可以去研究。
 
-**声明：**</br>
-zendAPI 项目第一版中有些部分跟 PHP-CPP 将会高度一样，文件头也会加上 PHP-CPP 信息，一旦完成后 项目将会独立发展，当然适当的时机
-我也会将代码反馈给 PHP-CPP 项目。
-
-### 简单入门
-#### 项目环境要求
-暂时只支持 linux 服务器环境，PHP 版本7.0以上，标准 C++11 编译器, cmake 3.5.0以上版本
-
-#### 安装
-
-TODO
-
-### 贡献者列表
-
-ZZU_SOFTBOY <zzu_softboy@163.com></br>
-冰冻三尺，非一日之寒。欢迎大家加入，一起玩。
-
-有什么建议，大家可以加这个微信，一起讨论</br></br>
+#### 国内同类型的项目推荐
+目前国内有一个跟 zendAPI 比较类似的项目，这个项目是 swoole 项目作者开发，值得推荐。
+项目名字 PHP—X
+项目的 github 地址是 https://github.com/swoole/PHP-X 大家有兴趣可以研究。
 
 
-<img width=200px src="https://raw.githubusercontent.com/qcoreteam/zendapi/master/assets/images/zzusoftboy.png">
+#### 怎么参与交流
 
-### License
+下面是我们项目的线上交流QQ群和微信的二维码，大家可以扫码加入：
+<div>
+<img width = "200" src="https://raw.githubusercontent.com/qcoreteam/zendapi/master/assets/images/qq.png"/>
+<img width = "20" src="https://raw.githubusercontent.com/qcoreteam/zendapi/master/assets/images/blank.png"/>
+<img width = "200" src="https://raw.githubusercontent.com/qcoreteam/zendapi/master/assets/images/wechat.png"/></div>
+</div>
 
-Apache License Version 2.0 see http://www.apache.org/licenses/LICENSE-2.0.html
+开源中国主页: https://www.oschina.net/p/zendapi
 
-### 特别感谢
-Unicorn Team，感谢团队的自我驱动和包容的文化，让我开发 zendAPI 项目。
+Segmentfault技术圈：https://segmentfault.com/g/1570000010966072
 
-<img style = "width:100px;height:100px;float:left;display:block" src="https://raw.githubusercontent.com/qcoreteam/zendapi/master/assets/images/unicornteam.png"/>
+欢迎大家在这两个平台上与我们进行互动
+
+#### 特别感谢
+
+360 无线电安全部 独角兽团队 (unicorn team)
+<div style="width:240px; height: 240px;float:left"><img src="https://raw.githubusercontent.com/qcoreteam/zendapi/master/assets/images/unicornteam.png"/></div>
