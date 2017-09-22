@@ -453,7 +453,7 @@
 #     error "Compiler not supported"
 #  endif
 #else
-#  error "libnotify has not been tested with this compiler"
+#  error "zendapi has not been tested with this compiler"
 #endif
 
 // C++11 support
@@ -504,7 +504,7 @@
 
 #ifdef __cplusplus
 #  if __cplusplus < 201103L && !(defined(ZAPI_CC_MSVC) && ZAPI_CC_MSVC  >= 1800)
-#     error "libnotify requires a C++11 compiler and yours does not seem to be that."
+#     error "zendapi requires a C++11 compiler and yours does not seem to be that."
 #  endif
 #endif
 

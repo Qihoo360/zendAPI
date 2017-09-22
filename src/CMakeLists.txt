@@ -58,6 +58,8 @@ if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
        INTERFACE -stdlib=libc++)
 endif()
 
+target_include_directories(${ZAPI_PROJECT_NAME} BEFORE INTERFACE ${ZAPI_PHP_INCLUDE_PATHS})
+
 export(TARGETS ${ZAPI_PROJECT_NAME}
    FILE "${ZAPI_BINARY_DIR}/zendAPITargets.cmake")
 export(PACKAGE ${ZAPI_PROJECT_NAME})

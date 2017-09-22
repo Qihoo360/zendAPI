@@ -94,6 +94,7 @@ set(ZAPI_PHP_INCLUDE_PATHS ${ZAPI_PHP_INCLUDE_PATH})
 # here we just add subdirectory of php include path to compiler include paths
 foreach(zapi_temp_include_path ${ZAPI_TEMP_RUN_PHPCFG_OUTPUT})
     string(SUBSTRING ${zapi_temp_include_path} 2 -1 zapi_temp_include_path)
+    string(STRIP ${zapi_temp_include_path} zapi_temp_include_path)
     list(APPEND ZAPI_PHP_INCLUDE_PATHS ${zapi_temp_include_path})
 endforeach()
 include_directories(BEFORE ${ZAPI_PHP_INCLUDE_PATHS})
