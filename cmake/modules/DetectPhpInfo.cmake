@@ -84,7 +84,7 @@ execute_process(COMMAND ${ZAPI_PHP_CONFIG_EXECUABLE} --includes
     OUTPUT_VARIABLE ZAPI_TEMP_RUN_PHPCFG_OUTPUT
     ERROR_QUIET)
 if (ZAPI_TEMP_RUN_PHPCFG_RET EQUAL 1)
-    message(FATAL_ERROR "run php-config error")
+    message(FATAL_ERROR "run php-config error, unable to get php include directories")
 endif()
 
 string(REPLACE " " ";" ZAPI_TEMP_RUN_PHPCFG_OUTPUT ${ZAPI_TEMP_RUN_PHPCFG_OUTPUT})
@@ -97,3 +97,13 @@ foreach(zapi_temp_include_path ${ZAPI_TEMP_RUN_PHPCFG_OUTPUT})
     list(APPEND ZAPI_PHP_INCLUDE_PATHS ${zapi_temp_include_path})
 endforeach()
 include_directories(BEFORE ${ZAPI_PHP_INCLUDE_PATHS})
+
+# we use php-config to detect php extension path
+execute_process(COMMAND ${ZAPI_PHP_CONFIG_EXECUABLE} --extension-dir
+    RESULT_VARIABLE ZAPI_TEMP_RUN_PHPCFG_RET
+    OUTPUT_VARIABLE ZAPI_TEMP_RUN_PHPCFG_OUTPUT
+    ERROR_QUIET)
+if (ZAPI_TEMP_RUN_PHPCFG_RET EQUAL 1)
+    message(FATAL_ERROR "run php-config error, unable to get php extension directory")
+endif()
+string(STRIP ${ZAPI_TEMP_RUN_PHPCFG_OUTPUT} ZAPI_PHP_EXTENSION_DIR)

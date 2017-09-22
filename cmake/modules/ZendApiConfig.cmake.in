@@ -13,4 +13,5 @@ set(ZAPI_INCLUDE_DIRS "@ZAPI_INSTALL_INCLUDE_DIR@")
 include(${ZAPI_CMAKE_DIR}/ZendApiTargets.cmake)
 
 # IMPORTED targets from ZendApiTargets.cmake
-set(ZAPI_LIBRARIES zendapi)
+set(ZAPI_LIBRARIES zapi)
+set(ZAPI_PHP_EXTENSION_DIR "@ZAPI_PHP_EXTENSION_DIR@")
