@@ -1,4 +1,4 @@
-// Copyright 2017-2018 zzu_softboy <zzu_softboy@163.com>
+// @copyright 2017-2018 zzu_softboy <zzu_softboy@163.com>
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
@@ -29,6 +29,7 @@ ObjectBinder::ObjectBinder(zend_class_entry *entry, std::shared_ptr<StdClass> na
                            const zend_object_handlers *objectHandlers, uint32_t refCount)
    : m_nativeObject(nativeObject)
 {
+   // @TODO maybe have some issue here
    ssize_t psize = zend_object_properties_size(entry);
    psize = psize < 0 ? 0 : psize;
    m_container = static_cast<Container *>(ecalloc(1, sizeof(Container) + psize));

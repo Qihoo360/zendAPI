@@ -2,7 +2,6 @@
 Class closure call test
 --FILE--
 <?php
-
 if (class_exists("\ZapiClosure")) {
     echo "internal class ZapiClosure exists\n";
     $refl = new ReflectionClass("ZapiClosure");

@@ -1,4 +1,7 @@
-// Copyright 2017-2018 zzu_softboy <zzu_softboy@163.com>
+// @author Emiel Bruijntjes <emiel.bruijntjes@copernica.com>
+// @copyright 2014 Copernica BV
+//
+// @copyright 2017-2018 zzu_softboy <zzu_softboy@163.com>
 //
 // THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR
 // IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
