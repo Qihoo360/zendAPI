@@ -66,22 +66,7 @@ option(ZAPI_OPT_ENABLE_TESTS
 option(ZAPI_OPT_ENABLE_VERBOSE_DEBUG
     "Enable verbose debugging" OFF)
 
-set(ZAPI_OPT_PHP_ROOT_PATH "" CACHE STRING "Specify the root php path of host platform")
-set(ZAPI_OPT_PHP_INCLUDE_PATH "" CACHE STRING "Specify the php include path of host platform")
-set(ZAPI_OPT_PHP_LIB_PATH "" CACHE STRING "Specify the php lib path of host platform")
-set(ZAPI_OPT_PHP_BIN_PATH "" CACHE STRING "Specify the php bin path of host platform")
-
-if (ZAPI_OPT_PHP_ROOT_PATH)
-    if (NOT ZAPI_OPT_PHP_INCLUDE_PATH)
-        set(ZAPI_OPT_PHP_INCLUDE_PATH ${ZAPI_OPT_PHP_ROOT_PATH}/include)
-    endif()
-    if (NOT ZAPI_OPT_PHP_LIB_PATH)
-        set(ZAPI_OPT_PHP_LIB_PATH ${ZAPI_OPT_PHP_ROOT_PATH}/lib)
-    endif()
-    if (NOT ZAPI_OPT_PHP_BIN_PATH)
-        set(ZAPI_OPT_PHP_BIN_PATH ${ZAPI_OPT_PHP_ROOT_PATH}/bin)
-    endif()
-endif()
+set(ZAPI_OPT_PHPCFG_PATH "" CACHE STRING "Specify the php-config path of host platform")
 
 set(ZAPI_OPT_LIBDIR_SUFFIX "" CACHE STRING "Define suffix of library directory name (32/64)" )
 string(TOUPPER "${CMAKE_BUILD_TYPE}" ZAPI_BUILD_TYPE)
