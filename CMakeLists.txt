@@ -123,6 +123,21 @@ endif()
 include(AddLibZendApi)
 include(DetectPhpInfo)
 
+# check min compiler version
+if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "3.5.2")
+    message(FATAL_ERROR "zendAPI only support clang 3.5.2 or above version.")
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    if (CMAKE_HOST_APPLE)
+        if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "5.4.0")
+            message(FATAL_ERROR "zendAPI only support gcc 5.4.0 or above version on MacOS platform.")
+        endif()
+    else()
+        if(CMAKE_CXX_COMPILER_VERSION VERSION_LESS "4.8.5")
+            message(FATAL_ERROR "zendAPI only support gcc 4.8.5 or above version.")
+        endif()
+    endif()
+endif()
+
 configure_file(
     ${ZAPI_INCLUDE_DIR}/zapi/Config.h.in
     ${ZAPI_EXTRA_INCLUDE_DIR}/zapi/Config.h
