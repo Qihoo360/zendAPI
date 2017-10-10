@@ -12,8 +12,9 @@ else()
     find_program(ZAPI_PHP_CONFIG_EXECUABLE php-config
         HINTS ${ZAPI_PHP_POSSIBLE_BIN_PATHS} NO_DEFAULT_PATH)
 endif()
-if (NOT ZAPI_PHP_CONFIG_EXECUABLE)
-    message(FATAL_ERROR "php-config script is not found")
+
+if (NOT (ZAPI_PHP_CONFIG_EXECUABLE AND EXISTS ${ZAPI_PHP_CONFIG_EXECUABLE}))
+    message(FATAL_ERROR "php-config script: ${ZAPI_PHP_CONFIG_EXECUABLE} is not found")
 endif()
 
 # if you build the unittest we will detect libphp library
