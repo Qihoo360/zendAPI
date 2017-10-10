@@ -17,18 +17,11 @@
 #ifndef ZAPI_PHP_HEADERS_H
 #define ZAPI_PHP_HEADERS_H
 
-#include <cmath>
-
-// for isfinite and isnan is not correct defined issue
-namespace
-{
-using std::isfinite;
-}
-
 #include "zapi/CompilerDetection.h"
 
 extern "C"
 {
+#include <math.h>
 #include "php/main/php.h"
 #include "php/Zend/zend_API.h"
 #include "php/Zend/zend_types.h"
@@ -36,4 +29,3 @@ extern "C"
 }
 
 #endif // ZAPI_PHP_HEADERS_H
-

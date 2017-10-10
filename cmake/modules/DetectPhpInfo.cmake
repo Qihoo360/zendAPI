@@ -5,9 +5,9 @@ if (ZAPI_OPT_PHPCFG_PATH)
     set(ZAPI_PHP_CONFIG_EXECUABLE ${ZAPI_OPT_PHPCFG_PATH})
 else()
     set(ZAPI_PHP_POSSIBLE_BIN_PATHS
-        /usr/local/php7/bin
         /usr/local/php/bin
         /usr/local/bin
+        /usr/php/bin
         /usr/bin)
     find_program(ZAPI_PHP_CONFIG_EXECUABLE php-config
         HINTS ${ZAPI_PHP_POSSIBLE_BIN_PATHS} NO_DEFAULT_PATH)
