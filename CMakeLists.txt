@@ -66,8 +66,8 @@ option(ZAPI_OPT_ENABLE_TESTS
 option(ZAPI_OPT_ENABLE_VERBOSE_DEBUG
     "Enable verbose debugging" OFF)
 
-set(ZAPI_OPT_PHPCFG_PATH "" CACHE STRING "Specify the php-config path of host platform")
-
+option(ZAPI_OPT_PHPCFG_PATH "Specify the php-config path of host platform" "")
+message("${ZAPI_OPT_PHPCFG_PATH}")
 set(ZAPI_OPT_LIBDIR_SUFFIX "" CACHE STRING "Define suffix of library directory name (32/64)" )
 string(TOUPPER "${CMAKE_BUILD_TYPE}" ZAPI_BUILD_TYPE)
 
@@ -89,6 +89,10 @@ endif()
 
 if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
     set(CMAKE_EXE_LINKER_FLAGS "-Xlinker --allow-shlib-undefined ${CMAKE_EXE_LINKER_FLAGS}")
+endif()
+
+if(NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE Release)
 endif()
 
 # prepare for installation
