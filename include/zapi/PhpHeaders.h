@@ -23,7 +23,6 @@
 namespace
 {
 using std::isfinite;
-using std::isnan;
 }
 
 #include "zapi/CompilerDetection.h"

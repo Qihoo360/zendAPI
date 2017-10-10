@@ -1,18 +1,6 @@
 # we detect the php execute binary path and the php version, Zend Engine API version
 
 # we first search the newest php version
-set(ZAPI_PHP_POSSIBLE_LIB_PATHS
-    /usr/local/php7/lib
-    /usr/local/php/lib
-    /usr/lib64/php
-    /usr/lib64
-    /usr/lib/php
-    /usr/lib)
-
-if (ZAPI_OPT_PHP_LIB_PATH)
-    list(INSERT ZAPI_PHP_POSSIBLE_LIB_PATHS 0 ${ZAPI_OPT_PHP_LIB_PATH})
-endif()
-
 if (ZAPI_OPT_PHPCFG_PATH)
     set(ZAPI_PHP_CONFIG_EXECUABLE ${ZAPI_OPT_PHPCFG_PATH})
 else()
@@ -30,8 +18,17 @@ endif()
 
 # if you build the unittest we will detect libphp library
 if(ZAPI_OPT_ENABLE_TESTS)
+    execute_process(COMMAND ${ZAPI_PHP_CONFIG_EXECUABLE} --prefix
+        RESULT_VARIABLE ZAPI_TEMP_RUN_PHPCFG_RET
+        OUTPUT_VARIABLE ZAPI_TEMP_RUN_PHPCFG_OUTPUT
+        ERROR_QUIET)
+    if (ZAPI_TEMP_RUN_PHPCFG_RET EQUAL 1)
+        message(FATAL_ERROR "run php-config error, unable to get php extension directory")
+    endif()
+    string(STRIP ${ZAPI_TEMP_RUN_PHPCFG_OUTPUT} ZAPI_TEMP_RUN_PHPCFG_OUTPUT)
+    set(ZAPI_PHP_LIB ${ZAPI_TEMP_RUN_PHPCFG_OUTPUT}/lib)
     find_library(ZAPI_PHP_LIB php7 NAEMS php php5
-        PATHS ${ZAPI_PHP_POSSIBLE_LIB_PATHS} NO_DEFAULT_PATH)
+        PATHS ${ZAPI_PHP_LIB_PATH} NO_DEFAULT_PATH)
     add_library(zapi_php_lib SHARED IMPORTED GLOBAL)
     set_target_properties(zapi_php_lib
         PROPERTIES
@@ -67,6 +64,15 @@ string(SUBSTRING ${ZAPI_PHP_INCLUDE_PATH} 0 ${ZAPI_TEMP_LAST_POS} ZAPI_PHP_INCLU
 
 list(INSERT ZAPI_PHP_INCLUDE_PATHS 0 ${ZAPI_PHP_INCLUDE_PATH})
 
+execute_process(COMMAND ${ZAPI_PHP_CONFIG_EXECUABLE} --php-binary
+    RESULT_VARIABLE ZAPI_TEMP_RUN_PHPCFG_RET
+    OUTPUT_VARIABLE ZAPI_TEMP_RUN_PHPCFG_OUTPUT
+    ERROR_QUIET)
+if (ZAPI_TEMP_RUN_PHPCFG_RET EQUAL 1)
+    message(FATAL_ERROR "run php-config error, unable to get php include directories")
+endif()
+string(STRIP ${ZAPI_TEMP_RUN_PHPCFG_OUTPUT} ZAPI_PHP_EXECUTABLE)
+
 # here we need ensure detected paths is compatible
 execute_process(COMMAND ${ZAPI_PHP_EXECUTABLE} ${ZAPI_SCRIPTS_DIR}/build/retrieve_php_info.php ${ZAPI_PHP_INCLUDE_PATH} --PHP_VERSION_ID
     RESULT_VARIABLE ZAPI_TEMP_RUN_PHP_INFO_RET
@@ -93,15 +99,6 @@ if (ZAPI_TEMP_RUN_PHPCFG_RET EQUAL 1)
 endif()
 string(STRIP ${ZAPI_TEMP_RUN_PHPCFG_OUTPUT} ZAPI_PHP_EXTENSION_DIR)
 
-execute_process(COMMAND ${ZAPI_PHP_CONFIG_EXECUABLE} --php-binary
-    RESULT_VARIABLE ZAPI_TEMP_RUN_PHPCFG_RET
-    OUTPUT_VARIABLE ZAPI_TEMP_RUN_PHPCFG_OUTPUT
-    ERROR_QUIET)
-if (ZAPI_TEMP_RUN_PHPCFG_RET EQUAL 1)
-    message(FATAL_ERROR "run php-config error, unable to get php include directories")
-endif()
-string(STRIP ${ZAPI_TEMP_RUN_PHPCFG_OUTPUT} ZAPI_PHP_EXECUTABLE)
-
 execute_process(COMMAND ${ZAPI_PHP_CONFIG_EXECUABLE} --php-sapis
     RESULT_VARIABLE ZAPI_TEMP_RUN_PHPCFG_RET
     OUTPUT_VARIABLE ZAPI_TEMP_RUN_PHPCFG_OUTPUT
@@ -110,4 +107,3 @@ if (ZAPI_TEMP_RUN_PHPCFG_RET EQUAL 1)
     message(FATAL_ERROR "run php-config error, unable to get php include directories")
 endif()
 string(STRIP ${ZAPI_TEMP_RUN_PHPCFG_OUTPUT} ZAPI_PHP_SUPPORT_SAPIS)
-
