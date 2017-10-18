@@ -184,11 +184,12 @@ zend_class_entry *AbstractClassPrivate::initialize(AbstractClass *cls, const std
       entry.iterator_funcs.funcs = IteratorBridge::getIteratorFuncs();
    }
    
+   // check if serializable
    if (m_apiPtr->serializable()) {
       entry.serialize = &AbstractClassPrivate::serialize;
       entry.unserialize = &AbstractClassPrivate::unserialize;
    }
-   // check if serializable
+   
    if (m_parent) {
       if (m_parent->m_implPtr->m_classEntry) {
          m_classEntry = zend_register_internal_class_ex(&entry, m_parent->m_implPtr->m_classEntry);
@@ -396,7 +397,7 @@ zval *AbstractClassPrivate::readDimension(zval *object, zval *offset, int type, 
          return nullptr; // unreachable, prevent some compiler warning
       }
    } else {
-      if (std_object_handlers.read_dimension) {
+      if (!std_object_handlers.read_dimension) {
          return nullptr;
       } else {
          return std_object_handlers.read_dimension(object, offset, type, returnValue);
@@ -414,7 +415,7 @@ void AbstractClassPrivate::writeDimension(zval *object, zval *offset, zval *valu
          process_exception(exception);
       }
    } else {
-      if (std_object_handlers.write_dimension) {
+      if (!std_object_handlers.write_dimension) {
          return;
       } else {
          std_object_handlers.write_dimension(object, offset, value);
