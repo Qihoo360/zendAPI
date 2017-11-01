@@ -51,6 +51,7 @@ set(ZAPI_PUBLIC_HEADERS
    ${ZAPI_INCLUDE_DIR}/zapi/ds/internal/ArrayItemProxyPrivate.h
    ${ZAPI_INCLUDE_DIR}/zapi/utils/PhpFuncs.h
    ${ZAPI_INCLUDE_DIR}/zapi/utils/CommonFuncs.h
+   ${ZAPI_INCLUDE_DIR}/zapi/utils/InternalFuncs.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/AbstractClass.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/InvokeBridge.h
    ${ZAPI_INCLUDE_DIR}/zapi/vm/Callable.h

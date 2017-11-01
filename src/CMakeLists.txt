@@ -44,7 +44,9 @@ set(ZAPI_SRC
    vm/ObjectBinder.cpp
    vm/Closure.cpp
    utils/PhpFuncs.cpp
-   utils/CommonFuncs.cpp)
+   utils/CommonFuncs.cpp
+   utils/InternalFuncs.cpp
+   )
 
 zapi_add_library(${ZAPI_PROJECT_NAME} SHARED ${ZAPI_SRC} ${ZAPI_PUBLIC_HEADERS})
 
