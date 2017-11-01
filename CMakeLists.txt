@@ -67,7 +67,6 @@ option(ZAPI_OPT_ENABLE_VERBOSE_DEBUG
     "Enable verbose debugging" OFF)
 
 option(ZAPI_OPT_PHPCFG_PATH "Specify the php-config path of host platform" "")
-message("${ZAPI_OPT_PHPCFG_PATH}")
 set(ZAPI_OPT_LIBDIR_SUFFIX "" CACHE STRING "Define suffix of library directory name (32/64)" )
 string(TOUPPER "${CMAKE_BUILD_TYPE}" ZAPI_BUILD_TYPE)
 
@@ -210,7 +209,7 @@ message(STATUS "----------------------------------------------------------------
 message(STATUS "ZAPI_VERSION: ${ZAPI_VERSION}")
 message(STATUS "CMAKE_INSTALL_PREFIX: ${CMAKE_INSTALL_PREFIX}")
 message(STATUS "PHP_INCLUDE_PATH: ${ZAPI_PHP_INCLUDE_PATH}")
-message(STATUS "PHP_LIB_PATH: ${ZAPI_PHP_LIB}")
+message(STATUS "PHP_LIB_PATH: ${ZAPI_PHP_LIB_PATH}")
 message(STATUS "PHP_EXECUTABLE: ${ZAPI_PHP_EXECUTABLE}")
 message(STATUS "PHP_CONFIG_EXECUABLE: ${ZAPI_PHP_CONFIG_EXECUABLE}")
 message(STATUS "CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")

@@ -27,16 +27,16 @@ if(ZAPI_OPT_ENABLE_TESTS)
         message(FATAL_ERROR "run php-config error, unable to get php extension directory")
     endif()
     string(STRIP ${ZAPI_TEMP_RUN_PHPCFG_OUTPUT} ZAPI_TEMP_RUN_PHPCFG_OUTPUT)
-    set(ZAPI_PHP_LIB ${ZAPI_TEMP_RUN_PHPCFG_OUTPUT}/lib)
-    find_library(ZAPI_PHP_LIB php7 NAEMS php php5
+    set(ZAPI_PHP_LIB_PATH ${ZAPI_TEMP_RUN_PHPCFG_OUTPUT}/lib)
+    find_library(ZAPI_LIBPHP_PATH php7 NAEMS php php5
         PATHS ${ZAPI_PHP_LIB_PATH} NO_DEFAULT_PATH)
-    add_library(zapi_php_lib SHARED IMPORTED GLOBAL)
-    set_target_properties(zapi_php_lib
-        PROPERTIES
-        IMPORTED_LOCATION ${ZAPI_PHP_LIB})
-    if (NOT ZAPI_PHP_LIB)
+    if (NOT ZAPI_LIBPHP_PATH)
         message(FATAL_ERROR "php library is not found")
     endif()
+    add_library(zapi_libphp SHARED IMPORTED GLOBAL)
+    set_target_properties(zapi_libphp
+        PROPERTIES
+        IMPORTED_LOCATION ${ZAPI_LIBPHP_PATH})
 endif()
 
 # we use php-config to detect php extra include paths

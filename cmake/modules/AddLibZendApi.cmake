@@ -143,16 +143,13 @@ macro(zapi_add_executable name)
    set(EXCLUDE_FROM_ALL OFF)
    zapi_set_output_directory(${name}
       BINARY_DIR ${ZAPI_RUNTIME_OUTPUT_INTDIR}
-      LIBRARY_DIR ${ZAPI_LIBRARY_OUTPUT_INTDIR})
+      LIBRARY_Dzapi_libphpIR ${ZAPI_LIBRARY_OUTPUT_INTDIR})
    if(ZAPI_COMMON_DEPENDS)
       add_dependencies(${name} ${ZAPI_COMMON_DEPENDS})
    endif()
 endmacro()
 
 function(zapi_add_unittest test_suite test_name)
-   if(ZAPI_OPT_ENABLE_TESTS)
-      set(EXCLUDE_FROM_ALL ON)
-   endif()
    include_directories(${ZAPI_UTILS_DIR}/unittest/googletest/include)
    include_directories(${ZAPI_UTILS_DIR}/unittest/googlemock/include)
    include_directories(${ZAPI_PHP_INCLUDE_PATH})
@@ -166,7 +163,7 @@ function(zapi_add_unittest test_suite test_name)
    # executable must be linked with it in order to provide consistent
    # API for all shared libaries loaded by this executable.
    target_link_libraries(${test_name} gtest_main gtest ${PTHREAD_LIB} ${CMAKE_PROJECT_NAME}
-      zapi_php_lib)
+      zapi_libphp)
    add_dependencies(${test_suite} ${test_name})
    get_target_property(test_suite_folder ${test_suite} FOLDER)
    if (NOT ${test_suite_folder} STREQUAL "NOTFOUND")
