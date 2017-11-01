@@ -5,10 +5,18 @@ add_subdirectory(dummyext)
 # just for show php test files
 add_custom_target(ZapiRuntimeTests SOURCES ${ZAPI_PHP_TESTS})
 
+set(ZAPI_RT_TESTCASES 
+    ext/IniTest.phpt
+    ext/ExtensionHandlerTest.phpt
+    ext/ExtensionInfoTest.phpt)
+
+file(GLOB_RECURSE ZAPI_RT_TESTCASES
+    LIST_DIRECTORIES false
+    RELATIVE ${CMAKE_CURRENT_SOURCE_DIR}
+    *.phpt)
+
 # add the runtime tests
-add_test(NAME ExtIniTest COMMAND ${ZAPI_PHP_EXECUTABLE} -c ${ZAPI_PHP_INI_FILENAME} ext/IniTest.phpt
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-add_test(NAME ExtCycleHandlerTest COMMAND ${ZAPI_PHP_EXECUTABLE} -c ${ZAPI_PHP_INI_FILENAME} ext/ExtensionHandlerTest.phpt
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-add_test(NAME ExtInfoHandlerTest COMMAND ${ZAPI_PHP_EXECUTABLE} -c ${ZAPI_PHP_INI_FILENAME} ext/ExtensionInfoTest.phpt
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+foreach(testcase ${ZAPI_RT_TESTCASES})
+    add_test(NAME ${testcase} COMMAND ${ZAPI_PHP_EXECUTABLE} -c ${ZAPI_PHP_INI_FILENAME} ${testcase}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
+endforeach()

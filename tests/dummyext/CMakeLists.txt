@@ -8,6 +8,8 @@ set(DUMMYEXT_SRCS
     FunctionTestcases.cpp
     IniTestcases.h
     IniTestcases.cpp
+    InterfaceTestcases.h
+    InterfaceTestcases.cpp
     NamespaceTestcases.h
     NamespaceTestcases.cpp)
 

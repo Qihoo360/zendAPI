@@ -1,12 +1,10 @@
---TEST--
-interface exists test
---FILE--
 <?php
 
-if (interface_exists("InterfaceA") && interface_exists("InterfaceB") && interface_exists("InterfaceC")) {
-    echo "InterfaceA and InterfaceB and InterfaceC exists\n";
+if (!interface_exists("InterfaceA") || !interface_exists("InterfaceB") || !interface_exists("InterfaceC")) {
+    goto error;   
 }
 
-?>
---EXPECT--
-InterfaceA and InterfaceB and InterfaceC exists
+success:
+exit(0);
+error:
+exit(1);

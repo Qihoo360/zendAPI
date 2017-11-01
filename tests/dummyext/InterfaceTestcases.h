@@ -13,28 +13,18 @@
 //
 // Created by softboy on 2017/11/01.
 
+#ifndef ZAPI_TEST_DUMMYEXT_INTERFACE_TESTCASES_H
+#define ZAPI_TEST_DUMMYEXT_INTERFACE_TESTCASES_H
+
 #include "zapi/ZendApi.h"
-#include "IniTestcases.h"
-#include "CycleHandlerTestcases.h"
-#include "NamespaceTestcases.h"
-#include "FunctionTestcases.h"
-#include "ClassTestcases.h"
-#include "InterfaceTestcases.h"
+
+namespace dummyext 
+{
 
 using zapi::lang::Extension;
 
-extern "C" {
+ZAPI_DECL_EXPORT void register_interface_testcases(Extension &extension);
 
-ZAPI_DECL_EXPORT void *get_module() 
-{
-   static Extension extension("dummyext", "1.0");
-   dummyext::register_ini_testcases(extension);
-   dummyext::register_cyclehandler_testcases(extension);
-   dummyext::register_namespace_testcases(extension);
-   dummyext::register_interface_testcases(extension);
-   dummyext::register_function_testcases(extension);
-   dummyext::register_class_testcases(extension);
-   return extension;
-}
+} // dummyext
 
-}
+#endif // ZAPI_TEST_DUMMYEXT_INTERFACE_TESTCASES_H
