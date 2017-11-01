@@ -22,8 +22,17 @@ namespace dummyext
 {
 
 using zapi::lang::Extension;
+using zapi::lang::Variant;
 
 ZAPI_DECL_EXPORT void register_cyclehandler_testcases(Extension &extension);
+
+void startup_handler();
+void shutdown_handler();
+void request_startup_handler();
+void request_shutdown_handler();
+void module_info_handler();
+void add_mhandler_info(const std::string &msg);
+Variant get_ext_handler_msgs();
 
 } // dummyext
 
