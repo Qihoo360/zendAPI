@@ -159,6 +159,12 @@ size_t Namespace::getClassQuanlity() const
    return implPtr->calculateClassQuantity();
 }
 
+const std::string &Namespace::getName() const
+{
+   ZAPI_D(const Namespace);
+   return implPtr->m_name;
+}
+
 size_t Namespace::getConstantQuanlity() const
 {
    ZAPI_D(const Namespace);

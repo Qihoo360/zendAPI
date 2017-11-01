@@ -167,26 +167,6 @@ Extension &Extension::registerFunction(const char *name, zapi::ZendCallable func
    return *this;
 }
 
-Extension &Extension::registerConstant(const Constant &constant)
-{
-   ZAPI_D(Extension);
-   if (implPtr->m_locked) {
-      return *this;
-   }
-   implPtr->m_constants.push_back(std::make_shared<Constant>(constant));
-   return *this;
-}
-
-Extension &Extension::registerConstant(Constant &&constant)
-{
-   ZAPI_D(Extension);
-   if (implPtr->m_locked) {
-      return *this;
-   }
-   implPtr->m_constants.push_back(std::make_shared<Constant>(std::move(constant)));
-   return *this;
-}
-
 Extension &Extension::registerInterface(const Interface &interface)
 {
    ZAPI_D(Extension);
@@ -226,6 +206,41 @@ Extension &Extension::registerNamespace(Namespace &&ns)
    }
    implPtr->m_namespaces.push_back(std::make_shared<Namespace>(std::move(ns)));
    return *this;
+}
+
+Extension &Extension::registerConstant(const Constant &constant)
+{
+   ZAPI_D(Extension);
+   if (implPtr->m_locked) {
+      return *this;
+   }
+   implPtr->m_constants.push_back(std::make_shared<Constant>(constant));
+   return *this;
+}
+
+Extension &Extension::registerConstant(Constant &&constant)
+{
+   ZAPI_D(Extension);
+   if (implPtr->m_locked) {
+      return *this;
+   }
+   implPtr->m_constants.push_back(std::make_shared<Constant>(std::move(constant)));
+   return *this;
+}
+
+Namespace *Extension::findNamespace(const std::string &ns) const
+{
+   ZAPI_D(const Extension);
+   auto begin = implPtr->m_namespaces.begin();
+   auto end = implPtr->m_namespaces.end();
+   while (begin != end) {
+      auto &cur = *begin;
+      if (cur->getName() == ns) {
+         return cur.get();
+      }
+      ++begin;
+   }
+   return nullptr;
 }
 
 bool Extension::initialize(int moduleNumber)
@@ -269,6 +284,12 @@ size_t Extension::getConstantQuantity() const
 {
    ZAPI_D(const Extension);
    return implPtr->m_constants.size();
+}
+
+size_t Extension::getNamespaceQuantity() const
+{
+   ZAPI_D(const Extension);
+   return implPtr->m_namespaces.size();
 }
 
 namespace internal

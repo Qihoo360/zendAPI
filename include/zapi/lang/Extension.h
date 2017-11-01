@@ -105,9 +105,13 @@ public:
    
    Extension &registerConstant(Constant &&constant);
    Extension &registerConstant(const Constant &constant);
+   
+   Namespace *findNamespace(const std::string &ns) const;
+   
    size_t getIniQuantity() const;
    size_t getFunctionQuantity() const;
    size_t getConstantQuantity() const;
+   size_t getNamespaceQuantity() const;
    operator void * ()
    {
       return getModule();

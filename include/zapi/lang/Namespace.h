@@ -76,6 +76,8 @@ public:
    size_t getFunctionQuantity() const;
    size_t getConstantQuanlity() const;
    size_t getClassQuanlity() const;
+   
+   const std::string &getName() const;
 protected:
    Namespace(NamespacePrivate *implPtr);
    Namespace &registerFunction(const char *name, zapi::ZendCallable function, const Arguments &arguments = {});
