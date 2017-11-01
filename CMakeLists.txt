@@ -61,8 +61,12 @@ set(ZAPI_ARCHIVE_OUTPUT_INTDIR "${ZAPI_BINARY_DIR}/${CMAKE_CFG_INTDIR}/lib")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-option(ZAPI_OPT_ENABLE_TESTS
+option(ZAPI_OPT_ENABLE_UNIT_TESTS
     "If tests should be compiled or not" ON)
+
+option(ZAPI_OPT_ENABLE_RUNTIME_TESTS
+    "If runtime tests should be compiled or not" ON)
+
 option(ZAPI_OPT_ENABLE_VERBOSE_DEBUG
     "Enable verbose debugging" OFF)
 
@@ -164,16 +168,26 @@ add_subdirectory(include)
 add_subdirectory(src)
 add_subdirectory(scripts)
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug" AND ZAPI_OPT_ENABLE_TESTS)
+## for runtime test
+if ((CMAKE_BUILD_TYPE STREQUAL "Debug" AND ZAPI_OPT_ENABLE_UNIT_TESTS) OR ZAPI_OPT_ENABLE_RUNTIME_TESTS)
     set(ZAPI_PHP_INI_TPL_FILENAME ${ZAPI_ASSETS_DIR}/php.ini.in)
     set(ZAPI_ETC_DIR ${ZAPI_BINARY_DIR}/etc)
     set(ZAPI_EXTENSION_DIR ${ZAPI_BINARY_DIR}/extensions)
     set(ZAPI_EXTENSIONS "extension=dummyext.so")
     set(ZAPI_PHP_INI_FILENAME ${ZAPI_ETC_DIR}/php.ini)
-    configure_file(${ZAPI_PHP_INI_TPL_FILENAME} ${ZAPI_PHP_INI_FILENAME} @ONLY)
+endif()
+
+configure_file(${ZAPI_PHP_INI_TPL_FILENAME} ${ZAPI_PHP_INI_FILENAME} @ONLY)
+
+if(CMAKE_BUILD_TYPE STREQUAL "Debug" AND ZAPI_OPT_ENABLE_UNIT_TESTS)
     add_subdirectory(utils/unittest)
-    add_subdirectory(tests)
     add_subdirectory(unittests)
+endif()
+
+if(ZAPI_OPT_ENABLE_RUNTIME_TESTS)
+    enable_testing()
+    ## normal test
+    add_subdirectory(tests)
 endif()
 
 set(ZAPI_INCLUDE_DIRS_TEMP
