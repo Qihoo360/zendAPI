@@ -13,7 +13,9 @@ set(DUMMYEXT_SRCS
     NamespaceTestcases.h
     NamespaceTestcases.cpp
     ConstantTestcases.h
-    ConstantTestcases.cpp)
+    ConstantTestcases.cpp
+    NativeFunctions.h
+    NativeFunctions.cpp)
 
 add_library(dummyext MODULE 
     ${DUMMYEXT_SRCS})
