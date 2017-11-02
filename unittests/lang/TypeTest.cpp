@@ -13,8 +13,8 @@
 //
 // Created by zzu_softboy on 2017/08/01.
 
-#include "gtest/gtest.h"
 #include "zapi/lang/Type.h"
+#include "gtest/gtest.h"
 
 using zapi::lang::Modifier;
 

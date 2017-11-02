@@ -14,10 +14,9 @@
 // Created by zzu_softboy on 2017/11/01.
 
 #include "php/sapi/embed/php_embed.h"
-#include "gtest/gtest.h"
-
 #include "zapi/lang/Extension.h"
 #include "zapi/lang/Namespace.h"
+#include "gtest/gtest.h"
 
 using zapi::lang::Extension;
 using zapi::lang::Namespace;

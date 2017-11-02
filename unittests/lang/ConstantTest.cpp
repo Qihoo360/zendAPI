@@ -13,8 +13,8 @@
 //
 // Created by zzu_softboy on 2017/07/27.
 
-#include "gtest/gtest.h"
 #include "zapi/lang/Constant.h"
+#include "gtest/gtest.h"
 
 using zapi::lang::Type;
 using zapi::lang::Constant;
