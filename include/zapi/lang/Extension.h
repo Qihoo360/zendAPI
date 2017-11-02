@@ -107,6 +107,7 @@ public:
    Extension &registerConstant(const Constant &constant);
    
    Namespace *findNamespace(const std::string &ns) const;
+   AbstractClass *findClass(const std::string &clsName) const;
    
    size_t getIniQuantity() const;
    size_t getFunctionQuantity() const;

@@ -16,10 +16,22 @@
 #include "php/sapi/embed/php_embed.h"
 #include "zapi/lang/Extension.h"
 #include "zapi/lang/Namespace.h"
+#include "zapi/lang/Class.h"
+#include "zapi/lang/StdClass.h"
+#include "zapi/vm/AbstractClass.h"
 #include "gtest/gtest.h"
 
 using zapi::lang::Extension;
 using zapi::lang::Namespace;
+using zapi::lang::Class;
+using zapi::lang::StdClass;
+using zapi::vm::AbstractClass;
+
+class ClassA : public StdClass
+{};
+
+class ClassB : public StdClass
+{};
 
 TEST(ExtensionTest, testFindNamespace)
 {
@@ -36,6 +48,25 @@ TEST(ExtensionTest, testFindNamespace)
    result = ext.findNamespace("php");
    ASSERT_NE(result, nullptr);
    ASSERT_EQ(result->getName(), "php");
+}
+
+TEST(ExtensionTest, testFindClass)
+{
+   Extension ext("dummyext", "1.0");
+   Class<ClassA> classA("ClassA");
+   Class<ClassB> classB("ClassB");
+   ext.registerClass(classA);
+   ext.registerClass(classB);
+   AbstractClass *resultCls = nullptr;
+   resultCls = ext.findClass("NotExistClass");
+   ASSERT_EQ(resultCls, nullptr);
+   resultCls = ext.findClass("ClassA");
+   ASSERT_NE(resultCls, nullptr);
+   ASSERT_EQ(resultCls->getClassName(), "ClassA");
+   resultCls = nullptr;
+   resultCls = ext.findClass("ClassB");
+   ASSERT_NE(resultCls, nullptr);
+   ASSERT_EQ(resultCls->getClassName(), "ClassB");
 }
 
 int main(int argc, char **argv)

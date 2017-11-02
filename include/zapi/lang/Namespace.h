@@ -72,6 +72,7 @@ public:
    Namespace &registerClass(const Class<T> &nativeClass);
    template <typename T>
    Namespace &registerClass(Class<T> &&nativeClass);
+   
 
    size_t getFunctionQuantity() const;
    size_t getConstantQuanlity() const;

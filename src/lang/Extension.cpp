@@ -243,6 +243,21 @@ Namespace *Extension::findNamespace(const std::string &ns) const
    return nullptr;
 }
 
+AbstractClass *Extension::findClass(const std::string &clsName) const
+{
+   ZAPI_D(const Extension);
+   auto begin = implPtr->m_classes.begin();
+   auto end = implPtr->m_classes.end();
+   while (begin != end) {
+      auto &cur = *begin;
+      if (cur->getClassName() == clsName) {
+         return cur.get();
+      }
+      ++begin;
+   }
+   return nullptr;
+}
+
 bool Extension::initialize(int moduleNumber)
 {
    return getImplPtr()->initialize(moduleNumber);

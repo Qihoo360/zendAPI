@@ -14,8 +14,7 @@ set(ZAPI_PHP_TESTS
     lang/func/FunctionRefArgTest.phpt
     lang/func/FunctionReturnTest.phpt
     lang/func/FunctionVarArgsTest.phpt
-    
-    lang/interface/InterfaceImplementTest.phpt
+   
     lang/interface/InterfaceInheritTest.phpt
     lang/interface/InterfaceExistTest.phpt
     
@@ -58,6 +57,7 @@ set(ZAPI_PHP_TESTS
     lang/class/ClassMagicSerializeTest.phpt
     lang/class/ClassMagicCompareTest.phpt
     lang/class/ClassMagicDebugInfoTest.phpt
+    lang/class/ClassImplementTest.phpt
     
     lang/class/ObjectVariantInvokeTest.phpt
     lang/class/ObjectVariantInstanceOfTest.phpt
