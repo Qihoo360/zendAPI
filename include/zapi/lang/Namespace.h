@@ -48,6 +48,7 @@ class Constant;
 
 using internal::NamespacePrivate;
 using zapi::vm::InvokeBridge;
+using zapi::vm::AbstractClass;
 
 class ZAPI_DECL_EXPORT Namespace final
 {
@@ -73,7 +74,9 @@ public:
    template <typename T>
    Namespace &registerClass(Class<T> &&nativeClass);
    
-
+   Namespace *findNamespace(const std::string &ns) const;
+   AbstractClass *findClass(const std::string &clsName) const;
+   
    size_t getFunctionQuantity() const;
    size_t getConstantQuanlity() const;
    size_t getClassQuanlity() const;

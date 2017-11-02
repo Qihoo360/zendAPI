@@ -3,5 +3,6 @@ set(LANG_TEST_SRCS
     FunctionTest.cpp
     ConstantTest.cpp
     TypeTest.cpp
-    ExtensionTest.cpp)
+    ExtensionTest.cpp
+    NamespaceTest.cpp)
 zapi_add_unittest(UnitTests LangTest ${LANG_TEST_SRCS})

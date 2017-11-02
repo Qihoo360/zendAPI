@@ -147,6 +147,36 @@ Namespace &Namespace::registerFunction(const char *name, zapi::ZendCallable func
    return *this;
 }
 
+Namespace *Namespace::findNamespace(const std::string &ns) const
+{
+   ZAPI_D(const Namespace);
+   auto begin = implPtr->m_namespaces.begin();
+   auto end = implPtr->m_namespaces.end();
+   while (begin != end) {
+      auto &cur = *begin;
+      if (cur->getName() == ns) {
+         return cur.get();
+      }
+      ++begin;
+   }
+   return nullptr;
+}
+
+AbstractClass *Namespace::findClass(const std::string &clsName) const
+{
+   ZAPI_D(const Namespace);
+   auto begin = implPtr->m_classes.begin();
+   auto end = implPtr->m_classes.end();
+   while (begin != end) {
+      auto &cur = *begin;
+      if (cur->getClassName() == clsName) {
+         return cur.get();
+      }
+      ++begin;
+   }
+   return nullptr;
+}
+
 size_t Namespace::getFunctionQuantity() const
 {
    ZAPI_D(const Namespace);
