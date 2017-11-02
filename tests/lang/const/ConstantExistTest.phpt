@@ -1,37 +1,31 @@
---TEST--
-Contant register test
---FILE--
 <?php
 
-if(defined("MY_CONST"))
+if(!defined("MY_CONST"))
 {
-   echo "MY_CONST defined\n";
+   goto error;
 }
 
-if(defined("PI"))
+if(!defined("PI"))
 {
-   echo "PI defined\n";
+   goto error;
 }
 
-if(defined("ZAPI_NAME"))
+if(!defined("ZAPI_NAME"))
 {
-   echo "ZAPI_NAME defined\n";
+   goto error;
 }
 
-if(defined("ZAPI_VERSION"))
+if(!defined("ZAPI_VERSION"))
 {
-   echo "ZAPI_NAME defined\n";
+   goto error;
 }
 
-if(defined("QIHOO"))
+if(!defined("QIHOO"))
 {
-   echo "QIHOO defined\n";
+   goto error;
 }
 
-?>
---EXPECT--
-MY_CONST defined
-PI defined
-ZAPI_NAME defined
-ZAPI_NAME defined
-QIHOO defined
+success:
+exit(0);
+error:
+exit(1);

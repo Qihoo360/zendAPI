@@ -11,7 +11,9 @@ set(DUMMYEXT_SRCS
     InterfaceTestcases.h
     InterfaceTestcases.cpp
     NamespaceTestcases.h
-    NamespaceTestcases.cpp)
+    NamespaceTestcases.cpp
+    ConstantTestcases.h
+    ConstantTestcases.cpp)
 
 add_library(dummyext MODULE 
     ${DUMMYEXT_SRCS})

@@ -11,32 +11,30 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF
 // THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //
-// Created by softboy on 2017/11/01.
+// Created by softboy on 2017/11/02.
 
-#include "zapi/ZendApi.h"
-#include "IniTestcases.h"
-#include "CycleHandlerTestcases.h"
-#include "NamespaceTestcases.h"
-#include "FunctionTestcases.h"
-#include "ClassTestcases.h"
-#include "InterfaceTestcases.h"
 #include "ConstantTestcases.h"
 
-using zapi::lang::Extension;
-
-extern "C" {
-
-ZAPI_DECL_EXPORT void *get_module() 
+namespace dummyext 
 {
-   static Extension extension("dummyext", "1.0");
-   dummyext::register_ini_testcases(extension);
-   dummyext::register_cyclehandler_testcases(extension);
-   dummyext::register_namespace_testcases(extension);
-   dummyext::register_constant_testcases(extension);
-   dummyext::register_interface_testcases(extension);
-   dummyext::register_function_testcases(extension);
-   dummyext::register_class_testcases(extension);
-   return extension;
+
+using zapi::lang::Constant;
+using zapi::lang::Namespace;
+
+void register_constant_testcases(Extension &extension)
+{
+   extension.registerConstant(Constant("MY_CONST", 12333));
+   extension.registerConstant(Constant("PI", 3.14));
+   Constant nameConst("ZAPI_NAME", "zapi");
+   extension.registerConstant(nameConst);
+   extension.registerConstant(Constant("ZAPI_VERSION", "v0.0.1"));
+   extension.registerConstant(Constant("QIHOO", "beijing qihoo"));
+   // register constant in namespace
+   Namespace *zapi = extension.findNamespace("zapi");
+   Namespace *io = zapi->findNamespace("io");
+   io->registerConstant(Constant("IO_TYPE", "ASYNC"));
+   io->registerConstant(Constant("NATIVE_STREAM", true));
+   zapi->registerConstant(Constant("SYS_VERSION", "0.1.1-alpha"));
 }
 
-}
+} // dummyext

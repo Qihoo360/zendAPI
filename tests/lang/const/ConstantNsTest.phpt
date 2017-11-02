@@ -1,25 +1,21 @@
---TEST--
-Contant namespace exist test
---FILE--
 <?php
 
-if(defined("\zapi\SYS_VERSION"))
+if(!defined("\zapi\SYS_VERSION"))
 {
-   echo "\zapi\SYS_VERSION defined\n";
+   goto error;
 }
 
-if(defined("\zapi\io\IO_TYPE"))
+if(!defined("\zapi\io\IO_TYPE"))
 {
-   echo "\zapi\io\IO_TYPE defined\n";
+   goto error;
 }
 
-if(defined("\zapi\io\NATIVE_STREAM"))
+if(!defined("\zapi\io\NATIVE_STREAM"))
 {
-   echo "\zapi\io\NATIVE_STREAM defined\n";
+   goto error;
 }
 
-?>
---EXPECT--
-\zapi\SYS_VERSION defined
-\zapi\io\IO_TYPE defined
-\zapi\io\NATIVE_STREAM defined
+success:
+exit(0);
+error:
+exit(1);

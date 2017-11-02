@@ -18,9 +18,14 @@
 namespace dummyext 
 {
 
+using zapi::lang::Namespace;
+
 void register_namespace_testcases(Extension &extension)
 {
-   
+   Namespace zapi("zapi");
+   Namespace io("io");
+   zapi.registerNamespace(io);
+   extension.registerNamespace(zapi);
 }
 
 } // dummyext
