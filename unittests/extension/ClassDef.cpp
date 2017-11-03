@@ -631,6 +631,13 @@ void FinalTestClass::someMethod()
 {
 }
 
+
+
+void AbstractTestClass::normalMethod()
+{
+   
+}
+
 IterateTestClass::IterateTestClass()
    : AbstractIterator(this)
 {
@@ -639,11 +646,6 @@ IterateTestClass::IterateTestClass()
    m_items.push_back(std::make_pair<std::string, std::string>("key3", "value3"));
    m_items.push_back(std::make_pair<std::string, std::string>("key4", "value4"));
    m_currentIter = m_items.begin();
-}
-
-void AbstractTestClass::normalMethod()
-{
-   
 }
 
 AbstractIterator *IterateTestClass::getIterator()

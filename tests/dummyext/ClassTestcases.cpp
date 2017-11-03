@@ -34,6 +34,7 @@ void register_class_testcases(Extension &extension)
    register_construct_and_destruct_classes(extension);
    register_namespace_classes(extension);
    register_inherit_test_classes(extension);
+   register_iterator_test_classes(extension);
 }
 
 void register_basic_classes(Extension &extension)
@@ -82,8 +83,6 @@ void register_basic_classes(Extension &extension)
    personClass.registerMethod<decltype(&Person::staticPrivateMethod), &Person::staticPrivateMethod>
          ("staticPrivateMethod", Modifier::Private);
    personClass.registerMethod<decltype(&Person::makeNewPerson), &Person::makeNewPerson>("makeNewPerson");
-   
-   
    
    extension.registerClass(personClass);
 }
@@ -172,6 +171,12 @@ void register_inherit_test_classes(Extension &extension)
    extension.registerClass(a);
    extension.registerClass(b);
    extension.registerClass(c);
+}
+
+void register_iterator_test_classes(Extension &extension)
+{
+   zapi::lang::Class<IterateTestClass> iterateTestClass("IterateTestClass");
+   extension.registerClass(iterateTestClass);
 }
 
 } // dummyext

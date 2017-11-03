@@ -19,7 +19,9 @@ namespace dummyext
 {
 
 using zapi::lang::ObjectVariant;
+using zapi::ds::StringVariant;
 using zapi::lang::Type;
+using zapi::protocol::AbstractIterator;
 
 Person::Person()
    : m_name("zzu_softboy"),
@@ -284,5 +286,121 @@ void C::privateMethodOfA()
 {
    
 }
+
+// for test class iterator
+
+
+IterateTestClass::IterateTestClass()
+   : AbstractIterator(this)
+{
+   m_items.push_back(std::make_pair<std::string, std::string>("key1", "value1"));
+   m_items.push_back(std::make_pair<std::string, std::string>("key2", "value2"));
+   m_items.push_back(std::make_pair<std::string, std::string>("key3", "value3"));
+   m_items.push_back(std::make_pair<std::string, std::string>("key4", "value4"));
+   m_currentIter = m_items.begin();
+}
+
+AbstractIterator *IterateTestClass::getIterator()
+{
+   return this;
+}
+
+bool IterateTestClass::valid()
+{
+   zapi::out << "IterateTestClass::valid called" << std::endl;
+   return m_currentIter != m_items.end();
+}
+
+Variant IterateTestClass::current()
+{
+   zapi::out << "IterateTestClass::current called" << std::endl;
+   return m_currentIter->second;
+}
+
+Variant IterateTestClass::key()
+{
+   zapi::out << "IterateTestClass::key called" << std::endl;
+   return m_currentIter->first;
+}
+
+void IterateTestClass::next()
+{
+   zapi::out << "IterateTestClass::next called" << std::endl;
+   m_currentIter++;
+}
+
+void IterateTestClass::rewind()
+{
+   zapi::out << "IterateTestClass::rewind called" << std::endl;
+   m_currentIter = m_items.begin();
+}
+
+zapi_long IterateTestClass::count()
+{
+   zapi::out << "IterateTestClass::count called" << std::endl;
+   return m_items.size();
+}
+
+bool IterateTestClass::offsetExists(Variant offset)
+{
+   auto begin = m_items.begin();
+   auto end = m_items.end();
+   std::string key = StringVariant(std::move(offset)).toString();
+   while (begin != end) {
+      if (begin->first == key) {
+         return true;
+      }
+      begin++;
+   }
+   return false;
+}
+
+void IterateTestClass::offsetSet(Variant offset, Variant value)
+{
+   auto begin = m_items.begin();
+   auto end = m_items.end();
+   std::string key = StringVariant(std::move(offset)).toString();
+   while (begin != end) {
+      if (begin->first == key) {
+         begin->second = StringVariant(std::move(value)).toString();
+         return;
+      }
+      begin++;
+   }
+}
+
+Variant IterateTestClass::offsetGet(Variant offset)
+{
+   auto begin = m_items.begin();
+   auto end = m_items.end();
+   std::string key = StringVariant(std::move(offset)).toString();
+   while (begin != end) {
+      if (begin->first == key) {
+         return begin->second;
+      }
+      begin++;
+   }
+   return nullptr;
+}
+
+void IterateTestClass::offsetUnset(Variant offset)
+{
+   auto begin = m_items.begin();
+   auto end = m_items.end();
+   std::string key = StringVariant(std::move(offset)).toString();
+   while (begin != end) {
+      if (begin->first == key) {
+         break;
+      }
+      begin++;
+   }
+   if (begin != end) {
+      m_items.erase(begin);
+   }
+   
+}
+
+IterateTestClass::~IterateTestClass()
+{}
 
 } // dummyext

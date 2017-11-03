@@ -115,6 +115,36 @@ public:
    void privateMethodOfA();
 };
 
+class IterateTestClass : 
+      public StdClass, 
+      public zapi::protocol::Traversable, 
+      public zapi::protocol::AbstractIterator,
+      public zapi::protocol::Countable,
+      public zapi::protocol::ArrayAccess
+{
+   using IteratorType = std::vector<std::pair<std::string, std::string>>::iterator;
+public:
+   IterateTestClass();
+   virtual AbstractIterator *getIterator();
+   virtual bool valid();
+   virtual Variant current();
+   virtual Variant key();
+   virtual void next();
+   virtual void rewind();
+   virtual zapi_long count();
+   
+   virtual bool offsetExists(Variant offset);
+   virtual void offsetSet(Variant offset, Variant value);
+   virtual Variant offsetGet(Variant offset);
+   virtual void offsetUnset(Variant offset);
+   virtual ~IterateTestClass();
+protected:
+   // save iterator object
+   std::shared_ptr<AbstractIterator> m_iterator;
+   IteratorType m_currentIter;
+   std::vector<std::pair<std::string, std::string>> m_items;
+};
+
 
 } // dummyext
 
