@@ -27,7 +27,7 @@ ZAPI_DECL_EXPORT void register_class_testcases(Extension &extension);
 void register_basic_classes(Extension &extension);
 void register_construct_and_destruct_classes(Extension &extension);
 void register_namespace_classes(Extension &extension);
-
+void register_inherit_test_classes(Extension &extension);
 } // dummyext
 
 #endif // ZAPI_TEST_DUMMYEXT_CLASS_TESTCASES_H

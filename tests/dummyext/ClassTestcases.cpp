@@ -23,13 +23,17 @@ using zapi::lang::Modifier;
 using zapi::lang::Constant;
 using zapi::lang::ValueArgument;
 using zapi::lang::VariadicArgument;
+using zapi::lang::RefArgument;
 using zapi::lang::Namespace;
+using zapi::lang::Interface;
+using zapi::lang::Type;
 
 void register_class_testcases(Extension &extension)
 {
    register_basic_classes(extension);
    register_construct_and_destruct_classes(extension);
    register_namespace_classes(extension);
+   register_inherit_test_classes(extension);
 }
 
 void register_basic_classes(Extension &extension)
@@ -103,5 +107,71 @@ void register_construct_and_destruct_classes(Extension &extension)
    extension.registerClass(ConstructAndDestruct);
 }
 
+void register_inherit_test_classes(Extension &extension)
+{
+   Interface interfaceA("InterfaceA");
+   Interface interfaceB("InterfaceB");
+   Interface interfaceC("InterfaceC");
+   interfaceA.registerMethod("methodOfA");
+   interfaceA.registerMethod("protectedMethodOfA", Modifier::Protected);
+   interfaceA.registerMethod("privateMethodOfA", Modifier::Private);
+   interfaceB.registerMethod("methodOfB");
+   interfaceB.registerMethod("protectedMethodOfB", Modifier::Protected);
+   interfaceB.registerMethod("privateMethodOfB", Modifier::Private);
+   interfaceC.registerMethod("methodOfC");
+   interfaceC.registerMethod("protectedMethodOfC", Modifier::Protected);
+   interfaceC.registerMethod("privateMethodOfC", Modifier::Private);
+   
+   interfaceC.registerBaseInterface(interfaceB);
+   interfaceB.registerBaseInterface(interfaceA);
+   extension.registerInterface(interfaceA);
+   extension.registerInterface(interfaceB);
+   extension.registerInterface(interfaceC);
+   
+   zapi::lang::Class<A> a("A");
+   zapi::lang::Class<B> b("B");
+   zapi::lang::Class<C> c("C");
+   a.registerMethod<decltype(&A::printInfo), &A::printInfo>("printInfo");
+   a.registerMethod<decltype(&A::changeNameByRef), &A::changeNameByRef>
+         ("changeNameByRef", {
+             RefArgument("name", Type::String)
+          });
+   a.registerMethod<decltype(&A::privateAMethod), &A::privateAMethod>("privateAMethod", Modifier::Private);
+   a.registerMethod<decltype(&A::protectedAMethod), &A::protectedAMethod>("protectedAMethod", Modifier::Protected);
+   a.registerProperty("name", "zapi");
+   a.registerProperty("protectedName", "protected zapi", Modifier::Protected);
+   a.registerProperty("privateName", "private zapi", Modifier::Private);
+   b.registerMethod<decltype(&B::privateBMethod), &B::privateBMethod>("privateBMethod", Modifier::Private);
+   b.registerMethod<decltype(&B::protectedBMethod), &B::protectedBMethod>("protectedBMethod", Modifier::Protected);
+   b.registerMethod<decltype(&B::printInfo), &B::printInfo>("printInfo");
+   b.registerMethod<decltype(&B::showSomething), &B::showSomething>("showSomething");
+   b.registerMethod<decltype(&B::calculateSumByRef), &B::calculateSumByRef>
+         ("calculateSumByRef", {
+             RefArgument("result", Type::Long),
+             VariadicArgument("numbers", Type::Long)
+          });
+   b.registerMethod<decltype(&B::addTwoNumber), &B::addTwoNumber>
+         ("addTwoNumber", {
+             ValueArgument("lhs"),
+             ValueArgument("rhs")
+          });
+   b.registerProperty("propsFromB", "unicornteam", Modifier::Protected);
+   c.registerMethod<decltype(&C::printInfo), &C::printInfo>("printInfo");
+   c.registerMethod<decltype(&C::testCallParentPassRefArg), &C::testCallParentPassRefArg>("testCallParentPassRefArg");
+   c.registerMethod<decltype(&C::testCallParentWithReturn), &C::testCallParentWithReturn>("testCallParentWithReturn");
+   c.registerMethod<decltype(&C::testGetObjectVaraintPtr), &C::testGetObjectVaraintPtr>("testGetObjectVaraintPtr");
+   c.registerMethod<decltype(&C::privateCMethod), &C::privateCMethod>("privateCMethod", Modifier::Private);
+   c.registerMethod<decltype(&C::protectedCMethod), &C::protectedCMethod>("protectedCMethod", Modifier::Protected);
+   c.registerMethod<decltype(&C::methodOfA), &C::methodOfA>("methodOfA", Modifier::Public);
+   c.registerMethod<decltype(&C::protectedMethodOfA), &C::protectedMethodOfA>("protectedMethodOfA", Modifier::Public);
+   c.registerMethod<decltype(&C::privateMethodOfA), &C::privateMethodOfA>("privateMethodOfA", Modifier::Public);
+   c.registerProperty("address", "beijing", Modifier::Private);
+   b.registerBaseClass(a);
+   c.registerBaseClass(b);
+   c.registerInterface(interfaceA);
+   extension.registerClass(a);
+   extension.registerClass(b);
+   extension.registerClass(c);
+}
 
 } // dummyext

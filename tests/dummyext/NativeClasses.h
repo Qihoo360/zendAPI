@@ -80,6 +80,42 @@ public:
 class EmptyClass : public StdClass
 {};
 
+// for test class and interface inherit
+class A : public StdClass
+{
+public:
+   void printInfo();
+   void changeNameByRef(StringVariant &name);
+   void privateAMethod();
+   void protectedAMethod();
+};
+
+class B : public StdClass
+{
+public:
+   void printInfo();
+   void showSomething();
+   void calculateSumByRef(NumericVariant argQuantity, NumericVariant retval, ...);
+   Variant addTwoNumber(NumericVariant &lhs, NumericVariant &rhs);
+   void privateBMethod();
+   void protectedBMethod();
+};
+
+class C : public StdClass
+{
+public:
+   void printInfo();
+   void testCallParentPassRefArg();
+   void testCallParentWithReturn();
+   void testGetObjectVaraintPtr();
+   void privateCMethod();
+   void protectedCMethod();
+   void methodOfA();
+   void protectedMethodOfA();
+   void privateMethodOfA();
+};
+
+
 } // dummyext
 
 #endif // ZAPI_TEST_DUMMYEXT_NATIVE_CLASSES_H
