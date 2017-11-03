@@ -1,7 +1,5 @@
---TEST--
-Class method exist test
---FILE--
 <?php
+ob_start();
 if (class_exists("Person")) {
    $p = new Person; 
    if (method_exists($p, "showName")) {
@@ -21,10 +19,15 @@ if (class_exists("Person")) {
    }
 
 }
-?>
---EXPECT--
+$ret = trim(ob_get_clean());
+$expect = <<<'EOF'
 method Person::showName exists
 method Person::print_sum exists
 method Person::setAge exists
 method Person::addTwoNum exists
 method Person::addSum exists
+EOF;
+
+if ($ret != $expect) {
+    exit(1);
+}

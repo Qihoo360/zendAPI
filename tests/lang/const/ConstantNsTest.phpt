@@ -1,21 +1,25 @@
 <?php
-
-if(!defined("\zapi\SYS_VERSION"))
+ob_start();
+if(defined("\zapi\SYS_VERSION"))
 {
-   goto error;
+   echo "\zapi\SYS_VERSION defined\n";
+}
+if(defined("\zapi\io\IO_TYPE"))
+{
+   echo "\zapi\io\IO_TYPE defined\n";
+}
+if(defined("\zapi\io\NATIVE_STREAM"))
+{
+   echo "\zapi\io\NATIVE_STREAM defined\n";
+}
+$ret = trim(ob_get_clean());
+$expect = <<<'EOF'
+\zapi\SYS_VERSION defined
+\zapi\io\IO_TYPE defined
+\zapi\io\NATIVE_STREAM defined
+EOF;
+
+if ($ret != $expect) {
+    exit(1);
 }
 
-if(!defined("\zapi\io\IO_TYPE"))
-{
-   goto error;
-}
-
-if(!defined("\zapi\io\NATIVE_STREAM"))
-{
-   goto error;
-}
-
-success:
-exit(0);
-error:
-exit(1);

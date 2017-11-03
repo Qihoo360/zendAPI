@@ -1,7 +1,5 @@
---TEST--
-Class method access level test
---FILE--
 <?php
+ob_start();
 if (class_exists("Person")) {
     if (method_exists("Person", "protectedMethod")) {
         $pmRefl = new ReflectionMethod("Person", "protectedMethod");
@@ -41,8 +39,8 @@ if (class_exists("Person")) {
         }
     }
 }
-?>
---EXPECT--
+$ret = trim(ob_get_clean());
+$expect = <<<'EOF'
 Person::protectedMethod is an instance method
 Person::protectedMethod is an protected method
 Person::privateMethod is an instance method
@@ -51,3 +49,9 @@ Person::staticProtectedMethod is an static method
 Person::staticProtectedMethod is an protected method
 Person::staticPrivateMethod is an static method
 Person::staticPrivateMethod is an private method
+EOF;
+
+if ($ret != $expect) {
+    exit(1);
+}
+

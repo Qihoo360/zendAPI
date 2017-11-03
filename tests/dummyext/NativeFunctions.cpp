@@ -91,4 +91,21 @@ Variant return_arg(Variant &value)
    return value;
 }
 
+// for test closure
+Variant print_something()
+{
+   zapi::out << "print_something called" << std::endl;
+   return "print_some";
+}
+
+Variant have_ret_and_have_arg(Parameters &params)
+{
+   zapi::out << "have_ret_and_have_arg called" << std::endl;
+   if (params.empty()) {
+      return "have_ret_and_have_arg";
+   } else {
+      return params.at(0);
+   }
+}
+
 } // dummyext

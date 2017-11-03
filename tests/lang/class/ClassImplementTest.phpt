@@ -1,8 +1,5 @@
---TEST--
-interface implement test
---FILE--
 <?php
-
+ob_start();
 if (class_exists("C") && interface_exists("InterfaceA") && interface_exists("InterfaceB") && interface_exists("InterfaceC")) {
     $obj = new C();
     var_dump(class_implements("C"));
@@ -19,9 +16,8 @@ if (class_exists("C") && interface_exists("InterfaceA") && interface_exists("Int
        echo "method C::privateMethodOfA exists\n";
     }
 }
-
-?>
---EXPECT--
+$ret = trim(ob_get_clean());
+$expect = <<<'EOF'
 array(1) {
   ["InterfaceA"]=>
   string(10) "InterfaceA"
@@ -30,4 +26,7 @@ $obj instanceof InterfaceA
 method C::methodOfA exists
 method C::protectedMethodOfA exists
 method C::privateMethodOfA exists
-
+EOF;
+if ($ret != $expect) {
+    exit(1);
+}

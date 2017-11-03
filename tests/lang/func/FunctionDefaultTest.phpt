@@ -1,35 +1,24 @@
 <?php
-
+ob_start();
 // here we just invoke a function without params and return value
 if (function_exists("show_something")) {
-   ob_start();
    show_something();
-   $ret = ob_get_clean();
-   if ("hello world, zapi" != trim($ret)) {
-      goto error;
-   }
-} else {
-    goto error;
 }
+echo "\n";
 if (function_exists("\zapi\show_something")) {
-   ob_start();
    \zapi\show_something();
-   $ret = ob_get_clean();
-   if ("hello world, zapi" != trim($ret)) {
-      goto error;
-   }
 }
+echo "\n";
 if (function_exists("\zapi\io\show_something")) {
-   ob_start();
    \zapi\io\show_something();
-   $ret = ob_get_clean();
-   if ("hello world, zapi" != trim($ret)) {
-      goto error;
-   }
 }
+$ret = trim(ob_get_clean());
+$expect = <<<'EOF'
+hello world, zapi
+hello world, zapi
+hello world, zapi
+EOF;
 
-
-success:
-exit(0);
-error:
-exit(1);
+if ($ret != $expect) {
+    exit(1);
+}

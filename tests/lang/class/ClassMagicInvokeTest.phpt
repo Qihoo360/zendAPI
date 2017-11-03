@@ -1,8 +1,5 @@
---TEST--
-Class magic invoke test
---FILE--
 <?php
-
+ob_start();
 if (class_exists("\NonMagicMethodClass") && class_exists("\MagicMethodClass")) {
     //$nonMagicMethodObject = new NonMagicMethodClass();
     // $nonMagicMethodObject(1, 2, 3); // fata error
@@ -12,10 +9,15 @@ if (class_exists("\NonMagicMethodClass") && class_exists("\MagicMethodClass")) {
     $sum = $magicMethodClass(1, 2, 3, 4);
     echo "the sum of \$magicMethodClass() is " . $sum ."\n";
 }
-
-?>
---EXPECT--
+$ret = trim(ob_get_clean());
+$expect = <<<'EOF'
 MagicMethodClass::__invoke is called
 the sum of $magicMethodClass() is 0
 MagicMethodClass::__invoke is called
 the sum of $magicMethodClass() is 10
+EOF;
+
+if ($ret != $expect) {
+    exit(1);
+}
+

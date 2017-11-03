@@ -15,6 +15,7 @@
 
 #include "ClassTestcases.h"
 #include "NativeClasses.h"
+#include "NativeFunctions.h"
 
 namespace dummyext
 {
@@ -35,6 +36,11 @@ void register_class_testcases(Extension &extension)
    register_namespace_classes(extension);
    register_inherit_test_classes(extension);
    register_iterator_test_classes(extension);
+   register_closure_test_classes(extension);
+   register_visibility_test_classes(extension);
+   register_magic_method_test_classes(extension);
+   register_props_test_classes(extension);
+   register_object_variant_test_classes(extension);
 }
 
 void register_basic_classes(Extension &extension)
@@ -177,6 +183,88 @@ void register_iterator_test_classes(Extension &extension)
 {
    zapi::lang::Class<IterateTestClass> iterateTestClass("IterateTestClass");
    extension.registerClass(iterateTestClass);
+}
+
+void register_closure_test_classes(Extension &extension)
+{
+   zapi::lang::Class<ClosureTestClass> closureTestClass("ClosureTestClass");
+   closureTestClass.registerMethod<decltype(&ClosureTestClass::testClosureCallable), &ClosureTestClass::testClosureCallable>("testClosureCallable");
+   closureTestClass.registerMethod<decltype(&ClosureTestClass::getNoArgAndReturnCallable), &ClosureTestClass::getNoArgAndReturnCallable>("getNoArgAndReturnCallable");
+   closureTestClass.registerMethod<decltype(&ClosureTestClass::getArgAndReturnCallable), &ClosureTestClass::getArgAndReturnCallable>("getArgAndReturnCallable");
+   extension.registerClass(closureTestClass);
+}
+
+void register_visibility_test_classes(Extension &extension)
+{
+   zapi::lang::Class<VisibilityClass> visibilityClass("VisibilityClass");
+   visibilityClass.registerMethod<decltype(&VisibilityClass::publicMethod), &VisibilityClass::publicMethod>("publicMethod", Modifier::Public);
+   visibilityClass.registerMethod<decltype(&VisibilityClass::protectedMethod), &VisibilityClass::protectedMethod>("protectedMethod", Modifier::Protected);
+   visibilityClass.registerMethod<decltype(&VisibilityClass::privateMethod), &VisibilityClass::privateMethod>("privateMethod", Modifier::Private);
+   visibilityClass.registerMethod<decltype(&VisibilityClass::finalMethod), &VisibilityClass::finalMethod>("finalMethod", Modifier::Final);
+   // register some property
+   visibilityClass.registerProperty("publicProp", "propValue", Modifier::Public);
+   visibilityClass.registerProperty("protectedProp", "propValue", Modifier::Protected);
+   visibilityClass.registerProperty("privateProp", "propValue", Modifier::Private);
+   
+   zapi::lang::Class<FinalTestClass> finalTestClass("FinalTestClass", zapi::lang::ClassType::Final);
+   finalTestClass.registerMethod<decltype(&FinalTestClass::someMethod), &FinalTestClass::someMethod>("someMethod");
+   extension.registerClass(visibilityClass);
+   extension.registerClass(finalTestClass);
+}
+
+void register_magic_method_test_classes(Extension &extension)
+{
+   zapi::lang::Class<NonMagicMethodClass> nonMagicMethodClass("NonMagicMethodClass");
+   zapi::lang::Class<MagicMethodClass> magicMethodClass("MagicMethodClass");
+   extension.registerClass(nonMagicMethodClass);
+   extension.registerClass(magicMethodClass);
+}
+
+void register_props_test_classes(Extension &extension)
+{
+   zapi::lang::Class<PropsTestClass> propsTestClass("PropsTestClass");
+   propsTestClass.registerProperty("nullProp", nullptr);
+   propsTestClass.registerProperty("trueProp", true);
+   propsTestClass.registerProperty("falseProp", false);
+   propsTestClass.registerProperty("numProp", 2017);
+   propsTestClass.registerProperty("doubleProp", 3.1415);
+   propsTestClass.registerProperty("strProp", "zapi");
+   propsTestClass.registerProperty("str1Prop", std::string("zapi"));
+   
+   propsTestClass.registerProperty("staticNullProp", nullptr, Modifier::Static);
+   propsTestClass.registerProperty("staticTrueProp", true, Modifier::Static);
+   propsTestClass.registerProperty("staticFalseProp", false, Modifier::Static);
+   propsTestClass.registerProperty("staticNumProp", 2012, Modifier::Static);
+   propsTestClass.registerProperty("staticDoubleProp", 3.1415, Modifier::Static);
+   propsTestClass.registerProperty("staticStrProp", "static zapi", Modifier::Static);
+   propsTestClass.registerProperty("staticStr1Prop", std::string("static zapi"), Modifier::Static);
+   
+   propsTestClass.registerProperty("MATH_PI", 3.14, Modifier::Const);
+   
+   propsTestClass.registerProperty("name", &PropsTestClass::getName, &PropsTestClass::setName);
+   propsTestClass.registerProperty("age", &PropsTestClass::getAge, &PropsTestClass::setAge);
+   
+   extension.registerClass(propsTestClass);
+}
+
+void register_object_variant_test_classes(Extension &extension)
+{
+   zapi::lang::Class<ObjectVariantClass> objectVariantClass("ObjectVariantClass");
+   objectVariantClass.registerMethod<decltype(&ObjectVariantClass::forwardInvoke), &ObjectVariantClass::forwardInvoke>("forwardInvoke");
+   objectVariantClass.registerMethod<decltype(&ObjectVariantClass::testDerivedFrom), &ObjectVariantClass::testDerivedFrom>("testDerivedFrom");
+   objectVariantClass.registerMethod<decltype(&ObjectVariantClass::testInstanceOf), &ObjectVariantClass::testInstanceOf>("testInstanceOf");
+   objectVariantClass.registerMethod<decltype(&ObjectVariantClass::testNoArgCall), &ObjectVariantClass::testNoArgCall>("testNoArgCall");
+   objectVariantClass.registerMethod<decltype(&ObjectVariantClass::testVarArgsCall), &ObjectVariantClass::testVarArgsCall>("testVarArgsCall");
+   objectVariantClass.registerMethod<decltype(&ObjectVariantClass::printName), &ObjectVariantClass::printName>("printName");
+   objectVariantClass.registerMethod<decltype(&ObjectVariantClass::getName), &ObjectVariantClass::getName>("getName");
+   objectVariantClass.registerMethod<decltype(&ObjectVariantClass::printSum), &ObjectVariantClass::printSum>("printSum");
+   objectVariantClass.registerMethod<decltype(&ObjectVariantClass::calculateSum), &ObjectVariantClass::calculateSum>("calculateSum");
+   objectVariantClass.registerMethod<decltype(&ObjectVariantClass::changeNameByRef), &ObjectVariantClass::changeNameByRef>
+         ("changeNameByRef", {
+             RefArgument("name", Type::String)
+          });
+   
+   extension.registerClass(objectVariantClass);
 }
 
 } // dummyext

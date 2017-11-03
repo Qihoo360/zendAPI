@@ -1,8 +1,5 @@
---TEST--
-Class magic unset test
---FILE--
 <?php
-
+ob_start();
 if (class_exists("\NonMagicMethodClass") && class_exists("\MagicMethodClass")) {
     $nonMagicMethodObject = new NonMagicMethodClass();
     // $nonMagicMethodObject->teamName; Notice: Undefined property: NonMagicMethodClass::$teamName
@@ -18,12 +15,17 @@ if (class_exists("\NonMagicMethodClass") && class_exists("\MagicMethodClass")) {
         echo "\$magicMethodObject->teamName is not exist\n";
     }
 }
-
-?>
---EXPECT--
+$ret = trim(ob_get_clean());
+$expect = <<<'EOF'
 $nonMagicMethodObject->teamName is not exist
 MagicMethodClass::__isset is called
 $magicMethodObject->teamName is exist
 MagicMethodClass::__unset is called
 MagicMethodClass::__isset is called
 $magicMethodObject->teamName is not exist
+EOF;
+
+if ($ret != $expect) {
+    exit(1);
+}
+

@@ -1,27 +1,24 @@
 <?php
-
+ob_start();
 if (function_exists("get_value_ref"))
 {
     $num = 123;
     get_value_ref($num);
-    if (321 != $num) {
-        goto error;
-    }
-} else {
-    goto error;
+    echo $num;
 }
+echo "\n";
 if (function_exists("passby_value"))
 {
     $num = 123;
     passby_value($num);
-    if (123 != $num) {
-        goto error;
-    }
-} else {
-    goto error;
+    echo $num;
 }
+$ret = trim(ob_get_clean());
+$expect = <<<'EOF'
+321
+123
+EOF;
 
-success:
-exit(0);
-error:
-exit(1);
+if ($ret != $expect) {
+    exit(1);
+}

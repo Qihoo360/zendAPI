@@ -29,6 +29,11 @@ void register_construct_and_destruct_classes(Extension &extension);
 void register_namespace_classes(Extension &extension);
 void register_inherit_test_classes(Extension &extension);
 void register_iterator_test_classes(Extension &extension);
+void register_closure_test_classes(Extension &extension);
+void register_visibility_test_classes(Extension &extension);
+void register_magic_method_test_classes(Extension &extension);
+void register_props_test_classes(Extension &extension);
+void register_object_variant_test_classes(Extension &extension);
 
 } // dummyext
 

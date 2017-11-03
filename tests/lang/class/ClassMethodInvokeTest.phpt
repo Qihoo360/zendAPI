@@ -1,8 +1,5 @@
---TEST--
-Class method invoke test
---FILE--
 <?php
-
+ob_start();
 if (class_exists("\Person")) {
     Person::makeNewPerson();
     $object = new \Person();
@@ -41,9 +38,8 @@ if (class_exists("\Person")) {
     }
 
 }
-
-?>
---EXPECT--
+$ret = trim(ob_get_clean());
+$expect = <<<'EOF'
 my name is zapi
 the sum is 11
 the original age is 0
@@ -54,3 +50,9 @@ the sum of 1, 2, 3, 4, 5, 6, 7 is 28
 the sum of 1, 2, 3 is 6
 static my name is zapi
 the concat of abc and def is abcdef
+EOF;
+
+if ($ret != $expect) {
+    exit(1);
+}
+

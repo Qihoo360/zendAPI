@@ -1,8 +1,5 @@
---TEST--
-Class property visibility test
---FILE--
 <?php
-
+ob_start();
 if (class_exists("\VisibilityClass")) {
     echo "class VisibilityClass exists\n";
     $refl = new ReflectionClass("VisibilityClass");
@@ -19,10 +16,15 @@ if (class_exists("\VisibilityClass")) {
         echo  "VisibilityClass::privateProp is private\n";
     }
 }
-
-?>
---EXPECT--
+$ret = trim(ob_get_clean());
+$expect = <<<'EOF'
 class VisibilityClass exists
 VisibilityClass::publicProp is public
 VisibilityClass::protectedProp is protected
 VisibilityClass::privateProp is private
+EOF;
+
+if ($ret != $expect) {
+    exit(1);
+}
+

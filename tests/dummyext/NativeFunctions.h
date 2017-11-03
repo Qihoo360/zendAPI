@@ -35,6 +35,8 @@ ZAPI_DECL_EXPORT void print_name_and_age(const StringVariant &name, const Numeri
 ZAPI_DECL_EXPORT Variant calculate_sum(NumericVariant argQuantity, ...);
 ZAPI_DECL_EXPORT Variant add_two_number(const NumericVariant &num1, const NumericVariant &num2);
 ZAPI_DECL_EXPORT void say_hello(StringVariant &name);
+ZAPI_DECL_EXPORT Variant print_something();
+ZAPI_DECL_EXPORT Variant have_ret_and_have_arg(Parameters &params);
 
 }
 

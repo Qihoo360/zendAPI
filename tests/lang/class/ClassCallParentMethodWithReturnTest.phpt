@@ -1,25 +1,18 @@
 <?php
-$ret = "";
+ob_start();
 if (class_exists("A") && class_exists("B") && class_exists("C")) {
+    echo "class A and class B and class C exist\n";
     $obj = new C();
-    ob_start();
     $obj->testCallParentWithReturn();
-    $ret = trim(ob_get_clean());
-} else {
-    goto error;
 }
-
-$expect = <<<EOF
+$ret = trim(ob_get_clean());
+$expect = <<<'EOF'
+class A and class B and class C exist
 C::testCallParentWithReturn been called
 B::addTwoNumber been called
 after call addTwoNumber get : 24
 EOF;
 
 if ($ret != $expect) {
-    goto error;
+    exit(1);
 }
-
-success:
-exit(0);
-error:
-exit(1);

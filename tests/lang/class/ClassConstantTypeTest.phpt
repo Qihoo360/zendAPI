@@ -1,7 +1,5 @@
---TEST--
-Class const type test
---FILE--
 <?php
+ob_start();
 if (class_exists("Person")) {
    if (defined("Person::UNICORNTEAM") && is_string(Person::UNICORNTEAM)) {
       echo "Person::UNICORNTEAM is string\n";
@@ -19,10 +17,16 @@ if (class_exists("Person")) {
       echo "Person::ALLOW_ACL is bool\n";
    }
 }
-?>
---EXPECT--
+$ret = trim(ob_get_clean());
+
+$expect = <<<EOF
 Person::UNICORNTEAM is string
 Person::MY_CONST is string
 Person::PI is double
 Person::HEADER_SIZE is int
 Person::ALLOW_ACL is bool
+EOF;
+
+if ($ret != $expect) {
+    exit(1);
+}

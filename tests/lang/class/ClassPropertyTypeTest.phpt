@@ -1,8 +1,5 @@
---TEST--
-Class property type test
---FILE--
 <?php
-
+ob_start();
 if (class_exists("PropsTestClass")) {
     // instance property
     $object = new PropsTestClass();
@@ -123,9 +120,8 @@ if (class_exists("PropsTestClass")) {
         }
     }
 }
-
-?>
---EXPECT--
+$ret = trim(ob_get_clean());
+$expect = <<<'EOF'
 the type of PropsTestClass::nullProp is null
 the type of PropsTestClass::trueProp is : boolean
 the type of PropsTestClass::falseProp is : boolean
@@ -143,3 +139,9 @@ the type of PropsTestClass::staticNumProp is int
 the type of PropsTestClass::staticDoubleProp is double
 the type of PropsTestClass::staticStrProp is string
 the type of PropsTestClass::MATH_PI is double
+EOF;
+
+if ($ret != $expect) {
+    exit(1);
+}
+

@@ -1,8 +1,5 @@
---TEST--
-Class static property test
---FILE--
 <?php
-
+ob_start();
 if (class_exists("PropsTestClass")) {
 
     if (property_exists("PropsTestClass", "staticNullProp")) {
@@ -38,9 +35,8 @@ if (class_exists("PropsTestClass")) {
         echo "PropsTestClass::MATH_PI value : ". PropsTestClass::MATH_PI ."\n";
     }
 }
-
-?>
---EXPECT--
+$ret = trim(ob_get_clean());
+$expect = <<<'EOF'
 PropsTestClass::staticNullProp is exist
 PropsTestClass::staticNullProp value : null
 PropsTestClass::staticTrueProp is exist
@@ -55,3 +51,8 @@ PropsTestClass::staticStrProp is exist
 PropsTestClass::staticStrProp value : static zapi
 PropsTestClass::MATH_PI is exist
 PropsTestClass::MATH_PI value : 3.14
+EOF;
+
+if ($ret != $expect) {
+    exit(1);
+}

@@ -1,8 +1,5 @@
---TEST--
-Class magic cast test
---FILE--
 <?php
-
+ob_start();
 if (class_exists("\MagicMethodClass")) {
     $object = new \MagicMethodClass();
     echo "cast to string : " . $object;
@@ -20,8 +17,8 @@ if (class_exists("\MagicMethodClass")) {
     echo "cast to boolean : " . (bool)$object;
     echo "\n";
 }
-?>
---EXPECT--
+$ret = trim(ob_get_clean());
+$expect = <<<EOF
 MagicMethodClass::__toString is called
 cast to string : hello, zapi
 MagicMethodClass::__toInteger is called
@@ -36,3 +33,8 @@ MagicMethodClass::__toBool is called
 cast to boolean : 1
 MagicMethodClass::__toBool is called
 cast to boolean : 1
+EOF;
+
+if ($ret != $expect) {
+    exit(1);
+}

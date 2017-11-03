@@ -1,8 +1,5 @@
---TEST--
-Class final test
---FILE--
 <?php
-
+ob_start();
 if (class_exists("\FinalTestClass")) {
     echo "FinalTestClass exists\n";
     $refl = new ReflectionClass("FinalTestClass");
@@ -21,9 +18,13 @@ if (class_exists("\VisibilityClass")) {
 // class xx extends FinalTestClass
 // {}
 // PHP Fatal error:  Class xx may not inherit from final class (FinalTestClass)
-?>
---EXPECT--
+$ret = trim(ob_get_clean());
+$expect = <<<EOF
 FinalTestClass exists
 class FinalTestClass is final
 VisibilityClass exists
 method VisibilityClass::finalMethod is final
+EOF;
+if ($ret != $expect) {
+    exit(1);
+}

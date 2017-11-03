@@ -1,7 +1,5 @@
---TEST--
-Class closure call test
---FILE--
 <?php
+ob_start();
 if (class_exists("\ZapiClosure")) {
     echo "internal class ZapiClosure exists\n";
     $refl = new ReflectionClass("ZapiClosure");
@@ -9,7 +7,6 @@ if (class_exists("\ZapiClosure")) {
         echo "class ZapiClosure is final\n";
     }
 }
-
 if (class_exists("\ClosureTestClass")) {
     echo "internal class ClosureTestClass exists\n";
     $obj = new \ClosureTestClass();
@@ -34,8 +31,8 @@ if (class_exists("\ClosureTestClass")) {
     }
 }
 
-?>
---EXPECT--
+$ret = trim(ob_get_clean());
+$expect = <<<'EOF'
 internal class ZapiClosure exists
 class ZapiClosure is final
 internal class ClosureTestClass exists
@@ -51,3 +48,8 @@ have_ret_and_have_arg called
 the return of hasParamCallable is 3.14
 have_ret_and_have_arg called
 the return of hasParamCallable is 1
+EOF;
+
+if ($ret != $expect) {
+    exit(1);
+}

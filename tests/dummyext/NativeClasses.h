@@ -145,6 +145,100 @@ protected:
    std::vector<std::pair<std::string, std::string>> m_items;
 };
 
+class ClosureTestClass : public StdClass
+{
+public:
+   void testClosureCallable();
+   Variant getNoArgAndReturnCallable();
+   Variant getArgAndReturnCallable();
+   ~ClosureTestClass();
+};
+
+class VisibilityClass : public StdClass
+{
+public:
+   void publicMethod();
+   void protectedMethod();
+   void privateMethod();
+   void finalMethod();
+};
+
+// for class type test
+
+class FinalTestClass : public StdClass   
+{
+public:
+   void someMethod();
+};
+
+class AbstractTestClass : public StdClass
+{
+public:
+   void normalMethod();   
+};
+
+// for magic test
+
+class NonMagicMethodClass : public StdClass
+{
+   
+};
+
+class MagicMethodClass : public StdClass, public zapi::protocol::Serializable
+{
+public:
+   Variant __call(const std::string &method, Parameters &params) const;
+   Variant __invoke(Parameters &params) const;
+   void __set(const std::string &key, const Variant &value);
+   Variant __get(const std::string &key) const;
+   bool __isset(const std::string &key) const;
+   void __unset(const std::string &key);
+   Variant __toString() const;
+   Variant __toInteger() const;
+   Variant __toDouble() const;
+   Variant __toBool() const;
+   ArrayVariant __debugInfo() const;
+   int __compare(const MagicMethodClass &object) const;
+   void __clone();
+   static Variant __callStatic(const std::string &method, Parameters &params);
+   virtual std::string serialize();
+   virtual void unserialize(const char *input, size_t size);
+   virtual ~MagicMethodClass() ZAPI_DECL_NOEXCEPT;
+private:
+   bool m_teamNameUnset = false;
+   bool m_teamAddressUnset = true;
+   int m_length = 0;
+   std::string m_address;
+};
+
+// for class properties test
+class PropsTestClass : public StdClass
+{
+private:
+   int m_age;
+   std::string m_name;
+public:
+   void setAge(const Variant &age);
+   Variant getAge();
+   void setName(const Variant &name);
+   Variant getName();
+};
+
+class ObjectVariantClass : public StdClass
+{
+public:
+   Variant __invoke(Parameters &params) const;
+   void forwardInvoke();
+   void testInstanceOf();
+   void testDerivedFrom();
+   void testNoArgCall();
+   void testVarArgsCall();
+   void printName();
+   std::string getName();
+   void printSum(NumericVariant argQuantity, ...);
+   int calculateSum(NumericVariant argQuantity, ...);
+   void changeNameByRef(StringVariant &name);
+};
 
 } // dummyext
 

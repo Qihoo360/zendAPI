@@ -25,6 +25,7 @@
 #include "zapi/ds/DoubleVariant.h"
 #include "zapi/ds/ArrayVariant.h"
 #include "zapi/ds/ArrayItemProxy.h"
+#include "zapi/ds/CallableVariant.h"
 #include "zapi/lang/Constant.h"
 #include "zapi/lang/Parameters.h"
 #include "zapi/lang/Class.h"

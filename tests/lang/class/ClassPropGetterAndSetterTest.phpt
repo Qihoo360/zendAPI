@@ -1,8 +1,5 @@
---TEST--
-Class property getter and setter test
---FILE--
 <?php
-    
+ob_start();
 if (class_exists("PropsTestClass")) {
     $object = new PropsTestClass();
     if (property_exists($object, "name")) {
@@ -22,12 +19,17 @@ if (class_exists("PropsTestClass")) {
         echo "PropsTestClass::notExistsProp value : {$object->notExistsProp}\n";
     }
 }
-
-?>
---EXPECT--
+$ret = trim(ob_get_clean());
+$expect = <<<'EOF'
 PropsTestClass::name is exist
 PropsTestClass::name value : 
 PropsTestClass::name value : zapi:unicornteam
 PropsTestClass::notExistsProp is not exist
 PropsTestClass::notExistsProp is exist
 PropsTestClass::notExistsProp value : 123
+EOF;
+
+if ($ret != $expect) {
+    exit(1);
+}
+

@@ -1,30 +1,38 @@
 <?php
-
+ob_start();
 if (class_exists("A") && class_exists("B") && class_exists("C")) {
-    if (!(new B instanceof \A)) {
-       goto error;
+    echo "class A and class B and class C exist\n";
+    if (new B instanceof \A) {
+       echo "object of class B is instance of A\n"; 
     }
     $reflClsB = new ReflectionClass("B");
     $parentOfClsB = $reflClsB->getParentClass();
-    if ($parentOfClsB->getName() != "A") {
-        goto error;
+    if ($parentOfClsB->getName() == "A") {
+        echo "The parent class of class B is class A\n";
     }
     $reflClsC = new ReflectionClass("C");
     $parentOfClsC = $reflClsC->getParentClass();
-    if ($parentOfClsC->getName() != "B") {
-        goto error;
+    if ($parentOfClsC->getName() == "B") {
+        echo "The parent class of class C is class B\n";
     }
-    if (!(new C instanceof \B)) {
-       goto error;
+    if (new C instanceof \B) {
+       echo "object of class C is instance of B\n"; 
     }
-    if (!(new C instanceof \A)) {
-       goto error; 
+    if (new C instanceof \A) {
+       echo "object of class C is instance of A\n"; 
     }
-} else {
-    goto error;
+}
+$ret = trim(ob_get_clean());
+$expect = <<<'EOF'
+class A and class B and class C exist
+object of class B is instance of A
+The parent class of class B is class A
+The parent class of class C is class B
+object of class C is instance of B
+object of class C is instance of A
+EOF;
+if ($ret != $expect) {
+    exit(1);
 }
 
-success:
-exit(0);
-error:
-exit(1);
+

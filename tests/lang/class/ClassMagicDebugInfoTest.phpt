@@ -1,8 +1,5 @@
---TEST--
-Class magic debug info test
---FILE--
 <?php
-
+ob_start();
 if (class_exists("\MagicMethodClass")) {
     echo "class MagicMethodClass exists\n";
     $object = new \MagicMethodClass();
@@ -20,7 +17,11 @@ if (class_exists("\MagicMethodClass")) {
     //object(FinalTestClass)#2 (0) {
     //}    
 }
-
-?>
---EXPECT--
+$ret = trim(ob_get_clean());
+$expect = <<<'EOF'
 class MagicMethodClass exists
+EOF;
+
+if ($ret != $expect) {
+    exit(1);
+}

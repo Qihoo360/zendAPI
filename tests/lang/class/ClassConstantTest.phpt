@@ -1,7 +1,5 @@
---TEST--
-Class const exist test
---FILE--
 <?php
+ob_start();
 if (class_exists("Person")) {
    if (defined("Person::UNICORNTEAM")) {
       echo "Person::UNICORNTEAM is ".Person::UNICORNTEAM."\n";
@@ -19,10 +17,15 @@ if (class_exists("Person")) {
       echo "Person::ALLOW_ACL is ".(Person::ALLOW_ACL ? "true": "false")."\n";
    }
 }
-?>
---EXPECT--
+$ret = trim(ob_get_clean());
+$expect = <<<EOF
 Person::UNICORNTEAM is beijing unicornteam
 Person::MY_CONST is MY_CONST_VALUE
 Person::PI is 3.1415926
 Person::HEADER_SIZE is 123
 Person::ALLOW_ACL is true
+EOF;
+
+if ($ret != $expect) {
+    exit(1);
+}

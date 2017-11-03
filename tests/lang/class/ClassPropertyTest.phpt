@@ -1,8 +1,5 @@
---TEST--
-Class property test
---FILE--
 <?php
-
+ob_start();
 if (class_exists("PropsTestClass")) {
     // instance property
     $object = new PropsTestClass();
@@ -38,9 +35,8 @@ if (class_exists("PropsTestClass")) {
         echo "PropsTestClass::strProp1 value : {$object->strProp1}\n";
     }
 }
-
-?>
---EXPECT--
+$ret = trim(ob_get_clean());
+$expect = <<<'EOF'
 PropsTestClass::nullProp is exist
 PropsTestClass::nullProp value : null
 PropsTestClass::trueProp is exist
@@ -53,3 +49,10 @@ PropsTestClass::doubleProp is exist
 PropsTestClass::doubleProp value : 3.1415
 PropsTestClass::strProp is exist
 PropsTestClass::strProp value : zapi
+EOF;
+
+if ($ret != $expect) {
+    exit(1);
+}
+
+

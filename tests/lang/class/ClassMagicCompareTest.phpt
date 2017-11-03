@@ -1,8 +1,5 @@
---TEST--
-Class magic compare test
---FILE--
 <?php
-
+ob_start();
 if (class_exists("\MagicMethodClass")) {
     $lhs = new MagicMethodClass();
     $rhs = new MagicMethodClass();
@@ -71,8 +68,8 @@ if (class_exists("\MagicMethodClass")) {
     
 }
 
-?>
---EXPECT--
+$ret = trim(ob_get_clean());
+$expect = <<<'EOF'
 MagicMethodClass::__compare is called
 $lhs == $rhs
 MagicMethodClass::__compare is called
@@ -106,3 +103,9 @@ $lhs > $rhs
 MagicMethodClass::__compare is called
 MagicMethodClass::__compare is called
 $lhs != $rhs
+EOF;
+
+if ($ret != $expect) {
+    exit(1);
+}
+

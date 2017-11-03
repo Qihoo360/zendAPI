@@ -1,31 +1,34 @@
 <?php
-
-if(!defined("MY_CONST"))
+ob_start();
+if(defined("MY_CONST"))
 {
-   goto error;
+   echo "MY_CONST defined\n";
 }
-
-if(!defined("PI"))
+if(defined("PI"))
 {
-   goto error;
+   echo "PI defined\n";
 }
-
-if(!defined("ZAPI_NAME"))
+if(defined("ZAPI_NAME"))
 {
-   goto error;
+   echo "ZAPI_NAME defined\n";
 }
-
-if(!defined("ZAPI_VERSION"))
+if(defined("ZAPI_VERSION"))
 {
-   goto error;
+   echo "ZAPI_NAME defined\n";
 }
-
-if(!defined("QIHOO"))
+if(defined("QIHOO"))
 {
-   goto error;
+   echo "QIHOO defined\n";
 }
+$ret = trim(ob_get_clean());
+$expect = <<<'EOF'
+MY_CONST defined
+PI defined
+ZAPI_NAME defined
+ZAPI_NAME defined
+QIHOO defined
+EOF;
 
-success:
-exit(0);
-error:
-exit(1);
+if ($ret != $expect) {
+    exit(1);
+}
