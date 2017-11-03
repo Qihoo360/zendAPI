@@ -1,54 +1,53 @@
---TEST--
-test function return value
---FILE--
 <?php
 // here we test simple return string value
 if (function_exists("get_name")) {
    $name = get_name();
-   if (is_string($name)) {
-      echo $name;
+   if (!is_string($name)) {
+      goto error;
    }
-}
-echo "\n";
-if (function_exists("\zapi\get_name")) {
-   $name = \zapi\get_name();
-   if (is_string($name)) {
-      echo $name;
-   }
+} else {
+    goto error;
 }
 
-echo "\n";
+if (function_exists("\zapi\get_name")) {
+   $name = \zapi\get_name();
+   if (!is_string($name)) {
+      goto error;
+   }
+} else {
+    goto error;
+}
+
 if (function_exists("add_two_number")) {
    $sum = add_two_number(1, 2);
-   if (is_int($sum)) {
-      echo "the sum is " . $sum;
+   if (!is_int($sum)) {
+      goto error;
    }
+} else {
+    goto error;
 }
-echo "\n";
+
 if (function_exists("return_arg")) {
    $data = return_arg(1);
-   if (is_int($data) && $data == 1) {
-      echo "success\n";
+   if (!is_int($data) || $data !== 1) {
+      goto error;
    }
    $data = return_arg(true);
-   if (is_bool($data) && $data === true) {
-      echo "success\n";
+   if (!is_bool($data) || $data !== true) {
+      goto error;
    }
    $data = return_arg(3.14);
-   if (is_float($data) && $data === 3.14) {
-      echo "success\n";
+   if (!is_float($data) || $data !== 3.14) {
+      goto error;
    }
    $data = return_arg(array(1));
-   if (is_array($data) && $data === array(1)) {
-      echo "success\n";
+   if (!is_array($data) || $data !== array(1)) {
+      goto error;
    }
+} else {
+    goto error;
 }
-?>
---EXPECT--
-zzu_softboy
-zzu_softboy
-the sum is 3
-success
-success
-success
-success
+success:
+exit(0);
+error:
+exit(1);

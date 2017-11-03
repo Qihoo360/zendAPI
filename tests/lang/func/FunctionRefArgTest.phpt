@@ -1,22 +1,27 @@
---TEST--
-Function reference argument test
---FILE--
 <?php
 
 if (function_exists("get_value_ref"))
 {
     $num = 123;
     get_value_ref($num);
-    echo $num;
+    if (321 != $num) {
+        goto error;
+    }
+} else {
+    goto error;
 }
-echo "\n";
 if (function_exists("passby_value"))
 {
     $num = 123;
     passby_value($num);
-    echo $num;
+    if (123 != $num) {
+        goto error;
+    }
+} else {
+    goto error;
 }
-?>
---EXPECT--
-321
-123
+
+success:
+exit(0);
+error:
+exit(1);
