@@ -1,17 +1,16 @@
---TEST--
-Class call parent method pass ref argument test
---FILE--
 <?php
 
+$ret = "";
 if (class_exists("A") && class_exists("B") && class_exists("C")) {
-    echo "class A and class B and class C exist\n";
     $obj = new C();
+    ob_start();
     $obj->testCallParentPassRefArg();
+    $ret = trim(ob_get_clean());
+} else {
+    goto error;
 }
 
-?>
---EXPECT--
-class A and class B and class C exist
+$expect = <<<EOF
 C::testCallParentPassRefArg been called
 before call changeNameByRef : xxxx
 A::changeNameByRef been called
@@ -22,3 +21,13 @@ C::calculateSumByRef been called
 got 4 args
 retval is reference arg
 after call calculateSumByRef : 47
+EOF;
+
+if ($ret != $expect) {
+    goto error;
+}
+
+success:
+exit(0);
+error:
+exit(1);
