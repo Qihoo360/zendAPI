@@ -1,18 +1,15 @@
---TEST--
-Class exist test
---FILE--
 <?php
-if (class_exists("Person")) {
-   echo "class \Person exist\n";
+if (!class_exists("Person")) {
+   goto error;
 }
-if (class_exists("\zapi\EmptyClass")) {
-   echo "class \zapi\EmptyClass exist\n";
+if (!class_exists("\zapi\EmptyClass")) {
+   goto error;
 }
-if (class_exists("ConstructAndDestruct")) {
-   echo "class \ConstructAndDestruct exist\n";
+if (!class_exists("ConstructAndDestruct")) {
+   goto error;
 }
-?>
---EXPECT--
-class \Person exist
-class \zapi\EmptyClass exist
-class \ConstructAndDestruct exist
+
+success:
+exit(0);
+error:
+exit(1);

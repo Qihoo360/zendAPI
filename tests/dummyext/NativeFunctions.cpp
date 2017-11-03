@@ -91,4 +91,4 @@ Variant return_arg(Variant &value)
    return value;
 }
 
-}
+} // dummyext
