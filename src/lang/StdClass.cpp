@@ -238,6 +238,7 @@ zval *StdClass::doCallParent(const char *name, const int argc, Variant *argv, zv
    }
    int result;
    zend_fcall_info fci;
+   std::memset(&fci, 0, sizeof(fci));
    zval retval;
    HashTable *funcTable;
    zval params[argc];

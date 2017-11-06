@@ -50,7 +50,9 @@ enum class Type : unsigned char
    // internal types
    Indirect    = IS_INDIRECT,
    Ptr         = IS_PTR,
+#if ZEND_MODULE_API_NO >= 20160303 // imported after php-7.1.0
    Error       = _IS_ERROR
+#endif
 };
 
 enum class ClassType : unsigned int

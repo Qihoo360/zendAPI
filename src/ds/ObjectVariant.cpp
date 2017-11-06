@@ -245,9 +245,11 @@ bool ObjectVariant::hasProperty(const std::string &name)
 {
    int value = 0;
    zval *self = getUnDerefZvalPtr();
+#if ZEND_MODULE_API_NO >= 20160303 // imported after php-7.1.0
    zend_class_entry *scope = Z_OBJCE_P(self);
    zend_class_entry *old_scope = EG(fake_scope);
    EG(fake_scope) = scope;
+#endif
    if (!Z_OBJ_HT_P(self)->has_property) {
       zend_error(E_CORE_ERROR, "Property %s of class %s cannot be read", name.c_str(), ZSTR_VAL(Z_OBJCE_P(self)->name));
    }
@@ -256,7 +258,9 @@ bool ObjectVariant::hasProperty(const std::string &name)
    // @TODO if I have time, I will find this cache, now pass nullptr
    value = Z_OBJ_HT_P(self)->has_property(self, &nameZval, 2, nullptr);
    zval_dtor(&nameZval);
+#if ZEND_MODULE_API_NO >= 20160303 // imported after php-7.1.0
    EG(fake_scope) = old_scope;
+#endif
    return 1 == value;
 }
 
@@ -406,7 +410,7 @@ Variant ObjectVariant::exec(const char *name, int argc, Variant *argv) const
       params[i] = *argv[i].getUnDerefZvalPtr();
       curArgPtr = &params[i];
       if (Z_TYPE_P(curArgPtr) == IS_REFERENCE && Z_REFCOUNTED_P(Z_REFVAL_P(curArgPtr))) {
-          Z_TRY_ADDREF_P(&params[i]); // _call_user_function_ex free call stack will decrease 1
+         Z_TRY_ADDREF_P(&params[i]); // _call_user_function_ex free call stack will decrease 1
       }
    }
    return do_execute(getZvalPtr(), methodName.getZvalPtr(), argc, params);
@@ -447,7 +451,11 @@ bool ObjectVariant::doClassInvoke(int argc, Variant *argv, zval *retval)
    }
    zend_class_entry *calledScope = Z_OBJCE_P(self);
    zend_object *object;
+#if ZEND_MODULE_API_NO >= 20160303 // imported after php-7.1.0
    uint32_t callInfo = ZEND_CALL_NESTED_FUNCTION | ZEND_CALL_DYNAMIC;
+#else
+   uint32_t callInfo = ZEND_CALL_NESTED_FUNCTION;
+#endif
    
    if (EXPECTED(Z_OBJ_HANDLER_P(self, get_closure)) &&
        EXPECTED(Z_OBJ_HANDLER_P(self, get_closure)(self, &calledScope, &func, &object) == ZAPI_SUCCESS)) {
