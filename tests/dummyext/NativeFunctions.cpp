@@ -80,7 +80,7 @@ Variant add_two_number(const NumericVariant &num1, const NumericVariant &num2)
 
 void say_hello(StringVariant &name)
 {
-   if (name.getCapacity() == 0) {
+   if (name.getSize() == 0) {
       name = "zapi";
    }
    zapi::out << "hello, " << name << std::endl;

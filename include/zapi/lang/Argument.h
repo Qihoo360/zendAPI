@@ -67,7 +67,7 @@ using Arguments = std::initializer_list<Argument>;
 class ZAPI_DECL_EXPORT RefArgument : public Argument
 {
 public:
-   RefArgument(const char *name, Type type = Type::Null, bool required = true,
+   RefArgument(const char *name, Type type = Type::Undefined, bool required = true,
                bool isVariadic = false)
       : Argument(name, type, required, true, isVariadic)
    {}
@@ -91,7 +91,7 @@ public:
 class ZAPI_DECL_EXPORT ValueArgument : public Argument
 {
 public:
-   ValueArgument(const char *name, Type type = Type::Null, 
+   ValueArgument(const char *name, Type type = Type::Undefined, 
                  bool required = true, bool isVariadic = false)
       : Argument(name, type, required, false, isVariadic)
    {}
@@ -115,7 +115,7 @@ public:
 class ZAPI_DECL_EXPORT VariadicArgument : public Argument
 {
 public:
-   VariadicArgument(const char *name, Type type = Type::Null, bool isReference = false)
+   VariadicArgument(const char *name, Type type = Type::Undefined, bool isReference = false)
       : Argument(name, type, false, isReference, true)
    {}
    

@@ -79,7 +79,9 @@ enum class  Modifier : unsigned long
    // special method type
    Constructor       = ZEND_ACC_CTOR,
    Destructor        = ZEND_ACC_DTOR,
+#if ZEND_MODULE_API_NO < 20170718 // // deleted after php-7.2.0
    Clone             = ZEND_ACC_CLONE
+#endif
 };
 
 ZAPI_DECL_EXPORT Modifier operator~(Modifier modifier);

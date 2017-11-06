@@ -16,5 +16,6 @@ hello, 3.14
 EOF;
 
 if ($ret != $expect) {
+    echo "got: ".$ret;
     exit(1);
 }

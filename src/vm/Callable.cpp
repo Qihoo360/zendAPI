@@ -39,11 +39,16 @@ CallablePrivate::CallablePrivate(const char *name, ZendCallable callable, const 
       if (argument.isRequired()) {
          m_required++;
       }
+      // setup the actually argument info
       setupCallableArgInfo(&m_argv[i++], argument);
    }
+   // note from PHP 7.2, zend engine remove class_name of zend_internal_arg_info
+   // and encode the class_name pointer data into type field of zend_internal_arg_info
+#if ZEND_MODULE_API_NO < 20170718 // for version less than PHP 7.2
    // last entry, we save extra infomation about self
    // this just for m_callable = nullptr and self::invoke been set for entry->handler
    m_argv[i].class_name = nullptr;
+#endif
    m_argv[i].name = nullptr;
 }
 
@@ -57,7 +62,11 @@ void CallablePrivate::initialize(zend_function_entry *entry, const char *classNa
       entry->handler = m_callable;
    } else {
       // install ourselves in the extra argument
+#if ZEND_MODULE_API_NO < 20170718 // for version less than PHP 7.2
       m_argv[m_argc + 1].class_name = reinterpret_cast<const char*>(this);
+#else
+      m_argv[m_argc + 1].name = reinterpret_cast<const char*>(this);
+#endif
       // we use our own invoke method, which does a lookup
       // in the map we just installed ourselves in
       entry->handler = &Callable::invoke;
@@ -66,20 +75,38 @@ void CallablePrivate::initialize(zend_function_entry *entry, const char *classNa
    entry->arg_info = m_argv.get();
    entry->num_args = m_argc;
    entry->flags = flags;
+   // first arg info save the infomation of callable itself
    initialize(reinterpret_cast<zend_internal_function_info *>(m_argv.get()), className);
 }
 
 void CallablePrivate::initialize(zend_internal_function_info *info, const char *className) const
 {
+   // current not support return type
+#if ZEND_MODULE_API_NO < 20170718 // for version less than PHP 7.
+   // this is ok ?
    info->class_name = className;
-   info->required_num_args = m_required;
    info->type_hint = static_cast<unsigned char>(m_return);
-   // current we don't support return by reference
-   info->return_reference = false;
    // since php 5.6 there are _allow_null and _is_variadic properties. It's
    // not exactly clear what they do (@todo find this out) so for now we set
    // them to false
    info->allow_null = false;
+#else
+   // we use new facility type system for zend_internal_function_info / zend_function_info
+   if (nullptr != className) {
+      if (m_name != "__construct" && m_name != "__destruct") {
+         //zapi::out << className << "::" << m_name << std::endl;
+         //info->type = ZEND_TYPE_ENCODE_CLASS(className, false);
+         info->type = Z_L(1);
+      } else {
+         info->type = Z_L(1);
+      }
+   } else {
+      info->type = Z_L(1);
+   }
+#endif
+   info->required_num_args = m_required;
+   // current we don't support return by reference
+   info->return_reference = false;
    info->_is_variadic = false;
 }
 
@@ -95,53 +122,50 @@ void CallablePrivate::initialize(const std::string &prefix, zend_function_entry 
 
 void CallablePrivate::setupCallableArgInfo(zend_internal_arg_info *info, const lang::Argument &arg) const
 {
+   std::memset(info, 0, sizeof(zend_internal_arg_info));
    info->name = arg.getName();
+   int rawType = IS_UNDEF;
+   Type underType = arg.getType();
+   if (Type::Undefined == underType) {
+      rawType = IS_UNDEF;
+   } else if (Type::Null == underType) {
+      rawType = IS_NULL;
+   } else if (Type::Boolean == underType || Type::True == underType || Type::False == underType) {
+      rawType = _IS_BOOL;
+   } else if (Type::Numeric == underType) {
+      rawType = IS_LONG;
+   } else if (Type::Double == underType) {
+      rawType = IS_DOUBLE;
+   } else if (Type::String == underType) {
+      rawType = IS_STRING;
+   } else if (Type::Array == underType) {
+      rawType = IS_ARRAY;
+   } else if (Type::Object == underType) {
+      rawType = IS_OBJECT;
+   } else if (Type::Callable == underType) {
+      rawType = IS_CALLABLE;
+   }
+
+#if ZEND_MODULE_API_NO < 20170718 // for version less than PHP 7.2
    if (arg.getType() == Type::Object) {
       info->class_name = arg.getClassName();
    } else {
       info->class_name = nullptr;
    }
-   switch (arg.getType()) {
-   case Type::Undefined:
-      info->type_hint = IS_UNDEF;
-      break;
-   case Type::Null:
-      // here we accept everything when is null? is good for this, any good choice?
-      info->type_hint = IS_UNDEF;
-      break;
-   case Type::Boolean:
-   case Type::True:
-   case Type::False:
-      info->type_hint = _IS_BOOL;
-      break;
-   case Type::Numeric:
-      info->type_hint = IS_LONG;
-      break;
-   case Type::Double:
-      info->type_hint = IS_DOUBLE;
-      break;
-   case Type::String:
-      info->type_hint = IS_STRING;
-      break;
-   case Type::Array:
-      info->type_hint = IS_ARRAY;
-      break;
-   case Type::Object:
-      info->type_hint = IS_OBJECT;
-      break;
-   case Type::Callable:
-      info->type_hint = IS_CALLABLE;
-      break;
-   default:
-      info->type_hint = IS_UNDEF;
-      break;
+   info->type_hint = rawType;
+   info->allow_null = arg.isNullable();
+#else
+   if (arg.getType() == Type::Object) {
+      info->type = ZEND_TYPE_ENCODE_CLASS(arg.getClassName(), arg.isNullable());
+   } else {
+      info->type = ZEND_TYPE_ENCODE(rawType, arg.isNullable());
    }
+#endif
    // from PHP 5.6 and onwards, an is_variadic property can be set, this
    // specifies whether this argument is the first argument that specifies
    // the type for a variable length list of arguments. For now we only
    // support methods and functions with a fixed number of arguments.
    info->is_variadic       = arg.isVariadic();
-   info->allow_null        = arg.isNullable();
    info->pass_by_reference = arg.isReference();
 }
 
@@ -202,9 +226,13 @@ void Callable::invoke(INTERNAL_FUNCTION_PARAMETERS)
 {
    uint32_t argc       = EX(func)->common.num_args;
    zend_arg_info *info = EX(func)->common.arg_info;
+#if ZEND_MODULE_API_NO < 20170718 // for version less than PHP 7.2
    assert(info[argc].class_name != nullptr && info[argc].name == nullptr);
    Callable *callable = reinterpret_cast<Callable *>(info[argc].class_name);
-   
+#else
+   assert(info[argc].name != nullptr);
+   Callable *callable = reinterpret_cast<Callable *>(info[argc].name);
+#endif
    // check if sufficient parameters were passed (for some reason this check
    // is not done by Zend, so we do it here ourselves)
    if (ZEND_NUM_ARGS() < callable->m_implPtr->m_required) {

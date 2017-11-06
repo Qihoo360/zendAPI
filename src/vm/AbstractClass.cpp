@@ -171,8 +171,12 @@ zend_class_entry *AbstractClassPrivate::initialize(AbstractClass *cls, const std
 {
    m_apiPtr = cls;
    zend_class_entry entry;
+   std::memset(&entry, 0, sizeof(zend_class_entry));
    if (ns.size() > 0 && ns != "\\") {
       m_name = ns + "\\" + m_name;
+   }
+   if ("Person" == m_name) {
+      
    }
    // initialize the class entry
    INIT_CLASS_ENTRY_EX(entry, m_name.c_str(), m_name.size(), getMethodEntries().get());
@@ -183,7 +187,7 @@ zend_class_entry *AbstractClassPrivate::initialize(AbstractClass *cls, const std
       entry.get_iterator = &AbstractClassPrivate::getIterator;
       entry.iterator_funcs.funcs = IteratorBridge::getIteratorFuncs();
    }
-   
+  
    // check if serializable
    if (m_apiPtr->serializable()) {
       entry.serialize = &AbstractClassPrivate::serialize;
