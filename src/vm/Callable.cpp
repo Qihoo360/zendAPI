@@ -27,6 +27,31 @@ namespace vm
 namespace internal
 {
 
+int get_raw_type(Type type)
+{
+   if (Type::Undefined == type) {
+      return IS_UNDEF;
+   } else if (Type::Null == type) {
+      return IS_NULL;
+   } else if (Type::Boolean == type || Type::True == type || Type::False == type) {
+      return _IS_BOOL;
+   } else if (Type::Numeric == type) {
+      return IS_LONG;
+   } else if (Type::Double == type) {
+      return IS_DOUBLE;
+   } else if (Type::String == type) {
+      return IS_STRING;
+   } else if (Type::Array == type) {
+      return IS_ARRAY;
+   } else if (Type::Object == type) {
+      return IS_OBJECT;
+   } else if (Type::Callable == type) {
+      return IS_CALLABLE;
+   }else {
+      return IS_UNDEF;
+   }
+}
+
 CallablePrivate::CallablePrivate(const char *name, ZendCallable callable, const lang::Arguments &arguments)
    : m_callable(callable),
      m_name(name),
@@ -83,9 +108,10 @@ void CallablePrivate::initialize(zend_internal_function_info *info, const char *
 {
    // current not support return type
 #if ZEND_MODULE_API_NO < 20170718 // for version less than PHP 7.
-   // this is ok ?
-   info->class_name = className;
-   info->type_hint = static_cast<unsigned char>(m_return);
+   info->type_hint = static_cast<unsigned char>(m_returnType);
+   if (m_returnType == Type::Object) {
+      info->class_name = m_retClsName.c_str();
+   }
    // since php 5.6 there are _allow_null and _is_variadic properties. It's
    // not exactly clear what they do (@todo find this out) so for now we set
    // them to false
@@ -93,15 +119,23 @@ void CallablePrivate::initialize(zend_internal_function_info *info, const char *
 #else
    // we use new facility type system for zend_internal_function_info / zend_function_info
    if (nullptr != className) {
+      // method
       if (m_name != "__construct" && m_name != "__destruct") {
-         //zapi::out << className << "::" << m_name << std::endl;
-         //info->type = ZEND_TYPE_ENCODE_CLASS(className, false);
-         info->type = Z_L(1);
+         if (m_returnType == Type::Object) {
+            info->type = ZEND_TYPE_ENCODE_CLASS(m_retClsName.c_str(), true);
+         } else {
+            info->type = ZEND_TYPE_ENCODE(get_raw_type(m_returnType), true);
+         }
       } else {
          info->type = Z_L(1);
       }
    } else {
-      info->type = Z_L(1);
+      // function
+      if (m_returnType == Type::Object) {
+         info->type = ZEND_TYPE_ENCODE_CLASS(m_retClsName.c_str(), true);
+      } else {
+         info->type = ZEND_TYPE_ENCODE(get_raw_type(m_returnType), true);
+      }
    }
 #endif
    info->required_num_args = m_required;
@@ -124,30 +158,9 @@ void CallablePrivate::setupCallableArgInfo(zend_internal_arg_info *info, const l
 {
    std::memset(info, 0, sizeof(zend_internal_arg_info));
    info->name = arg.getName();
-   int rawType = IS_UNDEF;
-   Type underType = arg.getType();
-   if (Type::Undefined == underType) {
-      rawType = IS_UNDEF;
-   } else if (Type::Null == underType) {
-      rawType = IS_NULL;
-   } else if (Type::Boolean == underType || Type::True == underType || Type::False == underType) {
-      rawType = _IS_BOOL;
-   } else if (Type::Numeric == underType) {
-      rawType = IS_LONG;
-   } else if (Type::Double == underType) {
-      rawType = IS_DOUBLE;
-   } else if (Type::String == underType) {
-      rawType = IS_STRING;
-   } else if (Type::Array == underType) {
-      rawType = IS_ARRAY;
-   } else if (Type::Object == underType) {
-      rawType = IS_OBJECT;
-   } else if (Type::Callable == underType) {
-      rawType = IS_CALLABLE;
-   }
-
+   int rawType = get_raw_type(arg.getType());
 #if ZEND_MODULE_API_NO < 20170718 // for version less than PHP 7.2
-   if (arg.getType() == Type::Object) {
+   if (rawType == IS_OBJECT) {
       info->class_name = arg.getClassName();
    } else {
       info->class_name = nullptr;
@@ -155,7 +168,7 @@ void CallablePrivate::setupCallableArgInfo(zend_internal_arg_info *info, const l
    info->type_hint = rawType;
    info->allow_null = arg.isNullable();
 #else
-   if (arg.getType() == Type::Object) {
+   if (rawType == IS_OBJECT) {
       info->type = ZEND_TYPE_ENCODE_CLASS(arg.getClassName(), arg.isNullable());
    } else {
       info->type = ZEND_TYPE_ENCODE(rawType, arg.isNullable());
@@ -215,6 +228,25 @@ Callable &Callable::operator=(Callable &&other) ZAPI_DECL_NOEXCEPT
    assert(this != &other);
    m_implPtr = std::move(other.m_implPtr);
    return *this;
+}
+
+Callable &Callable::setReturnType(Type type) ZAPI_DECL_NOEXCEPT
+{
+   if (Type::Object != type && Type::Resource != type && Type::Ptr != type) {
+      m_implPtr->m_returnType = type;
+   }
+   return *this;
+}
+Callable &Callable::setReturnType(const std::string &clsName) ZAPI_DECL_NOEXCEPT
+{
+   m_implPtr->m_returnType = Type::Object;
+   m_implPtr->m_retClsName = clsName;
+   return *this;
+}
+
+Callable &Callable::setReturnType(const char *clsName) ZAPI_DECL_NOEXCEPT
+{
+   return setReturnType(clsName);
 }
 
 void Callable::setupCallableArgInfo(zend_internal_arg_info *info, const lang::Argument &arg) const

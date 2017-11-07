@@ -75,6 +75,9 @@ public:
 public:
    Callable &operator=(const Callable &other);
    Callable &operator=(Callable &&other) ZAPI_DECL_NOEXCEPT;
+   Callable &setReturnType(Type type) ZAPI_DECL_NOEXCEPT;
+   Callable &setReturnType(const std::string &clsName) ZAPI_DECL_NOEXCEPT;
+   Callable &setReturnType(const char *clsName) ZAPI_DECL_NOEXCEPT;
 public:
    virtual Variant invoke(Parameters &parameters) = 0;
 protected:

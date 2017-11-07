@@ -53,8 +53,9 @@ public:
    CallablePrivate &operator=(CallablePrivate &&other) ZAPI_DECL_NOEXCEPT;
    zapi::ZendCallable m_callable;
    std::string m_name;
-   Type m_return = Type::Undefined;
+   Type m_returnType = Type::Undefined;
    uint32_t m_required = 0;
+   std::string m_retClsName;
    int m_argc = 0;
    std::unique_ptr<zend_internal_arg_info[]> m_argv;
 };
