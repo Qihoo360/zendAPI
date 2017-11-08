@@ -129,6 +129,13 @@ endif()
 
 include(AddLibZendApi)
 include(DetectPhpInfo)
+include(FindGTest)
+
+set(ZAPI_FOUND_NATIVE_GTEST OFF)
+find_package(GTest)
+if(GTEST_FOUND)
+    set(ZAPI_FOUND_NATIVE_GTEST ON)
+endif()
 
 # check min compiler version
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang" AND CMAKE_CXX_COMPILER_VERSION VERSION_LESS "3.5.2")
@@ -180,7 +187,9 @@ endif()
 configure_file(${ZAPI_PHP_INI_TPL_FILENAME} ${ZAPI_PHP_INI_FILENAME} @ONLY)
 
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" AND ZAPI_OPT_ENABLE_UNIT_TESTS)
-    add_subdirectory(utils/unittest)
+    if(NOT ZAPI_FOUND_NATIVE_GTEST)
+        add_subdirectory(utils/unittest)
+    endif()
     add_subdirectory(unittests)
 endif()
 
