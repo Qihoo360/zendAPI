@@ -454,7 +454,7 @@ Variant MagicMethodClass::__call(const std::string &method, Parameters &params) 
    zapi::out << "MagicMethodClass::__call is called" << std::endl;
    if (method == "calculateSum") {
       NumericVariant sum;
-      for (int i = 0; i < params.size(); i++) {
+      for (Parameters::SizeType i = 0; i < params.size(); i++) {
          sum += NumericVariant(params.at(i));
       }
       return sum;
@@ -467,7 +467,7 @@ Variant MagicMethodClass::__invoke(Parameters &params) const
 {
    zapi::out << "MagicMethodClass::__invoke is called" << std::endl;
    NumericVariant sum;
-   for (int i = 0; i < params.size(); i++) {
+   for (Parameters::SizeType i = 0; i < params.size(); i++) {
       sum += NumericVariant(params.at(i));
    }
    return sum;
@@ -578,7 +578,7 @@ Variant MagicMethodClass::__callStatic(const std::string &method, Parameters &pa
    zapi::out << "MagicMethodClass::__callStatic is called" << std::endl;
    if (method == "staticCalculateSum") {
       NumericVariant sum;
-      for (int i = 0; i < params.size(); i++) {
+      for (Parameters::SizeType i = 0; i < params.size(); i++) {
          sum += NumericVariant(params.at(i));
       }
       return sum;
@@ -634,7 +634,7 @@ Variant ObjectVariantClass::__invoke(Parameters &params) const
    zapi::out << "ObjectVariantClass::__invoke invoked" << std::endl;
    StringVariant str(params.at(0).getUnDerefZvalPtr(), true);
    NumericVariant result;
-   for (int i = 1; i < params.size(); i++) {
+   for (Parameters::SizeType i = 1; i < params.size(); i++) {
       result += NumericVariant(params.at(i));
    }
    str = "zapi";

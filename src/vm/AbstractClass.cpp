@@ -789,8 +789,8 @@ class ScopedFree
 {
 public:
    ScopedFree(ContextMapType &map, const std::string &key)
-      : m_map(map),
-        m_key(key)
+      : m_key(key),
+        m_map(map)
    {}
    ~ScopedFree()
    {
@@ -844,7 +844,6 @@ void AbstractClassPrivate::magicInvokeForwarder(INTERNAL_FUNCTION_PARAMETERS)
 {
    CallContext *callContext = reinterpret_cast<CallContext *>(execute_data->func);
    assert(callContext);
-   zend_internal_function *func = &callContext->m_func;
    AbstractClass *meta = callContext->m_selfPtr->m_apiPtr;
    zend_class_entry *defClassEntry = callContext->m_selfPtr->m_classEntry;
    assert(defClassEntry);
@@ -1131,7 +1130,6 @@ void AbstractClass::registerProperty(const char *name, const zapi::GetterMethodC
 
 void AbstractClass::registerConstant(const Constant &constant)
 {
-   ZAPI_D(AbstractClass);
    const zend_constant &zendConst = constant.getZendConstant();
    const std::string &name = constant.getName();
    switch (Z_TYPE(zendConst.value)) {

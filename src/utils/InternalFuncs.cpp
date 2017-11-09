@@ -22,7 +22,7 @@ namespace internal
 
 bool parse_namespaces(const std::string &ns, std::list<std::string> &parts)
 {
-   int markPos = 0;
+   std::string::size_type markPos = 0;
    int cycleSepCount = 0;
    std::string::value_type curChar;
    std::string::size_type len = ns.size();
@@ -32,7 +32,7 @@ bool parse_namespaces(const std::string &ns, std::list<std::string> &parts)
    if (ns[len - 1] == ':') {
       return false;
    }
-   int i = 0;
+   std::string::size_type i = 0;
    for (; i < ns.size(); i++) {
       curChar = ns[i];
       if (':' == curChar) {

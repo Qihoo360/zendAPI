@@ -48,7 +48,12 @@ set(ZAPI_SRC
    utils/InternalFuncs.cpp
    )
 
-zapi_add_library(${ZAPI_PROJECT_NAME} SHARED ${ZAPI_SRC} ${ZAPI_PUBLIC_HEADERS})
+if(BUILD_SHARED_LIBS)
+    set(ZAPI_BUILD_TYPE SHARED)
+else()
+    set(ZAPI_BUILD_TYPE STATIC)
+endif()
+zapi_add_library(${ZAPI_PROJECT_NAME} ${ZAPI_BUILD_TYPE} ${ZAPI_SRC} ${ZAPI_PUBLIC_HEADERS})
 
 # setup zapi property
 target_compile_options(${ZAPI_PROJECT_NAME} 

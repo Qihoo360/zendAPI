@@ -31,6 +31,8 @@ class ZAPI_DECL_EXPORT Serializable
 public:
    virtual std::string serialize() = 0;
    virtual void unserialize(const char *input, size_t size) = 0;
+   virtual ~Serializable()
+   {}
 };
 
 } // protocol

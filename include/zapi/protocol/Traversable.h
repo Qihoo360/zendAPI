@@ -32,6 +32,8 @@ class ZAPI_DECL_EXPORT Traversable
 {
 public:
    virtual AbstractIterator *getIterator() = 0;
+   virtual ~Traversable()
+   {}
 };
 
 } // protocol

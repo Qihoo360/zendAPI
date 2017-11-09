@@ -381,7 +381,6 @@ ArrayIterator ArrayVariant::append(const Variant &value)
    zval temp;
    ZVAL_COPY(&temp, zvalPtr);
    zend_array *selfArrPtr = getZendArrayPtr();
-   zapi_long cindex = selfArrPtr->nNextFreeElement;
    zval *valPtr = zend_hash_next_index_insert(selfArrPtr, &temp);
    if (valPtr) {
       HashPosition pos = calculateIdxFromZval(valPtr);
@@ -401,7 +400,6 @@ ArrayIterator ArrayVariant::append(Variant &&value)
    ZVAL_COPY_VALUE(&temp, zvalPtr);
    std::memset(&value.m_implPtr->m_buffer, 0, sizeof(value.m_implPtr->m_buffer));
    zend_array *selfArrPtr = getZendArrayPtr();
-   zapi_long cindex = selfArrPtr->nNextFreeElement;
    zval *valPtr = zend_hash_next_index_insert(selfArrPtr, &temp);
    if (valPtr) {
       HashPosition pos = calculateIdxFromZval(valPtr);

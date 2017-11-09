@@ -30,6 +30,8 @@ class ZAPI_DECL_EXPORT Countable
 {
 public:
    virtual zapi_long count() = 0;
+   virtual ~Countable()
+   {}
 };
 
 } // protocol

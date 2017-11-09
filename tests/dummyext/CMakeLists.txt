@@ -22,7 +22,7 @@ set(DUMMYEXT_SRCS
 add_library(dummyext MODULE 
     ${DUMMYEXT_SRCS})
 
-target_link_libraries(dummyext ${PTHREAD_LIB} ${CMAKE_PROJECT_NAME})
+target_link_libraries(dummyext ${PTHREAD_LIB} ${ZAPI_PROJECT_NAME})
 set(BUILD_ETC_DIR ${ZAPI_BINARY_DIR}/etc)
 set_target_properties(dummyext PROPERTIES
    RUNTIME_OUTPUT_DIRECTORY ${ZAPI_BINARY_DIR}/extensions

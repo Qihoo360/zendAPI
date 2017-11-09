@@ -13,3 +13,10 @@
 //
 // Created by softboy on 25/07/2017.
 
+namespace zapi
+{
+namespace kernel
+{
+
+}
+} // zapi

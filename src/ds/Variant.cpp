@@ -864,8 +864,8 @@ bool Variant::isBool() const ZAPI_DECL_NOEXCEPT
    if (getType() == Type::False || getType() == Type::True) {
       return true;
    }
-   Type type = static_cast<Type>(Z_TYPE_P(const_cast<zval *>(getZvalPtr())));
-   return getType() == Type::False || getType() == Type::True;
+   Type type = getType();
+   return type == Type::False || type == Type::True;
 }
 
 /**

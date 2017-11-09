@@ -47,19 +47,19 @@ Modifier &operator&=(Modifier &left, Modifier right)
    return left;
 }
 
-bool operator==(int value, Modifier right)
+bool operator==(unsigned long value, Modifier right)
 {
-   return static_cast<unsigned int>(right) == value;
+   return static_cast<unsigned long>(right) == value;
 }
 
-bool operator==(Modifier left, int value)
+bool operator==(Modifier left, unsigned long value)
 {
-   return static_cast<unsigned int>(left) == value;
+   return static_cast<unsigned long>(left) == value;
 }
 
 bool operator==(Modifier left, Modifier right)
 {
-   return static_cast<unsigned int>(left) == static_cast<unsigned int>(right);
+   return static_cast<unsigned long>(left) == static_cast<unsigned long>(right);
 }
 
 } // lang

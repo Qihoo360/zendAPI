@@ -12,7 +12,7 @@
 #   DEPENDS targets...
 #     Same semantics as add_dependencies().
 #   LINK_COMPONENTS components...
-#     Same as the variable LLVM_LINK_COMPONENTS.
+#     Same as the variable ZAPI_LINK_COMPONENTS.
 #   LINK_LIBS lib_targets...
 #     Same semantics as target_link_libraries().
 #   ADDITIONAL_HEADERS
@@ -168,7 +168,7 @@ function(zapi_add_unittest test_suite test_name)
     # libpthreads overrides some standard library symbols, so main
     # executable must be linked with it in order to provide consistent
     # API for all shared libaries loaded by this executable.
-    target_link_libraries(${test_name} ${ZAPI_TEMP_GTEST_LIBS} ${PTHREAD_LIB} ${CMAKE_PROJECT_NAME}
+    target_link_libraries(${test_name} ${ZAPI_TEMP_GTEST_LIBS} ${PTHREAD_LIB} ${ZAPI_PROJECT_NAME}
         zapi_libphp)
     add_dependencies(${test_suite} ${test_name})
     get_target_property(test_suite_folder ${test_suite} FOLDER)

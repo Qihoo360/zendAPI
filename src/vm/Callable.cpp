@@ -246,7 +246,8 @@ Callable &Callable::setReturnType(const std::string &clsName) ZAPI_DECL_NOEXCEPT
 
 Callable &Callable::setReturnType(const char *clsName) ZAPI_DECL_NOEXCEPT
 {
-   return setReturnType(clsName);
+   m_implPtr->m_retClsName = clsName;
+   return *this;
 }
 
 void Callable::setupCallableArgInfo(zend_internal_arg_info *info, const lang::Argument &arg) const

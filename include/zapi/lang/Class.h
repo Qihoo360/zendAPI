@@ -248,7 +248,7 @@ private:
 
    template <typename TargetClassType, typename CallalbleType,
              CallalbleType callable, bool IsCallable, bool IsMemberCallable>
-   friend class internal::ClassMethodRegisterImpl;
+   friend struct internal::ClassMethodRegisterImpl;
 };
 
 template <typename T>

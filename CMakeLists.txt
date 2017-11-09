@@ -44,6 +44,10 @@ endif()
 set(ZAPI_VERSION
     "${ZAPI_VERSION_MAJOR}.${ZAPI_VERSION_MINOR}.${ZAPI_VERSION_PATCH}-${ZAPI_VERSION_STAGE}")
 
+if(NOT ${CMAKE_SOURCE_DIR} STREQUAL ${CMAKE_CURRENT_SOURCE_DIR})
+    set(ZAPI_BUILD_EMBED_MOED ON)
+endif()
+
 set(ZAPI_WORKSPACE_DIR "${CMAKE_CURRENT_SOURCE_DIR}")
 set(ZAPI_UTILS_DIR "${ZAPI_WORKSPACE_DIR}/utils")
 set(ZAPI_SOURCE_DIR "${ZAPI_WORKSPACE_DIR}/src")
@@ -69,8 +73,7 @@ option(ZAPI_OPT_ENABLE_RUNTIME_TESTS
 
 option(ZAPI_OPT_ENABLE_VERBOSE_DEBUG
     "Enable verbose debugging" OFF)
-
-option(ZAPI_OPT_PHPCFG_PATH "Specify the php-config path of host platform" "")
+set(ZAPI_OPT_PHPCFG_PATH "" CACHE STRING "Specify the php-config path of host platform.")
 set(ZAPI_OPT_LIBDIR_SUFFIX "" CACHE STRING "Define suffix of library directory name (32/64)" )
 string(TOUPPER "${CMAKE_BUILD_TYPE}" ZAPI_BUILD_TYPE)
 
@@ -89,6 +92,10 @@ set(CMAKE_CXX_FLAGS "-Wno-macro-redefined ${CMAKE_CXX_FLAGS}")
 if (CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
     set(CMAKE_CXX_FLAGS "-stdlib=libc++ ${CMAKE_CXX_FLAGS}")
 endif()
+
+string(REPLACE " " ";" CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
+list(REMOVE_DUPLICATES CMAKE_CXX_FLAGS)
+string(REPLACE ";" " " CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
 if (CMAKE_HOST_SYSTEM_NAME STREQUAL "Linux")
     set(CMAKE_EXE_LINKER_FLAGS "-Xlinker --allow-shlib-undefined ${CMAKE_EXE_LINKER_FLAGS}")
@@ -125,6 +132,10 @@ if (CMAKE_BUILD_TYPE STREQUAL "Debug") #  OR CMAKE_BUILD_TYPE STREQUAL "RelWithD
     if(ZAPI_OPT_ENABLE_VERBOSE_DEBUG)
         set(ZAPI_VERBOSE_DEBUG TRUE)
     endif()
+endif()
+
+# if we are in embed mode, setup force setup some variables and options
+if()
 endif()
 
 include(AddLibZendApi)

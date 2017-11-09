@@ -380,7 +380,6 @@ bool StringVariant::toBool() const ZAPI_DECL_NOEXCEPT
 
 std::string StringVariant::toString() const ZAPI_DECL_NOEXCEPT
 {
-   zval *self = const_cast<zval *>(getZvalPtr());
    zend_string *str = getZendStringPtr();
    if (!str) {
       return std::string();
@@ -1415,7 +1414,6 @@ bool operator <(const std::string &lhs, const StringVariant &rhs)
 
 bool operator <=(const char *lhs, const StringVariant &rhs)
 {
-   size_t len = std::max(std::strlen(lhs), rhs.getLength());
    return std::memcmp(lhs, rhs.getCStr(), rhs.getLength()) < 0 ||
          0 == std::memcmp(lhs, rhs.getCStr(), rhs.getLength());
 }

@@ -52,7 +52,7 @@ public:
    {}
    
    Parameters(const Parameters &other)
-      : m_data(other.m_data), m_object(other.m_object)
+      : m_object(other.m_object), m_data(other.m_data)
    {}
    
    Parameters(const ParamCollectionType::iterator begin,
@@ -61,7 +61,7 @@ public:
    {}
    
    Parameters(Parameters &&params) ZAPI_DECL_NOEXCEPT
-      : m_data(std::move(params.m_data)), m_object(params.m_object)
+      : m_object(params.m_object), m_data(std::move(params.m_data))
    {}
    
    Parameters(StdClass *object) : m_object(object)

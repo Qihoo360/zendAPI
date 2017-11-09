@@ -89,8 +89,8 @@ ZAPI_DECL_EXPORT Modifier operator|(Modifier left, Modifier right);
 ZAPI_DECL_EXPORT Modifier operator&(Modifier left, Modifier right);
 ZAPI_DECL_EXPORT Modifier &operator|=(Modifier &left, Modifier right);
 ZAPI_DECL_EXPORT Modifier &operator&=(Modifier &left, Modifier right);
-ZAPI_DECL_EXPORT bool operator==(const Modifier left, int value);
-ZAPI_DECL_EXPORT bool operator==(int value, const Modifier &right);
+ZAPI_DECL_EXPORT bool operator==(const Modifier left, unsigned long value);
+ZAPI_DECL_EXPORT bool operator==(unsigned long value, const Modifier &right);
 ZAPI_DECL_EXPORT bool operator==(Modifier left, Modifier right);
 
 using HashTableDataDeleter = dtor_func_t;
