@@ -31,7 +31,8 @@ if(ZAPI_OPT_ENABLE_UNIT_TESTS)
     find_library(ZAPI_LIBPHP_PATH php7 NAEMS php php5
         PATHS ${ZAPI_PHP_LIB_PATH} NO_DEFAULT_PATH)
     if (NOT ZAPI_LIBPHP_PATH)
-        message(FATAL_ERROR "php library is not found")
+        message(FATAL_ERROR "php library is not found automatic, maybe your php is not in system standard path "
+            "you can specify ZAPI_OPT_PHPCFG_PATH and try again, good luck!")
     endif()
     add_library(zapi_libphp SHARED IMPORTED GLOBAL)
     set_target_properties(zapi_libphp
