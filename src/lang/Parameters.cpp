@@ -27,8 +27,8 @@ Parameters::Parameters(zval *thisPtr, uint32_t argc)
    : Parameters(nullptr != thisPtr ? ObjectBinder::retrieveSelfPtr(thisPtr)->getNativeObject() : nullptr)
 {
    m_data.reserve(argc);
-   zval arguments[argc];
-   zend_get_parameters_array_ex(argc, arguments);
+   std::unique_ptr<zval[]> arguments(new zval[argc]);
+   zend_get_parameters_array_ex(argc, arguments.get());
    for (uint32_t i = 0; i < argc; i++)
    {
       // append value

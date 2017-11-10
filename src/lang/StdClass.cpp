@@ -241,7 +241,7 @@ zval *StdClass::doCallParent(const char *name, const int argc, Variant *argv, zv
    std::memset(&fci, 0, sizeof(fci));
    zval retval;
    HashTable *funcTable;
-   zval params[argc];
+   std::unique_ptr<zval[]> params(new zval[argc]);
    zval *curArgPtr = nullptr;
    for (int i = 0; i < argc; i++) {
       params[i] = *argv[i].getUnDerefZvalPtr();
@@ -256,7 +256,7 @@ zval *StdClass::doCallParent(const char *name, const int argc, Variant *argv, zv
    zapi::utils::str_tolower(Z_STRVAL(fci.function_name), Z_STRLEN(fci.function_name));
    fci.retval = retvalPtr ? retvalPtr : &retval;
    fci.param_count = argc;
-   fci.params = params;
+   fci.params = params.get();
    fci.no_separation = 1;
    
    // setup cache

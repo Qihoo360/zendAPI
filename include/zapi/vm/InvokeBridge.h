@@ -153,9 +153,9 @@ public:
             return;
          }
          const size_t argNumber = ZEND_NUM_ARGS();
-         zval arguments[argNumber];
-         zend_get_parameters_array_ex(argNumber, arguments);
-         InvokeParamGenerator generator(arguments);
+         std::unique_ptr<zval[]> arguments(new zval[argNumber]);
+         zend_get_parameters_array_ex(argNumber, arguments.get());
+         InvokeParamGenerator generator(arguments.get());
          auto tuple = zapi::stdext::gen_tuple_with_type<paramNumber, CallableType>(generator);
          zapi::stdext::apply(callable, tuple);
          yield(return_value, nullptr);
@@ -216,9 +216,9 @@ public:
             return;
          }
          const size_t argNumber = ZEND_NUM_ARGS();
-         zval arguments[argNumber];
-         zend_get_parameters_array_ex(argNumber, arguments);
-         InvokeParamGenerator generator(arguments);
+         std::unique_ptr<zval[]> arguments(new zval[argNumber]);
+         zend_get_parameters_array_ex(argNumber, arguments.get());
+         InvokeParamGenerator generator(arguments.get());
          auto tuple = zapi::stdext::gen_tuple_with_type<paramNumber, CallableType>(generator);
          yield(return_value, zapi::stdext::apply(callable, tuple));
       } catch (Exception &exception) {
@@ -280,10 +280,10 @@ public:
          using ClassType = typename std::decay<typename zapi::stdext::member_pointer_traits<CallableType>::ClassType>::type;
          StdClass *nativeObject = ObjectBinder::retrieveSelfPtr(getThis())->getNativeObject();
          const size_t argNumber = ZEND_NUM_ARGS();
-         zval arguments[argNumber];
-         zend_get_parameters_array_ex(argNumber, arguments);
+         std::unique_ptr<zval[]> arguments(new zval[argNumber]);
+         zend_get_parameters_array_ex(argNumber, arguments.get());
          // for class object
-         InvokeParamGenerator generator(arguments);
+         InvokeParamGenerator generator(arguments.get());
          auto objectTuple = std::make_tuple(static_cast<ClassType *>(nativeObject));
          auto tuple = std::tuple_cat(objectTuple, zapi::stdext::gen_tuple_with_type<paramNumber, CallableType>(generator));
          zapi::stdext::apply(callable, tuple);
@@ -351,10 +351,10 @@ public:
          using ClassType = typename std::decay<typename zapi::stdext::member_pointer_traits<CallableType>::ClassType>::type;
          StdClass *nativeObject = ObjectBinder::retrieveSelfPtr(getThis())->getNativeObject();
          const size_t argNumber = ZEND_NUM_ARGS();
-         zval arguments[argNumber];
-         zend_get_parameters_array_ex(argNumber, arguments);
+         std::unique_ptr<zval[]> arguments(new zval[argNumber]);
+         zend_get_parameters_array_ex(argNumber, arguments.get());
          // for class object
-         InvokeParamGenerator generator(arguments);
+         InvokeParamGenerator generator(arguments.get());
          auto objectTuple = std::make_tuple(static_cast<ClassType *>(nativeObject));
          auto tuple = std::tuple_cat(objectTuple, zapi::stdext::gen_tuple_with_type<paramNumber, CallableType>(generator));
          yield(return_value, zapi::stdext::apply(callable, tuple));

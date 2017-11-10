@@ -404,7 +404,7 @@ Variant ObjectVariant::exec(const char *name, int argc, Variant *argv)
 Variant ObjectVariant::exec(const char *name, int argc, Variant *argv) const
 {
    Variant methodName(name);
-   zval params[argc];
+   std::unique_ptr<zval[]> params(new zval[argc]);
    zval *curArgPtr = nullptr;
    for (int i = 0; i < argc; i++) {
       params[i] = *argv[i].getUnDerefZvalPtr();
@@ -413,7 +413,7 @@ Variant ObjectVariant::exec(const char *name, int argc, Variant *argv) const
          Z_TRY_ADDREF_P(&params[i]); // _call_user_function_ex free call stack will decrease 1
       }
    }
-   return do_execute(getZvalPtr(), methodName.getZvalPtr(), argc, params);
+   return do_execute(getZvalPtr(), methodName.getZvalPtr(), argc, params.get());
 }
 
 bool ObjectVariant::doClassInvoke(int argc, Variant *argv, zval *retval)

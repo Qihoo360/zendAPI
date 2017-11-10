@@ -192,11 +192,11 @@ CallableVariant &CallableVariant::operator =(Variant &&other)
 
 Variant CallableVariant::exec(int argc, Variant *argv) const
 {
-   zval params[argc];
+   std::unique_ptr<zval[]> params(new zval[argc]);
    for (int i = 0; i < argc; i++) {
       params[i] = *argv[i].getZvalPtr();
    }
-   return do_execute(const_cast<zval *>(getUnDerefZvalPtr()), argc, params);
+   return do_execute(const_cast<zval *>(getUnDerefZvalPtr()), argc, params.get());
 }
 
 Variant CallableVariant::operator ()() const
