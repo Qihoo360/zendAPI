@@ -263,7 +263,7 @@
 // Define ZAPI_PROCESSOR_WORDSIZE to be the size of the machine's word (usually,
 // the size of the register). On some architectures where a pointer could be
 // smaller than the register, the macro is defined above.
-// Falls back to QT_POINTER_SIZE if not set explicitly for the platform.
+// Falls back to PDK_POINTER_SIZE if not set explicitly for the platform.
 #ifndef ZAPI_PROCESSOR_WORDSIZE
 #  define ZAPI_PROCESSOR_WORDSIZE ZAPI_POINTER_SIZE
 #endif
